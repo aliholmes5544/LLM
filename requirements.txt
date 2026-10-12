@@ -1,5 +1,6 @@
-pyyaml>=6.0
-beautifulsoup4>=4.12
-lxml>=5.0
-datasketch>=1.6
-numpy>=1.26
+# Pinned to the environment that produced the committed reports/ (WSL2 Ubuntu 24.04, Python 3.12.3).
+pyyaml==6.0.3
+beautifulsoup4==4.15.0
+lxml==6.1.3
+datasketch==2.0.0
+numpy==2.5.4
