@@ -13,7 +13,7 @@ import re
 import sys
 from collections import Counter
 
-from common import ROOT, load_config, read_text, write_json, GREETING_RE, GENERIC
+from common import ROOT, load_config, read_text, write_json, salutation_class
 
 CFG = load_config()
 RAW = ROOT / "data" / "raw"
@@ -27,14 +27,6 @@ PLACEHOLDER_RE = re.compile(r"<<[^>]*>>")
 
 def flatten(body: str) -> str:
     return WS_RE.sub(" ", TAG_RE.sub(" ", body or "")).strip().lower()
-
-
-def salutation_class(body: str) -> str:
-    m = GREETING_RE.match(flatten(body))
-    if not m:
-        return "none"
-    name = m.group(1).strip().lower()
-    return "generic" if any(name == g or name.startswith(g + " ") for g in GENERIC) else "named"
 
 
 def audit_nahmias() -> dict:
@@ -88,7 +80,7 @@ def audit_ephishllm() -> dict:
         sub = [r for r in en if r.get("type") == cls]
         bodies = [flatten(str(r.get("Body", ""))) for r in sub]
         ph = sum(1 for r in sub if PLACEHOLDER_RE.search(str(r.get("Body", ""))))
-        sal = Counter(salutation_class(str(r.get("Body", ""))) for r in sub)
+        sal = Counter(salutation_class(flatten(str(r.get("Body", "")))) for r in sub)
         words = sorted(len(b.split()) for b in bodies)
         out["en"][label] = {
             "n": len(sub),

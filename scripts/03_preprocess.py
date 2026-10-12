@@ -25,7 +25,7 @@ from bs4 import BeautifulSoup
 from datasketch import MinHash, MinHashLSH
 
 from common import (ROOT, load_config, read_text, write_json, open_utf8,
-                    norm_key, trigrams, GREETING_RE, GENERIC)
+                    norm_key, trigrams, salutation_class)
 
 CFG = load_config()
 P = CFG["preprocess"]
@@ -99,14 +99,6 @@ def truncate_words(text: str, limit: int) -> tuple[str, bool]:
     ends = [m.end() for m in SENT_END_RE.finditer(cut)]
     cut = cut[: ends[-1]].strip() if ends else cut
     return cut, True
-
-
-def salutation_class(body: str) -> str:
-    m = GREETING_RE.match(body)
-    if not m:
-        return "none"
-    name = m.group(1).strip().lower()
-    return "generic" if any(name == g or name.startswith(g + " ") for g in GENERIC) else "named"
 
 
 # ---- loading ---------------------------------------------------------------

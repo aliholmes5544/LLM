@@ -63,3 +63,12 @@ def trigrams(body: str) -> set:
     """Word-trigram set used for near-duplicate Jaccard (threshold in config)."""
     w = norm_key(body).split()
     return {" ".join(w[i:i + 3]) for i in range(len(w) - 2)}
+
+
+def salutation_class(body: str) -> str:
+    """Salutation proxy: named / generic / none (Section 3.2.1). Expects plain text."""
+    m = GREETING_RE.match(body)
+    if not m:
+        return "none"
+    name = m.group(1).strip().lower()
+    return "generic" if any(name == g or name.startswith(g + " ") for g in GENERIC) else "named"
