@@ -1,0 +1,34 @@
+# Data configuration. Every number in Section 3.2 traces to this file.
+seed: 2026
+
+sources:
+  nahmias:
+    repo: nahmiasd/Prompted-Contextual-Vectors-for-Spear-Phishing-Detection
+    commit: 1c5ecbddf1efc7e6591ba8faec036a847def24e1
+    license: CC-BY-NC-SA-4.0
+    subdir: data/emails
+  ephishllm:
+    repo: pajola/e-phishGen
+    commit: 3ff53fb2ddeb09594b383406315d2ca47464c4e6
+    license: unspecified (not redistributed)
+    file: ephishLLM.json
+
+preprocess:
+  language: en
+  min_body_words: 5
+  max_body_words: 600
+  near_dup_jaccard: 0.80          # word-trigram Jaccard threshold
+  minhash_perm: 128
+  placeholder_map:                # E-PhishLLM <<...>> neutralization (Section 3.2.2)
+    link: "the link"
+    attachment: "the attachment"
+    email: "the address"
+    default: "the link"
+
+partition:
+  core_negatives_total: 1002
+  control_paraphrased_legit: 334
+  control_modern_legit: 334
+  generalization: {phish: 1000, legit: 1000}
+  dev: {traditional: 100, enron: 100, ephish_personalized_phish: 100, ephish_legit: 100}
+  validation_fraction: 0.10

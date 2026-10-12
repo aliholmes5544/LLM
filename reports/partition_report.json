@@ -1,0 +1,31 @@
+{
+  "seed": 2026,
+  "counts": {
+    "core_pos": 334,
+    "core_neg": 1002,
+    "ctrl_para_legit": 334,
+    "ctrl_modern_legit": 334,
+    "gen_phish": 1000,
+    "gen_legit": 1000,
+    "dev": 400,
+    "valid": 337,
+    "train": 3033,
+    "fewshot_pool": 3033,
+    "core_neg_by_subclass": {
+      "enron_ham": 694,
+      "hard_ham": 308
+    },
+    "gen_phish_by_salutation": {
+      "generic": 330,
+      "named": 599,
+      "none": 71
+    },
+    "train_by_subclass": {
+      "enron_ham": 734,
+      "traditional": 2299
+    }
+  },
+  "leakage_removed_from": {},
+  "leakage_removed_ids": {},
+  "near_dup_jaccard": 0.8
+}

@@ -1,0 +1,86 @@
+{
+  "unparseable": {
+    "spear_llm": 0,
+    "traditional": 0,
+    "enron_ham": 0,
+    "hard_ham": 1
+  },
+  "steps": [
+    {
+      "loaded": {
+        "spear_llm": 334,
+        "traditional": 3332,
+        "enron_ham": 3000,
+        "hard_ham": 489,
+        "ephish_legit": 5506,
+        "ephish_phish": 5996
+      }
+    },
+    {
+      "after_normalize": {
+        "spear_llm": 334,
+        "traditional": 3330,
+        "enron_ham": 2922,
+        "hard_ham": 486,
+        "ephish_legit": 5506,
+        "ephish_phish": 5996
+      }
+    },
+    {
+      "after_exact_dedup": {
+        "spear_llm": 334,
+        "hard_ham": 348,
+        "ephish_phish": 5996,
+        "ephish_legit": 5506,
+        "enron_ham": 1734,
+        "traditional": 3227
+      }
+    },
+    {
+      "after_near_dedup": {
+        "ephish_legit": 5506,
+        "ephish_phish": 5996,
+        "enron_ham": 1610,
+        "hard_ham": 308,
+        "spear_llm": 334,
+        "traditional": 2654
+      }
+    }
+  ],
+  "placeholders_replaced": 3673,
+  "truncated": {
+    "traditional": 455,
+    "enron_ham": 195,
+    "hard_ham": 96
+  },
+  "too_short": {
+    "traditional": 2,
+    "enron_ham": 78,
+    "hard_ham": 3
+  },
+  "exact_dup_removed": {
+    "hard_ham": 138,
+    "enron_ham": 1188,
+    "traditional": 103
+  },
+  "near_dup_removed": {
+    "hard_ham": 40,
+    "enron_ham": 124,
+    "traditional": 573
+  },
+  "near_dup_pairs_verified": 1653,
+  "cross_collection_near_dups": {},
+  "config": {
+    "language": "en",
+    "min_body_words": 5,
+    "max_body_words": 600,
+    "near_dup_jaccard": 0.8,
+    "minhash_perm": 128,
+    "placeholder_map": {
+      "link": "the link",
+      "attachment": "the attachment",
+      "email": "the address",
+      "default": "the link"
+    }
+  }
+}

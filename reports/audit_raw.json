@@ -1,0 +1,194 @@
+{
+  "provenance": {
+    "fetched_utc": "2026-10-11T15:48:44+00:00",
+    "sources": {
+      "nahmias": {
+        "repo": "nahmiasd/Prompted-Contextual-Vectors-for-Spear-Phishing-Detection",
+        "commit": "1c5ecbddf1efc7e6591ba8faec036a847def24e1",
+        "zip_sha256": "4804c49341808f941f847e8b079801193ab1403fdb50137663fd3d6c83c9e8f9",
+        "files": 7187,
+        "license": "CC-BY-NC-SA-4.0"
+      },
+      "ephishllm": {
+        "repo": "pajola/e-phishGen",
+        "commit": "3ff53fb2ddeb09594b383406315d2ca47464c4e6",
+        "zip_sha256": "edc5c5850a78463b6ebf07ab1f1334afded1a2fd88edd455f6b87e0550813094",
+        "files": 13,
+        "license": "unspecified (not redistributed)"
+      }
+    }
+  },
+  "nahmias": {
+    "enron_ham": {
+      "files": 3000,
+      "parsed": 3000,
+      "unparseable": [],
+      "fields": {
+        "email_subject": 3000,
+        "email_body": 3000,
+        "id": 3000
+      },
+      "html_bodies": 14,
+      "exact_duplicate_bodies": 1225,
+      "distinct_bodies": 1775,
+      "missing_subject": 0,
+      "body_words": {
+        "min": 1,
+        "median": 97,
+        "max": 5278
+      }
+    },
+    "hard_ham": {
+      "files": 490,
+      "parsed": 489,
+      "unparseable": [
+        "00113.1d37bdbcad4975b5012cc6d87a048ecf.json"
+      ],
+      "fields": {
+        "email_subject": 489,
+        "email_body": 488,
+        "body": 36
+      },
+      "html_bodies": 36,
+      "exact_duplicate_bodies": 116,
+      "distinct_bodies": 373,
+      "missing_subject": 1,
+      "body_words": {
+        "min": 0,
+        "median": 173,
+        "max": 11315
+      }
+    },
+    "spear_phishing": {
+      "files": 334,
+      "parsed": 334,
+      "unparseable": [],
+      "fields": {
+        "email_subject": 334,
+        "sender_name": 334,
+        "email_body": 334
+      },
+      "html_bodies": 334,
+      "exact_duplicate_bodies": 0,
+      "distinct_bodies": 334,
+      "missing_subject": 0,
+      "body_words": {
+        "min": 59,
+        "median": 181,
+        "max": 324
+      }
+    },
+    "traditional_phishing": {
+      "files": 3332,
+      "parsed": 3332,
+      "unparseable": [],
+      "fields": {
+        "email_subject": 3332,
+        "email_body": 3332,
+        "id": 3332
+      },
+      "html_bodies": 1,
+      "exact_duplicate_bodies": 61,
+      "distinct_bodies": 3271,
+      "missing_subject": 39,
+      "body_words": {
+        "min": 0,
+        "median": 430,
+        "max": 23480
+      }
+    }
+  },
+  "ephishllm": {
+    "total": 16616,
+    "by_language": {
+      "it": 2701,
+      "en": 11502,
+      "fr": 12,
+      "de": 2349,
+      "es": 35,
+      "zh-cn": 3,
+      "ja": 2,
+      "da": 4,
+      "no": 3,
+      "sv": 5
+    },
+    "en_total": 11502,
+    "en": {
+      "phishing": {
+        "n": 5996,
+        "with_placeholder": 3609,
+        "placeholder_pct": 60.2,
+        "salutation": {
+          "generic": 1979,
+          "none": 425,
+          "named": 3592
+        },
+        "exact_duplicate_bodies": 0,
+        "body_words": {
+          "min": 24,
+          "median": 69,
+          "max": 216
+        }
+      },
+      "legitimate": {
+        "n": 5506,
+        "with_placeholder": 0,
+        "placeholder_pct": 0.0,
+        "salutation": {
+          "named": 3898,
+          "generic": 1571,
+          "none": 37
+        },
+        "exact_duplicate_bodies": 0,
+        "body_words": {
+          "min": 38,
+          "median": 97,
+          "max": 275
+        }
+      }
+    },
+    "placeholder_tokens_top": [
+      [
+        "<<link>>",
+        3141
+      ],
+      [
+        "<<attachment>>",
+        17
+      ],
+      [
+        "<<link to fake login page>>",
+        10
+      ],
+      [
+        "<<email>>",
+        7
+      ],
+      [
+        "<<fake-link>>",
+        6
+      ],
+      [
+        "<<contact email>>",
+        5
+      ],
+      [
+        "<<Link email ends here>>",
+        5
+      ],
+      [
+        "<<Vendor Name>>",
+        4
+      ],
+      [
+        "<<malicious_link>>",
+        4
+      ],
+      [
+        "<<Verification Link>>",
+        4
+      ]
+    ],
+    "placeholder_distinct": 424
+  }
+}
