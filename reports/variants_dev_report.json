@@ -1,0 +1,361 @@
+{
+  "seed": 2026,
+  "target": {
+    "partition": "dev",
+    "subclass": "ephish_phish",
+    "n_available": 100,
+    "eval_partitions_checked": [
+      "core_pos",
+      "core_neg",
+      "ctrl_para_legit",
+      "ctrl_modern_legit",
+      "gen_phish",
+      "gen_legit"
+    ],
+    "n_eval_ids": 3670,
+    "disjoint": true,
+    "n_records": 100
+  },
+  "model": {
+    "paraphrase_model": {
+      "repo_id": "bartowski/Phi-3.5-mini-instruct-GGUF",
+      "filename": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+      "license": "MIT",
+      "local_dir": "models",
+      "expected_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5"
+    },
+    "excluded_from_detectors": [
+      "phi"
+    ],
+    "llama": {
+      "n_ctx": 2048,
+      "n_batch": 256,
+      "n_threads": 16,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_tokens_factor": 3
+    },
+    "embedding": "sentence-transformers/all-mpnet-base-v2",
+    "nli": "cross-encoder/nli-deberta-v3-base",
+    "model_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5",
+    "llama_cpp_version": "0.3.36",
+    "prompt_sha256": "3a8078410aa17f8acd4a2f9f42eaa535332304f2c56571b0e0efa3072d6778d1",
+    "entailment_label_index": 1
+  },
+  "thresholds": {
+    "thr_cos": 0.8,
+    "thr_nli": 0.7,
+    "len_ratio_min": 0.7,
+    "len_ratio_max": 1.4
+  },
+  "conditions": {
+    "para_low": {
+      "family": "paraphrase",
+      "rate": 0.5,
+      "produced": 100,
+      "status": {
+        "pass": 79,
+        "regenerated": 11,
+        "excluded": 10
+      },
+      "failures": {
+        "attempt_0": {
+          "checked": 100,
+          "sim_ok": 3,
+          "len_ok": 0,
+          "spans_ok": 2,
+          "nli_ok": 16
+        },
+        "attempt_1": {
+          "checked": 21,
+          "sim_ok": 2,
+          "len_ok": 0,
+          "spans_ok": 2,
+          "nli_ok": 7
+        }
+      },
+      "sim_cos": {
+        "min": 0.6858,
+        "p5": 0.8433,
+        "median": 0.9536
+      },
+      "nli_min": {
+        "min": 0.0043,
+        "p5": 0.0828,
+        "median": 0.9964
+      },
+      "len_ratio": {
+        "min": 0.9423,
+        "median": 1.0433,
+        "max": 1.2817
+      },
+      "n_segments": {
+        "min": 6.0,
+        "median": 9.0,
+        "max": 16.0,
+        "total": 943.0
+      },
+      "n_eligible_segments": {
+        "min": 3.0,
+        "median": 5.0,
+        "max": 9.0,
+        "total": 498.0
+      },
+      "n_selected_segments": {
+        "min": 2.0,
+        "median": 3.0,
+        "max": 5.0,
+        "total": 275.0
+      },
+      "truncated_generations": 0
+    },
+    "para_high": {
+      "family": "paraphrase",
+      "rate": 1.0,
+      "produced": 100,
+      "status": {
+        "pass": 70,
+        "regenerated": 16,
+        "excluded": 14
+      },
+      "failures": {
+        "attempt_0": {
+          "checked": 100,
+          "sim_ok": 8,
+          "len_ok": 0,
+          "spans_ok": 2,
+          "nli_ok": 21
+        },
+        "attempt_1": {
+          "checked": 30,
+          "sim_ok": 2,
+          "len_ok": 0,
+          "spans_ok": 2,
+          "nli_ok": 11
+        }
+      },
+      "sim_cos": {
+        "min": 0.6248,
+        "p5": 0.8245,
+        "median": 0.9173
+      },
+      "nli_min": {
+        "min": 0.0043,
+        "p5": 0.0365,
+        "median": 0.9932
+      },
+      "len_ratio": {
+        "min": 0.9545,
+        "median": 1.0847,
+        "max": 1.3415
+      },
+      "n_segments": {
+        "min": 6.0,
+        "median": 9.0,
+        "max": 16.0,
+        "total": 943.0
+      },
+      "n_eligible_segments": {
+        "min": 3.0,
+        "median": 5.0,
+        "max": 9.0,
+        "total": 498.0
+      },
+      "n_selected_segments": {
+        "min": 3.0,
+        "median": 5.0,
+        "max": 9.0,
+        "total": 498.0
+      },
+      "truncated_generations": 0
+    },
+    "obf_low": {
+      "family": "obfuscation",
+      "rate": 0.1,
+      "produced": 100,
+      "status": {
+        "pass": 100
+      },
+      "integrity_pass": 100,
+      "ops": {
+        "homoglyph": 117,
+        "digit": 106,
+        "zero_width": 112,
+        "separator": 116
+      },
+      "op_redraws": 2,
+      "n_eligible_tokens": {
+        "min": 18.0,
+        "median": 43.0,
+        "max": 100.0,
+        "total": 4425.0
+      },
+      "n_selected_tokens": {
+        "min": 2.0,
+        "median": 4.0,
+        "max": 10.0,
+        "total": 451.0
+      }
+    },
+    "obf_high": {
+      "family": "obfuscation",
+      "rate": 0.3,
+      "produced": 100,
+      "status": {
+        "pass": 100
+      },
+      "integrity_pass": 100,
+      "ops": {
+        "homoglyph": 335,
+        "digit": 324,
+        "zero_width": 354,
+        "separator": 322
+      },
+      "op_redraws": 11,
+      "n_eligible_tokens": {
+        "min": 18.0,
+        "median": 43.0,
+        "max": 100.0,
+        "total": 4425.0
+      },
+      "n_selected_tokens": {
+        "min": 5.0,
+        "median": 13.0,
+        "max": 30.0,
+        "total": 1335.0
+      }
+    },
+    "_spans_per_record": {
+      "min": 0.0,
+      "median": 3.5,
+      "max": 12.0,
+      "total": 375.0,
+      "by_label": {
+        "CARDINAL": 1,
+        "DATE": 34,
+        "EMAIL": 3,
+        "MONEY": 3,
+        "NUMBER": 35,
+        "ORG": 75,
+        "PERSON": 142,
+        "PLACEHOLDER": 78,
+        "TIME": 4
+      }
+    },
+    "_obfuscation_log_rows": 1786
+  },
+  "manual_sample": {
+    "file": "reports/manual_review_sample_dev.csv",
+    "fraction": 0.1,
+    "rows": 40,
+    "per_condition": {
+      "para_low": 10,
+      "para_high": 10,
+      "obf_low": 10,
+      "obf_high": 10
+    }
+  },
+  "config": {
+    "excluded_from_detectors": [
+      "phi"
+    ],
+    "model": {
+      "repo_id": "bartowski/Phi-3.5-mini-instruct-GGUF",
+      "filename": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+      "license": "MIT",
+      "local_dir": "models",
+      "expected_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5"
+    },
+    "llama": {
+      "n_ctx": 2048,
+      "n_batch": 256,
+      "n_threads": 16,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_tokens_factor": 3
+    },
+    "embedding": {
+      "model": "sentence-transformers/all-mpnet-base-v2"
+    },
+    "nli": {
+      "model": "cross-encoder/nli-deberta-v3-base"
+    },
+    "conditions": {
+      "para_low": {
+        "family": "paraphrase",
+        "rate": 0.5
+      },
+      "para_high": {
+        "family": "paraphrase",
+        "rate": 1.0
+      },
+      "obf_low": {
+        "family": "obfuscation",
+        "rate": 0.1
+      },
+      "obf_high": {
+        "family": "obfuscation",
+        "rate": 0.3
+      }
+    },
+    "thresholds": {
+      "thr_cos": 0.8,
+      "thr_nli": 0.7,
+      "len_ratio_min": 0.7,
+      "len_ratio_max": 1.4
+    },
+    "spans": {
+      "placeholder_phrases": [
+        "the link",
+        "the attachment",
+        "the address"
+      ],
+      "ner_labels": [
+        "PERSON",
+        "ORG",
+        "DATE",
+        "TIME",
+        "MONEY",
+        "CARDINAL"
+      ],
+      "spacy_model": "en_core_web_sm"
+    },
+    "sentence_eligibility": {
+      "min_alpha_words": 3,
+      "long_segment_words": 8
+    },
+    "obfuscation": {
+      "min_token_len": 4,
+      "homoglyph": {
+        "a": "\u0430",
+        "e": "\u0435",
+        "o": "\u043e",
+        "c": "\u0441",
+        "p": "\u0440",
+        "x": "\u0445",
+        "i": "\u0456"
+      },
+      "digit": {
+        "o": "0",
+        "l": "1",
+        "e": "3",
+        "a": "4",
+        "s": "5"
+      },
+      "separators": [
+        "-",
+        "."
+      ],
+      "zero_width": "\u200b"
+    },
+    "target": {
+      "partition": "dev",
+      "subclass": "ephish_phish",
+      "manual_sample_fraction": 0.1
+    },
+    "paths": {
+      "cache": "data/interim/paraphrase_cache_dev.jsonl",
+      "prompt": "prompts/paraphrase_v1.txt"
+    }
+  }
+}

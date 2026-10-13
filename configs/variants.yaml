@@ -1,0 +1,64 @@
+# Variant derivation (Section 3.2.3). The random seed is inherited from data.yaml.
+# Thresholds are provisional until calibrated on the development set (TASK_05 step 3).
+
+# The paraphrase model's family is excluded from the detector set (Section 3.2.3):
+# no detector may be evaluated on text produced by a close relative.
+excluded_from_detectors: [phi]
+
+model:
+  repo_id: bartowski/Phi-3.5-mini-instruct-GGUF
+  filename: Phi-3.5-mini-instruct-Q4_K_M.gguf
+  license: MIT
+  local_dir: models                 # gitignored; downloaded by scripts/05_derive_variants.py
+  expected_sha256: e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5   # verified on every run
+
+llama:                              # fixed decoding settings (echoed in the report)
+  n_ctx: 2048
+  n_batch: 256
+  n_threads: 16
+  temperature: 0.7
+  top_p: 0.9
+  max_tokens_factor: 3              # max_tokens = factor x input tokens
+
+embedding:
+  model: sentence-transformers/all-mpnet-base-v2
+nli:
+  model: cross-encoder/nli-deberta-v3-base
+
+conditions:
+  para_low:  {family: paraphrase,  rate: 0.5}   # share of eligible sentences rewritten
+  para_high: {family: paraphrase,  rate: 1.0}
+  obf_low:   {family: obfuscation, rate: 0.1}   # share of eligible tokens perturbed
+  obf_high:  {family: obfuscation, rate: 0.3}
+
+thresholds:                         # provisional; calibrated values are written by 05b
+  thr_cos: 0.80
+  thr_nli: 0.70
+  len_ratio_min: 0.70
+  len_ratio_max: 1.40
+
+spans:
+  placeholder_phrases: ["the link", "the attachment", "the address"]
+  ner_labels: [PERSON, ORG, DATE, TIME, MONEY, CARDINAL]
+  spacy_model: en_core_web_sm
+
+sentence_eligibility:               # a segment is rewritable only if it reads as a sentence:
+  min_alpha_words: 3                #   at least this many alphabetic words outside protected spans, and
+  long_segment_words: 8             #   it ends with sentence punctuation or has at least this many words
+                                    #   (greeting lines, titles, signature lines, link labels are copied verbatim)
+
+obfuscation:
+  min_token_len: 4
+  homoglyph: {a: "а", e: "е", o: "о", c: "с", p: "р", x: "х", i: "і"}   # Cyrillic lookalikes
+  digit:     {o: "0", l: "1", e: "3", a: "4", s: "5"}
+  separators: ["-", "."]
+  zero_width: "​"
+
+target:
+  partition: dev
+  subclass: ephish_phish
+  manual_sample_fraction: 0.10
+
+paths:
+  cache: data/interim/paraphrase_cache_dev.jsonl
+  prompt: prompts/paraphrase_v1.txt

@@ -4,3 +4,16 @@ beautifulsoup4==4.15.0
 lxml==6.1.3
 datasketch==2.0.0
 numpy==2.5.4
+
+# Step 05 (variant derivation, Section 3.2.3). CPU-only torch wheel; llama-cpp-python builds from
+# source (needs a C/C++ compiler; cmake is fetched by the build backend).
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.14.1+cpu
+transformers==5.19.0
+sentence-transformers==6.1.0
+sentencepiece==0.2.2
+protobuf==7.36.2
+spacy==3.8.16
+en_core_web_sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+huggingface_hub==1.33.0
+llama-cpp-python==0.3.36
