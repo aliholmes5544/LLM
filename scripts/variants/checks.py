@@ -1,10 +1,13 @@
 """
 checks.py — automatic meaning checks for paraphrased variants (Section 3.2.3).
 
+Sentence level (drive retry and fallback):
+  nli        each rewritten sentence must mutually entail its source (both directions)
+  spans      every protected span masked inside the sentence must survive the rewrite
+Variant level (final body):
   sim_cos    sentence-embedding cosine between whole original and whole variant body
   len_ratio  variant words / original words (words = str.split(), as in step 03)
   spans_ok   every protected span present in the variant
-  nli_ok     each rewritten sentence mutually entails its source (both directions)
 Model objects are created lazily so the paraphrase model can be released first.
 """
 from .spans import spans_present
@@ -42,20 +45,18 @@ def len_ratio(orig: str, var: str) -> float:
     return len(var.split()) / n if n else 0.0
 
 
-def run_checks(orig_body: str, var_body: str, sentence_pairs: list, spans: list, thr: dict, ck: Checkers) -> dict:
-    """All four checks; `sentence_pairs` = [(original_sentence, rewritten_sentence)] for rewritten segments only."""
+def check_sentence(orig_sent: str, new_sent: str, spans_ok: bool, thr_nli: float, ck: Checkers) -> dict:
+    """NLI both directions for one rewritten sentence; `spans_ok` is the sentence's own mask check."""
+    nli = round(min(ck.entailment_both(orig_sent, new_sent)), 4)
+    return {"nli": nli, "nli_ok": nli >= thr_nli, "spans_ok": spans_ok, "ok": nli >= thr_nli and spans_ok}
+
+
+def check_variant(orig_body: str, var_body: str, spans: list, thr: dict, ck: Checkers) -> dict:
+    """Whole-body checks on the final variant."""
     sim = ck.cosine(orig_body, var_body)
     ratio = len_ratio(orig_body, var_body)
     ok_spans, missing = spans_present(var_body, spans)
-    nli = [min(ck.entailment_both(a, b)) for a, b in sentence_pairs]
-    nli_min = min(nli) if nli else 1.0
-    out = {
-        "sim_cos": round(sim, 4), "len_ratio": round(ratio, 4), "spans_ok": ok_spans,
-        "spans_missing": missing, "nli_min": round(nli_min, 4),
-        "nli_per_sentence": [round(x, 4) for x in nli],
-        "sim_ok": sim >= thr["thr_cos"],
-        "len_ok": thr["len_ratio_min"] <= ratio <= thr["len_ratio_max"],
-        "nli_ok": nli_min >= thr["thr_nli"],
-    }
-    out["passed"] = out["sim_ok"] and out["len_ok"] and out["spans_ok"] and out["nli_ok"]
+    out = {"sim_cos": round(sim, 4), "len_ratio": round(ratio, 4), "spans_ok": ok_spans, "spans_missing": missing,
+           "sim_ok": sim >= thr["thr_cos"], "len_ok": thr["len_ratio_min"] <= ratio <= thr["len_ratio_max"]}
+    out["passed"] = out["sim_ok"] and out["len_ok"] and out["spans_ok"]
     return out

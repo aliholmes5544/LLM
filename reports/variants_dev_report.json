@@ -48,6 +48,12 @@
     "len_ratio_min": 0.7,
     "len_ratio_max": 1.4
   },
+  "fallback": {
+    "min_achieved_fraction": {
+      "para_low": 0.4,
+      "para_high": 0.8
+    }
+  },
   "conditions": {
     "para_low": {
       "family": "paraphrase",
@@ -55,38 +61,86 @@
       "produced": 100,
       "status": {
         "pass": 79,
-        "regenerated": 11,
-        "excluded": 10
+        "regenerated": 19,
+        "excluded": 2
+      },
+      "min_achieved_fraction": 0.4,
+      "excluded_failed_tests": {
+        "eph:12308#para_low": [
+          "cosine"
+        ],
+        "eph:14228#para_low": [
+          "cosine"
+        ]
+      },
+      "exclusion_combos": {
+        "cosine": 2
+      },
+      "exclusions_involving": {
+        "cosine": 2,
+        "length": 0,
+        "spans": 0,
+        "fraction": 0
       },
       "failures": {
         "attempt_0": {
-          "checked": 100,
+          "variants_checked": 100,
           "sim_ok": 3,
           "len_ok": 0,
           "spans_ok": 2,
-          "nli_ok": 16
+          "sentences_checked": 275,
+          "sentences_failed_nli": 17,
+          "sentences_failed_spans": 2
         },
         "attempt_1": {
-          "checked": 21,
+          "variants_checked": 21,
           "sim_ok": 2,
           "len_ok": 0,
-          "spans_ok": 2,
-          "nli_ok": 7
+          "spans_ok": 0,
+          "sentences_checked": 27,
+          "sentences_failed_nli": 6,
+          "sentences_failed_spans": 2
         }
+      },
+      "achieved_fraction": {
+        "min": 0.5,
+        "p5": 0.75,
+        "median": 1.0,
+        "mean": 0.978,
+        "max": 1.0
+      },
+      "achieved_fraction_histogram": {
+        "0.0-0.2": 0,
+        "0.2-0.4": 0,
+        "0.4-0.6": 1,
+        "0.6-0.8": 5,
+        "0.8-1.0": 94
+      },
+      "n_retried": {
+        "min": 0.0,
+        "median": 0.0,
+        "max": 3.0,
+        "total": 27.0
+      },
+      "n_reverted": {
+        "min": 0.0,
+        "median": 0.0,
+        "max": 1.0,
+        "total": 7.0
       },
       "sim_cos": {
         "min": 0.6858,
         "p5": 0.8433,
-        "median": 0.9536
+        "median": 0.9559
       },
       "nli_min": {
-        "min": 0.0043,
-        "p5": 0.0828,
-        "median": 0.9964
+        "min": 0.7366,
+        "p5": 0.9728,
+        "median": 0.9967
       },
       "len_ratio": {
         "min": 0.9423,
-        "median": 1.0433,
+        "median": 1.0438,
         "max": 1.2817
       },
       "n_segments": {
@@ -115,38 +169,99 @@
       "produced": 100,
       "status": {
         "pass": 70,
-        "regenerated": 16,
-        "excluded": 14
+        "regenerated": 24,
+        "excluded": 6
+      },
+      "min_achieved_fraction": 0.8,
+      "excluded_failed_tests": {
+        "eph:12308#para_high": [
+          "cosine"
+        ],
+        "eph:12656#para_high": [
+          "fraction"
+        ],
+        "eph:13635#para_high": [
+          "fraction"
+        ],
+        "eph:14228#para_high": [
+          "cosine"
+        ],
+        "eph:1823#para_high": [
+          "cosine"
+        ],
+        "eph:5004#para_high": [
+          "fraction"
+        ]
+      },
+      "exclusion_combos": {
+        "cosine": 3,
+        "fraction": 3
+      },
+      "exclusions_involving": {
+        "cosine": 3,
+        "length": 0,
+        "spans": 0,
+        "fraction": 3
       },
       "failures": {
         "attempt_0": {
-          "checked": 100,
+          "variants_checked": 100,
           "sim_ok": 8,
           "len_ok": 0,
           "spans_ok": 2,
-          "nli_ok": 21
+          "sentences_checked": 498,
+          "sentences_failed_nli": 25,
+          "sentences_failed_spans": 2
         },
         "attempt_1": {
-          "checked": 30,
-          "sim_ok": 2,
+          "variants_checked": 30,
+          "sim_ok": 3,
           "len_ok": 0,
-          "spans_ok": 2,
-          "nli_ok": 11
+          "spans_ok": 0,
+          "sentences_checked": 57,
+          "sentences_failed_nli": 10,
+          "sentences_failed_spans": 2
         }
+      },
+      "achieved_fraction": {
+        "min": 0.75,
+        "p5": 0.8,
+        "median": 1.0,
+        "mean": 0.9792,
+        "max": 1.0
+      },
+      "achieved_fraction_histogram": {
+        "0.0-0.2": 0,
+        "0.2-0.4": 0,
+        "0.4-0.6": 0,
+        "0.6-0.8": 3,
+        "0.8-1.0": 97
+      },
+      "n_retried": {
+        "min": 0.0,
+        "median": 0.0,
+        "max": 5.0,
+        "total": 57.0
+      },
+      "n_reverted": {
+        "min": 0.0,
+        "median": 0.0,
+        "max": 1.0,
+        "total": 11.0
       },
       "sim_cos": {
         "min": 0.6248,
-        "p5": 0.8245,
-        "median": 0.9173
+        "p5": 0.8243,
+        "median": 0.9234
       },
       "nli_min": {
-        "min": 0.0043,
-        "p5": 0.0365,
-        "median": 0.9932
+        "min": 0.7518,
+        "p5": 0.9644,
+        "median": 0.9946
       },
       "len_ratio": {
         "min": 0.9545,
-        "median": 1.0847,
+        "median": 1.0835,
         "max": 1.3415
       },
       "n_segments": {
@@ -246,13 +361,27 @@
   },
   "manual_sample": {
     "file": "reports/manual_review_sample_dev.csv",
-    "fraction": 0.1,
-    "rows": 40,
+    "rows": 57,
+    "config": {
+      "fraction": 0.1,
+      "add_all_excluded": true,
+      "add_regenerated": 10
+    },
     "per_condition": {
-      "para_low": 10,
-      "para_high": 10,
+      "para_low": 16,
+      "para_high": 21,
       "obf_low": 10,
       "obf_high": 10
+    },
+    "per_origin": {
+      "stratified": 40,
+      "regenerated_sample": 10,
+      "all_excluded": 7
+    },
+    "per_auto_outcome": {
+      "regenerated": 18,
+      "excluded": 8,
+      "pass": 31
     }
   },
   "config": {
@@ -348,10 +477,20 @@
       ],
       "zero_width": "\u200b"
     },
+    "fallback": {
+      "min_achieved_fraction": {
+        "para_low": 0.4,
+        "para_high": 0.8
+      }
+    },
     "target": {
       "partition": "dev",
       "subclass": "ephish_phish",
-      "manual_sample_fraction": 0.1
+      "manual_sample": {
+        "fraction": 0.1,
+        "add_all_excluded": true,
+        "add_regenerated": 10
+      }
     },
     "paths": {
       "cache": "data/interim/paraphrase_cache_dev.jsonl",

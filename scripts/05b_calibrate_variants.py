@@ -105,6 +105,27 @@ def calibrate(sample_rows: list, variants: dict, rule: str) -> dict:
                             "ci95": [round(lo, 4), round(hi, 4)], "review_whole_condition": k / len(rs) > 0.05,
                             "verdicts": dict(Counter(r["verdict"] for r in rs))}
 
+    # false rejection: "preserved" verdicts among variants the automatic checks excluded
+    false_rejection = {}
+    for name, rs in (("all", para), *((c, [r for r in para if r["condition"] == c]) for c in sorted({r["condition"] for r in para}))):
+        ex = [r for r in rs if r.get("auto_outcome") == "excluded"]
+        k = sum(r["verdict"] == "preserved" for r in ex)
+        lo, hi = wilson(k, len(ex))
+        false_rejection[name] = {"n_excluded": len(ex), "preserved": k,
+                                 "rate": round(k / len(ex), 4) if ex else None,
+                                 "ci95": [round(lo, 4), round(hi, 4)] if ex else None}
+    by_outcome = {}
+    for o in ("pass", "regenerated", "excluded"):
+        rs = [r for r in para if r.get("auto_outcome") == o]
+        by_outcome[o] = {"n": len(rs), "verdicts": dict(Counter(r["verdict"] for r in rs))}
+    # which automatic test(s) caused each exclusion, against the raters' verdict: shows e.g. whether
+    # cosine alone over-rejects paraphrases that NLI (fraction) and the raters accept
+    by_failed = {}
+    for combo in sorted({r.get("failed_tests", "") for r in para if r.get("auto_outcome") == "excluded"}):
+        rs = [r for r in para if r.get("auto_outcome") == "excluded" and r.get("failed_tests", "") == combo]
+        by_failed[combo or "(none)"] = {"n": len(rs), "verdicts": dict(Counter(r["verdict"] for r in rs)),
+                                        "preserved_rate": round(sum(r["verdict"] == "preserved" for r in rs) / len(rs), 4)}
+
     kappa = {"all": round(cohen_kappa([r["rating_A"].strip().lower() for r in sample_rows],
                                       [r["rating_B"].strip().lower() for r in sample_rows]), 4)}
     for name, rs in (("paraphrase", para), ("obfuscation", obf)):
@@ -119,7 +140,9 @@ def calibrate(sample_rows: list, variants: dict, rule: str) -> dict:
     return {"rule": rule, "n_sample": len(sample_rows), "n_paraphrase_preserved": len(preserved),
             "chosen": {"thr_cos": thr_cos, "thr_nli": thr_nli,
                        "joint_pass_rate_preserved": round(joint / len(preserved), 4)},
-            "grid_cos": grid, "grid_nli": grid_n, "kappa": kappa, "per_condition": per_condition}
+            "grid_cos": grid, "grid_nli": grid_n, "kappa": kappa, "per_condition": per_condition,
+            "false_rejection": false_rejection, "paraphrase_by_auto_outcome": by_outcome,
+            "excluded_by_failed_tests": by_failed}
 
 
 def load_inputs() -> tuple:
@@ -180,6 +203,12 @@ def main() -> int:
     print(f"chosen thresholds: thr_cos {ch['thr_cos']}  thr_nli {ch['thr_nli']}  "
           f"(joint pass rate of preserved {ch['joint_pass_rate_preserved']:.1%})")
     print(f"Cohen's kappa: {result['kappa']}")
+    fr = result["false_rejection"]["all"]
+    print(f"false rejection (preserved among auto-excluded): {fr['preserved']}/{fr['n_excluded']}"
+          + (f" = {fr['rate']:.1%}  CI95 [{fr['ci95'][0]:.1%}, {fr['ci95'][1]:.1%}]" if fr["rate"] is not None else ""))
+    print(f"verdicts by automatic outcome: {result['paraphrase_by_auto_outcome']}")
+    for combo, s in result["excluded_by_failed_tests"].items():
+        print(f"  excluded by {combo:28s} n={s['n']:3d}  rated preserved {s['preserved_rate']:.0%}  {s['verdicts']}")
     for c, s in result["per_condition"].items():
         flag = "  <-- review whole condition" if s["review_whole_condition"] else ""
         print(f"{c:10s} n={s['n']:3d}  not preserved {s['not_preserved']}  rate {s['failure_rate']:.1%}  "

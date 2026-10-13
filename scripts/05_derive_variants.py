@@ -9,9 +9,14 @@ Stages:
   1. protected spans per record (regex + spaCy NER; placeholders always protected)
   2. obfuscation conditions (deterministic script) + integrity replay of the edit log
   3. paraphrase conditions, attempt 0 (Phi-3.5-mini-instruct GGUF via llama.cpp, cached)
-  4. automatic checks (embedding cosine, length ratio, spans, NLI both directions)
-  5. failed variants: attempt 1 with a new seed, checked again -> pass | regenerated | excluded
-  6. outputs, report and the stratified manual-review sample
+  4. checks: per rewritten sentence NLI both directions + its own protected spans;
+     per variant cosine, length ratio, spans
+  5. sentences that failed are rewritten once more with a new seed; a sentence that still
+     fails is replaced by its original (fallback). achieved_fraction = retained rewrites /
+     selected sentences. A variant is excluded if achieved_fraction is below the condition's
+     minimum or the final body fails the variant-level checks; otherwise it is "regenerated".
+  6. outputs, report and the manual-review sample (stratified 10 % + every excluded
+     paraphrase + a seeded sample of regenerated ones, each flagged with auto_outcome)
 
 Usage:  python scripts/05_derive_variants.py [--conditions a,b] [--limit N] [--selftest] [--skip-download]
 Output: data/processed/variants_dev.jsonl, data/processed/obfuscation_log_dev.jsonl,
@@ -42,7 +47,7 @@ os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
 from variants import obfuscate as ob                                   # noqa: E402
 from variants import paraphrase as pp                                  # noqa: E402
 from variants import spans as sp                                       # noqa: E402
-from variants.checks import Checkers, run_checks                       # noqa: E402
+from variants.checks import Checkers, check_sentence, check_variant    # noqa: E402
 from variants.rng import derive_rng, llama_seed                        # noqa: E402
 
 CFG = load_config()
@@ -51,7 +56,7 @@ SEED = CFG["seed"]
 PROC = ROOT / "data" / "processed"
 REPORTS = ROOT / "reports"
 EVAL_PARTITIONS = ("core_pos", "core_neg", "ctrl_para_legit", "ctrl_modern_legit", "gen_phish", "gen_legit")
-CHECK_NAMES = ("sim_ok", "len_ok", "spans_ok", "nli_ok")
+VARIANT_CHECKS = ("sim_ok", "len_ok", "spans_ok")
 
 
 # ---- helpers ---------------------------------------------------------------
@@ -60,7 +65,7 @@ def dist(values: list, keys=("min", "p5", "median")) -> dict:
         return {k: None for k in keys}
     a = np.array(values, dtype=float)
     f = {"min": a.min, "p5": lambda: np.percentile(a, 5), "median": lambda: np.median(a), "max": a.max,
-         "total": a.sum}
+         "mean": a.mean, "total": a.sum}
     return {k: round(float(f[k]()), 4) for k in keys}
 
 
@@ -132,88 +137,139 @@ def derive_obfuscation(records: list, cond: str, rate: float, spans_by_id: dict)
     return rows, log
 
 
-# ---- stage 3/5: paraphrase candidates ---------------------------------------
-def paraphrase_candidates(records: list, cond: str, rate: float, spans_by_id: dict,
-                          para: pp.Paraphraser, attempt: int) -> dict:
-    """One candidate body per record for this attempt; selection is identical across attempts."""
-    out = {}
-    for r in records:
-        spans = spans_by_id[r["id"]]
-        masked, mapping = sp.mask(r["body"], spans)
-        segs = pp.split_segments(masked)
+# ---- stages 3-5: paraphrase ---------------------------------------------------
+class ParaState:
+    """Everything about one (record, condition) pair across both attempts."""
+
+    def __init__(self, rec: dict, cond: str, rate: float, spans: list):
+        self.rec, self.cond, self.spans = rec, cond, spans
+        self.masked, self.mapping = sp.mask(rec["body"], spans)
+        self.segs = pp.split_segments(self.masked)
         el = VCFG["sentence_eligibility"]
-        eligible = [i for i, s in enumerate(segs) if pp.is_eligible(s["text"], el["min_alpha_words"], el["long_segment_words"])]
-        selected = pp.select_indices(eligible, rate, derive_rng(SEED, cond, r["id"]))
-        rewrites, pairs, truncated = {}, [], 0
-        for idx in selected:
-            res = para.rewrite(segs[idx]["text"], llama_seed(SEED, r["id"], idx, attempt))
-            rewrites[idx] = res["text"]
-            truncated += res["finish_reason"] == "length"
-            pairs.append((sp.restore(segs[idx]["text"], mapping), sp.restore(res["text"], mapping)))
-        out[r["id"]] = {"body": sp.restore(pp.reassemble(segs, rewrites), mapping), "pairs": pairs,
-                        "n_segments": len(segs), "n_eligible": len(eligible), "n_selected": len(selected),
-                        "truncated": truncated}
-    return out
+        self.eligible = [i for i, s in enumerate(self.segs)
+                         if pp.is_eligible(s["text"], el["min_alpha_words"], el["long_segment_words"])]
+        self.selected = pp.select_indices(self.eligible, rate, derive_rng(SEED, cond, rec["id"]))
+        self.rewrites = {}            # idx -> masked rewrite currently in the variant
+        self.sent = {}                # idx -> {attempt, nli, nli_ok, spans_ok, ok}
+        self.reverted = []            # idx list replaced by the original sentence
+        self.truncated = 0
+        self.attempt = {}             # attempt -> variant-level check dict
 
+    def original_sentence(self, idx: int) -> str:
+        return sp.restore(self.segs[idx]["text"], self.mapping)
 
-def check_candidates(cands: dict, by_id: dict, spans_by_id: dict, ck: Checkers) -> dict:
-    thr = VCFG["thresholds"]
-    return {i: run_checks(by_id[i]["body"], c["body"], c["pairs"], spans_by_id[i], thr, ck) for i, c in cands.items()}
+    def rewritten_sentence(self, idx: int) -> str:
+        return sp.restore(self.rewrites[idx], self.mapping)
+
+    def sentence_spans_ok(self, idx: int) -> bool:
+        need = Counter(sp.MASK_RE.findall(self.segs[idx]["text"]))
+        have = Counter(sp.MASK_RE.findall(self.rewrites[idx]))
+        return all(have[t] >= n for t, n in need.items())
+
+    def generate(self, para: pp.Paraphraser, indices: list, attempt: int) -> None:
+        for idx in indices:
+            res = para.rewrite(self.segs[idx]["text"], llama_seed(SEED, self.rec["id"], idx, attempt))
+            self.rewrites[idx] = res["text"]
+            self.truncated += res["finish_reason"] == "length"
+
+    def check_sentences(self, indices: list, attempt: int, ck: Checkers) -> None:
+        for idx in indices:
+            r = check_sentence(self.original_sentence(idx), self.rewritten_sentence(idx),
+                               self.sentence_spans_ok(idx), VCFG["thresholds"]["thr_nli"], ck)
+            self.sent[idx] = {"attempt": attempt, **r}
+
+    def body(self) -> str:
+        return sp.restore(pp.reassemble(self.segs, self.rewrites), self.mapping)
+
+    def check_variant(self, attempt: int, ck: Checkers) -> dict:
+        v = check_variant(self.rec["body"], self.body(), self.spans, VCFG["thresholds"], ck)
+        retained = [i for i in self.selected if i in self.rewrites]
+        v["nli_per_sentence"] = [self.sent[i]["nli"] for i in retained]
+        v["nli_min"] = round(min(v["nli_per_sentence"]), 4) if v["nli_per_sentence"] else 1.0
+        v["sentences"] = [{"idx": i, **self.sent[i]} for i in self.selected if i in self.sent]
+        v["sentences_failed"] = [i for i in retained if not self.sent[i]["ok"]]
+        v["passed"] = v["passed"] and not v["sentences_failed"]
+        self.attempt[attempt] = v
+        return v
+
+    def failed_sentences(self) -> list:
+        return [i for i in self.selected if i in self.rewrites and not self.sent[i]["ok"]]
+
+    def revert_failed(self) -> None:
+        for idx in self.failed_sentences():
+            del self.rewrites[idx]
+            self.reverted.append(idx)
+
+    def achieved_fraction(self) -> float:
+        return round((len(self.selected) - len(self.reverted)) / len(self.selected), 4) if self.selected else 1.0
 
 
 def run_paraphrase(records: list, conds: dict, spans_by_id: dict, model_path: Path, model_sha: str, timings: dict) -> tuple:
-    """Attempt 0 for all -> checks -> attempt 1 for failures -> checks. Returns (rows, meta)."""
-    by_id = {r["id"]: r for r in records}
+    """Attempt 0 for all -> checks -> retry failed sentences -> checks + fallback. Returns (rows, meta)."""
     prompt_text = read_text(ROOT / VCFG["paths"]["prompt"]).strip()
     para = pp.Paraphraser(model_path, model_sha, prompt_text, VCFG["llama"], ROOT / VCFG["paths"]["cache"])
     ck = Checkers(VCFG["embedding"]["model"], VCFG["nli"]["model"])
+    min_frac = VCFG["fallback"]["min_achieved_fraction"]
+    states = [ParaState(r, c, conds[c]["rate"], spans_by_id[r["id"]]) for c in conds for r in records]
 
     t0 = time.time()
-    cand = {c: paraphrase_candidates(records, c, conds[c]["rate"], spans_by_id, para, 0) for c in conds}
+    for st in states:
+        st.generate(para, st.selected, 0)
     para.close(); gc.collect()
     timings["paraphrase_attempt_0"] = round(time.time() - t0, 1)
 
     t0 = time.time()
     ck.load()
-    checks = {c: {0: check_candidates(cand[c], by_id, spans_by_id, ck)} for c in conds}
+    for st in states:
+        st.check_sentences(st.selected, 0, ck)
+        st.check_variant(0, ck)
+    entail_idx = ck.entail_idx
     ck.close(); gc.collect()
     timings["checks_attempt_0"] = round(time.time() - t0, 1)
 
-    failed = {c: [i for i, r in checks[c][0].items() if not r["passed"]] for c in conds}
-    if any(failed.values()):
+    retry = {}                      # state -> indices to regenerate with the new seed
+    for st in states:
+        if not st.attempt[0]["passed"]:
+            failed = st.failed_sentences()
+            retry[id(st)] = failed if failed else list(st.selected)   # variant-level failure only: redo all
+    if retry:
         t0 = time.time()
-        for c, ids in failed.items():
-            if ids:
-                cand[c].update({i: v for i, v in paraphrase_candidates([by_id[i] for i in ids], c, conds[c]["rate"],
-                                                                        spans_by_id, para, 1).items()})
+        for st in states:
+            if id(st) in retry:
+                st.generate(para, retry[id(st)], 1)
         para.close(); gc.collect()
         timings["paraphrase_attempt_1"] = round(time.time() - t0, 1)
         t0 = time.time()
         ck.load()
-        for c, ids in failed.items():
-            checks[c][1] = check_candidates({i: cand[c][i] for i in ids}, by_id, spans_by_id, ck) if ids else {}
-        entail_idx = ck.entail_idx
+        for st in states:
+            if id(st) in retry:
+                st.check_sentences(retry[id(st)], 1, ck)
+                st.revert_failed()                                     # sentence-level fallback
+                st.check_variant(1, ck)
         ck.close(); gc.collect()
         timings["checks_attempt_1"] = round(time.time() - t0, 1)
-    else:
-        ck.load(); entail_idx = ck.entail_idx; ck.close()
 
     rows = []
-    for c in conds:
-        for r in records:
-            i = r["id"]
-            a0 = checks[c][0][i]
-            a1 = checks[c].get(1, {}).get(i)
-            final = 1 if a1 is not None else 0
-            status = "pass" if a0["passed"] else ("regenerated" if a1 and a1["passed"] else "excluded")
-            k = cand[c][i]
-            rows.append({"variant_id": f"{i}#{c}", "source_id": i, "condition": c, "subject": r["subject"],
-                         "body": k["body"],
-                         "checks": {"attempt_0": a0, "attempt_1": a1, "final_attempt": final,
-                                    "n_segments": k["n_segments"], "n_eligible": k["n_eligible"],
-                                    "n_selected": k["n_selected"], "truncated": k["truncated"],
-                                    "spans": [{"text": s["text"], "label": s["label"]} for s in spans_by_id[i]]},
-                         "status": status})
+    for st in states:
+        final = 1 if 1 in st.attempt else 0
+        frac = st.achieved_fraction()
+        v = st.attempt[final]
+        failed = [name for name, ok in (("cosine", v["sim_ok"]), ("length", v["len_ok"]), ("spans", v["spans_ok"]),
+                                        ("fraction", frac >= min_frac[st.cond])) if not ok]
+        if final == 0:
+            status = "pass"
+        else:
+            status = "excluded" if failed else "regenerated"
+        rows.append({"variant_id": f"{st.rec['id']}#{st.cond}", "source_id": st.rec["id"], "condition": st.cond,
+                     "subject": st.rec["subject"], "body": st.body(),
+                     "checks": {"attempt_0": st.attempt[0], "attempt_1": st.attempt.get(1), "final_attempt": final,
+                                "n_segments": len(st.segs), "n_eligible": len(st.eligible),
+                                "n_selected": len(st.selected), "n_retried": len(retry.get(id(st), [])),
+                                "n_reverted": len(st.reverted), "reverted_idx": sorted(st.reverted),
+                                "achieved_fraction": frac, "min_achieved_fraction": min_frac[st.cond],
+                                "failed_tests": failed, "truncated": st.truncated,
+                                "spans": [{"text": s["text"], "label": s["label"]} for s in st.spans]},
+                     "status": status})
     meta = {"prompt_sha256": para.prompt_hash, "cache_hits": para.hits, "cache_misses": para.misses,
             "entailment_label_index": entail_idx}
     return rows, meta
@@ -255,10 +311,27 @@ def summarise(rows: list, conds: dict, spans_by_id: dict, obf_rows_log_len: int)
             fails = {}
             for att in (0, 1):
                 ch = [r["checks"][f"attempt_{att}"] for r in rs if r["checks"][f"attempt_{att}"]]
-                fails[f"attempt_{att}"] = {"checked": len(ch), **{k: sum(not x[k] for x in ch) for k in CHECK_NAMES}}
+                fails[f"attempt_{att}"] = {
+                    "variants_checked": len(ch),
+                    **{k: sum(not x[k] for x in ch) for k in VARIANT_CHECKS},
+                    "sentences_checked": sum(1 for x in ch for s in x["sentences"] if s["attempt"] == att),
+                    "sentences_failed_nli": sum(1 for x in ch for s in x["sentences"] if s["attempt"] == att and not s["nli_ok"]),
+                    "sentences_failed_spans": sum(1 for x in ch for s in x["sentences"] if s["attempt"] == att and not s["spans_ok"]),
+                }
             final = [r["checks"][f"attempt_{r['checks']['final_attempt']}"] for r in rs]
+            fracs = [r["checks"]["achieved_fraction"] for r in rs]
             entry.update({
+                "min_achieved_fraction": VCFG["fallback"]["min_achieved_fraction"][c],
+                "excluded_failed_tests": {r["variant_id"]: r["checks"]["failed_tests"] for r in rs if r["status"] == "excluded"},
+                "exclusion_combos": dict(sorted(Counter("+".join(r["checks"]["failed_tests"]) for r in rs if r["status"] == "excluded").items())),
+                "exclusions_involving": {t: sum(t in r["checks"]["failed_tests"] for r in rs if r["status"] == "excluded")
+                                         for t in ("cosine", "length", "spans", "fraction")},
                 "failures": fails,
+                "achieved_fraction": dist(fracs, ("min", "p5", "median", "mean", "max")),
+                "achieved_fraction_histogram": {f"{lo:.1f}-{lo + 0.2:.1f}": sum(lo <= f < lo + 0.2 or (f == 1.0 and lo == 0.8) for f in fracs)
+                                                for lo in (0.0, 0.2, 0.4, 0.6, 0.8)},
+                "n_retried": stats([r["checks"]["n_retried"] for r in rs]),
+                "n_reverted": stats([r["checks"]["n_reverted"] for r in rs]),
                 "sim_cos": dist([x["sim_cos"] for x in final]),
                 "nli_min": dist([x["nli_min"] for x in final]),
                 "len_ratio": dist([x["len_ratio"] for x in final], ("min", "median", "max")),
@@ -275,23 +348,40 @@ def summarise(rows: list, conds: dict, spans_by_id: dict, obf_rows_log_len: int)
 
 
 def write_manual_sample(rows: list, by_id: dict, conds: dict, path: Path) -> dict:
-    frac = VCFG["target"]["manual_sample_fraction"]
-    picked = []
+    """Stratified 10 % per condition, plus every excluded paraphrase and a seeded sample of
+    regenerated paraphrases; each row carries its automatic outcome."""
+    ms = VCFG["target"]["manual_sample"]
+    by_vid = {r["variant_id"]: r for r in rows}
+    picked, origin = [], {}
     for c in conds:
         ids = sorted(r["variant_id"] for r in rows if r["condition"] == c)
-        k = int(round(frac * len(ids)))
-        picked.extend(sorted(derive_rng(SEED, "manual_sample", c).sample(ids, k)))
-    by_vid = {r["variant_id"]: r for r in rows}
+        k = int(round(ms["fraction"] * len(ids)))
+        for v in derive_rng(SEED, "manual_sample", c).sample(ids, k):
+            picked.append(v); origin[v] = "stratified"
+    para_ids = sorted(r["variant_id"] for r in rows if conds[r["condition"]]["family"] == "paraphrase")
+    if ms["add_all_excluded"]:
+        for v in para_ids:
+            if by_vid[v]["status"] == "excluded" and v not in origin:
+                picked.append(v); origin[v] = "all_excluded"
+    pool = [v for v in para_ids if by_vid[v]["status"] == "regenerated" and v not in origin]
+    k = min(ms["add_regenerated"], len(pool))
+    for v in derive_rng(SEED, "manual_sample", "regenerated").sample(pool, k):
+        picked.append(v); origin[v] = "regenerated_sample"
+    order = {c: i for i, c in enumerate(VCFG["conditions"])}
+    picked = sorted(set(picked), key=lambda v: (order[by_vid[v]["condition"]], v))
     with open_utf8(path, "w") as fh:
         w = csv.writer(fh, lineterminator="\n")
-        w.writerow(["variant_id", "condition", "original_body", "variant_body",
+        w.writerow(["variant_id", "condition", "auto_outcome", "failed_tests", "original_body", "variant_body",
                     "rating_A", "rating_B", "readability_A", "readability_B", "notes"])
         for vid in picked:
             r = by_vid[vid]
             readability = "" if conds[r["condition"]]["family"] == "obfuscation" else "n/a"
-            w.writerow([vid, r["condition"], by_id[r["source_id"]]["body"], r["body"], "", "", readability, readability, ""])
-    return {"file": str(path.relative_to(ROOT)), "fraction": frac, "rows": len(picked),
-            "per_condition": dict(Counter(by_vid[v]["condition"] for v in picked))}
+            w.writerow([vid, r["condition"], r["status"], "+".join(r["checks"].get("failed_tests", [])),
+                        by_id[r["source_id"]]["body"], r["body"], "", "", readability, readability, ""])
+    return {"file": str(path.relative_to(ROOT)), "rows": len(picked), "config": ms,
+            "per_condition": dict(Counter(by_vid[v]["condition"] for v in picked)),
+            "per_origin": dict(Counter(origin[v] for v in picked)),
+            "per_auto_outcome": dict(Counter(by_vid[v]["status"] for v in picked))}
 
 
 # ---- main -------------------------------------------------------------------
@@ -340,8 +430,12 @@ def main() -> int:
         rows.extend(prow)
         model_info.update(meta)
         for c in para_conds:
-            st = Counter(r["status"] for r in prow if r["condition"] == c)
-            print(f"{c}: {sum(st.values())} variants  pass {st['pass']}  regenerated {st['regenerated']}  excluded {st['excluded']}")
+            rs = [r for r in prow if r["condition"] == c]
+            st = Counter(r["status"] for r in rs)
+            fr = dist([r["checks"]["achieved_fraction"] for r in rs], ("min", "median", "mean"))
+            print(f"{c}: {len(rs)} variants  pass {st['pass']}  regenerated {st['regenerated']}  excluded {st['excluded']}"
+                  f"  | reverted sentences {sum(r['checks']['n_reverted'] for r in rs)}  achieved_fraction min/median/mean "
+                  f"{fr['min']}/{fr['median']}/{fr['mean']}")
 
     order = {c: i for i, c in enumerate(VCFG["conditions"])}
     rows.sort(key=lambda r: (order[r["condition"]], r["source_id"]))
@@ -357,7 +451,7 @@ def main() -> int:
     sample = write_manual_sample(rows, by_id, conds, REPORTS / "manual_review_sample_dev.csv")
     cache_stats = {k: model_info.pop(k, None) for k in ("cache_hits", "cache_misses")}   # run-dependent -> runtime file
     report = {"seed": SEED, "target": target, "model": model_info, "thresholds": VCFG["thresholds"],
-              "conditions": summarise(rows, conds, spans_by_id, len(obf_log)),
+              "fallback": VCFG["fallback"], "conditions": summarise(rows, conds, spans_by_id, len(obf_log)),
               "manual_sample": sample, "config": VCFG}
     write_json(REPORTS / "variants_dev_report.json", report)
     timings["total"] = round(time.time() - t_start, 1)
@@ -366,7 +460,7 @@ def main() -> int:
                 "cache": cache_stats})
 
     print(f"\nvariants -> {(PROC / 'variants_dev.jsonl').relative_to(ROOT)}  ({len(rows)} rows)")
-    print(f"manual sample -> {sample['file']}  ({sample['rows']} rows)")
+    print(f"manual sample -> {sample['file']}  ({sample['rows']} rows: {sample['per_origin']})")
     print(f"report -> reports/variants_dev_report.json   runtime {timings['total']} s")
     return 0
 

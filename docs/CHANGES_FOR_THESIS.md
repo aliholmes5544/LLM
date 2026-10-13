@@ -33,3 +33,31 @@
   reports/manual_review_sample_dev.csv; obfuscated rows also carry readability columns. The
   calibrated thresholds, Cohen's kappa and the sample failure rate with 95 % CI follow from
   scripts/05b_calibrate_variants.py once rated.
+
+## Step 05 refinements, development set only (2026-10-13; thresholds still provisional)
+- Section 3.2.3, sentence-level fallback: a rewritten sentence that fails the NLI test (or loses a
+  protected span) is rewritten once more with a new seed; if it still fails it is replaced by its
+  original sentence instead of discarding the whole variant. Each variant records
+  achieved_fraction = retained rewrites / selected sentences, and is excluded when the fraction is
+  below 0.40 (para_low) or 0.80 (para_high) or when the final body fails the variant-level tests
+  (cosine >= 0.80, length ratio in [0.70, 1.40], protected spans). The retry regenerates only the
+  failing sentences; if only a variant-level test failed, all selected sentences are regenerated.
+- Section 3.2.3, dev results after the fallback (same provisional thresholds): para_low 79 pass /
+  19 regenerated / 2 excluded (was 79 / 11 / 10); para_high 70 / 24 / 6 (was 70 / 16 / 14).
+  Sentences reverted to the original: 7 of 275 selected (para_low) and 11 of 498 (para_high).
+  achieved_fraction: para_low min 0.50, 5th percentile 0.75, mean 0.978, median 1.0 (94 variants
+  at 0.8-1.0, 5 at 0.6-0.8, 1 at 0.4-0.6); para_high min 0.75, 5th percentile 0.80, mean 0.979,
+  median 1.0 (97 at 0.8-1.0, 3 at 0.6-0.8). Minimum NLI entailment among retained sentences is
+  now 0.74 (para_low) and 0.75 (para_high), median 0.995.
+- Section 3.2.3, tests failed by each excluded variant (reports/variants_dev_report.json,
+  conditions.*.excluded_failed_tests): para_low eph:12308 and eph:14228 fail cosine only;
+  para_high eph:12308, eph:14228 and eph:1823 fail cosine only, eph:12656, eph:13635 and eph:5004
+  fail the fraction minimum only. No exclusion involves length or protected spans. Whether cosine
+  alone over-rejects paraphrases that NLI and the raters accept is therefore a question for the
+  calibration (thr_cos unchanged at 0.80 until the rated sample is returned).
+- Section 3.2.3, manual review sample extended to 57 variants: the stratified 10 % per condition
+  (40) plus every excluded paraphrase variant (8, of which 7 were not already sampled) plus a
+  seeded sample of 10 regenerated paraphrases. Each row carries auto_outcome
+  (pass / regenerated / excluded) and failed_tests; 05b reports the false-rejection rate (share of
+  "preserved" ratings among automatically excluded variants) with a Wilson 95 % CI, and the
+  raters' verdicts per failed-test combination.

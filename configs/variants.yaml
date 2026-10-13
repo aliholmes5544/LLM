@@ -54,10 +54,18 @@ obfuscation:
   separators: ["-", "."]
   zero_width: "​"
 
+fallback:                           # sentence-level fallback (dev refinement, 2026-10-13):
+  min_achieved_fraction:            # a sentence that still fails after its retry is replaced by the
+    para_low: 0.40                  # original; achieved_fraction = retained rewrites / selected
+    para_high: 0.80                 # sentences; below this minimum the variant is excluded
+
 target:
   partition: dev
   subclass: ephish_phish
-  manual_sample_fraction: 0.10
+  manual_sample:
+    fraction: 0.10                  # stratified share per condition
+    add_all_excluded: true          # plus every excluded paraphrase variant
+    add_regenerated: 10             # plus a seeded sample of regenerated paraphrase variants
 
 paths:
   cache: data/interim/paraphrase_cache_dev.jsonl
