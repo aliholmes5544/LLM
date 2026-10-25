@@ -1,0 +1,211 @@
+{
+  "n_sample": 57,
+  "meaning": {
+    "workbooks": {
+      "A": {
+        "file": "reports/ratings/A.xlsx",
+        "sheet": "manual_review_sample_dev",
+        "rating_column": "rating_A",
+        "rows": 57,
+        "cells_mojibake_repaired": 37,
+        "text_cells_differing_from_csv": 0,
+        "same_row_order": true,
+        "rows_shown_garbled_in_excel": {
+          "n": 29,
+          "by_condition": {
+            "para_low": 3,
+            "para_high": 6,
+            "obf_low": 10,
+            "obf_high": 10
+          },
+          "variant_ids": [
+            "eph:12228#para_low",
+            "eph:14228#para_low",
+            "eph:14893#para_low",
+            "eph:13635#para_high",
+            "eph:14228#para_high",
+            "eph:14893#para_high",
+            "eph:14998#para_high",
+            "eph:1708#para_high",
+            "eph:5256#para_high",
+            "eph:12072#obf_low",
+            "eph:12240#obf_low",
+            "eph:12308#obf_low",
+            "eph:12798#obf_low",
+            "eph:15539#obf_low",
+            "eph:16547#obf_low",
+            "eph:1743#obf_low",
+            "eph:4123#obf_low",
+            "eph:4299#obf_low",
+            "eph:5551#obf_low",
+            "eph:11422#obf_high",
+            "eph:11795#obf_high",
+            "eph:11938#obf_high",
+            "eph:12001#obf_high",
+            "eph:12580#obf_high",
+            "eph:12678#obf_high",
+            "eph:12998#obf_high",
+            "eph:13135#obf_high",
+            "eph:13635#obf_high",
+            "eph:4299#obf_high"
+          ]
+        },
+        "labels": {
+          "preserved": 52,
+          "partly": 5
+        },
+        "n_notes": 5
+      },
+      "B": {
+        "file": "reports/ratings/B.xlsx",
+        "sheet": "Sheet1",
+        "rating_column": "rating_B",
+        "rows": 57,
+        "cells_mojibake_repaired": 37,
+        "text_cells_differing_from_csv": 0,
+        "same_row_order": true,
+        "rows_shown_garbled_in_excel": {
+          "n": 29,
+          "by_condition": {
+            "para_low": 3,
+            "para_high": 6,
+            "obf_low": 10,
+            "obf_high": 10
+          },
+          "variant_ids": [
+            "eph:12228#para_low",
+            "eph:14228#para_low",
+            "eph:14893#para_low",
+            "eph:13635#para_high",
+            "eph:14228#para_high",
+            "eph:14893#para_high",
+            "eph:14998#para_high",
+            "eph:1708#para_high",
+            "eph:5256#para_high",
+            "eph:12072#obf_low",
+            "eph:12240#obf_low",
+            "eph:12308#obf_low",
+            "eph:12798#obf_low",
+            "eph:15539#obf_low",
+            "eph:16547#obf_low",
+            "eph:1743#obf_low",
+            "eph:4123#obf_low",
+            "eph:4299#obf_low",
+            "eph:5551#obf_low",
+            "eph:11422#obf_high",
+            "eph:11795#obf_high",
+            "eph:11938#obf_high",
+            "eph:12001#obf_high",
+            "eph:12580#obf_high",
+            "eph:12678#obf_high",
+            "eph:12998#obf_high",
+            "eph:13135#obf_high",
+            "eph:13635#obf_high",
+            "eph:4299#obf_high"
+          ]
+        },
+        "labels": {
+          "preserved": 54,
+          "not": 3
+        },
+        "n_notes": 3
+      },
+      "C": {
+        "file": "reports/ratings/C.xlsx",
+        "sheet": "manual_review_sample_dev",
+        "rating_column": "rating_B",
+        "rows": 57,
+        "cells_mojibake_repaired": 37,
+        "text_cells_differing_from_csv": 0,
+        "same_row_order": true,
+        "rows_shown_garbled_in_excel": {
+          "n": 29,
+          "by_condition": {
+            "para_low": 3,
+            "para_high": 6,
+            "obf_low": 10,
+            "obf_high": 10
+          },
+          "variant_ids": [
+            "eph:12228#para_low",
+            "eph:14228#para_low",
+            "eph:14893#para_low",
+            "eph:13635#para_high",
+            "eph:14228#para_high",
+            "eph:14893#para_high",
+            "eph:14998#para_high",
+            "eph:1708#para_high",
+            "eph:5256#para_high",
+            "eph:12072#obf_low",
+            "eph:12240#obf_low",
+            "eph:12308#obf_low",
+            "eph:12798#obf_low",
+            "eph:15539#obf_low",
+            "eph:16547#obf_low",
+            "eph:1743#obf_low",
+            "eph:4123#obf_low",
+            "eph:4299#obf_low",
+            "eph:5551#obf_low",
+            "eph:11422#obf_high",
+            "eph:11795#obf_high",
+            "eph:11938#obf_high",
+            "eph:12001#obf_high",
+            "eph:12580#obf_high",
+            "eph:12678#obf_high",
+            "eph:12998#obf_high",
+            "eph:13135#obf_high",
+            "eph:13635#obf_high",
+            "eph:4299#obf_high"
+          ]
+        },
+        "labels": {
+          "preserved": 54,
+          "partly": 3
+        },
+        "n_notes": 3
+      }
+    },
+    "majority": {
+      "preserved": 55,
+      "partly": 2
+    },
+    "majority_by_condition": {
+      "obf_high": {
+        "preserved": 10
+      },
+      "obf_low": {
+        "preserved": 10
+      },
+      "para_high": {
+        "preserved": 19,
+        "partly": 2
+      },
+      "para_low": {
+        "preserved": 16
+      }
+    },
+    "unanimous": 48,
+    "split": []
+  },
+  "readability": {
+    "status": "pending (run with --readability once reports/readability_dev.xlsx is rated)"
+  },
+  "csv": {
+    "file": "reports/manual_review_sample_dev.csv",
+    "bytes": 61406,
+    "utf8_strict": true,
+    "has_bom": false,
+    "mojibake_markers": {
+      "\u00e2\u20ac": 0,
+      "\u00c3": 0,
+      "\u00c2": 0,
+      "\u00d0": 0,
+      "\u00d1": 0,
+      "\u0623": 0,
+      "\u0630": 0,
+      "\u0631": 0
+    },
+    "non_ascii_chars": 137,
+    "clean": true
+  }
+}
