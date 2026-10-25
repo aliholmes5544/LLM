@@ -252,6 +252,13 @@ def load_inputs() -> tuple:
     missing = [c for c in need if c not in sample[0]]
     if missing:
         raise SystemExit(f"columns {missing} missing: run scripts/05a_merge_ratings.py first")
+    prov = [r["variant_id"] for r in sample if r.get("rating_A_prov", "").strip()]
+    if prov:
+        raise SystemExit(f"{len(prov)} rows were re-rated on bodies accepted under the frozen thresholds (rating_*_prov "
+                         "populated, e.g. " + ", ".join(prov[:3]) + "). This script still computes the threshold "
+                         "calibration and false-rejection analyses from the current columns; it must read the *_prov "
+                         "columns (provisional run) for those and the current columns for the residual error before "
+                         "it can run on this file.")
     unrated = [r["variant_id"] for r in sample if not all(r[c].strip() for c in need)]
     if unrated:
         raise SystemExit(f"{len(unrated)} sample rows are not rated by all three raters yet, e.g. {unrated[:3]}")

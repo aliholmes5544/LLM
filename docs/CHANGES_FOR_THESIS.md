@@ -146,3 +146,19 @@ from scripts/05b_calibrate_variants.py, written to reports/variants_calibration.
   which the thresholds were chosen; scripts/05_derive_variants.py no longer rewrites a sample that
   carries ratings and reports instead what a fresh draw would select (54 rows: 40 stratified +
   4 excluded + 10 regenerated).
+- Re-rating of the changed paraphrases (2026-10-25): reports/readability_dev.xlsx carries sheets
+  para_changed_A/B/C with the 8 paraphrases whose accepted body changed (eph:12308#para_low,
+  eph:16367#para_low, eph:11434#para_high, eph:12308#para_high, eph:14108#para_high,
+  eph:15264#para_high, eph:16367#para_high, eph:4123#para_high), showing the body accepted under the
+  frozen thresholds with a meaning drop-down (no readability column). On merge
+  (scripts/05a_merge_ratings.py --readability) the new ratings become rating_A/B/C for these rows,
+  the first-round ratings of the superseded attempt-1 bodies move to rating_A/B/C_prov together with
+  the superseded body (variant_body_prov) and provisional outcome (auto_outcome_prov,
+  failed_tests_prov), and the three variants outside the first-round sample are appended, so the
+  sample grows from 57 to 60 rows. The residual-error estimate among accepted items (Section 3.2.3)
+  will be recomputed on the bodies accepted under the frozen thresholds (cosine 0.68, NLI 0.70)
+  once these ratings are in; the 1/29 figure above refers to the provisional run. The threshold
+  calibration and the false-rejection analysis remain those of the provisional run, since the
+  thresholds were chosen on it (scripts/05b_calibrate_variants.py has to read the *_prov columns for
+  those analyses before it is rerun on the merged file; it currently stops with a message when it
+  finds them).
