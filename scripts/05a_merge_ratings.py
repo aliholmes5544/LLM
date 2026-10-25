@@ -398,12 +398,13 @@ def main() -> int:
     # rows appended by an earlier --readability merge (changed paraphrases outside the first-round
     # sample) are rebuilt below from the current variants, so the first-round state is restored first
     appended = [r["variant_id"] for r in sample
-                if r["variant_id"] in PARA_CHANGED and r["auto_outcome_prov"] and r["variant_body_prov"] == ""]
+                if r["variant_id"] in PARA_CHANGED and r["auto_outcome_prov"] and r["rating_A_prov"] == ""]
     sample = [r for r in sample if r["variant_id"] not in appended]
     for r in sample:                     # superseded body and provisional outcome back in place
         if r["variant_body_prov"]:
-            r.update({"variant_body": r["variant_body_prov"], "auto_outcome": r["auto_outcome_prov"],
-                      "failed_tests": r["failed_tests_prov"]})
+            r["variant_body"] = r["variant_body_prov"]
+        if r["auto_outcome_prov"]:
+            r["auto_outcome"], r["failed_tests"] = r["auto_outcome_prov"], r["failed_tests_prov"]
     report = {"n_sample": len(sample), "meaning": {}, "readability": {}}
     ratings, notes, report["meaning"]["workbooks"] = load_meaning_workbooks(sample)
     for r in sample:
@@ -472,9 +473,25 @@ def main() -> int:
                     raise SystemExit(f"sheet {PARA_SHEET.format(x)}: body of {vid} differs from the current accepted body")
                 r[f"rating_{x}"] = s["meaning"]
             r["rating_majority"] = majority([r[f"rating_{x}"] for x in RATERS])
+        # every other row: carry the status under the frozen thresholds (body unchanged); rows whose
+        # status differs from the provisional run keep the provisional one in auto_outcome_prov
+        cur = load_current_variants()
+        status_only = []
+        for r in sample:
+            vid = r["variant_id"]
+            if vid in PARA_CHANGED:
+                continue
+            v = cur[vid]
+            if r["variant_body"].strip() != v["body"].strip():
+                raise SystemExit(f"{vid}: body in the sample differs from the current variant but it is not in PARA_CHANGED")
+            if (r["auto_outcome"], r["failed_tests"]) != (v["status"], v["failed_tests"]):
+                r["auto_outcome_prov"], r["failed_tests_prov"] = r["auto_outcome"], r["failed_tests"]
+                r["auto_outcome"], r["failed_tests"] = v["status"], v["failed_tests"]
+                status_only.append(vid)
         order = {c: i for i, c in enumerate(("para_low", "para_high", "obf_low", "obf_high"))}
         sample.sort(key=lambda r: (order[r["condition"]], r["variant_id"]))
         report["n_sample"] = len(sample)
+        report["readability"]["status_changed_body_unchanged"] = status_only
         report["readability"]["para_changed_rerated"] = {
             "rows": len(changed_rows), "ratings_moved_to_prov": moved, "rows_added": added,
             "majority": {r["variant_id"]: r["rating_majority"] for r in sample if r["variant_id"] in PARA_CHANGED},

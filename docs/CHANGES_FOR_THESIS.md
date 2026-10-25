@@ -162,3 +162,49 @@ from scripts/05b_calibrate_variants.py, written to reports/variants_calibration.
   thresholds were chosen on it (scripts/05b_calibrate_variants.py has to read the *_prov columns for
   those analyses before it is rerun on the merged file; it currently stops with a message when it
   finds them).
+
+## Step 05 final dev-set statistics (2026-10-25; re-rated obfuscation rows and changed paraphrases)
+The raters returned reports/readability_dev.xlsx (sheets A/B/C: 20 obfuscated rows, readability
+and meaning from clean text; sheets para_changed_A/B/C: the 8 paraphrases whose accepted body
+changed). Merged by scripts/05a_merge_ratings.py --readability: 60 rows (16 para_low, 24 para_high,
+10 obf_low, 10 obf_high), no empty rating cell, no split majority. Two further rows changed status
+without a change of body (eph:14228#para_low and eph:1823#para_high, excluded -> regenerated) and
+carry the provisional outcome in auto_outcome_prov. scripts/05b_calibrate_variants.py now keeps the
+two runs apart: the provisional-run analyses (threshold calibration, false rejection per test,
+cosine-only exclusions) are read from reports/variants_calibration_provisional.json (the committed
+output of the provisional run, renamed) and verified against the *_prov / *_cp1256 columns (five
+checks: per-condition labels, false rejection, cosine-only labels, residual error, agreement; all
+consistent); agreement, residual error, per-condition rates and readability are computed from the
+current columns on the bodies accepted under the frozen thresholds. Output:
+reports/variants_calibration.json (sections provisional_run and frozen_run).
+- Obfuscated rows re-rated from clean text: meaning ratings identical to the first round for all
+  three raters (0 of 20 changed per rater); majority "preserved" 20/20 under both. The cp1256
+  display therefore did not change any meaning rating.
+- Changed paraphrases re-rated on the body accepted under cosine 0.68: 7 of 8 "preserved" by
+  majority; eph:12308#para_high is again "partly" (A partly, B preserved, C partly), as its
+  superseded attempt-1 body was. The other four re-rated rows keep "preserved"; eph:11434#para_high
+  is now unanimous (C had rated the superseded body "partly").
+- Section 3.2.3 inter-rater agreement on the final sample (n = 60): Fleiss' kappa 0.163; pairwise
+  percent agreement AB 86.7 %, AC 95.0 %, BC 91.7 %; PABAK AB 0.73, AC 0.90, BC 0.83; Cohen's kappa
+  AB -0.03, AC 0.55, BC -0.02 (58 of 60 majority labels "preserved"); 52 rows unanimous. Paraphrase
+  rows (n = 40): Fleiss 0.144, percent agreement 80.0 / 92.5 / 87.5 %, PABAK 0.60 / 0.85 / 0.75.
+  Obfuscation rows (n = 20): unanimous "preserved", all statistics 1.0.
+- Residual error among paraphrases accepted under the frozen thresholds (pass + regenerated,
+  n = 36): 2/36 = 5.6 % not fully preserved (both "partly": eph:12308#para_high and
+  eph:14356#para_high; Wilson 95 % CI 1.5-18.1 %); strictly "not" 0/36 (0-9.6 %). Reweighted to the
+  population counts (para_low 81 pass / 19 regenerated, para_high 76 / 20): 4.7 %. Among the 20
+  accepted obfuscated variants 0/20 (0-16.1 %); all accepted items together 2/56 = 3.6 % (1.0-12.1 %).
+  This replaces the provisional 1/29 figure.
+- Manual-sample failure rate (majority "not") per condition: para_low 0/16 (95 % CI 0-19.4 %),
+  para_high 0/24 (0-13.8 %), obf_low 0/10 (0-27.8 %), obf_high 0/10 (0-27.8 %); no condition
+  exceeds the 5 % review trigger. "Not fully preserved": para_high 2/24 = 8.3 % (2.3-25.9 %),
+  all other conditions 0.
+- Section 3.2.3 readability of the obfuscated variants (2 reads normally / 1 noticeably odd but
+  every word readable / 0 at least one word unrecognisable), majority of three raters: obf_low
+  0 / 10 / 0, obf_high 0 / 10 / 0. Unreadable-word rate 0/10 in both conditions (95 % CI 0-27.8 %);
+  neither condition reaches the 10 % flag. Every obfuscated variant was judged noticeably odd
+  (odd or worse 10/10, 72.2-100 %). Per rater: A gave one obf_low variant (eph:16547) a 2, all
+  other ratings are 1. Agreement: 19 of 20 unanimous; percent agreement AB 95 %, AC 95 %, BC 100 %;
+  PABAK 0.90 / 0.90 / 1.00; Cohen's kappa 0.00 / 0.00 / 1.00 and Fleiss' kappa -0.02, which are
+  uninformative here because 59 of 60 ratings fall in one category.
+- Thresholds unchanged: cosine 0.68 (calibrated, provisional run), NLI 0.70 (pre-specified).

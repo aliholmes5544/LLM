@@ -1,5 +1,5 @@
 {
-  "n_sample": 57,
+  "n_sample": 60,
   "meaning": {
     "workbooks": {
       "A": {
@@ -166,7 +166,7 @@
       }
     },
     "majority": {
-      "preserved": 55,
+      "preserved": 58,
       "partly": 2
     },
     "majority_by_condition": {
@@ -177,7 +177,7 @@
         "preserved": 10
       },
       "para_high": {
-        "preserved": 19,
+        "preserved": 22,
         "partly": 2
       },
       "para_low": {
@@ -188,11 +188,127 @@
     "split": []
   },
   "readability": {
-    "status": "pending (run with --readability once reports/readability_dev.xlsx is rated)"
+    "sheets": {
+      "A": {
+        "rows": 20,
+        "cells_mojibake_repaired": 0,
+        "readability": {
+          "1": 19,
+          "2": 1
+        },
+        "meaning": {
+          "preserved": 20
+        },
+        "para_changed": {
+          "rows": 8,
+          "cells_mojibake_repaired": 0,
+          "meaning": {
+            "preserved": 7,
+            "partly": 1
+          }
+        }
+      },
+      "B": {
+        "rows": 20,
+        "cells_mojibake_repaired": 0,
+        "readability": {
+          "1": 20
+        },
+        "meaning": {
+          "preserved": 20
+        },
+        "para_changed": {
+          "rows": 8,
+          "cells_mojibake_repaired": 0,
+          "meaning": {
+            "preserved": 8
+          }
+        }
+      },
+      "C": {
+        "rows": 20,
+        "cells_mojibake_repaired": 0,
+        "readability": {
+          "1": 20
+        },
+        "meaning": {
+          "preserved": 20
+        },
+        "para_changed": {
+          "rows": 8,
+          "cells_mojibake_repaired": 0,
+          "meaning": {
+            "preserved": 7,
+            "partly": 1
+          }
+        }
+      }
+    },
+    "status_changed_body_unchanged": [
+      "eph:14228#para_low",
+      "eph:1823#para_high"
+    ],
+    "para_changed_rerated": {
+      "rows": 8,
+      "ratings_moved_to_prov": [
+        "eph:12308#para_low",
+        "eph:16367#para_low",
+        "eph:11434#para_high",
+        "eph:12308#para_high",
+        "eph:4123#para_high"
+      ],
+      "rows_added": [
+        "eph:14108#para_high",
+        "eph:15264#para_high",
+        "eph:16367#para_high"
+      ],
+      "majority": {
+        "eph:12308#para_low": "preserved",
+        "eph:16367#para_low": "preserved",
+        "eph:11434#para_high": "preserved",
+        "eph:12308#para_high": "partly",
+        "eph:14108#para_high": "preserved",
+        "eph:15264#para_high": "preserved",
+        "eph:16367#para_high": "preserved",
+        "eph:4123#para_high": "preserved"
+      },
+      "majority_prov": {
+        "eph:12308#para_low": "preserved",
+        "eph:16367#para_low": "preserved",
+        "eph:11434#para_high": "preserved",
+        "eph:12308#para_high": "partly",
+        "eph:4123#para_high": "preserved"
+      }
+    },
+    "majority": {
+      "1": 20
+    },
+    "majority_by_condition": {
+      "obf_low": {
+        "1": 10
+      },
+      "obf_high": {
+        "1": 10
+      }
+    },
+    "meaning_rerated": {
+      "rows": 20,
+      "ratings_changed_vs_cp1256": {
+        "A": 0,
+        "B": 0,
+        "C": 0
+      },
+      "majority": {
+        "preserved": 20
+      },
+      "majority_cp1256": {
+        "preserved": 20
+      }
+    }
   },
   "csv": {
     "file": "reports/manual_review_sample_dev.csv",
-    "bytes": 62936,
+    "bytes": 67597,
     "utf8_strict": true,
     "has_bom": false,
     "mojibake_markers": {

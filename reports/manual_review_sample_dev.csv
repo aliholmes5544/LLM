@@ -41,13 +41,22 @@ Best,
 Jason Moore
 Senior Engineer
 Southwest AeroTech",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:12308#para_low,para_low,excluded,cosine,,,"Hey James,
+eph:12308#para_low,para_low,pass,,excluded,cosine,"Hey James,
 
 Hope your day is going well! We're rolling out some updates to streamline our processes for the revamp project. To ensure everything is set smoothly, could you please log into the internal server using the link below? It just needs a quick check from your end.
 
 the link
 
 Thanks a ton!
+Best,
+Cassie Hamilton
+(Senior Operations Manager)","Hey James,
+
+Hope your day is going well! We're implementing enhancements to optimize our workflows for the comprehensive overhaul initiative. To ensure everything is set smoothly, could you please log into the internal server using the link below? A brief verification is required from your side.
+
+the link
+
+Immeasurable gratitude expressed!
 Best,
 Cassie Hamilton
 (Senior Operations Manager)","Hey James,
@@ -59,7 +68,7 @@ the link
 Gratitude is profoundly appreciated!
 Best,
 Cassie Hamilton
-(Senior Operations Manager)",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
+(Senior Operations Manager)",preserved,preserved,preserved,preserved,preserved,preserved,preserved,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
 eph:12598#para_low,para_low,pass,,,,"Dear Olivia,
 
 We have detected unusual activity on your company account that suggests it may have been compromised. For your protection, please verify your account immediately to secure your information.
@@ -169,7 +178,7 @@ I appreciate your willingness to collaborate.
 Regards,
 
 Emerald Coast Adventures IT Department",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:14228#para_low,para_low,excluded,cosine,,,"Hi Hazel,
+eph:14228#para_low,para_low,regenerated,,excluded,cosine,"Hi Hazel,
 
 I hope this message finds you well. I wanted to share a fantastic tool I came across that seems perfect for enhancing our current project workflow. It’s from one of our preferred vendors and promises significant improvements! You can check it out and download from this link: the link.
 
@@ -276,9 +285,17 @@ Please inform me if additional details are required.
 Take care,
 Michael Green
 Sustainability Coordinator",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:16367#para_low,para_low,regenerated,,,,"Hey Michael,
+eph:16367#para_low,para_low,pass,,regenerated,,"Hey Michael,
 
 Hope you're doing well! We're rolling out some new updates and I realized I need you to verify your credentials to grant access. Should only take a moment. Here's the link: the link
+
+Thank you!
+
+Best,
+Jake
+Operations Team","Hey Michael,
+
+I trust you're in good spirits! We're about to launch fresh enhancements and it's come to my attention that you'll need to confirm your credentials to obtain entry. Should only take a moment. Here's the link: the link
 
 Thank you!
 
@@ -292,7 +309,7 @@ Thank you!
 
 Best,
 Jake
-Operations Team",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
+Operations Team",preserved,preserved,preserved,preserved,preserved,preserved,preserved,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
 eph:1823#para_low,para_low,regenerated,,,,"Hi Jessica,
 
 I hope this message finds you well. As we proceed with the wind farm project in Chile, I wanted to get your insights on the local provider logistics report. We're aiming to finalize the document by next week.
@@ -329,13 +346,23 @@ Your assistance is critically essential.
 
 Regards,
 Executive Office",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:11434#para_high,para_high,regenerated,,,,"Hello David,
+eph:11434#para_high,para_high,pass,,regenerated,,"Hello David,
 
 I hope this message finds you well. As we prepare for the next phase of our data analysis project, it is mandatory to confirm your login credentials to ensure seamless access to the analysis tools needed for your current project.
 
 Please use the secure portal provided to confirm your credentials: the link.
 
 Let me know once you've done this, so I can proceed with the necessary adjustments.
+
+Best regards,
+John Smith
+Senior Operations Analyst","Hello David,
+
+I trust this communication reaches you in good health. In anticipation of the forthcoming stage in our data analysis endeavor, it is imperative to verify your login details to guarantee uninterrupted utilization of the necessary analytical tools for your ongoing project.
+
+Kindly utilize the protected website indicated to verify your identity: the link.
+
+Please inform me upon completion, allowing me to make the required modifications.
 
 Best regards,
 John Smith
@@ -349,7 +376,7 @@ Please inform me upon completion of this task, allowing me to make the required 
 
 Best regards,
 John Smith
-Senior Operations Analyst",,preserved,preserved,partly,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,link phrasing garbled
+Senior Operations Analyst",preserved,preserved,preserved,preserved,preserved,preserved,partly,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,link phrasing garbled
 eph:1156#para_high,para_high,pass,,,,"Dear Anna,
 
 I hope this finds you well. We have an urgent situation regarding Invoice #3478 that needs your immediate attention. Failure to process this payment today will result in disruptions with our vendor, which could impact our current operations.
@@ -400,13 +427,22 @@ I express my gratitude for your sustained confidence.
 
 Sincerely,
 Eco-Tour Software Innovations Team",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:12308#para_high,para_high,excluded,cosine,,,"Hey James,
+eph:12308#para_high,para_high,pass,,excluded,cosine,"Hey James,
 
 Hope your day is going well! We're rolling out some updates to streamline our processes for the revamp project. To ensure everything is set smoothly, could you please log into the internal server using the link below? It just needs a quick check from your end.
 
 the link
 
 Thanks a ton!
+Best,
+Cassie Hamilton
+(Senior Operations Manager)","Hey James,
+
+Wishing you a pleasant day ahead! We're implementing enhancements to optimize our workflows for the comprehensive overhaul initiative. For a seamless setup, kindly access the internal server by entering the credentials provided in the link. A brief verification is required from your side.
+
+the link
+
+Immeasurable gratitude expressed!
 Best,
 Cassie Hamilton
 (Senior Operations Manager)","Hey James,
@@ -418,7 +454,7 @@ the link
 Gratitude is profoundly appreciated!
 Best,
 Cassie Hamilton
-(Senior Operations Manager)",,partly,preserved,partly,partly,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,credentials confused,,login wording muddled
+(Senior Operations Manager)",partly,preserved,partly,partly,partly,preserved,partly,n/a,n/a,n/a,n/a,n/a,n/a,n/a,credentials confused,,login wording muddled
 eph:12656#para_high,para_high,excluded,fraction,,,"Dear Andrea,
 
 This is a confidential communication from the office of the CEO. Due to recent developments, I require your immediate assistance in reviewing a critical report concerning our latest financial analyses. Please download the confidential report from the link below and provide your feedback at the earliest convenience.
@@ -559,6 +595,25 @@ Eagerly anticipating your affirmative reply.
 Best,
 Anna Tran
 Lead Analyst, External Healthcare Partnerships",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
+eph:14108#para_high,para_high,pass,,regenerated,,"Hi Callum,
+
+Great team meeting today! As discussed, I've compiled the key points and next steps. You can review the details by checking out the link below:
+
+the link
+
+Let's make sure everyone is on the same page.
+
+Cheers,
+Alex Martins","Hi Callum,
+
+Outstanding team assembly today! In accordance with our previous discussion, I have organized the essential highlights and subsequent actions. You can examine the specifics by referring to the information provided in the link listed below:
+
+the link
+
+Ensure that all parties are aligned and informed.
+
+Cheers,
+Alex Martins",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
 eph:14228#para_high,para_high,excluded,cosine,,,"Hi Hazel,
 
 I hope this message finds you well. I wanted to share a fantastic tool I came across that seems perfect for enhancing our current project workflow. It’s from one of our preferred vendors and promises significant improvements! You can check it out and download from this link: the link.
@@ -654,6 +709,44 @@ I eagerly anticipate the outstanding concepts you will contribute to our joint e
 Warm regards,
 Michael Johnson
 Industry Partnerships Manager",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
+eph:15264#para_high,para_high,pass,,regenerated,,"Hello Joel,
+
+Hope you're well! I've attached the latest progress documents for the green manufacturing project we are working on. Please review at your convenience.
+
+Link to download: the link
+
+Let me know if you need any further information.
+
+Take care,
+Michael Green
+Sustainability Coordinator","Hello Joel,
+
+I trust you're in good health! I have enclosed the most recent update files for the sustainable production initiative we are currently undertaking. Kindly peruse at your leisure.
+
+Link to download: the link
+
+Please inform me if additional details are required.
+
+Take care,
+Michael Green
+Sustainability Coordinator",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
+eph:16367#para_high,para_high,pass,,regenerated,,"Hey Michael,
+
+Hope you're doing well! We're rolling out some new updates and I realized I need you to verify your credentials to grant access. Should only take a moment. Here's the link: the link
+
+Thank you!
+
+Best,
+Jake
+Operations Team","Hey Michael,
+
+I trust you're in good spirits! We're about to launch fresh enhancements and it's come to my attention that you'll need to confirm your credentials to obtain entry. Will require a brief duration. Here's the link: the link
+
+Thank you!
+
+Best,
+Jake
+Operations Team",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
 eph:1708#para_high,para_high,regenerated,,,,"Hi Marina,
 
 I hope you're doing great! It's been exciting to see the progress on your current marketing campaign, especially the work you're doing with those stunning new product lines.
@@ -677,7 +770,7 @@ Cheers,
 Alex
 
 P.S. Looking forward to seeing the final campaign—I’m sure it will be a hit!",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:1823#para_high,para_high,excluded,cosine,,,"Hi Jessica,
+eph:1823#para_high,para_high,regenerated,,excluded,cosine,"Hi Jessica,
 
 I hope this message finds you well. As we proceed with the wind farm project in Chile, I wanted to get your insights on the local provider logistics report. We're aiming to finalize the document by next week.
 
@@ -717,13 +810,25 @@ Immeasurable gratitude for your assistance!
 
 Best,
 Peter Krause",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
-eph:4123#para_high,para_high,regenerated,,,,"Dear Gerald,
+eph:4123#para_high,para_high,pass,,regenerated,,"Dear Gerald,
 
 We've identified a critical issue with the network capabilities of your device that needs immediate attention. Our records indicate that your equipment might be experiencing malfunctions, which could interfere with your day-to-day operations.
 
 To avoid disruption, we urge you to download our comprehensive repair tool from the following link: the link. This tool has been crafted meticulously by our engineers to address the specific issues at hand.
 
 Please prioritize this task to ensure your devices are running smoothly and securely.
+
+Regards,
+
+Tech Support Team
+
+--- This message is intended for immediate action ---","Dear Gerald,
+
+We have pinpointed a vital concern pertaining to the network functionalities of your equipment that necessitates prompt action. The data suggests that your machinery may be suffering from issues, potentially disrupting your routine business activities, as indicated by day.
+
+In order to prevent any interruption, we strongly recommend that you acquire our full-fledged repair software from the subsequent link: the link. Our engineers have painstakingly developed this instrument to effectively tackle the particular challenges presented.
+
+Ensure the prioritization of this task to guarantee your gadgets operate efficiently and with enhanced security.
 
 Regards,
 
@@ -741,7 +846,7 @@ Regards,
 
 Tech Support Team
 
---- This message is intended for immediate action ---",,preserved,preserved,preserved,preserved,,,,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
+--- This message is intended for immediate action ---",preserved,preserved,preserved,preserved,preserved,preserved,preserved,n/a,n/a,n/a,n/a,n/a,n/a,n/a,,,
 eph:5004#para_high,para_high,excluded,fraction,,,"Dear Josef,
 
 I hope this email finds you well. We would like to remind you that the payment for the recent order is due and needs to be processed by the end of this week.
@@ -822,7 +927,7 @@ Thank you for your collaboration on th​is.
 
 Reg4rds,
 Steven Marshall
-Finance Department",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Finance Department",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12240#obf_low,obf_low,pass,,,,"Hi Carlos,
 
 I hope this finds you well. We're reviewing the latest developments on the pilot training enhancements project, and I need your input on a proposed change in the software architecture. This is crucial for aligning our developments with the new objectives set for next quarter.
@@ -851,7 +956,7 @@ Thanks,
 
 Alicia Park
 Senior Project Manager
-Southwest AeroTech",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Southwest AeroTech",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12308#obf_low,obf_low,pass,,,,"Hey James,
 
 Hope your day is going well! We're rolling out some updates to streamline our processes for the revamp project. To ensure everything is set smoothly, could you please log into the internal server using the link below? It just needs a quick check from your end.
@@ -870,7 +975,7 @@ the link
 Thanks a ton!
 Bes-t,
 Cassie Hamilton
-(Senior Operations Manager)",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+(Senior Operations Manager)",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12798#obf_low,obf_low,pass,,,,"Dear Accounts Department,
 
 This is a reminder that the invoice for order #: 5498 from July 2023 remains unsettled. We urge you to process the payment at your earliest convenience to avoid late fee charges.
@@ -897,7 +1002,7 @@ Thank you for your immediate attention.
 Best regards,
 Peter Maxwell
 Billing Department
-Artistic Furnish Suppliers Attachment: Invoice_5498.pdf",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Artistic Furnish Suppliers Attachment: Invoice_5498.pdf",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:15539#obf_low,obf_low,pass,,,,"Dear Diego,
 
 I hope this message finds you well. I need your immediate assistance with a critical issue involving our network security. It appears there might be a vulnerability that needs addressing, and I need your expertise on this.
@@ -918,7 +1023,7 @@ Than​k you for your prompt attention.
 
 Best,
 Elena Rossi
-Senior Manager, Liguria Eccellenze Nautiche",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Senior Manager, Liguria Eccellenze Nautiche",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:16547#obf_low,obf_low,pass,,,,"Hi Ahmed,
 
 I hope you're doing well. Could you please do me a quick favor? We need to verify some details for the cloud management portal, and I realized you might have the most updated access credentials. Could you send them over to ensure everything is synced on our end?
@@ -937,7 +1042,7 @@ Thanks for your help!
 Best regards,
 Sarah Williams
 Vendor Relations
-SkyTech Associated Complaints",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+SkyTech Associated Complaints",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,2,1,1,1,,,
 eph:1743#obf_low,obf_low,pass,,,,"Hi Walter,
 
 Hope you’ve been well since our last meeting about the new handbag redesign. I wanted to quickly touch base with you on something I might have forgotten to mention. Could you check this link regarding tonight’s revisions? It’s important we stay on the same page to avoid any mix-ups before the deadline.
@@ -956,7 +1061,7 @@ Thank-s in advance, and let me know if you hаve any questions!
 Cheers,
 Marco
 
-the link",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+the link",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:4123#obf_low,obf_low,pass,,,,"Dear Gerald,
 
 We've identified a critical issue with the network capabilities of your device that needs immediate attention. Our records indicate that your equipment might be experiencing malfunctions, which could interfere with your day-to-day operations.
@@ -981,7 +1086,7 @@ Regards,
 
 Tech Support Team
 
---- This me​ssage is intended for immediate action ---",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+--- This me​ssage is intended for immediate action ---",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:4299#obf_low,obf_low,pass,,,,"Hi Mark,
 
 I’m reaching out with an urgent request regarding a critical payment to one of our major suppliers. Due to the time-sensitive nature, please arrange a transfer of €50,000 to the account provided in the link below by EOD.
@@ -1008,7 +1113,7 @@ Thank you for your immediate cooperation.
 Regards,
 Dr. Hans Meyer
 CEO
-Thuringia Equipment Supply Co.",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Thuringia Equipment Supply Co.",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:5551#obf_low,obf_low,pass,,,,"Hi Inga,
 
 I hope you're doing well! I was reviewing our recent analytics project, and there are a few points I'd like to discuss with you. Could you send me the latest data report? It would be super helpful for our next meeting.
@@ -1021,7 +1126,7 @@ I hope you're doing well! I was reviewing our recent analytics project, and ther
 
 Thanks a lot,
 
-Floria​n",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Floria​n",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:11422#obf_high,obf_high,pass,,,,"Hi Evelyn,
 
 Please process the transfer of funds for our latest venture. It's crucial that these resources are available immediately for strategic operations. Use the attached account details to ensure seamless completion.
@@ -1038,7 +1143,7 @@ Thіs ta​sk is of hi​gh priority; your prompt response is appre-ciated.
 
 Regards,
 Mark Spencer
-CEO, Maple Leaf Organic Farms",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+CEO, Maple Leaf Organic Farms",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:11795#obf_high,obf_high,pass,,,,"Hi James,
 
 We hope you're enjoying your time with us at Atlantic Coast Media Group! As we implement some necessary system updates, we kindly ask you to verify your email account details to ensure continued access. Please follow this secure link: the link.
@@ -1051,7 +1156,7 @@ We hope you're enjoying your ti​me with us at Atlantic Coast Media Grouр! As 
 
 Thanks for yоur cooperatіon,
 
-Your IT Support Team",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Your IT Support Team",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:11938#obf_high,obf_high,pass,,,,"Dear Ms. Harris,
 
 This is a friendly reminder that Invoice #34829 from our company remains unpaid and was due on October 10, 2023. Please find the invoice attached for your reference.
@@ -1080,7 +1185,7 @@ David Greene
 Accounts Receivabl-e
 XYZ Ingr3dients Supplier
 
-Attachment: the link",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Attachment: the link",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12001#obf_high,obf_high,pass,,,,"Dear Marcus,
 
 We are glad to introduce our latest software update designed to enhance your eco-tourism project management experience. This update includes:
@@ -1109,7 +1214,7 @@ We are committed to providing you with the best tools to en.sure sustainable and
 Thank you for your continued tru5t.
 
 Sincerely,
-Eco-Tour Software Innovations Team",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Eco-Tour Software Innovations Team",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12580#obf_high,obf_high,pass,,,,"Dear Megan,
 
 I hope this message finds you well. As we are in the critical stages of finalizing our current shipping routes optimization project, I need you to confirm your login credentials to grant you continued access to all necessary documents and platforms.
@@ -1134,7 +1239,7 @@ Your prompt attention to thіs matter is great.ly appreciated.
 
 Bеst regard-s,
 James R. Peterson
-S3nior Executive, Gulf Coast Shipping Lines",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+S3nior Executive, Gulf Coast Shipping Lines",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12678#obf_high,obf_high,pass,,,,"Dear Pacific Northwest Software Team Member,
 
 Our records indicate that your account is due for a mandatory security update. To prevent any disruption in service, we require you to reset your password immediately using the secure portal linked below:
@@ -1159,7 +1264,7 @@ Thank you for your prompt attentіon to thi5 matter.
 
 Best regard​s,
 
-IT Department",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+IT Department",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:12998#obf_high,obf_high,pass,,,,"Hi Kelly,
 
 I hope you're doing well. I've sent over a crucial file pertaining to the CRM project that needs your input. It's essential to review this document as soon as possible to keep our timelines intact.
@@ -1178,7 +1283,7 @@ Please open the attachment immediately to ensure we're aligned.
 Thanks for yоur cooperatio​n.
 
 Best,
-[Colleague's Name]",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+[Colleague's Name]",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:13135#obf_high,obf_high,pass,,,,"Hello James,
 
 We hope you're doing well. As a trusted provider, we are writing to inform you about a critical update for the marketing analysis tool your department frequently uses.
@@ -1201,7 +1306,7 @@ Use the followi.ng link to initiate the upd​ate process: the link. Yo​ur pro
 Thank you for trusting us.
 
 Sincerely,
-[Trusted Third-Party App Provider] Support Team",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+[Trusted Third-Party App Provider] Support Team",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:13635#obf_high,obf_high,pass,,,,"Hello Aaron,
 
 As part of our ongoing commitment to maintaining robust security standards, it's critical that you review the attached document detailing the latest updates to our security protocols.
@@ -1222,7 +1327,7 @@ Thаnk you for your coopera.tion and dedication to maintaining DalesWool Craftwo
 
 Warm regards,
 Elaine Carter
-IT Security Manager",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+IT Security Manager",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,
 eph:4299#obf_high,obf_high,pass,,,,"Hi Mark,
 
 I’m reaching out with an urgent request regarding a critical payment to one of our major suppliers. Due to the time-sensitive nature, please arrange a transfer of €50,000 to the account provided in the link below by EOD.
@@ -1249,4 +1354,4 @@ Thаnk you for your immediate cooperation.
 Regards,
 Dr. Hans Meyer
 CEO
-Thuringia Equipment Supply Co.",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,,,,,,,
+Thuringia Equipment Supply Co.",,preserved,preserved,preserved,preserved,,,,preserved,preserved,preserved,1,1,1,1,,,

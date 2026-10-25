@@ -1,34 +1,30 @@
 #!/usr/bin/env python3
 """
-05b_calibrate_variants.py — calibrate the meaning checks against the three-rater dev sample (Section 3.2.3).
+05b_calibrate_variants.py — final dev-set statistics of the meaning checks (Section 3.2.3).
 
-Reads reports/manual_review_sample_dev.csv as merged by scripts/05a_merge_ratings.py (rating_A/B/C,
-rating_majority; readability_A/B/C and readability_majority for the obfuscated rows once rated) and
-data/processed/variants_dev.jsonl for the automatic scores of the same variants.
+Two runs of scripts/05_derive_variants.py are involved and are kept apart:
 
-  * Inter-rater agreement, overall and per family: pairwise percent agreement, Cohen's kappa and
-    PABAK (2 p_o - 1, Byrt et al., 1993) for each pair of raters, and Fleiss' kappa over the three.
-  * Human label = rating_majority (label given by at least two raters); "split" rows are counted and
-    left out of the label-based analyses.
-  * thr_cos / thr_nli: the highest grid value at which at least 95% of the paraphrases labelled
-    "preserved" still pass (the 5th percentile of their scores rounded down to the grid).
-  * For each automatic test (cosine, NLI, length, protected spans, achieved fraction): the
-    false-rejection rate against the human label among the items that test alone rejected, both as
-    the final decision (excluded with that test as the only failed test) and at the first attempt
-    (flagged by that test only, whatever happened after the retry; the rating refers to the final
-    body, so a "preserved" there shows the retry repaired the variant, not that the flag was wrong).
-  * Every cosine-only exclusion with its cosine (and the other scores) beside the human label.
-  * Residual error among accepted items (auto_outcome pass or regenerated): share whose human label
-    is not "preserved", with a Wilson 95% interval, plus the strict "not" share and an estimate
-    reweighted to the population counts of pass / regenerated variants.
-  * Sample failure rate per condition (majority "not") with a Wilson 95% interval; conditions above
-    5% are flagged for full review (a manual gate, not automated here).
-  * Readability (2 / 1 / 0) agreement and distribution for the obfuscated rows, when rated.
+  * the PROVISIONAL run (cosine 0.80, NLI 0.70) on which the thresholds were chosen. Its score-based
+    analyses (threshold calibration, false rejection per automatic test, cosine-only exclusions) are
+    taken verbatim from reports/variants_calibration_provisional.json, the committed output of this
+    script on that run, and the label-based parts of them are recomputed from the *_prov /
+    *_cp1256 columns of the sample as a consistency check;
+  * the FROZEN run (cosine 0.68, NLI 0.70) whose accepted bodies are the ones in
+    data/processed/variants_dev.jsonl. Inter-rater agreement, the residual error among accepted
+    items (Wilson 95 % interval), the per-condition failure rates and the readability statistics
+    are computed from the current columns of reports/manual_review_sample_dev.csv as merged by
+    scripts/05a_merge_ratings.py --readability (obfuscated rows re-rated from clean text, the
+    paraphrases whose accepted body changed re-rated on the new body, three of them appended).
 
-The YAML snippet for configs/variants.yaml and the lines for docs/CHANGES_FOR_THESIS.md are
-printed for the author to paste; the config is deliberately not rewritten by the script.
+Human label = rating_majority (label given by at least two raters; "split" rows are counted and
+left out of the label-based analyses). Agreement: pairwise percent agreement, Cohen's kappa and
+PABAK (2 p_o - 1, Byrt et al., 1993), and Fleiss' kappa over the three raters. Readability (2 / 1 / 0)
+of the obfuscated rows: distribution per condition and rater, agreement, and a flag when the majority
+value is 0 for more than 10 % of a condition's rows.
 
 Usage:  python scripts/05b_calibrate_variants.py [--selftest]
+Input:  reports/manual_review_sample_dev.csv, data/processed/variants_dev.jsonl,
+        reports/variants_dev_report.json, reports/variants_calibration_provisional.json
 Output: reports/variants_calibration.json
 """
 import argparse
@@ -43,13 +39,14 @@ from common import ROOT, open_utf8, write_json
 
 PROC = ROOT / "data" / "processed"
 REPORTS = ROOT / "reports"
-GRID_COS = [round(0.60 + 0.01 * i, 2) for i in range(36)]      # 0.60 .. 0.95
-GRID_NLI = [round(0.50 + 0.01 * i, 2) for i in range(41)]      # 0.50 .. 0.90
+PROVISIONAL = REPORTS / "variants_calibration_provisional.json"
 RATERS = ("A", "B", "C")
 LABELS = ("preserved", "partly", "not")
 READABILITY_LABELS = ("2", "1", "0")
 TESTS = ("cosine", "nli", "length", "spans", "fraction")
 ACCEPTED = ("pass", "regenerated")
+OBF_CONDITIONS = ("obf_low", "obf_high")
+UNREADABLE_FLAG = 0.10          # flag a condition when majority readability 0 exceeds this share
 
 
 # ---- statistics ---------------------------------------------------------------
@@ -103,16 +100,9 @@ def rate_ci(k: int, n: int) -> dict:
             "ci95": [round(lo, 4), round(hi, 4)] if n else None}
 
 
-def pick_threshold(scores: list, grid: list, target: float = 0.95) -> dict:
-    """Highest grid value at which >= target of `scores` are still >= the value. Falls back to the grid
-    minimum, flagged target_met False, when no grid value reaches the target; a value on either grid
-    bound is flagged so the grid can be extended rather than read as a calibrated optimum."""
-    best, met = grid[0], False
-    for t in grid:
-        if sum(s >= t for s in scores) / len(scores) >= target:
-            best, met = t, True
-    return {"value": best, "target_met": met, "pass_rate": round(sum(s >= best for s in scores) / len(scores), 4),
-            "at_grid_bound": best in (grid[0], grid[-1]), "grid": [grid[0], grid[-1]]}
+def majority(values: list) -> str:
+    top, n = Counter(values).most_common(1)[0]
+    return top if n >= 2 else "split"
 
 
 def agreement(rows: list, prefix: str, categories: tuple, majority_col: str) -> dict:
@@ -131,134 +121,167 @@ def agreement(rows: list, prefix: str, categories: tuple, majority_col: str) -> 
     return out
 
 
-# ---- calibration ---------------------------------------------------------------
-def calibrate(sample: list, variants: dict, population: dict) -> dict:
-    fam = lambda r: variants[r["variant_id"]]["family"]
-    para = [r for r in sample if fam(r) == "paraphrase"]
-    obf = [r for r in sample if fam(r) == "obfuscation"]
-    lab = lambda rs: [r for r in rs if r["rating_majority"] in LABELS]          # drop "split" rows
+# ---- frozen-run analyses (current columns) ---------------------------------------
+def labelled(rows: list) -> list:
+    return [r for r in rows if r["rating_majority"] in LABELS]
 
-    preserved = [variants[r["variant_id"]] for r in lab(para) if r["rating_majority"] == "preserved"]
-    if not preserved:
-        raise SystemExit("no paraphrase row has majority label 'preserved'; cannot calibrate")
-    pick_cos = pick_threshold([v["sim_cos"] for v in preserved], GRID_COS)
-    pick_nli = pick_threshold([v["nli_min"] for v in preserved], GRID_NLI)
-    thr_cos, thr_nli = pick_cos["value"], pick_nli["value"]
-    joint = sum(v["sim_cos"] >= thr_cos and v["nli_min"] >= thr_nli and v["len_ok"] and v["spans_ok"] for v in preserved)
-    grid = [{"thr_cos": c, "pass_rate": round(sum(v["sim_cos"] >= c for v in preserved) / len(preserved), 4)} for c in GRID_COS]
-    grid_n = [{"thr_nli": t, "pass_rate": round(sum(v["nli_min"] >= t for v in preserved) / len(preserved), 4)} for t in GRID_NLI]
 
-    agree = {"all": agreement(sample, "rating", LABELS, "rating_majority"),
-             "paraphrase": agreement(para, "rating", LABELS, "rating_majority"),
-             "obfuscation": agreement(obf, "rating", LABELS, "rating_majority")}
-
-    per_condition = {}
+def per_condition(sample: list) -> dict:
+    out = {}
     for c in sorted({r["condition"] for r in sample}):
-        rs = lab([r for r in sample if r["condition"] == c])
+        rs = labelled([r for r in sample if r["condition"] == c])
         k_not = sum(r["rating_majority"] == "not" for r in rs)
-        k_np = sum(r["rating_majority"] != "preserved" for r in rs)
-        per_condition[c] = {"n": len(rs), "not": rate_ci(k_not, len(rs)), "not_preserved": rate_ci(k_np, len(rs)),
-                            "review_whole_condition": bool(rs) and k_not / len(rs) > 0.05,
-                            "labels": dict(Counter(r["rating_majority"] for r in rs))}
+        out[c] = {"n": len(rs), "not": rate_ci(k_not, len(rs)),
+                  "not_preserved": rate_ci(sum(r["rating_majority"] != "preserved" for r in rs), len(rs)),
+                  "review_whole_condition": bool(rs) and k_not / len(rs) > 0.05,
+                  "labels": dict(Counter(r["rating_majority"] for r in rs))}
+    return out
 
-    # false rejection per automatic test, among the items that test alone rejected
-    def label_block(rs: list) -> dict:
-        rs = lab(rs)
-        return {**rate_ci(sum(r["rating_majority"] == "preserved" for r in rs), len(rs)),
-                "labels": dict(Counter(r["rating_majority"] for r in rs)),
-                "variant_ids": [r["variant_id"] for r in rs]}
-    false_rejection = {}
+
+def residual(rows: list, population: dict = None) -> dict:
+    """Share of accepted items (pass + regenerated) whose human label is not 'preserved'."""
+    rs = labelled([r for r in rows if r["auto_outcome"] in ACCEPTED])
+    out = {"not_preserved": rate_ci(sum(r["rating_majority"] != "preserved" for r in rs), len(rs)),
+           "not": rate_ci(sum(r["rating_majority"] == "not" for r in rs), len(rs)),
+           "labels": dict(Counter(r["rating_majority"] for r in rs)),
+           "by_auto_outcome": {o: {"n": sum(r["auto_outcome"] == o for r in rs),
+                                   "labels": dict(Counter(r["rating_majority"] for r in rs if r["auto_outcome"] == o))}
+                               for o in ACCEPTED},
+           "not_preserved_ids": [r["variant_id"] for r in rs if r["rating_majority"] != "preserved"]}
+    if population:
+        w_num, w_den = 0.0, 0
+        for c in sorted({r["condition"] for r in rs}):
+            for o in ACCEPTED:
+                ro = [r for r in rs if r["condition"] == c and r["auto_outcome"] == o]
+                n_pop = population.get(c, {}).get(o, 0)
+                if ro and n_pop:
+                    w_num += n_pop * sum(r["rating_majority"] != "preserved" for r in ro) / len(ro)
+                    w_den += n_pop
+        out["not_preserved_population_weighted"] = {
+            "rate": round(w_num / w_den, 4) if w_den else None, "population_accepted": w_den,
+            "weights": {c: {o: population.get(c, {}).get(o, 0) for o in ACCEPTED} for c in sorted({r["condition"] for r in rs})}}
+    return out
+
+
+def readability_stats(obf: list) -> dict:
+    rated = [r for r in obf if all(r[f"readability_{x}"] in READABILITY_LABELS for x in RATERS)]
+    if not obf or len(rated) < len(obf):
+        return {"status": f"pending ({len(rated)}/{len(obf)} obfuscated rows rated by all three raters)"}
+    out = {"status": "rated", "scale": {"2": "reads normally", "1": "noticeably odd but every word readable",
+                                        "0": "at least one word unrecognisable"},
+           "agreement": agreement(rated, "readability", READABILITY_LABELS, "readability_majority"), "per_condition": {}}
+    for c in OBF_CONDITIONS:
+        rs = [r for r in rated if r["condition"] == c]
+        maj = [r for r in rs if r["readability_majority"] in READABILITY_LABELS]
+        unreadable = rate_ci(sum(r["readability_majority"] == "0" for r in maj), len(maj))
+        out["per_condition"][c] = {
+            "n": len(rs),
+            "per_rater": {x: {k: sum(r[f"readability_{x}"] == k for r in rs) for k in READABILITY_LABELS} for x in RATERS},
+            "majority": {k: sum(r["readability_majority"] == k for r in rs) for k in READABILITY_LABELS},
+            "n_split": sum(r["readability_majority"] == "split" for r in rs),
+            "unreadable_word (majority 0)": unreadable,
+            "odd_or_worse (majority 1 or 0)": rate_ci(sum(r["readability_majority"] in ("1", "0") for r in maj), len(maj)),
+            "flag_unreadable_above_10pct": bool(maj) and unreadable["rate"] > UNREADABLE_FLAG}
+    return out
+
+
+def obfuscation_rerating(obf: list) -> dict:
+    """Meaning ratings of the obfuscated rows from clean text versus the first round (cp1256 display)."""
+    out = {"n": len(obf), "changed_per_rater": {}, "majority_clean": dict(Counter(r["rating_majority"] for r in obf))}
+    for x in RATERS:
+        out["changed_per_rater"][x] = sum(r[f"rating_{x}"] != r[f"rating_{x}_cp1256"] for r in obf)
+    out["majority_cp1256"] = dict(Counter(majority([r[f"rating_{x}_cp1256"] for x in RATERS]) for r in obf))
+    return out
+
+
+# ---- provisional-run analyses (carried over + consistency check) ------------------
+def provisional_view(sample: list) -> list:
+    """The sample as it was in the provisional run: superseded outcomes, bodies' first-round ratings
+    (rating_*_prov for the re-rated paraphrases, rating_*_cp1256 for the obfuscated rows); rows that
+    were not in the first-round sample are dropped."""
+    out = []
+    for r in sample:
+        p = dict(r)
+        p["auto_outcome"] = r["auto_outcome_prov"] or r["auto_outcome"]
+        p["failed_tests"] = r["failed_tests_prov"] if r["auto_outcome_prov"] else r["failed_tests"]
+        for x in RATERS:
+            if r[f"rating_{x}_prov"]:
+                p[f"rating_{x}"] = r[f"rating_{x}_prov"]
+            elif r[f"rating_{x}_cp1256"] not in ("", "n/a"):
+                p[f"rating_{x}"] = r[f"rating_{x}_cp1256"]
+        p["rating_majority"] = majority([p[f"rating_{x}"] for x in RATERS])
+        out.append(p)
+    return out
+
+
+def first_round_rows(sample: list) -> list:
+    """Rows of the provisional view that belonged to the first-round sample (appended rows excluded)."""
+    view = provisional_view(sample)
+    appended = {r["variant_id"] for r in sample
+                if r["auto_outcome_prov"] and r["variant_body_prov"] == "" and r["rating_A_prov"] == ""
+                and r["variant_id"] in PARA_CHANGED_IDS}
+    return [r for r in view if r["variant_id"] not in appended]
+
+
+PARA_CHANGED_IDS = None          # filled from 05a at import time (single source of truth)
+
+
+def provisional_block(sample: list, prov: dict) -> dict:
+    """Score-based analyses copied from the provisional report; label-based parts recomputed from the
+    *_prov / *_cp1256 columns and compared with it."""
+    rows = first_round_rows(sample)
+    para = [r for r in rows if r["condition"].startswith("para")]
+    checks = {}
+    # (a) per-condition label counts
+    pc = per_condition(rows)
+    checks["per_condition_labels"] = all(pc[c]["labels"] == prov["per_condition"][c]["labels"] for c in pc)
+    # (b) false rejection, final exclusion by a single test
+    fr = {}
     for t in TESTS:
-        final_alone = [r for r in para if r["auto_outcome"] == "excluded" and r["failed_tests"] == t]
-        first_alone = [r for r in para if variants[r["variant_id"]]["attempt0_failed"] == {t}]
-        false_rejection[t] = {"final_alone": label_block(final_alone),
-                              "first_attempt_alone": None if t == "fraction" else label_block(first_alone)}
-    false_rejection["any_excluded"] = label_block([r for r in para if r["auto_outcome"] == "excluded"])
-    by_failed = {}
-    for combo in sorted({r["failed_tests"] for r in para if r["auto_outcome"] == "excluded"}):
-        by_failed[combo or "(none)"] = label_block([r for r in para if r["auto_outcome"] == "excluded" and r["failed_tests"] == combo])
-
-    cosine_only = []
-    for r in para:
-        if r["auto_outcome"] == "excluded" and r["failed_tests"] == "cosine":
-            v = variants[r["variant_id"]]
-            cosine_only.append({"variant_id": r["variant_id"], "condition": r["condition"], "sim_cos": v["sim_cos"],
-                                "nli_min": v["nli_min"], "len_ratio": v["len_ratio"], "achieved_fraction": v["achieved_fraction"],
-                                "rating_A": r["rating_A"], "rating_B": r["rating_B"], "rating_C": r["rating_C"],
-                                "human_label": r["rating_majority"],
-                                "notes": {x: r[f"notes_{x}"] for x in RATERS if r.get(f"notes_{x}")}})
-    cosine_only.sort(key=lambda d: d["sim_cos"])
-
-    # residual error among accepted items (pass + regenerated), by family and outcome
-    def residual(rs: list) -> dict:
-        rs = lab([r for r in rs if r["auto_outcome"] in ACCEPTED])
-        out = {"not_preserved": rate_ci(sum(r["rating_majority"] != "preserved" for r in rs), len(rs)),
-               "not": rate_ci(sum(r["rating_majority"] == "not" for r in rs), len(rs)),
-               "labels": dict(Counter(r["rating_majority"] for r in rs)), "by_auto_outcome": {}}
-        for o in ACCEPTED:
-            ro = [r for r in rs if r["auto_outcome"] == o]
-            out["by_auto_outcome"][o] = {"n": len(ro), "labels": dict(Counter(r["rating_majority"] for r in ro))}
-        return out
-    residual_error = {"paraphrase": residual(para), "obfuscation": residual(obf), "all": residual(sample)}
-    # reweight the paraphrase estimate to the population shares of pass / regenerated variants
-    w_num, w_den = 0.0, 0
-    for c in sorted({r["condition"] for r in para}):
-        for o in ACCEPTED:
-            rs = lab([r for r in para if r["condition"] == c and r["auto_outcome"] == o])
-            n_pop = population.get(c, {}).get(o, 0)
-            if rs and n_pop:
-                w_num += n_pop * sum(r["rating_majority"] != "preserved" for r in rs) / len(rs)
-                w_den += n_pop
-    residual_error["paraphrase"]["not_preserved_population_weighted"] = {
-        "rate": round(w_num / w_den, 4) if w_den else None, "population_accepted": w_den,
-        "weights": {c: {o: population.get(c, {}).get(o, 0) for o in ACCEPTED} for c in sorted({r["condition"] for r in para})}}
-
-    by_outcome = {o: {"n": sum(r["auto_outcome"] == o for r in para),
-                      "labels": dict(Counter(r["rating_majority"] for r in para if r["auto_outcome"] == o))}
-                  for o in ("pass", "regenerated", "excluded")}
-
-    rated = [r for r in obf if all(r.get(f"readability_{x}", "") in READABILITY_LABELS for x in RATERS)]
-    if obf and len(rated) == len(obf):
-        readability = {"status": "rated", "agreement": agreement(rated, "readability", READABILITY_LABELS, "readability_majority"),
-                       "per_condition": {}}
-        for c in sorted({r["condition"] for r in rated}):
-            rs = [r for r in rated if r["condition"] == c and r["readability_majority"] in READABILITY_LABELS]
-            readability["per_condition"][c] = {
-                "n": len(rs), "majority": dict(Counter(r["readability_majority"] for r in rs)),
-                "unreadable_word (0)": rate_ci(sum(r["readability_majority"] == "0" for r in rs), len(rs)),
-                "odd_or_worse (1 or 0)": rate_ci(sum(r["readability_majority"] in ("1", "0") for r in rs), len(rs))}
-    else:
-        readability = {"status": f"pending ({len(rated)}/{len(obf)} obfuscated rows rated by all three raters)"}
-
-    return {"human_label": "rating_majority (label given by at least two of three raters; 'split' rows excluded)",
-            "n_sample": len(sample), "n_paraphrase": len(para), "n_obfuscation": len(obf),
-            "n_split": sum(r["rating_majority"] == "split" for r in sample),
-            "n_paraphrase_preserved": len(preserved),
-            "chosen": {"thr_cos": thr_cos, "thr_nli": thr_nli, "joint_pass_rate_preserved": round(joint / len(preserved), 4),
-                       "cos": pick_cos, "nli": pick_nli,
-                       "caveat_nli": "nli_min is the minimum over the retained sentences of the final body; sentences below "
-                                     "the provisional 0.70 were already reverted by the fallback, so the preserved items' "
-                                     "nli_min is censored at the provisional threshold and cannot calibrate a lower one"},
-            "grid_cos": grid, "grid_nli": grid_n, "agreement": agree, "per_condition": per_condition,
-            "false_rejection_by_test": false_rejection, "excluded_by_failed_tests": by_failed,
-            "cosine_only_exclusions": cosine_only, "residual_error_accepted": residual_error,
-            "paraphrase_by_auto_outcome": by_outcome, "readability": readability}
+        rs = labelled([r for r in para if r["auto_outcome"] == "excluded" and r["failed_tests"] == t])
+        fr[t] = rate_ci(sum(r["rating_majority"] == "preserved" for r in rs), len(rs))
+    checks["false_rejection_final_alone"] = all(
+        (fr[t]["k"], fr[t]["n"]) == (prov["false_rejection_by_test"][t]["final_alone"]["k"], prov["false_rejection_by_test"][t]["final_alone"]["n"])
+        for t in TESTS)
+    # (c) cosine-only exclusions' human labels
+    lab = {r["variant_id"]: r["rating_majority"] for r in para}
+    checks["cosine_only_labels"] = all(lab.get(d["variant_id"]) == d["human_label"] for d in prov["cosine_only_exclusions"])
+    # (d) residual error and agreement in the provisional view
+    res = residual(para)
+    checks["residual_error_paraphrase"] = (res["not_preserved"]["k"], res["not_preserved"]["n"]) == (
+        prov["residual_error_accepted"]["paraphrase"]["not_preserved"]["k"], prov["residual_error_accepted"]["paraphrase"]["not_preserved"]["n"])
+    agr = agreement(rows, "rating", LABELS, "rating_majority")
+    checks["agreement_all"] = agr["pairwise"] == prov["agreement"]["all"]["pairwise"]
+    return {"source": str(PROVISIONAL.relative_to(ROOT)), "thresholds": {"thr_cos": 0.80, "thr_nli": 0.70},
+            "n_sample": prov["n_sample"], "n_paraphrase_preserved": prov["n_paraphrase_preserved"],
+            "chosen": prov["chosen"], "grid_cos": prov["grid_cos"], "grid_nli": prov["grid_nli"],
+            "false_rejection_by_test": prov["false_rejection_by_test"],
+            "excluded_by_failed_tests": prov["excluded_by_failed_tests"],
+            "cosine_only_exclusions": prov["cosine_only_exclusions"],
+            "agreement": prov["agreement"], "per_condition": prov["per_condition"],
+            "residual_error_accepted": prov["residual_error_accepted"],
+            "recomputed_from_prov_columns": {"n_rows": len(rows), "false_rejection_final_alone": fr,
+                                             "residual_error_paraphrase": res["not_preserved"],
+                                             "agreement_all_pairwise": agr["pairwise"]},
+            "consistency": checks, "consistent": all(checks.values())}
 
 
+# ---- inputs -----------------------------------------------------------------------
 def load_inputs() -> tuple:
+    global PARA_CHANGED_IDS
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("m05a", ROOT / "scripts" / "05a_merge_ratings.py")
+    m05a = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m05a)
+    PARA_CHANGED_IDS = set(m05a.PARA_CHANGED)
+
     with open_utf8(REPORTS / "manual_review_sample_dev.csv") as fh:
         sample = list(csv.DictReader(fh))
     need = [f"rating_{x}" for x in RATERS] + ["rating_majority"]
-    missing = [c for c in need if c not in sample[0]]
+    missing = [c for c in need + ["rating_A_prov", "auto_outcome_prov", "readability_A"] if c not in sample[0]]
     if missing:
-        raise SystemExit(f"columns {missing} missing: run scripts/05a_merge_ratings.py first")
-    prov = [r["variant_id"] for r in sample if r.get("rating_A_prov", "").strip()]
-    if prov:
-        raise SystemExit(f"{len(prov)} rows were re-rated on bodies accepted under the frozen thresholds (rating_*_prov "
-                         "populated, e.g. " + ", ".join(prov[:3]) + "). This script still computes the threshold "
-                         "calibration and false-rejection analyses from the current columns; it must read the *_prov "
-                         "columns (provisional run) for those and the current columns for the residual error before "
-                         "it can run on this file.")
+        raise SystemExit(f"columns {missing} missing: run scripts/05a_merge_ratings.py --readability first")
     unrated = [r["variant_id"] for r in sample if not all(r[c].strip() for c in need)]
     if unrated:
         raise SystemExit(f"{len(unrated)} sample rows are not rated by all three raters yet, e.g. {unrated[:3]}")
@@ -267,33 +290,29 @@ def load_inputs() -> tuple:
     if bad:
         raise SystemExit(f"ratings must be one of {LABELS}; offending rows: {bad[:5]}")
     for r in sample:
+        for c in r:
+            r[c] = r[c].strip()
         for x in RATERS:
-            r[f"rating_{x}"] = r[f"rating_{x}"].strip().lower()
-            r[f"readability_{x}"] = r.get(f"readability_{x}", "").strip()
-        r["readability_majority"] = r.get("readability_majority", "").strip()
+            r[f"rating_{x}"] = r[f"rating_{x}"].lower()
 
     variants, population = {}, {}
     for line in open_utf8(PROC / "variants_dev.jsonl"):
         v = json.loads(line)
-        ch = v["checks"]
-        if "attempt_0" in ch:
-            a0, fin = ch["attempt_0"], ch[f"attempt_{ch['final_attempt']}"]
-            flagged = set()
-            if not a0["sim_ok"]:
-                flagged.add("cosine")
-            if not a0["len_ok"]:
-                flagged.add("length")
-            if not a0["spans_ok"] or any(not s["spans_ok"] for s in a0["sentences"]):
-                flagged.add("spans")
-            if any(not s["nli_ok"] for s in a0["sentences"]):
-                flagged.add("nli")
-            variants[v["variant_id"]] = {"family": "paraphrase", "sim_cos": fin["sim_cos"], "nli_min": fin["nli_min"],
-                                         "len_ratio": fin["len_ratio"], "len_ok": fin["len_ok"], "spans_ok": fin["spans_ok"],
-                                         "achieved_fraction": ch["achieved_fraction"], "attempt0_failed": flagged}
+        variants[v["variant_id"]] = v
+        if "attempt_0" in v["checks"]:
             population.setdefault(v["condition"], Counter())[v["status"]] += 1
-        else:
-            variants[v["variant_id"]] = {"family": "obfuscation", "attempt0_failed": set()}
-    return sample, variants, {c: dict(n) for c, n in population.items()}
+    # the sample must describe the bodies and statuses of the frozen run
+    for r in sample:
+        v = variants[r["variant_id"]]
+        if r["variant_body"].strip() != v["body"].strip():
+            raise SystemExit(f"{r['variant_id']}: sample body differs from data/processed/variants_dev.jsonl")
+        if r["auto_outcome"] != v["status"]:
+            raise SystemExit(f"{r['variant_id']}: sample auto_outcome {r['auto_outcome']} differs from the current status {v['status']}")
+    dev_report = json.loads((REPORTS / "variants_dev_report.json").read_text(encoding="utf-8"))
+    if not PROVISIONAL.exists():
+        raise SystemExit(f"{PROVISIONAL.relative_to(ROOT)} missing: the committed calibration of the provisional run is required")
+    prov = json.loads(PROVISIONAL.read_text(encoding="utf-8"))
+    return sample, {c: dict(n) for c, n in population.items()}, dev_report["thresholds"], prov
 
 
 def selftest() -> int:
@@ -304,22 +323,25 @@ def selftest() -> int:
     ok &= abs(pabak(["a", "a", "a", "b"], ["a", "a", "a", "a"]) - 0.5) < 1e-9
     ok &= abs(fleiss_kappa([["a", "a", "a"], ["b", "b", "b"]], ("a", "b", "c")) - 1.0) < 1e-9
     ok &= abs(fleiss_kappa([["a", "b", "c"], ["a", "b", "c"]], ("a", "b", "c")) - (-0.5)) < 1e-9
-    # Fleiss (1971) worked example, Table 1 of the Wikipedia article: kappa = 0.210
+    # Fleiss (1971) worked example (Wikipedia, Table 1): kappa = 0.210
     fl = [[0, 0, 0, 0, 14], [0, 2, 6, 4, 2], [0, 0, 3, 5, 6], [0, 3, 9, 2, 0], [2, 2, 8, 1, 1], [7, 7, 0, 0, 0],
           [3, 2, 6, 3, 0], [2, 5, 3, 2, 2], [6, 5, 2, 1, 0], [0, 2, 2, 3, 7]]
     ok &= abs(fleiss_kappa([[str(j) for j, n in enumerate(row) for _ in range(n)] for row in fl], tuple("01234")) - 0.2099) < 5e-4
     lo, hi = wilson(1, 10)
     ok &= 0.0 < lo < 0.1 < hi < 0.5
     ok &= wilson(0, 20)[0] == 0.0 and wilson(0, 20)[1] < 0.17
-    pk = pick_threshold([0.9, 0.85, 0.8, 0.75, 0.95] * 20, GRID_COS)
-    ok &= pk["value"] == 0.75 and pk["target_met"] and not pk["at_grid_bound"]
-    pk = pick_threshold([0.5, 0.5, 0.9], GRID_COS)
-    ok &= pk["value"] == GRID_COS[0] and not pk["target_met"] and pk["at_grid_bound"]
+    ok &= majority(["a", "a", "b"]) == "a" and majority(["a", "b", "c"]) == "split"
     rows = [{"rating_A": "preserved", "rating_B": "preserved", "rating_C": "partly", "rating_majority": "preserved"},
             {"rating_A": "not", "rating_B": "not", "rating_C": "not", "rating_majority": "not"}]
     a = agreement(rows, "rating", LABELS, "rating_majority")
     ok &= a["pairwise"]["AB"]["percent_agreement"] == 1.0 and a["pairwise"]["AC"]["percent_agreement"] == 0.5
     ok &= a["n_unanimous"] == 1 and a["n_split"] == 0
+    obf = [{"condition": "obf_low", "readability_A": "0", "readability_B": "0", "readability_C": "1", "readability_majority": "0"}] + \
+          [{"condition": "obf_low", "readability_A": "1", "readability_B": "1", "readability_C": "2", "readability_majority": "1"}] * 4 + \
+          [{"condition": "obf_high", "readability_A": "2", "readability_B": "2", "readability_C": "2", "readability_majority": "2"}] * 3
+    rd = readability_stats(obf)
+    ok &= rd["per_condition"]["obf_low"]["flag_unreadable_above_10pct"] and not rd["per_condition"]["obf_high"]["flag_unreadable_above_10pct"]
+    ok &= rd["per_condition"]["obf_low"]["unreadable_word (majority 0)"]["k"] == 1
     print("selftest:", "PASS" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -330,6 +352,14 @@ def fmt_rate(d: dict) -> str:
     return f"{d['k']}/{d['n']} = {d['rate']:.1%}  CI95 [{d['ci95'][0]:.1%}, {d['ci95'][1]:.1%}]"
 
 
+def print_agreement(agree: dict) -> None:
+    for grp, a in agree.items():
+        pw = "  ".join(f"{p}: agree {s['percent_agreement']:.1%} kappa {s['cohen_kappa']:.3f} PABAK {s['pabak']:.3f}"
+                       for p, s in a["pairwise"].items())
+        print(f"{grp:12s} n={a['n']:3d}  unanimous {a['n_unanimous']:3d}  split {a['n_split']}  Fleiss {a['fleiss_kappa']:.3f}  |  {pw}")
+        print(f"{'':12s} per rater {a['per_rater']}  majority {a['majority']}")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--selftest", action="store_true")
@@ -337,80 +367,101 @@ def main() -> int:
     if args.selftest:
         return selftest()
 
-    sample, variants, population = load_inputs()
-    result = calibrate(sample, variants, population)
+    sample, population, thresholds, prov = load_inputs()
+    para = [r for r in sample if r["condition"].startswith("para")]
+    obf = [r for r in sample if r["condition"] in OBF_CONDITIONS]
+    frozen = {"thresholds": thresholds, "n_sample": len(sample), "n_paraphrase": len(para), "n_obfuscation": len(obf),
+              "n_split": sum(r["rating_majority"] == "split" for r in sample),
+              "rows_rerated_on_new_body": sorted(r["variant_id"] for r in sample if r["rating_A_prov"]),
+              "rows_appended": sorted(r["variant_id"] for r in sample if r["auto_outcome_prov"] and not r["rating_A_prov"]
+                                      and r["variant_id"] in PARA_CHANGED_IDS),
+              "rows_status_changed_body_unchanged": sorted(r["variant_id"] for r in sample if r["auto_outcome_prov"]
+                                                           and r["variant_id"] not in PARA_CHANGED_IDS),
+              "by_auto_outcome": dict(Counter((r["condition"], r["auto_outcome"]) for r in sample)),
+              "agreement": {"all": agreement(sample, "rating", LABELS, "rating_majority"),
+                            "paraphrase": agreement(para, "rating", LABELS, "rating_majority"),
+                            "obfuscation": agreement(obf, "rating", LABELS, "rating_majority")},
+              "per_condition": per_condition(sample),
+              "residual_error_accepted": {"paraphrase": residual(para, population), "obfuscation": residual(obf),
+                                          "all": residual(sample)},
+              "obfuscation_meaning_clean_vs_cp1256": obfuscation_rerating(obf),
+              "readability": readability_stats(obf)}
+    frozen["by_auto_outcome"] = {f"{c}/{o}": n for (c, o), n in sorted(frozen["by_auto_outcome"].items())}
+    result = {"human_label": "rating_majority (label given by at least two of three raters; 'split' rows excluded)",
+              "provisional_run": provisional_block(sample, prov), "frozen_run": frozen}
     write_json(REPORTS / "variants_calibration.json", result)
 
-    ch = result["chosen"]
-    print(f"sample: {result['n_sample']} rows ({result['n_paraphrase']} paraphrase, {result['n_obfuscation']} obfuscation); "
-          f"human label = majority of three raters; split rows: {result['n_split']}")
-    print("\n== inter-rater agreement (meaning) ==")
-    for grp, a in result["agreement"].items():
-        pw = "  ".join(f"{p}: agree {s['percent_agreement']:.1%} kappa {s['cohen_kappa']:.3f} PABAK {s['pabak']:.3f}"
-                       for p, s in a["pairwise"].items())
-        print(f"{grp:12s} n={a['n']:3d}  unanimous {a['n_unanimous']:3d}  Fleiss {a['fleiss_kappa']:.3f}  |  {pw}")
-        print(f"{'':12s} per rater {a['per_rater']}  majority {a['majority']}")
-    print("\n== thresholds ==")
-    print(f"preserved paraphrases (majority): {result['n_paraphrase_preserved']} / {result['n_paraphrase']}")
-    print(f"chosen: thr_cos {ch['thr_cos']}  thr_nli {ch['thr_nli']}  (joint pass rate of preserved {ch['joint_pass_rate_preserved']:.1%})")
-    for name in ("cos", "nli"):
-        p = ch[name]
-        note = []
-        if not p["target_met"]:
-            note.append("95% target NOT met at any grid value")
-        if p["at_grid_bound"]:
-            note.append(f"value is on the grid bound {p['grid']}")
-        print(f"  {name}: pass rate of preserved at chosen value {p['pass_rate']:.1%}" + (f"  <-- {'; '.join(note)}" if note else ""))
-    print(f"  caveat: {ch['caveat_nli']}")
-    print("\n== false rejection per automatic test (share labelled preserved among items the test alone rejected) ==")
+    p, f = result["provisional_run"], result["frozen_run"]
+    print("=" * 100)
+    print(f"PROVISIONAL RUN (cosine {p['thresholds']['thr_cos']}, NLI {p['thresholds']['thr_nli']}; n={p['n_sample']}) "
+          f"from {p['source']}  | consistency with *_prov columns: {p['consistency']}")
+    print("=" * 100)
+    ch = p["chosen"]
+    print(f"thresholds: thr_cos {ch['thr_cos']} (pass rate of preserved {ch['cos']['pass_rate']:.1%}, target met {ch['cos']['target_met']}), "
+          f"thr_nli {ch['thr_nli']} (grid bound: {ch['nli']['at_grid_bound']}; not adopted, see caveat)  "
+          f"preserved paraphrases {p['n_paraphrase_preserved']}")
+    print("false rejection per automatic test (share labelled preserved among items the test alone rejected):")
     for t in TESTS:
-        fr = result["false_rejection_by_test"][t]
+        fr = p["false_rejection_by_test"][t]
         fa = fr["first_attempt_alone"]
-        print(f"{t:9s} final exclusion: {fmt_rate(fr['final_alone']):42s} {fr['final_alone']['labels']}")
-        if fa is not None:
-            print(f"{'':9s} first attempt:   {fmt_rate(fa):42s} {fa['labels']}")
-    print(f"{'any':9s} final exclusion: {fmt_rate(result['false_rejection_by_test']['any_excluded'])}")
-    print("\n== cosine-only exclusions ==")
-    for d in result["cosine_only_exclusions"]:
-        print(f"{d['variant_id']:22s} cos {d['sim_cos']:.4f}  nli_min {d['nli_min']:.3f}  len {d['len_ratio']:.2f}  "
-              f"frac {d['achieved_fraction']:.2f}  A/B/C {d['rating_A']}/{d['rating_B']}/{d['rating_C']}  -> {d['human_label']}"
-              + (f"  {d['notes']}" if d["notes"] else ""))
-    print("\n== residual error among accepted items (pass + regenerated) ==")
-    for grp, s in result["residual_error_accepted"].items():
+        print(f"  {t:9s} final exclusion: {fmt_rate(fr['final_alone']):42s}" + (f" first attempt: {fmt_rate(fa)}" if fa else ""))
+    print(f"  {'any':9s} final exclusion: {fmt_rate(p['false_rejection_by_test']['any_excluded'])}")
+    print("cosine-only exclusions:")
+    for d in p["cosine_only_exclusions"]:
+        print(f"  {d['variant_id']:22s} cos {d['sim_cos']:.4f}  nli_min {d['nli_min']:.3f}  A/B/C {d['rating_A']}/{d['rating_B']}/{d['rating_C']} -> {d['human_label']}")
+    r = p["residual_error_accepted"]["paraphrase"]["not_preserved"]
+    print(f"residual error among accepted paraphrases (provisional bodies): {fmt_rate(r)}")
+
+    print("\n" + "=" * 100)
+    print(f"FROZEN RUN (cosine {f['thresholds']['thr_cos']}, NLI {f['thresholds']['thr_nli']}; n={f['n_sample']}: "
+          f"{f['n_paraphrase']} paraphrase, {f['n_obfuscation']} obfuscation; split {f['n_split']})")
+    print("=" * 100)
+    print(f"re-rated on new body: {f['rows_rerated_on_new_body']}\nappended: {f['rows_appended']}\n"
+          f"status changed, body unchanged: {f['rows_status_changed_body_unchanged']}\nby outcome: {f['by_auto_outcome']}")
+    print("\n== inter-rater agreement (meaning, current ratings) ==")
+    print_agreement(f["agreement"])
+    print("\n== residual error among accepted items (pass + regenerated under the frozen thresholds) ==")
+    for grp, s in f["residual_error_accepted"].items():
         print(f"{grp:12s} not preserved {fmt_rate(s['not_preserved']):42s} strictly not {fmt_rate(s['not'])}")
-        print(f"{'':12s} by outcome {s['by_auto_outcome']}")
-    pw = result["residual_error_accepted"]["paraphrase"]["not_preserved_population_weighted"]
-    print(f"{'':12s} paraphrase, reweighted to population (pass/regenerated counts {pw['weights']}): "
-          f"{pw['rate']:.1%}" if pw["rate"] is not None else "")
+        print(f"{'':12s} by outcome {s['by_auto_outcome']}  ids {s['not_preserved_ids']}")
+    popw = f["residual_error_accepted"]["paraphrase"]["not_preserved_population_weighted"]
+    print(f"{'':12s} paraphrase reweighted to population {popw['weights']}: {popw['rate']:.1%}")
     print("\n== per condition (majority label) ==")
-    for c, s in result["per_condition"].items():
+    for c, s in f["per_condition"].items():
         flag = "  <-- review whole condition" if s["review_whole_condition"] else ""
         print(f"{c:10s} n={s['n']:3d}  not: {fmt_rate(s['not']):40s} not preserved: {fmt_rate(s['not_preserved'])}{flag}")
-    print(f"\n== readability (obfuscated rows) == {result['readability']['status']}")
-    if result["readability"]["status"] == "rated":
-        a = result["readability"]["agreement"]
+    o = f["obfuscation_meaning_clean_vs_cp1256"]
+    print(f"\n== obfuscated rows, meaning from clean text vs first round == changed per rater {o['changed_per_rater']}; "
+          f"majority clean {o['majority_clean']} vs cp1256 {o['majority_cp1256']}")
+    rd = f["readability"]
+    print(f"\n== readability (obfuscated rows) == {rd['status']}")
+    if rd["status"] == "rated":
+        a = rd["agreement"]
         pw = "  ".join(f"{p}: agree {s['percent_agreement']:.1%} kappa {s['cohen_kappa']:.3f} PABAK {s['pabak']:.3f}"
                        for p, s in a["pairwise"].items())
-        print(f"{'':12s} n={a['n']}  Fleiss {a['fleiss_kappa']:.3f}  |  {pw}")
-        for c, s in result["readability"]["per_condition"].items():
-            print(f"{c:10s} majority {s['majority']}  unreadable word {fmt_rate(s['unreadable_word (0)'])}  "
-                  f"odd or worse {fmt_rate(s['odd_or_worse (1 or 0)'])}")
-    print("\n--- paste into configs/variants.yaml (thresholds:) ---")
-    print(f"  thr_cos: {ch['thr_cos']}\n  thr_nli: {ch['thr_nli']}")
+        print(f"{'':10s} n={a['n']}  unanimous {a['n_unanimous']}  split {a['n_split']}  Fleiss {a['fleiss_kappa']:.3f}  |  {pw}")
+        for c, s in rd["per_condition"].items():
+            flag = "  <-- majority 0 above 10 %" if s["flag_unreadable_above_10pct"] else ""
+            print(f"{c:10s} n={s['n']}  majority 2/1/0 = {s['majority']['2']}/{s['majority']['1']}/{s['majority']['0']}  "
+                  f"per rater {s['per_rater']}")
+            print(f"{'':10s} unreadable word {fmt_rate(s['unreadable_word (majority 0)'])}   "
+                  f"odd or worse {fmt_rate(s['odd_or_worse (majority 1 or 0)'])}{flag}")
+
     print("\n--- lines for docs/CHANGES_FOR_THESIS.md ---")
-    print(f"- Section 3.2.3 thresholds calibrated on dev: cosine >= {ch['thr_cos']}, NLI entailment >= {ch['thr_nli']} "
-          f"(human label = majority of three raters).")
-    a = result["agreement"]["all"]
-    print(f"- Section 3.2.3 inter-rater agreement (n={a['n']}): Fleiss' kappa {a['fleiss_kappa']}; pairwise percent agreement "
-          + ", ".join(f"{p} {s['percent_agreement']:.1%}" for p, s in a["pairwise"].items())
+    a = f["agreement"]["all"]
+    print(f"- Section 3.2.3 inter-rater agreement on the final sample (n={a['n']}): Fleiss' kappa {a['fleiss_kappa']}; pairwise "
+          "percent agreement " + ", ".join(f"{p} {s['percent_agreement']:.1%}" for p, s in a["pairwise"].items())
           + "; PABAK " + ", ".join(f"{p} {s['pabak']:.2f}" for p, s in a["pairwise"].items()) + ".")
-    for c, s in result["per_condition"].items():
+    r = f["residual_error_accepted"]["paraphrase"]["not_preserved"]
+    print(f"- Residual error among paraphrases accepted under the frozen thresholds: {r['k']}/{r['n']} not fully preserved "
+          f"({r['rate']:.1%}, 95% CI {r['ci95'][0]:.1%}-{r['ci95'][1]:.1%}); population-weighted {popw['rate']:.1%}.")
+    for c, s in f["per_condition"].items():
         print(f"- {c}: manual-sample failure rate {s['not']['rate']:.1%} (95% CI {s['not']['ci95'][0]:.1%}-{s['not']['ci95'][1]:.1%}, n={s['n']}).")
-    r = result["residual_error_accepted"]["paraphrase"]["not_preserved"]
-    print(f"- Residual error among accepted paraphrases: {r['k']}/{r['n']} not fully preserved "
-          f"(95% CI {r['ci95'][0]:.1%}-{r['ci95'][1]:.1%}).")
+    if rd["status"] == "rated":
+        for c, s in rd["per_condition"].items():
+            print(f"- {c} readability (majority 2/1/0): {s['majority']['2']}/{s['majority']['1']}/{s['majority']['0']} of {s['n']}; "
+                  f"unreadable word {fmt_rate(s['unreadable_word (majority 0)'])}.")
     print(f"\nwritten to {(REPORTS / 'variants_calibration.json').relative_to(ROOT)}")
-    print("NOTE: rerun scripts/05_derive_variants.py after updating the thresholds so statuses reflect them.")
     return 0
 
 
