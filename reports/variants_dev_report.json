@@ -43,7 +43,7 @@
     "entailment_label_index": 1
   },
   "thresholds": {
-    "thr_cos": 0.8,
+    "thr_cos": 0.68,
     "thr_nli": 0.7,
     "len_ratio_min": 0.7,
     "len_ratio_max": 1.4
@@ -60,24 +60,14 @@
       "rate": 0.5,
       "produced": 100,
       "status": {
-        "pass": 79,
-        "regenerated": 19,
-        "excluded": 2
+        "pass": 81,
+        "regenerated": 19
       },
       "min_achieved_fraction": 0.4,
-      "excluded_failed_tests": {
-        "eph:12308#para_low": [
-          "cosine"
-        ],
-        "eph:14228#para_low": [
-          "cosine"
-        ]
-      },
-      "exclusion_combos": {
-        "cosine": 2
-      },
+      "excluded_failed_tests": {},
+      "exclusion_combos": {},
       "exclusions_involving": {
-        "cosine": 2,
+        "cosine": 0,
         "length": 0,
         "spans": 0,
         "fraction": 0
@@ -85,7 +75,7 @@
       "failures": {
         "attempt_0": {
           "variants_checked": 100,
-          "sim_ok": 3,
+          "sim_ok": 1,
           "len_ok": 0,
           "spans_ok": 2,
           "sentences_checked": 275,
@@ -93,11 +83,11 @@
           "sentences_failed_spans": 2
         },
         "attempt_1": {
-          "variants_checked": 21,
-          "sim_ok": 2,
+          "variants_checked": 19,
+          "sim_ok": 0,
           "len_ok": 0,
           "spans_ok": 0,
-          "sentences_checked": 27,
+          "sentences_checked": 22,
           "sentences_failed_nli": 6,
           "sentences_failed_spans": 2
         }
@@ -120,7 +110,7 @@
         "min": 0.0,
         "median": 0.0,
         "max": 3.0,
-        "total": 27.0
+        "total": 22.0
       },
       "n_reverted": {
         "min": 0.0,
@@ -130,7 +120,7 @@
       },
       "sim_cos": {
         "min": 0.6858,
-        "p5": 0.8433,
+        "p5": 0.8375,
         "median": 0.9559
       },
       "nli_min": {
@@ -168,15 +158,12 @@
       "rate": 1.0,
       "produced": 100,
       "status": {
-        "pass": 70,
-        "regenerated": 24,
-        "excluded": 6
+        "pass": 76,
+        "regenerated": 20,
+        "excluded": 4
       },
       "min_achieved_fraction": 0.8,
       "excluded_failed_tests": {
-        "eph:12308#para_high": [
-          "cosine"
-        ],
         "eph:12656#para_high": [
           "fraction"
         ],
@@ -186,19 +173,16 @@
         "eph:14228#para_high": [
           "cosine"
         ],
-        "eph:1823#para_high": [
-          "cosine"
-        ],
         "eph:5004#para_high": [
           "fraction"
         ]
       },
       "exclusion_combos": {
-        "cosine": 3,
+        "cosine": 1,
         "fraction": 3
       },
       "exclusions_involving": {
-        "cosine": 3,
+        "cosine": 1,
         "length": 0,
         "spans": 0,
         "fraction": 3
@@ -206,7 +190,7 @@
       "failures": {
         "attempt_0": {
           "variants_checked": 100,
-          "sim_ok": 8,
+          "sim_ok": 1,
           "len_ok": 0,
           "spans_ok": 2,
           "sentences_checked": 498,
@@ -214,11 +198,11 @@
           "sentences_failed_spans": 2
         },
         "attempt_1": {
-          "variants_checked": 30,
-          "sim_ok": 3,
+          "variants_checked": 24,
+          "sim_ok": 1,
           "len_ok": 0,
           "spans_ok": 0,
-          "sentences_checked": 57,
+          "sentences_checked": 32,
           "sentences_failed_nli": 10,
           "sentences_failed_spans": 2
         }
@@ -241,7 +225,7 @@
         "min": 0.0,
         "median": 0.0,
         "max": 5.0,
-        "total": 57.0
+        "total": 32.0
       },
       "n_reverted": {
         "min": 0.0,
@@ -251,18 +235,18 @@
       },
       "sim_cos": {
         "min": 0.6248,
-        "p5": 0.8243,
+        "p5": 0.789,
         "median": 0.9234
       },
       "nli_min": {
-        "min": 0.7518,
-        "p5": 0.9644,
+        "min": 0.7366,
+        "p5": 0.9453,
         "median": 0.9946
       },
       "len_ratio": {
-        "min": 0.9545,
-        "median": 1.0835,
-        "max": 1.3415
+        "min": 0.9492,
+        "median": 1.0857,
+        "max": 1.3239
       },
       "n_segments": {
         "min": 6.0,
@@ -361,27 +345,20 @@
   },
   "manual_sample": {
     "file": "reports/manual_review_sample_dev.csv",
-    "rows": 57,
-    "config": {
-      "fraction": 0.1,
-      "add_all_excluded": true,
-      "add_regenerated": 10
-    },
-    "per_condition": {
-      "para_low": 16,
-      "para_high": 21,
-      "obf_low": 10,
-      "obf_high": 10
-    },
-    "per_origin": {
-      "stratified": 40,
-      "regenerated_sample": 10,
-      "all_excluded": 7
-    },
-    "per_auto_outcome": {
-      "regenerated": 18,
-      "excluded": 8,
-      "pass": 31
+    "kept_existing_rated_sample": true,
+    "rows_rated": 57,
+    "would_pick_now": {
+      "rows": 54,
+      "per_origin": {
+        "stratified": 40,
+        "regenerated_sample": 10,
+        "all_excluded": 4
+      },
+      "per_auto_outcome": {
+        "regenerated": 17,
+        "pass": 33,
+        "excluded": 4
+      }
     }
   },
   "config": {
@@ -428,7 +405,7 @@
       }
     },
     "thresholds": {
-      "thr_cos": 0.8,
+      "thr_cos": 0.68,
       "thr_nli": 0.7,
       "len_ratio_min": 0.7,
       "len_ratio_max": 1.4

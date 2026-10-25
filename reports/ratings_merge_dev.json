@@ -188,11 +188,46 @@
     "split": []
   },
   "readability": {
-    "status": "pending (run with --readability once reports/readability_dev.xlsx is rated)"
+    "status": "pending (run with --readability once reports/readability_dev.xlsx is rated)",
+    "sheet_written": {
+      "file": "reports/readability_dev.xlsx",
+      "sheets": [
+        "Instructions",
+        "A",
+        "B",
+        "C"
+      ],
+      "rows_per_sheet": 20,
+      "conditions": {
+        "obf_low": 10,
+        "obf_high": 10
+      },
+      "columns": [
+        "row",
+        "variant_id",
+        "condition",
+        "original_body",
+        "variant_body",
+        "readability",
+        "meaning"
+      ],
+      "scale": {
+        "readability": {
+          "2": "reads normally",
+          "1": "noticeably odd but every word readable",
+          "0": "at least one word unrecognisable"
+        },
+        "meaning": [
+          "preserved",
+          "partly",
+          "not"
+        ]
+      }
+    }
   },
   "csv": {
     "file": "reports/manual_review_sample_dev.csv",
-    "bytes": 61406,
+    "bytes": 62498,
     "utf8_strict": true,
     "has_bom": false,
     "mojibake_markers": {

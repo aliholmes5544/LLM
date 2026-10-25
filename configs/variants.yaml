@@ -31,9 +31,12 @@ conditions:
   obf_low:   {family: obfuscation, rate: 0.1}   # share of eligible tokens perturbed
   obf_high:  {family: obfuscation, rate: 0.3}
 
-thresholds:                         # provisional; calibrated values are written by 05b
-  thr_cos: 0.80
-  thr_nli: 0.70
+thresholds:                         # frozen 2026-10-25 after the dev calibration (scripts/05b_calibrate_variants.py)
+  thr_cos: 0.68                     # calibrated: highest grid value at which >= 95 % of the paraphrases labelled
+                                    #   "preserved" by the three-rater majority pass (reports/variants_calibration.json)
+  thr_nli: 0.70                     # pre-specified, not calibrated: the sentence-level fallback reverts every
+                                    #   sentence below this value, so the rated bodies carry no NLI scores under it
+                                    #   and the sample cannot support a lower threshold
   len_ratio_min: 0.70
   len_ratio_max: 1.40
 

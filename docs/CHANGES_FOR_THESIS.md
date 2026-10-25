@@ -61,3 +61,88 @@
   (pass / regenerated / excluded) and failed_tests; 05b reports the false-rejection rate (share of
   "preserved" ratings among automatically excluded variants) with a Wilson 95 % CI, and the
   raters' verdicts per failed-test combination.
+
+## Step 05 calibration on the rated development sample (2026-10-25; thresholds frozen)
+Three raters (A, B, C) rated the 57-variant sample for meaning (preserved / partly / not). The
+human label is the majority label (given by at least two raters; no row was split). Statistics
+from scripts/05b_calibrate_variants.py, written to reports/variants_calibration.json.
+- Section 3.2.3 thresholds calibrated on dev: cosine >= 0.68, NLI entailment >= 0.70 (human
+  label = majority of three raters). thr_cos = 0.68 is the highest grid value at which at least
+  95 % of the 35 paraphrases labelled "preserved" pass (97.1 % pass at 0.68; the 95 % target is
+  not reached anywhere at or above 0.70, so the grid was extended down to 0.60). thr_nli stays at
+  the pre-specified 0.70 and is **not calibrated**: the sentence-level fallback reverts every
+  sentence below 0.70, so the rated bodies carry no NLI score under it and the sample cannot
+  support a lower value (the mechanical rule returns 0.90, the top of the grid, with 97.1 % pass;
+  this value is reported but not adopted).
+- Section 3.2.3 inter-rater agreement (n = 57): Fleiss' kappa 0.137; pairwise percent agreement
+  AB 86.0 %, AC 93.0 %, BC 89.5 %; PABAK AB 0.72, AC 0.86, BC 0.79. Cohen's kappa is near zero
+  (AB -0.03, AC 0.47, BC -0.03) because 55 of 57 majority labels are "preserved"; PABAK (2 p_o - 1)
+  is the prevalence-adjusted figure to report alongside it.
+
+  | group | n | unanimous | Fleiss kappa | pair | % agreement | Cohen kappa | PABAK |
+  |---|---|---|---|---|---|---|---|
+  | all | 57 | 48 | 0.137 | AB / AC / BC | 86.0 / 93.0 / 89.5 | -0.03 / 0.47 / -0.03 | 0.72 / 0.86 / 0.79 |
+  | paraphrase | 37 | 28 | 0.111 | AB / AC / BC | 78.4 / 89.2 / 83.8 | -0.05 / 0.44 / -0.04 | 0.57 / 0.78 / 0.68 |
+  | obfuscation | 20 | 20 | 1.000 | all | 100 | 1.00 | 1.00 |
+
+  Per rater: A preserved 52 / partly 5; B preserved 54 / not 3; C preserved 54 / partly 3.
+- Rater B's three "not" ratings (eph:14738#para_low, eph:13635#para_high, eph:14893#para_high, all
+  noted "link missing") are each outvoted by the other two raters. Decision: rater B is retained
+  and the disagreement is resolved by majority labelling rather than by excluding the rater; the
+  three rows are labelled "preserved".
+- Section 3.2.3 false rejection by automatic test (share labelled "preserved" among the variants
+  that test alone excluded): cosine 4/5 = 80 % (95 % CI 37.5-96.4 %); achieved fraction 3/3 =
+  100 % (43.9-100 %); length, protected spans and NLI excluded no variant on their own (NLI only
+  triggers the sentence-level retry; 15 of the 16 variants it alone flagged at the first attempt
+  were rated "preserved" after the retry). Any exclusion: 7/8 = 87.5 % (52.9-97.8 %).
+- Cosine-only exclusions under the provisional 0.80, with cosine value and human label:
+  eph:14228#para_high 0.625 preserved; eph:14228#para_low 0.686 preserved; eph:12308#para_high
+  0.731 partly (A: "credentials confused", C: "login wording muddled"); eph:12308#para_low 0.752
+  preserved; eph:1823#para_high 0.794 preserved. All five have NLI minimum >= 0.99 and length
+  ratio 1.00-1.09.
+- Residual error among accepted paraphrases (auto_outcome pass or regenerated, n = 29): 1/29 =
+  3.4 % not fully preserved (rated "partly"; Wilson 95 % CI 0.6-17.2 %); strictly "not" 0/29
+  (0-11.7 %). Reweighted to the population counts of pass / regenerated variants the point
+  estimate is 1.2 %. Among the 20 accepted obfuscated variants 0/20 (0-16.1 %).
+- Manual-sample failure rate (majority "not") per condition: para_low 0/16 (95 % CI 0-19.4 %),
+  para_high 0/21 (0-15.5 %), obf_low 0/10 (0-27.8 %), obf_high 0/10 (0-27.8 %); no condition
+  exceeds the 5 % review trigger. "Not fully preserved" (partly or not): para_high 2/21 = 9.5 %
+  (2.6-28.9 %), all others 0.
+- Display issue in the first rating round: the raters opened the UTF-8 CSV in Excel, which decoded
+  it in the system code page Windows-1256 (Arabic). 29 of the 57 rows were shown with garbled
+  characters (all 20 obfuscated rows, whose Cyrillic homoglyphs and zero-width spaces appeared as
+  Arabic letters, plus 3 para_low and 6 para_high rows containing a curly apostrophe or an umlaut).
+  scripts/05a_merge_ratings.py repairs the workbook text (every repaired cell equals the CSV text)
+  and records the affected rows in reports/ratings_merge_dev.json. Consequence: the meaning ratings
+  of the 20 obfuscated rows were made on mis-rendered text and are re-rated, together with
+  readability (2 / 1 / 0), from reports/readability_dev.xlsx, which openpyxl writes as true
+  Unicode; the first-round values are kept in rating_A/B/C_cp1256. The nine paraphrase rows are
+  not re-rated (the garbling there was confined to one or two punctuation characters).
+- Readability of the obfuscated variants: pending (rated from the clean sheet; merged by
+  scripts/05a_merge_ratings.py --readability; statistics in 05b once rated).
+
+## Step 05 dev re-run with the frozen thresholds (2026-10-25; cosine 0.68, NLI 0.70)
+- Section 3.2.3, dev results with the frozen thresholds (same seed, same cached generations;
+  obfuscated variants byte-identical to the previous run, integrity 100/100): para_low 81 pass /
+  19 regenerated / 0 excluded (was 79 / 19 / 2); para_high 76 / 20 / 4 (was 70 / 24 / 6).
+  Exclusions now: para_high eph:14228 (cosine 0.625, the only cosine exclusion) and eph:12656,
+  eph:13635, eph:5004 (achieved fraction below 0.80). Variant-level cosine failures at the first
+  attempt fell from 3 to 1 (para_low) and 8 to 1 (para_high); retried sentences from 27 to 22 and
+  57 to 32; reverted sentences unchanged (7 and 11). Final-body cosine: para_low min 0.686, 5th
+  percentile 0.838, median 0.956; para_high min 0.625, 5th percentile 0.789, median 0.923.
+- Four of the five former cosine-only exclusions are recovered (one more than the three expected
+  from the calibration print-out, because eph:14228#para_low at 0.686 clears 0.68): eph:12308
+  para_low and para_high now pass, eph:14228#para_low and eph:1823#para_high are regenerated.
+  eph:14228#para_high (0.625) stays excluded.
+- Ten variants changed status (6 regenerated -> pass, 2 excluded -> pass, 2 excluded ->
+  regenerated). Eight of them changed body as well: under 0.80 their first attempt failed only
+  the cosine test and was regenerated, whereas under 0.68 the first attempt is kept. Five of the
+  eight are in the rated sample (eph:12308 para_low and para_high, eph:16367#para_low,
+  eph:11434#para_high, eph:4123#para_high): their rated body (reports/manual_review_sample_dev.csv)
+  is the former attempt-1 body, not the body now in data/processed/variants_dev.jsonl. In
+  particular eph:12308#para_high, whose rated attempt-1 body (cosine 0.731) was labelled "partly",
+  is now accepted with its unrated attempt-0 body (cosine 0.707). The sample CSV and
+  reports/variants_calibration.json are kept as records of the provisional run (cosine 0.80) on
+  which the thresholds were chosen; scripts/05_derive_variants.py no longer rewrites a sample that
+  carries ratings and reports instead what a fresh draw would select (54 rows: 40 stratified +
+  4 excluded + 10 regenerated).

@@ -369,6 +369,14 @@ def write_manual_sample(rows: list, by_id: dict, conds: dict, path: Path) -> dic
         picked.append(v); origin[v] = "regenerated_sample"
     order = {c: i for i, c in enumerate(VCFG["conditions"])}
     picked = sorted(set(picked), key=lambda v: (order[by_vid[v]["condition"]], v))
+    if path.exists():                    # never overwrite a sample that already carries ratings (frozen after rating)
+        with open_utf8(path) as fh:
+            rated = sum(any(v.strip() for k, v in row.items() if k.startswith("rating_")) for row in csv.DictReader(fh))
+        if rated:
+            print(f"manual sample kept: {path.relative_to(ROOT)} already holds {rated} rated rows (not rewritten)")
+            return {"file": str(path.relative_to(ROOT)), "kept_existing_rated_sample": True, "rows_rated": rated,
+                    "would_pick_now": {"rows": len(picked), "per_origin": dict(Counter(origin[v] for v in picked)),
+                                       "per_auto_outcome": dict(Counter(by_vid[v]["status"] for v in picked))}}
     with open_utf8(path, "w") as fh:
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(["variant_id", "condition", "auto_outcome", "failed_tests", "original_body", "variant_body",
@@ -460,7 +468,10 @@ def main() -> int:
                 "cache": cache_stats})
 
     print(f"\nvariants -> {(PROC / 'variants_dev.jsonl').relative_to(ROOT)}  ({len(rows)} rows)")
-    print(f"manual sample -> {sample['file']}  ({sample['rows']} rows: {sample['per_origin']})")
+    if sample.get("kept_existing_rated_sample"):
+        print(f"manual sample -> {sample['file']}  (kept: {sample['rows_rated']} rated rows; a fresh draw would give {sample['would_pick_now']})")
+    else:
+        print(f"manual sample -> {sample['file']}  ({sample['rows']} rows: {sample['per_origin']})")
     print(f"report -> reports/variants_dev_report.json   runtime {timings['total']} s")
     return 0
 

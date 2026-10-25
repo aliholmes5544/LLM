@@ -13,8 +13,13 @@ used, plus free-text notes. This script
     never mojibaked; the repaired workbook text is checked against them);
   * adds rating_majority: the label given by at least two raters, or "split" when all three differ;
   * --make-readability-sheet writes reports/readability_dev.xlsx: one sheet per rater holding only
-    the obfuscated rows (obf_low, obf_high) with a 2 / 1 / 0 drop-down, plus an instructions sheet;
-  * --readability merges that workbook back as readability_A/B/C and readability_majority.
+    the obfuscated rows (obf_low, obf_high) with a readability drop-down (2 / 1 / 0) and a meaning
+    drop-down (preserved / partly / not), plus an instructions sheet. The obfuscated rows are
+    re-rated for meaning from this sheet because Excel showed the raters the first-round CSV in
+    Windows-1256, which turned the Cyrillic homoglyphs into Arabic letters;
+  * --readability merges that workbook back: readability_A/B/C and readability_majority, and for the
+    obfuscated rows the new meaning ratings overwrite rating_A/B/C (and rating_majority) while the
+    first-round values stay in rating_A/B/C_cp1256 for the record.
 
 The CSV is re-read after writing and verified to be strict UTF-8 without mojibake markers.
 Report: reports/ratings_merge_dev.json.
@@ -40,20 +45,29 @@ OBF_CONDITIONS = ("obf_low", "obf_high")
 MOJIBAKE_MARKERS = ("â€", "Ã", "Â", "Ð", "Ñ", "أ", "ذ", "ر")
 COLUMNS = ["variant_id", "condition", "auto_outcome", "failed_tests", "original_body", "variant_body",
            "rating_A", "rating_B", "rating_C", "rating_majority",
+           "rating_A_cp1256", "rating_B_cp1256", "rating_C_cp1256",
            "readability_A", "readability_B", "readability_C", "readability_majority",
            "notes_A", "notes_B", "notes_C"]
 READABILITY_INSTRUCTIONS = [
-    ("Readability rating of obfuscated variants (Section 3.2.3)", True),
+    ("Readability and meaning rating of obfuscated variants (Section 3.2.3)", True),
     ("", False),
     ("Each sheet A, B, C is for one rater. Rate only your own sheet. The 20 rows are the obfuscated "
      "variants (obf_low, obf_high) of the development sample; original_body is the untouched email, "
-     "variant_body the obfuscated one. Read variant_body as a recipient would, without the original.", False),
+     "variant_body the obfuscated one. This workbook shows the text exactly as stored (the first-round "
+     "file was displayed by Excel in the wrong code page, so these rows are rated again here).", False),
     ("", False),
-    ("Choose one value in the readability column (drop-down):", True),
+    ("Step 1, readability: read variant_body as a recipient would, without the original, and choose one "
+     "value in the readability column (drop-down):", True),
     ("2 = reads normally: nothing stands out, every word is read without effort.", False),
     ("1 = noticeably odd but every word readable: spelling, spacing or characters look wrong in places, "
      "yet every word can still be recognised.", False),
     ("0 = at least one word unrecognisable: at least one word cannot be read at all.", False),
+    ("", False),
+    ("Step 2, meaning: compare variant_body with original_body and choose one value in the meaning column "
+     "(drop-down), using the same scale as in the first round:", True),
+    ("preserved = the variant conveys the same information and the same request as the original.", False),
+    ("partly = some information is changed, lost or added, but the main request is still the same.", False),
+    ("not = the main request or a key fact (who, what, when, how much, where to act) is changed or missing.", False),
     ("", False),
     ("Do not edit any other column. Do not correct the text. Save the workbook under the same name.", False),
 ]
@@ -188,15 +202,19 @@ def load_readability_workbook(sample: list) -> tuple:
         got = [r["variant_id"] for r in rows]
         if sorted(got) != sorted(obf_ids):
             raise SystemExit(f"readability sheet {rater}: variant_ids differ from the obfuscated sample rows")
-        unrated = [r["variant_id"] for r in rows if r.get("readability", "") == ""]
+        unrated = [r["variant_id"] for r in rows if r.get("readability", "") == "" or r.get("meaning", "") == ""]
         if unrated:
-            raise SystemExit(f"readability sheet {rater}: {len(unrated)} rows not rated yet, e.g. {unrated[:3]}")
+            raise SystemExit(f"readability sheet {rater}: {len(unrated)} rows missing readability or meaning, e.g. {unrated[:3]}")
         bad = [(r["variant_id"], r["readability"]) for r in rows if r["readability"] not in READABILITY_LABELS]
         if bad:
-            raise SystemExit(f"readability sheet {rater}: values must be one of {READABILITY_LABELS}; offending: {bad[:5]}")
-        scores[rater] = {r["variant_id"]: r["readability"] for r in rows}
+            raise SystemExit(f"readability sheet {rater}: readability must be one of {READABILITY_LABELS}; offending: {bad[:5]}")
+        bad = [(r["variant_id"], r["meaning"]) for r in rows if r["meaning"].lower() not in MEANING_LABELS]
+        if bad:
+            raise SystemExit(f"readability sheet {rater}: meaning must be one of {MEANING_LABELS}; offending: {bad[:5]}")
+        scores[rater] = {r["variant_id"]: {"readability": r["readability"], "meaning": r["meaning"].lower()} for r in rows}
         report[rater] = {"rows": len(rows), "cells_mojibake_repaired": fixed,
-                         "labels": dict(Counter(scores[rater].values()))}
+                         "readability": dict(Counter(v["readability"] for v in scores[rater].values())),
+                         "meaning": dict(Counter(v["meaning"] for v in scores[rater].values()))}
     wb.close()
     return scores, report
 
@@ -211,8 +229,8 @@ def make_readability_sheet(sample: list, force: bool) -> dict:
     if READABILITY_XLSX.exists() and not force:
         raise SystemExit(f"{READABILITY_XLSX.relative_to(ROOT)} exists; use --force to overwrite it")
     obf = [r for r in sample if r["condition"] in OBF_CONDITIONS]
-    header = ["row", "variant_id", "condition", "original_body", "variant_body", "readability"]
-    widths = {"A": 6, "B": 24, "C": 11, "D": 70, "E": 70, "F": 13}
+    header = ["row", "variant_id", "condition", "original_body", "variant_body", "readability", "meaning"]
+    widths = {"A": 6, "B": 24, "C": 11, "D": 70, "E": 70, "F": 13, "G": 13}
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Instructions"
@@ -227,7 +245,7 @@ def make_readability_sheet(sample: list, force: bool) -> dict:
         for c in ws[1]:
             c.font = Font(bold=True)
         for n, r in enumerate(obf, start=1):
-            ws.append([n, r["variant_id"], r["condition"], r["original_body"], r["variant_body"], None])
+            ws.append([n, r["variant_id"], r["condition"], r["original_body"], r["variant_body"], None, None])
         for col, w in widths.items():
             ws.column_dimensions[col].width = w
         for row in ws.iter_rows(min_row=2, max_row=len(obf) + 1):
@@ -237,12 +255,17 @@ def make_readability_sheet(sample: list, force: bool) -> dict:
                             errorTitle="readability", error="Enter 2, 1 or 0 (see the Instructions sheet)")
         ws.add_data_validation(dv)
         dv.add(f"F2:F{len(obf) + 1}")
+        dv2 = DataValidation(type="list", formula1='"preserved,partly,not"', allow_blank=True, showErrorMessage=True,
+                             errorTitle="meaning", error="Enter preserved, partly or not (see the Instructions sheet)")
+        ws.add_data_validation(dv2)
+        dv2.add(f"G2:G{len(obf) + 1}")
         ws.freeze_panes = "A2"
     wb.save(READABILITY_XLSX)
     return {"file": str(READABILITY_XLSX.relative_to(ROOT)), "sheets": ["Instructions", *RATERS],
             "rows_per_sheet": len(obf), "conditions": dict(Counter(r["condition"] for r in obf)),
-            "columns": header, "scale": {"2": "reads normally", "1": "noticeably odd but every word readable",
-                                         "0": "at least one word unrecognisable"}}
+            "columns": header, "scale": {"readability": {"2": "reads normally", "1": "noticeably odd but every word readable",
+                                                         "0": "at least one word unrecognisable"},
+                                         "meaning": list(MEANING_LABELS)}}
 
 
 # ---- CSV ------------------------------------------------------------------------------
@@ -286,6 +309,8 @@ def main() -> int:
         r["rating_majority"] = majority([r[f"rating_{x}"] for x in RATERS])
         obf = r["condition"] in OBF_CONDITIONS
         for rater in RATERS:
+            # first-round meaning rating of the obfuscated rows, made on text Excel showed in cp1256
+            r[f"rating_{rater}_cp1256"] = ratings[rater][vid] if obf else "n/a"
             if not obf:
                 r[f"readability_{rater}"] = "n/a"
             elif r[f"readability_{rater}"] == "n/a":
@@ -300,15 +325,28 @@ def main() -> int:
 
     if args.readability:
         scores, report["readability"]["sheets"] = load_readability_workbook(sample)
+        changed = Counter()
         for r in sample:
             if r["condition"] in OBF_CONDITIONS:
                 for rater in RATERS:
-                    r[f"readability_{rater}"] = scores[rater][r["variant_id"]]
+                    s = scores[rater][r["variant_id"]]
+                    r[f"readability_{rater}"] = s["readability"]
+                    r[f"rating_{rater}"] = s["meaning"]            # clean-text re-rating replaces the cp1256 one
+                    changed[rater] += s["meaning"] != r[f"rating_{rater}_cp1256"]
                 r["readability_majority"] = majority([r[f"readability_{x}"] for x in RATERS])
+                r["rating_majority"] = majority([r[f"rating_{x}"] for x in RATERS])
         obf_rows = [r for r in sample if r["condition"] in OBF_CONDITIONS]
         report["readability"]["majority"] = dict(Counter(r["readability_majority"] for r in obf_rows))
         report["readability"]["majority_by_condition"] = {
             c: dict(Counter(r["readability_majority"] for r in obf_rows if r["condition"] == c)) for c in OBF_CONDITIONS}
+        report["readability"]["meaning_rerated"] = {
+            "rows": len(obf_rows), "ratings_changed_vs_cp1256": dict(changed),
+            "majority": dict(Counter(r["rating_majority"] for r in obf_rows)),
+            "majority_cp1256": dict(Counter(majority([r[f"rating_{x}_cp1256"] for x in RATERS]) for r in obf_rows))}
+        report["meaning"]["majority"] = dict(Counter(r["rating_majority"] for r in sample))
+        report["meaning"]["majority_by_condition"] = {
+            c: dict(Counter(r["rating_majority"] for r in sample if r["condition"] == c))
+            for c in sorted({r["condition"] for r in sample})}
     else:
         report["readability"]["status"] = "pending (run with --readability once reports/readability_dev.xlsx is rated)"
 
@@ -326,7 +364,8 @@ def main() -> int:
     for c, d in report["meaning"]["majority_by_condition"].items():
         print(f"  {c:10s} {d}")
     if args.readability:
-        print(f"readability majority: {report['readability']['majority']}")
+        print(f"readability majority: {report['readability']['majority']}  "
+              f"meaning re-rated on obfuscated rows: {report['readability']['meaning_rerated']}")
     else:
         print("readability: pending")
     if args.make_readability_sheet:
