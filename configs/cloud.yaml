@@ -1,0 +1,6 @@
+# Colab tier runtime settings (TASK_06 section 1): these affect speed only, never decoding or outputs.
+# T4 (Qwen2.5-14B) or L4 (gemma-2-27b); all layers offloaded, same llama-cpp-python version as the laptop.
+tier: colab
+n_threads: 4
+n_batch: 512
+n_gpu_layers: -1

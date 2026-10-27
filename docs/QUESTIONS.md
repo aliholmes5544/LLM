@@ -124,3 +124,12 @@
     0.30. Done before any model was run: slots 1 to 3 unchanged, slot 4 now
     nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme (99 words); same-label Jaccard 0.15
     (phishing) and 0.08 (legitimate). Old and new ids and the rule are logged in CHANGES_FOR_THESIS.md.
+
+11. **Runtime of the laptop tier (2026-10-28).** The dev smoke test measured mean latencies of 5.6 to 8.9 s per
+    inference on CPU (16 threads). The core evaluation (3,207 items x 4 strategies x 4 laptop models) projects to
+    about 107 h, and the generalisation set (2,000 items x 4 strategies) adds about 66 h. Options: (a) run the
+    laptop tier as planned over nights, in model order qwen25-7b, mistral-7b, llama31-8b, gemma2-9b, with completed
+    cells cached so the run can be restarted; (b) move gemma2-9b and/or the generalisation set to Colab T4 (same
+    GGUF, same decoding; only threads and GPU layers differ, which configs/cloud.yaml records); (c) reduce the
+    generalisation set to a seeded subsample, which changes Table 3.2 and must be recorded in CHANGES_FOR_THESIS.md.
+    (a) and (b) are not methodological changes. Awaiting the author's decision before 06_run_detection.py is run.

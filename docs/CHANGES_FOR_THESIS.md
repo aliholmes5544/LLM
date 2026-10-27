@@ -434,3 +434,36 @@ inference was run; everything below is configuration and code, frozen only after
 - QUESTIONS.md item 9 confirmed: for the two Gemma 2 models the system text is prepended to the user
   message; the run report (reports/smoke_dev_report.json, later reports/detection_run_report.json) carries
   this note.
+
+## Step 06 items 2 and 3: laptop-tier models downloaded; dev smoke test (2026-10-27 to 2026-10-28)
+- Section 3.5 / 3.7, detector files (bartowski GGUF, Q4_K_M; sha256 pinned in configs/models.yaml and
+  reports/models_download_report.json; files under models/, not in git):
+  llama31-8b: Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf, 4,920,739,232 bytes, sha256 7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c, licence llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024).
+  mistral-7b: Mistral-7B-Instruct-v0.3-Q4_K_M.gguf, 4,372,812,000 bytes, sha256 1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6, licence apache-2.0.
+  gemma2-9b: gemma-2-9b-it-Q4_K_M.gguf, 5,761,057,728 bytes, sha256 13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe, licence gemma (Gemma Terms of Use).
+  qwen25-7b: Qwen2.5-7B-Instruct-Q4_K_M.gguf, 4,683,074,240 bytes, sha256 65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423, licence apache-2.0.
+- Section 3.6, smoke test (TASK_06 section 5; reports/smoke_dev_report.json, results/smoke_dev/): 20 dev items
+  (5 per subclass, seeded), 4 models x 4 strategies = 320 inferences, llama-cpp-python 0.3.36, CPU only
+  (16 threads, n_ctx 4,096, greedy, seed from configs/data.yaml). Gate (invalid <= 10 % per cell) PASSED in all
+  16 cells. No input was truncated (longest prompt 1,718 tokens, Mistral few_shot). Per cell: invalid / median
+  latency s / max latency s:
+  llama31-8b (load 6.1 s): zero_shot 0/20, 3.42, 11.33; few_shot 0/20, 3.96, 14.09; cot 0/20, 14.28, 24.08; role 0/20, 3.13, 11.27.
+  mistral-7b (load 5.6 s): zero_shot 2/20, 3.96, 12.33; few_shot 0/20, 4.7, 16.27; cot 2/20, 11.39, 22.8; role 2/20, 4.11, 12.27.
+  gemma2-9b (load 12.6 s): zero_shot 0/20, 4.54, 16.89; few_shot 0/20, 4.93, 18.28; cot 0/20, 12.9, 26.5; role 0/20, 4.34, 14.42.
+  qwen25-7b (load 5.0 s): zero_shot 0/20, 2.85, 10.75; few_shot 0/20, 3.53, 13.06; cot 0/20, 7.38, 17.9; role 0/20, 3.17, 10.64.
+- Invalid outputs: 6/320 (1.9 %), all from Mistral-7B-Instruct-v0.3, none from the other three models. In
+  zero_shot and role the same two E-PhishLLM phishing items (eph:14893, eph:11599) received the hedge
+  "Insufficient information to determine with certainty. However, it's important to", cut at 16 tokens. In cot
+  one answer named both words after FINAL ("as either PHISHING or LEGITIMATE") and one ended without a FINAL
+  line. These are refusals to commit, not parser gaps; the rule in decision 4 scores them as incorrect. No
+  prompt was revised (dev invalid rate before = after).
+- QUESTIONS.md item 9 applied: gemma2-9b (system_role false) received the system text prepended to the user
+  message; its four cells had 0 invalid outputs. gemma-2-9b-it loaded in 12.6 s within the 7 GB WSL memory cap.
+- Runtime measurement for the order of work, item 3 (Section 3.7, the time risk): mean latency over all four
+  strategies on the smoke items was llama31-8b 7.76 s, mistral-7b 7.71 s, gemma2-9b 8.91 s, qwen25-7b 5.56 s
+  per inference. Projected CPU time for the core evaluation (3,207 items x 4 strategies = 12,828 inferences
+  per model): llama31-8b 27.7 h, mistral-7b 27.5 h, gemma2-9b 31.8 h, qwen25-7b 19.8 h, total about 107 h;
+  the generalisation set (2,000 items x 4 strategies) adds about 66 h, total about 173 h for the laptop tier.
+  Few-shot prompts are 4 to 5 times longer (median about 1,000 tokens) but cost only about 0.5 s more per item;
+  cot costs 2 to 4 times a single-word strategy. Whether to move part of the laptop tier to Colab is the
+  author's decision (QUESTIONS.md item 11).

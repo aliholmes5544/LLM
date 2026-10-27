@@ -42,7 +42,7 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 | 03 | normalize, neutralize placeholders, dedup across collections | done, tested |
 | 04 | partitions + leakage check | done, tested (no leakage) |
 | 05 | variants (paraphrase, obfuscation) + meaning checks, dev set first, then eval | done: dev calibrated (thresholds frozen), eval derived 2026-10-26 and determinism-checked; questions 7 and 8 answered 2026-10-27 (control 210 after the unchanged rule; variants file + cache are the fixed artifact, hashes in the report) |
-| 06 | prompting / inference (llama.cpp GGUF backend) | in progress: item 1 done 2026-10-27 (configs/models.yaml, configs/detection.yaml, prompts/*.txt, extract_label + tests, few-shot examples drawn; QUESTIONS.md items 9 and 10 open); no model downloaded, no inference run |
+| 06 | prompting / inference (llama.cpp GGUF backend) | in progress: item 1 done 2026-10-27 (configs, prompts, extract_label + tests, few-shot examples; Q9 and Q10 answered); laptop-tier GGUFs downloaded and sha256-pinned 2026-10-27; dev smoke test 2026-10-28 PASSED all 16 cells (6/320 invalid, all Mistral; no truncation; reports/smoke_dev_report.json); projected CPU time about 107 h core + 66 h generalisation (QUESTIONS.md item 11); 06_run_detection.py and baselines not written |
 | 07 | baselines | not started |
 | 08 | evaluation + statistics | not started |
 

@@ -1,0 +1,521 @@
+{
+  "cells": {
+    "llama31-8b/zero_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "legit": 11
+      },
+      "latency_median_s": 3.42,
+      "latency_max_s": 11.33,
+      "latency_total_s": 95.9,
+      "prompt_tokens_median": 256,
+      "prompt_tokens_max": 798,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "llama31-8b/few_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 13,
+        "legit": 7
+      },
+      "latency_median_s": 3.96,
+      "latency_max_s": 14.09,
+      "latency_total_s": 115.3,
+      "prompt_tokens_median": 1011,
+      "prompt_tokens_max": 1553,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "llama31-8b/cot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "legit": 14,
+        "phish": 6
+      },
+      "latency_median_s": 14.28,
+      "latency_max_s": 24.08,
+      "latency_total_s": 317.0,
+      "prompt_tokens_median": 292,
+      "prompt_tokens_max": 834,
+      "output_tokens_median": 85,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "llama31-8b/role": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "legit": 11
+      },
+      "latency_median_s": 3.13,
+      "latency_max_s": 11.27,
+      "latency_total_s": 92.7,
+      "prompt_tokens_median": 288,
+      "prompt_tokens_max": 830,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "mistral-7b/zero_shot": {
+      "n": 20,
+      "invalid": 2,
+      "invalid_rate": 0.1,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "invalid": 2,
+        "legit": 9
+      },
+      "latency_median_s": 3.96,
+      "latency_max_s": 12.33,
+      "latency_total_s": 111.8,
+      "prompt_tokens_median": 245,
+      "prompt_tokens_max": 812,
+      "output_tokens_median": 5,
+      "finish_reasons": {
+        "stop": 18,
+        "length": 2
+      },
+      "truncated_input": 0
+    },
+    "mistral-7b/few_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 10,
+        "legit": 10
+      },
+      "latency_median_s": 4.7,
+      "latency_max_s": 16.27,
+      "latency_total_s": 132.6,
+      "prompt_tokens_median": 1151,
+      "prompt_tokens_max": 1718,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "mistral-7b/cot": {
+      "n": 20,
+      "invalid": 2,
+      "invalid_rate": 0.1,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 11,
+        "legit": 7,
+        "invalid": 2
+      },
+      "latency_median_s": 11.39,
+      "latency_max_s": 22.8,
+      "latency_total_s": 261.9,
+      "prompt_tokens_median": 289,
+      "prompt_tokens_max": 856,
+      "output_tokens_median": 70,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "mistral-7b/role": {
+      "n": 20,
+      "invalid": 2,
+      "invalid_rate": 0.1,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "invalid": 2,
+        "legit": 9
+      },
+      "latency_median_s": 4.11,
+      "latency_max_s": 12.27,
+      "latency_total_s": 110.9,
+      "prompt_tokens_median": 245,
+      "prompt_tokens_max": 812,
+      "output_tokens_median": 5,
+      "finish_reasons": {
+        "stop": 18,
+        "length": 2
+      },
+      "truncated_input": 0
+    },
+    "gemma2-9b/zero_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 10,
+        "legit": 10
+      },
+      "latency_median_s": 4.54,
+      "latency_max_s": 16.89,
+      "latency_total_s": 130.3,
+      "prompt_tokens_median": 239,
+      "prompt_tokens_max": 784,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "gemma2-9b/few_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "legit": 11
+      },
+      "latency_median_s": 4.93,
+      "latency_max_s": 18.28,
+      "latency_total_s": 149.2,
+      "prompt_tokens_median": 1053,
+      "prompt_tokens_max": 1598,
+      "output_tokens_median": 5,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "gemma2-9b/cot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 10,
+        "legit": 10
+      },
+      "latency_median_s": 12.9,
+      "latency_max_s": 26.5,
+      "latency_total_s": 311.3,
+      "prompt_tokens_median": 274,
+      "prompt_tokens_max": 819,
+      "output_tokens_median": 54,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "gemma2-9b/role": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 11,
+        "legit": 9
+      },
+      "latency_median_s": 4.34,
+      "latency_max_s": 14.42,
+      "latency_total_s": 122.1,
+      "prompt_tokens_median": 271,
+      "prompt_tokens_max": 816,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "qwen25-7b/zero_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "legit": 11
+      },
+      "latency_median_s": 2.85,
+      "latency_max_s": 10.75,
+      "latency_total_s": 88.8,
+      "prompt_tokens_median": 234,
+      "prompt_tokens_max": 796,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "qwen25-7b/few_shot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "legit": 14,
+        "phish": 6
+      },
+      "latency_median_s": 3.53,
+      "latency_max_s": 13.06,
+      "latency_total_s": 104.6,
+      "prompt_tokens_median": 1028,
+      "prompt_tokens_max": 1590,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "qwen25-7b/cot": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 10,
+        "legit": 10
+      },
+      "latency_median_s": 7.38,
+      "latency_max_s": 17.9,
+      "latency_total_s": 162.9,
+      "prompt_tokens_median": 270,
+      "prompt_tokens_max": 832,
+      "output_tokens_median": 37,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    },
+    "qwen25-7b/role": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "gate_pass": true,
+      "pred_counts": {
+        "phish": 9,
+        "legit": 11
+      },
+      "latency_median_s": 3.17,
+      "latency_max_s": 10.64,
+      "latency_total_s": 88.9,
+      "prompt_tokens_median": 266,
+      "prompt_tokens_max": 828,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0
+    }
+  },
+  "seed": 2026,
+  "tier": "laptop",
+  "runtime": {
+    "tier": "laptop",
+    "n_threads": 16,
+    "n_batch": 512,
+    "n_gpu_layers": 0
+  },
+  "n_items": 20,
+  "items": [
+    {
+      "item_id": "eph:13158",
+      "label_true": "phish",
+      "subclass": "ephish_phish"
+    },
+    {
+      "item_id": "eph:5768",
+      "label_true": "phish",
+      "subclass": "ephish_phish"
+    },
+    {
+      "item_id": "eph:14893",
+      "label_true": "phish",
+      "subclass": "ephish_phish"
+    },
+    {
+      "item_id": "eph:11599",
+      "label_true": "phish",
+      "subclass": "ephish_phish"
+    },
+    {
+      "item_id": "eph:12427",
+      "label_true": "phish",
+      "subclass": "ephish_phish"
+    },
+    {
+      "item_id": "nah:traditional_phishing:fe56b475f075fa5c6d6f15af533572f7",
+      "label_true": "phish",
+      "subclass": "traditional"
+    },
+    {
+      "item_id": "nah:traditional_phishing:2e46ec6d02cb267720a5f1406c51bf73",
+      "label_true": "phish",
+      "subclass": "traditional"
+    },
+    {
+      "item_id": "nah:traditional_phishing:6977be3e893d21687f56e8aa02e0d430",
+      "label_true": "phish",
+      "subclass": "traditional"
+    },
+    {
+      "item_id": "nah:traditional_phishing:5cec06ce3b5fa4a7904b6f2c36601deb",
+      "label_true": "phish",
+      "subclass": "traditional"
+    },
+    {
+      "item_id": "nah:traditional_phishing:37a279e291b058cf341045f1b6f8cd55",
+      "label_true": "phish",
+      "subclass": "traditional"
+    },
+    {
+      "item_id": "nah:enron_ham:11293814_1075858640439_JavaMail_evans_thyme",
+      "label_true": "legit",
+      "subclass": "enron_ham"
+    },
+    {
+      "item_id": "nah:enron_ham:9568095_1075862161350_JavaMail_evans_thyme",
+      "label_true": "legit",
+      "subclass": "enron_ham"
+    },
+    {
+      "item_id": "nah:enron_ham:21035552_1075857570805_JavaMail_evans_thyme",
+      "label_true": "legit",
+      "subclass": "enron_ham"
+    },
+    {
+      "item_id": "nah:enron_ham:1066043_1075857601625_JavaMail_evans_thyme",
+      "label_true": "legit",
+      "subclass": "enron_ham"
+    },
+    {
+      "item_id": "nah:enron_ham:11165334_1075855691750_JavaMail_evans_thyme",
+      "label_true": "legit",
+      "subclass": "enron_ham"
+    },
+    {
+      "item_id": "eph:10351",
+      "label_true": "legit",
+      "subclass": "ephish_legit"
+    },
+    {
+      "item_id": "eph:9121",
+      "label_true": "legit",
+      "subclass": "ephish_legit"
+    },
+    {
+      "item_id": "eph:8161",
+      "label_true": "legit",
+      "subclass": "ephish_legit"
+    },
+    {
+      "item_id": "eph:7515",
+      "label_true": "legit",
+      "subclass": "ephish_legit"
+    },
+    {
+      "item_id": "eph:7612",
+      "label_true": "legit",
+      "subclass": "ephish_legit"
+    }
+  ],
+  "decoding": {
+    "temperature": 0.0,
+    "top_p": 1.0,
+    "repeat_penalty": 1.0,
+    "seed_from": "data.yaml",
+    "max_tokens": {
+      "zero_shot": 16,
+      "few_shot": 16,
+      "role": 16,
+      "cot": 256
+    },
+    "stop": []
+  },
+  "n_ctx": 4096,
+  "prompts": {
+    "zero_shot": {
+      "file": "prompts/zero_shot.txt",
+      "sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa"
+    },
+    "few_shot": {
+      "file": "prompts/few_shot.txt",
+      "sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5"
+    },
+    "cot": {
+      "file": "prompts/cot.txt",
+      "sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374"
+    },
+    "role": {
+      "file": "prompts/role.txt",
+      "sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892"
+    }
+  },
+  "few_shot_examples": {
+    "file": "prompts/few_shot_examples.json",
+    "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+    "ids": [
+      "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+      "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+      "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+      "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+    ]
+  },
+  "config_sha256": {
+    "detection.yaml": "62ccb7b4ac99b04c72f249879736098e73c5f5fc88b2da71263b4e809ade8900",
+    "models.yaml": "3ade86000b3f47b22bb866ca47d95f739aa54f243814c4256b017eb4d5cc33a8"
+  },
+  "llama_cpp_python": "0.3.36",
+  "git_commit": "3058064",
+  "system_role_note": "Models with system_role false (Gemma 2) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
+  "models": {
+    "llama31-8b": {
+      "sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
+      "load_s": 6.1,
+      "system_role": true,
+      "license": "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)",
+      "chat_format": "chat_template.default"
+    },
+    "mistral-7b": {
+      "sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
+      "load_s": 5.6,
+      "system_role": true,
+      "license": "apache-2.0",
+      "chat_format": "mistral-instruct"
+    },
+    "gemma2-9b": {
+      "sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "load_s": 12.6,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "chat_format": "chat_template.default"
+    },
+    "qwen25-7b": {
+      "sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "load_s": 5.0,
+      "system_role": true,
+      "license": "apache-2.0",
+      "chat_format": "chat_template.default"
+    }
+  },
+  "updated_at": "2026-10-27T21:26:09Z",
+  "gate_all_pass": true
+}

@@ -1,0 +1,6 @@
+# Laptop tier runtime settings (TASK_06 section 1): these affect speed only, never decoding or outputs.
+# Ryzen laptop, 16 logical CPUs, CPU-only inference (the integrated GPU is not used by the build).
+tier: laptop
+n_threads: 16
+n_batch: 512
+n_gpu_layers: 0
