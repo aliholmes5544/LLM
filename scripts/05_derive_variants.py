@@ -20,6 +20,9 @@ Stages:
      fails is replaced by its original (fallback). achieved_fraction = retained rewrites /
      selected sentences. A variant is excluded if achieved_fraction is below the condition's
      minimum or the final body fails the variant-level checks; otherwise it is "regenerated".
+     Logical rule for every condition: a body byte-identical to its original is not a variant
+     and is excluded with reason "unchanged" (e.g. every selected sentence reverted, or no
+     eligible sentence at all).
   6. outputs, report and the manual-review sample (stratified 10 % + every excluded
      paraphrase + a seeded sample of regenerated ones, each flagged with auto_outcome)
 
@@ -188,11 +191,19 @@ def derive_obfuscation(records: list, cond: str, rate: float, spans_by_id: dict)
             integrity = False
         vid = f"{r['id']}#{cond}"
         log.extend({"variant_id": vid, **e} for e in edits)
+        failed = ([] if integrity else ["integrity"]) + unchanged_test(variant, r["body"])
         rows.append({"variant_id": vid, "source_id": r["id"], "condition": cond, "subject": r["subject"],
                      "body": variant, "checks": {"integrity_ok": integrity, **st,
-                                                  "spans": [{"text": s["text"], "label": s["label"]} for s in spans]},
-                     "status": "pass" if integrity else "excluded"})
+                                                  "spans": [{"text": s["text"], "label": s["label"]} for s in spans],
+                                                  "failed_tests": failed},
+                     "status": "excluded" if failed else "pass"})
     return rows, log
+
+
+def unchanged_test(variant_body: str, original_body: str) -> list:
+    """Logical rule, not a threshold: a body byte-identical to its original is not a variant and is
+    excluded with reason "unchanged" (all partitions and conditions). Returns [] or ["unchanged"]."""
+    return ["unchanged"] if variant_body == original_body else []
 
 
 # ---- stages 3-5: paraphrase ---------------------------------------------------
@@ -320,7 +331,10 @@ def run_paraphrase(pairs: list, conds: dict, spans_by_id: dict, model_path: Path
         v = st.attempt[final]
         failed = [name for name, ok in (("cosine", v["sim_ok"]), ("length", v["len_ok"]), ("spans", v["spans_ok"]),
                                         ("fraction", frac >= min_frac[st.cond])) if not ok]
-        if final == 0:
+        failed += unchanged_test(st.body(), st.rec["body"])
+        if "unchanged" in failed:
+            status = "excluded"
+        elif final == 0:
             status = "pass"
         else:
             status = "excluded" if failed else "regenerated"
@@ -366,6 +380,8 @@ def summarise(rows: list, conds: dict, spans_by_id: dict, obf_rows_log_len: int)
         if spec["family"] == "obfuscation":
             entry.update({
                 "integrity_pass": sum(r["checks"]["integrity_ok"] for r in rs),
+                "excluded_failed_tests": {r["variant_id"]: r["checks"]["failed_tests"] for r in rs if r["status"] == "excluded"},
+                "exclusion_combos": dict(sorted(Counter("+".join(r["checks"]["failed_tests"]) for r in rs if r["status"] == "excluded").items())),
                 "ops": dict(sum((Counter(r["checks"]["ops"]) for r in rs), Counter())),
                 "op_redraws": sum(r["checks"]["op_redraws"] for r in rs),
                 "n_eligible_tokens": stats([r["checks"]["n_eligible"] for r in rs]),
@@ -389,7 +405,7 @@ def summarise(rows: list, conds: dict, spans_by_id: dict, obf_rows_log_len: int)
                 "excluded_failed_tests": {r["variant_id"]: r["checks"]["failed_tests"] for r in rs if r["status"] == "excluded"},
                 "exclusion_combos": dict(sorted(Counter("+".join(r["checks"]["failed_tests"]) for r in rs if r["status"] == "excluded").items())),
                 "exclusions_involving": {t: sum(t in r["checks"]["failed_tests"] for r in rs if r["status"] == "excluded")
-                                         for t in ("cosine", "length", "spans", "fraction")},
+                                         for t in ("cosine", "length", "spans", "fraction", "unchanged")},
                 "failures": fails,
                 "achieved_fraction": dist(fracs, ("min", "p5", "median", "mean", "max")),
                 "achieved_fraction_histogram": {f"{lo:.1f}-{lo + 0.2:.1f}": sum(lo <= f < lo + 0.2 or (f == 1.0 and lo == 0.8) for f in fracs)
@@ -586,7 +602,7 @@ def eval_report(rows: list, obf_log: list, spans_by_id: dict, target: dict, mode
         partitions[part] = summarise(prow, conds, {i: spans_by_id[i] for i in ids if i in spans_by_id}, n_log)
     exclusions = [{"variant_id": r["variant_id"], "condition": r["condition"],
                    "partition": next(p for p, s in ECFG["targets"].items() if r["source_id"] in set(parts[p])),
-                   "reasons": r["checks"].get("failed_tests", ["integrity"] if not r["checks"].get("integrity_ok", True) else []),
+                   "reasons": r["checks"]["failed_tests"],
                    "sim_cos": r["checks"].get(f"attempt_{r['checks'].get('final_attempt', 0)}", {}).get("sim_cos"),
                    "achieved_fraction": r["checks"].get("achieved_fraction")}
                   for r in rows if r["status"] == "excluded"]

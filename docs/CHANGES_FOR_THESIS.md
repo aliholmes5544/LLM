@@ -322,3 +322,45 @@ diagnosis.py, output reports/control_exclusion_diagnosis.json; nothing was re-de
   694cd11b27045dfd6d7256b6f2bfae366e77d6c9d1be6fb02b9e6b0aac6297d7 (4,714,876 bytes, 8,228 rows).
   Both files are archived at submission under CC BY-NC-SA 4.0 (the Nahmias et al., 2024, licence),
   not in git.
+
+## Step 05 unchanged-variant rule; evaluation variants re-derived from the cache (2026-10-27)
+Logical correction, not a threshold change: a "variant" whose body is byte-identical to its original
+is not a variant and is excluded with reason "unchanged". scripts/05_derive_variants.py applies the
+rule uniformly to every partition and condition (paraphrase: after the four existing tests;
+obfuscation: next to the integrity test, whose rows now carry a failed_tests list like the paraphrase
+rows). The development set is unaffected: none of its 400 variants is identical to its original
+(checked; the dev outputs were not re-derived).
+- Re-derivation (run_variants_eval.sh at commit 3d3a10b, 13:24-13:59 UTC, 2,083.9 s): cache hits
+  10,172, cache misses 0, so no sentence was generated anew; the cache is unchanged (sha256
+  694cd11b...). Against the previous run: all 1,670 variant bodies and subjects byte-identical;
+  obfuscation log byte-identical (sha256 d7a8865c...); 984 rows identical in every field; the 668
+  obfuscation rows differ only by the added empty failed_tests list; 18 ctrl_para_legit/para_high
+  rows carry the new reason "unchanged" (15 of them already excluded for fraction 0.0, all selected
+  sentences reverted; 3 previously "pass" with no eligible sentence, now excluded). No other row
+  changed. The second run of the script (determinism check) was stopped by the host while the
+  session was idle, at the first-attempt checks, before writing anything; the run-1 outputs are
+  complete and hashed (data/interim/variants_eval_run1.sha256). The earlier determinism proof
+  (2026-10-26, two byte-identical runs) covers the unchanged generation and check stages; the
+  determinism run is to be repeated when the machine is free.
+- Section 3.2.3 / Table 3.2 counts after the rule: core_pos para_low 334 accepted (219 pass, 115
+  regenerated), para_high 325 (129 / 196; 9 excluded, fraction), obf_low 334, obf_high 334 (integrity
+  334/334); ctrl_para_legit para_high 210 accepted (60 pass, 150 regenerated), 124 excluded (37.1 %:
+  fraction 98, fraction+unchanged 15, unchanged 3, cosine 5, length 2, cosine+length 1; enron_ham 101
+  of 222, hard_ham 23 of 112). Dev comparison for the control: 37.1 % vs 4.0 % (+33.1 points,
+  flagged). Table 3.2 therefore reads: variants 1,327 accepted items (334 + 325 + 334 + 334),
+  paraphrased legitimate control 210 of 334, controls 544, items per detector per prompting strategy
+  334 + 1,002 + 1,327 + 544 = 3,207; the table in docs/METHODOLOGY_3.2.md is updated accordingly.
+- Diagnosis re-run (reports/control_exclusion_diagnosis.json): excluded vs accepted controls, body
+  words median 88 vs 142.5; eligible sentences median 4 vs 8; spans per record median 13 vs 17;
+  fraction median 0.667 vs 0.932; by collection enron_ham 45.5 %, hard_ham 20.5 %; of the 98
+  fraction-only exclusions 38 have fewer than 5 eligible sentences and all 98 have fraction equal to
+  (eligible - reverted) / eligible. No accepted variant is identical to its original any more
+  (previous run: 3). The interpretation of the 2026-10-27 diagnosis entry stands.
+- Fixed artifact (Section 3.8): data/processed/variants_eval.jsonl sha256
+  d898cece2d0f5d399a036bdeab8d63c9246b4eb91fd8298c299285b354d46389 (5,618,458 bytes, 1,670 rows);
+  data/interim/paraphrase_cache_eval.jsonl sha256
+  694cd11b27045dfd6d7256b6f2bfae366e77d6c9d1be6fb02b9e6b0aac6297d7 (4,714,876 bytes, 8,228 rows,
+  unchanged). Recorded in reports/variants_eval_fixed_artifacts.json and in
+  reports/variants_eval_report.json (fixed_artifacts). The previous variants hash (a4672bb6...) is
+  superseded. The spot check (171/179) remains valid: spans, sentence selection and generations are
+  untouched by the rule.

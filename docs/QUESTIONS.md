@@ -49,6 +49,10 @@
    exclusions are sentence-level reverts on short, span-dense Enron bodies with few eligible
    sentences (1-4 eligible: 60 of 119 excluded; enron_ham 44.1 % vs hard_ham 20.5 %); interpretation
    in docs/CHANGES_FOR_THESIS.md (2026-10-27 entry). Control kept at 213 accepted variants.
+   **Update 2026-10-27:** with the logical rule that a body byte-identical to its original is not a
+   variant (reason "unchanged"; 18 control rows, 3 of them previously "pass"), the control has 210
+   accepted variants and 124 exclusions (37.1 %). Table 3.2 updated to 1,327 variants, 544 controls,
+   3,207 items per detector per strategy.
 
 8. **Generation is not bit-reproducible on this backend (spot check 171/179).** Two runs of the
    evaluation derivation that share the generation cache are byte-identical, but regenerating 179

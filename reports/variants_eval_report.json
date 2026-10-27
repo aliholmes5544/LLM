@@ -101,7 +101,8 @@
           "cosine": 0,
           "length": 0,
           "spans": 0,
-          "fraction": 0
+          "fraction": 0,
+          "unchanged": 0
         },
         "failures": {
           "attempt_0": {
@@ -230,7 +231,8 @@
           "cosine": 0,
           "length": 0,
           "spans": 0,
-          "fraction": 9
+          "fraction": 9,
+          "unchanged": 0
         },
         "failures": {
           "attempt_0": {
@@ -321,6 +323,8 @@
           "pass": 334
         },
         "integrity_pass": 334,
+        "excluded_failed_tests": {},
+        "exclusion_combos": {},
         "ops": {
           "homoglyph": 917,
           "digit": 876,
@@ -349,6 +353,8 @@
           "pass": 334
         },
         "integrity_pass": 334,
+        "excluded_failed_tests": {},
+        "exclusion_combos": {},
         "ops": {
           "homoglyph": 2778,
           "digit": 2653,
@@ -392,9 +398,9 @@
         "rate": 1.0,
         "produced": 334,
         "status": {
-          "pass": 63,
+          "pass": 60,
           "regenerated": 150,
-          "excluded": 121
+          "excluded": 124
         },
         "min_achieved_fraction": 0.8,
         "excluded_failed_tests": {
@@ -416,6 +422,9 @@
           "nah:enron_ham:11898568_1075857655215_JavaMail_evans_thyme#para_high": [
             "fraction"
           ],
+          "nah:enron_ham:12211064_1075855695940_JavaMail_evans_thyme#para_high": [
+            "unchanged"
+          ],
           "nah:enron_ham:12263278_1075857649705_JavaMail_evans_thyme#para_high": [
             "fraction"
           ],
@@ -429,10 +438,12 @@
             "fraction"
           ],
           "nah:enron_ham:13099327_1075855695394_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:13109923_1075855682514_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:13118437_1075849627344_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -455,6 +466,9 @@
           "nah:enron_ham:15165535_1075855716141_JavaMail_evans_thyme#para_high": [
             "cosine"
           ],
+          "nah:enron_ham:15240164_1075855689768_JavaMail_evans_thyme#para_high": [
+            "unchanged"
+          ],
           "nah:enron_ham:15307395_1075855698508_JavaMail_evans_thyme#para_high": [
             "fraction"
           ],
@@ -476,11 +490,16 @@
           "nah:enron_ham:16893800_1075858644217_JavaMail_evans_thyme#para_high": [
             "fraction"
           ],
+          "nah:enron_ham:17100868_1075855669544_JavaMail_evans_thyme#para_high": [
+            "unchanged"
+          ],
           "nah:enron_ham:17450211_1075849627126_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:18111482_1075857572444_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:18134938_1075857654736_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -510,7 +529,8 @@
             "fraction"
           ],
           "nah:enron_ham:2047280_1075858635378_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:20550064_1075857595502_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -519,7 +539,8 @@
             "fraction"
           ],
           "nah:enron_ham:20826693_1075855687016_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:21051369_1075849624623_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -549,7 +570,8 @@
             "fraction"
           ],
           "nah:enron_ham:24925859_1075855677658_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:25095902_1075858637606_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -591,7 +613,8 @@
             "fraction"
           ],
           "nah:enron_ham:27832524_1075857651008_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:28080899_1075855375453_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -603,7 +626,8 @@
             "fraction"
           ],
           "nah:enron_ham:28907577_1075855681357_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:29114721_1075857651932_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -612,7 +636,8 @@
             "fraction"
           ],
           "nah:enron_ham:29960923_1075857655931_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:3027933_1075862165438_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -654,13 +679,15 @@
             "fraction"
           ],
           "nah:enron_ham:4949589_1075857656365_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:5092291_1075858644394_JavaMail_evans_thyme#para_high": [
             "fraction"
           ],
           "nah:enron_ham:5452401_1075858631361_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:5510987_1075857599221_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -675,7 +702,8 @@
             "cosine"
           ],
           "nah:enron_ham:7048143_1075858631317_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:7261333_1075862165117_JavaMail_evans_thyme#para_high": [
             "fraction"
@@ -687,10 +715,12 @@
             "fraction"
           ],
           "nah:enron_ham:8395231_1075857654134_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:enron_ham:914355_1075858639897_JavaMail_evans_thyme#para_high": [
-            "fraction"
+            "fraction",
+            "unchanged"
           ],
           "nah:hard_ham:00012.58a866f18474d94989984958e1789df4#para_high": [
             "fraction"
@@ -766,14 +796,17 @@
         "exclusion_combos": {
           "cosine": 5,
           "cosine+length": 1,
-          "fraction": 113,
-          "length": 2
+          "fraction": 98,
+          "fraction+unchanged": 15,
+          "length": 2,
+          "unchanged": 3
         },
         "exclusions_involving": {
           "cosine": 6,
           "length": 3,
           "spans": 0,
-          "fraction": 113
+          "fraction": 113,
+          "unchanged": 18
         },
         "failures": {
           "attempt_0": {
@@ -938,6 +971,16 @@
       "achieved_fraction": 0.5
     },
     {
+      "variant_id": "nah:enron_ham:12211064_1075855695940_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "unchanged"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 1.0
+    },
+    {
       "variant_id": "nah:enron_ham:12263278_1075857649705_JavaMail_evans_thyme#para_high",
       "condition": "para_high",
       "partition": "ctrl_para_legit",
@@ -982,7 +1025,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -992,7 +1036,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1068,6 +1113,16 @@
       "achieved_fraction": 1.0
     },
     {
+      "variant_id": "nah:enron_ham:15240164_1075855689768_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "unchanged"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 1.0
+    },
+    {
       "variant_id": "nah:enron_ham:15307395_1075855698508_JavaMail_evans_thyme#para_high",
       "condition": "para_high",
       "partition": "ctrl_para_legit",
@@ -1138,11 +1193,22 @@
       "achieved_fraction": 0.4
     },
     {
+      "variant_id": "nah:enron_ham:17100868_1075855669544_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "unchanged"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 1.0
+    },
+    {
       "variant_id": "nah:enron_ham:17450211_1075849627126_JavaMail_evans_thyme#para_high",
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1152,7 +1218,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1252,7 +1319,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1282,7 +1350,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1382,7 +1451,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1522,7 +1592,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1562,7 +1633,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1592,7 +1664,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1732,7 +1805,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1752,7 +1826,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1802,7 +1877,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1842,7 +1918,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -1852,7 +1929,8 @@
       "condition": "para_high",
       "partition": "ctrl_para_legit",
       "reasons": [
-        "fraction"
+        "fraction",
+        "unchanged"
       ],
       "sim_cos": 1.0,
       "achieved_fraction": 0.0
@@ -2226,13 +2304,13 @@
         "difference_pp": 0.0
       },
       "ctrl_para_legit/para_high": {
-        "eval_excluded": 121,
+        "eval_excluded": 124,
         "eval_produced": 334,
-        "eval_rate": 0.3623,
+        "eval_rate": 0.3713,
         "dev_excluded": 4,
         "dev_produced": 100,
         "dev_rate": 0.04,
-        "difference_pp": 32.23
+        "difference_pp": 33.13
       }
     },
     "flags": {
@@ -2514,8 +2592,8 @@
     "in_git": false,
     "files": {
       "data/processed/variants_eval.jsonl": {
-        "sha256": "a4672bb621a3bb6107c58a19ce66d30efd05979dc36fed2771704d1ffe3fb7a9",
-        "bytes": 5604858,
+        "sha256": "d898cece2d0f5d399a036bdeab8d63c9246b4eb91fd8298c299285b354d46389",
+        "bytes": 5618458,
         "rows": 1670
       },
       "data/interim/paraphrase_cache_eval.jsonl": {

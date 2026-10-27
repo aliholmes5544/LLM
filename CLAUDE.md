@@ -41,7 +41,7 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 | 02 | audit raw sources | done, tested |
 | 03 | normalize, neutralize placeholders, dedup across collections | done, tested |
 | 04 | partitions + leakage check | done, tested (no leakage) |
-| 05 | variants (paraphrase, obfuscation) + meaning checks, dev set first, then eval | done: dev calibrated (thresholds frozen), eval derived 2026-10-26 and determinism-checked; questions 7 and 8 answered 2026-10-27 (control kept at 213; variants file + cache are the fixed artifact, hashes in the report) |
+| 05 | variants (paraphrase, obfuscation) + meaning checks, dev set first, then eval | done: dev calibrated (thresholds frozen), eval derived 2026-10-26 and determinism-checked; questions 7 and 8 answered 2026-10-27 (control 210 after the unchanged rule; variants file + cache are the fixed artifact, hashes in the report) |
 | 06 | prompting / inference (llama.cpp GGUF backend) | not started |
 | 07 | baselines | not started |
 | 08 | evaluation + statistics | not started |
@@ -55,8 +55,10 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
   gen 1,000+1,000 (salutation named 599 / generic 330 / none 71), dev 400, train 3,033, valid 337.
 - Eval variants (reports/variants_eval_report.json): core_pos para_low 334/334 accepted, para_high
   325/334 (9 excluded, fraction), obf_low and obf_high 334/334 (integrity 100%); ctrl_para_legit
-  para_high 213/334 (121 excluded, 36.2%, flagged; QUESTIONS.md item 7). Two cache-sharing runs
-  byte-identical; cache spot check 171/179 generations identical (QUESTIONS.md item 8).
+  para_high 210/334 (124 excluded, 37.1%, flagged; 18 excluded as "unchanged", a logical rule applied
+  in every condition; QUESTIONS.md item 7). Items per detector per strategy: 334 + 1,002 + 1,327 + 544
+  = 3,207. Two cache-sharing runs byte-identical (2026-10-26); cache spot check 171/179 generations
+  identical (QUESTIONS.md item 8). Fixed artifact hashes in reports/variants_eval_fixed_artifacts.json.
 
 ## Working with the thesis author
 - The author reviews methodology with a separate advisor chat; this repo implements what
