@@ -1,0 +1,125 @@
+{
+  "partition": "core_pos",
+  "seed": 2026,
+  "rng_label": [
+    "spot_check",
+    "core_pos"
+  ],
+  "n_records": 10,
+  "records": [
+    "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19",
+    "nah:spear_phishing:ethan_hawk_urgent_important_information_about_graphconnect_2024_02_04_17_11_30",
+    "nah:spear_phishing:gale_robinson_important_security_announcement_-_immediate_action_required_2024_02_04_16_51_56",
+    "nah:spear_phishing:jennifer_singer_important_message_from_safesecurity_2024_02_04_17_28_20",
+    "nah:spear_phishing:john_thompson_important_update_for_safesecurity_employees_2024_02_04_17_46_17",
+    "nah:spear_phishing:lars_treble_urgent_update_cybersecurity_threat_2024_02_04_17_11_12",
+    "nah:spear_phishing:michael_reed_urgent_important_information_regarding_cyber_security_2024_02_04_17_43_24",
+    "nah:spear_phishing:moses_sharp_graphconnect_follow-up_and_ontology_for_cyber_security_update_2024_02_04_16_48_15",
+    "nah:spear_phishing:robert_mitchell_important_security_update_2024_02_04_16_52_20",
+    "nah:spear_phishing:robert_turner_important_update_for_safesecurity_employees_2024_02_04_17_34_45"
+  ],
+  "n_variants": 20,
+  "n_generations": 179,
+  "n_identical": 171,
+  "cache_rows_missing": 0,
+  "spans_identical_to_eval_run": true,
+  "sentence_selection_identical_to_eval_run": true,
+  "mismatches": [
+    {
+      "variant_id": "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19#para_high",
+      "idx": 5,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "Considering your proficiency in cyber security and your leadership position within the engineering team, we are confident that your knowledge and input will be extremely beneficial to us.",
+      "fresh_raw": "Considering your proficiency in cyber security and your leadership position within the engineering team, we are confident that your knowledge and input will prove extremely beneficial to us.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19#para_high",
+      "idx": 6,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "We cordially encourage you to join our privileged pre-launch initiative, allowing you to trial and contribute your valuable feedback on our state-of-the-art solution.",
+      "fresh_raw": "We cordially encourage you to join our privileged pre-launch initiative, allowing you to trial and offer your valuable feedback on our state-of-the-art innovation.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19#para_high",
+      "idx": 12,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "Your unwavering commitment and diligence towards achieving superior standards are deeply valued.",
+      "fresh_raw": "Your unwavering dedication and commitment to achieving superior quality are deeply valued.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:ethan_hawk_urgent_important_information_about_graphconnect_2024_02_04_17_11_30#para_high",
+      "idx": 2,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "I am writing to inform you about an important announcement concerning an impending occasion that you might find extremely beneficial.",
+      "fresh_raw": "I am writing to inform you about an important update concerning an imminent event that you might find extremely beneficial.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:gale_robinson_important_security_announcement_-_immediate_action_required_2024_02_04_16_51_56#para_high",
+      "idx": 6,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "Our team has crafted a unique strategy that specifically targets this weakness and boosts the total safety of our infrastructure.",
+      "fresh_raw": "Our team has crafted a unique approach that specifically targets this weakness and boosts the total security of our systems.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:jennifer_singer_important_message_from_safesecurity_2024_02_04_17_28_20#para_high",
+      "idx": 6,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "Considering your substantial achievements and proficiency in the field, I felt compelled to inform you about an essential tool that I am convinced will augment your understanding and proficiency in the realm of cybersecurity.",
+      "fresh_raw": "Considering your substantial achievements and proficiency in the field, I felt compelled to inform you about a beneficial tool I think will augment your understanding and competence in cybersecurity.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:michael_reed_urgent_important_information_regarding_cyber_security_2024_02_04_17_43_24#para_high",
+      "idx": 9,
+      "attempt": 0,
+      "reason": "output differs",
+      "cached_raw": "The document offers crucial insights and tactics that can aid in bolstering our cyber security framework.",
+      "fresh_raw": "The document offers crucial insights and tactics that can aid in bolstering our cyber security defenses.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    },
+    {
+      "variant_id": "nah:spear_phishing:moses_sharp_graphconnect_follow-up_and_ontology_for_cyber_security_update_2024_02_04_16_48_15#para_high",
+      "idx": 5,
+      "attempt": 1,
+      "reason": "output differs",
+      "cached_raw": "I am confident that keeping abreast with this content is essential for the successful completion of our duties.",
+      "fresh_raw": "I am confident that keeping abreast with this content is essential for the completion of our duties.",
+      "cached_finish": "stop",
+      "fresh_finish": "stop"
+    }
+  ],
+  "identical": false,
+  "llama": {
+    "n_ctx": 2048,
+    "n_batch": 256,
+    "n_threads": 16,
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "max_tokens_factor": 3
+  },
+  "model_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5",
+  "prompt_sha256": "3a8078410aa17f8acd4a2f9f42eaa535332304f2c56571b0e0efa3072d6778d1",
+  "per_condition": {
+    "para_high": 10,
+    "para_low": 10
+  },
+  "runtime_s": 436.2
+}

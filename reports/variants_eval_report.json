@@ -1,0 +1,2510 @@
+{
+  "seed": 2026,
+  "target": {
+    "target": "eval",
+    "partitions": {
+      "core_pos": {
+        "n_available": 334,
+        "n_records": 334,
+        "conditions": [
+          "para_low",
+          "para_high",
+          "obf_low",
+          "obf_high"
+        ],
+        "subclasses": {
+          "spear_llm": 334
+        }
+      },
+      "ctrl_para_legit": {
+        "n_available": 334,
+        "n_records": 334,
+        "conditions": [
+          "para_high"
+        ],
+        "subclasses": {
+          "enron_ham": 222,
+          "hard_ham": 112
+        }
+      }
+    },
+    "n_records_unique": 668,
+    "overlap_with_other_partitions": {
+      "core_neg": 334,
+      "ctrl_modern_legit": 0,
+      "gen_phish": 0,
+      "gen_legit": 0,
+      "dev": 0,
+      "valid": 0,
+      "train": 0,
+      "fewshot_pool": 0
+    },
+    "disjoint_from_train_dev_valid": true
+  },
+  "config_sha256": {
+    "configs/variants.yaml": "a8e938fdc037dc478ee2e65e124235aa56e9c5d8226f216796c88485bd5f6b7e",
+    "configs/variants_eval.yaml": "589f8113d7ab600c4cd5ff2d965925f901f9ff5a10670b2638872d910bd00ff7",
+    "prompts/paraphrase_v1.txt": "abe51e78ab6c6342ba5201cf1c355e9b9e163da38260072f0ae2a238b5da36e4"
+  },
+  "model": {
+    "paraphrase_model": {
+      "repo_id": "bartowski/Phi-3.5-mini-instruct-GGUF",
+      "filename": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+      "license": "MIT",
+      "local_dir": "models",
+      "expected_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5"
+    },
+    "excluded_from_detectors": [
+      "phi"
+    ],
+    "llama": {
+      "n_ctx": 2048,
+      "n_batch": 256,
+      "n_threads": 16,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_tokens_factor": 3
+    },
+    "embedding": "sentence-transformers/all-mpnet-base-v2",
+    "nli": "cross-encoder/nli-deberta-v3-base",
+    "model_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5",
+    "llama_cpp_version": "0.3.36",
+    "prompt_sha256": "3a8078410aa17f8acd4a2f9f42eaa535332304f2c56571b0e0efa3072d6778d1",
+    "entailment_label_index": 1
+  },
+  "thresholds": {
+    "thr_cos": 0.68,
+    "thr_nli": 0.7,
+    "len_ratio_min": 0.7,
+    "len_ratio_max": 1.4
+  },
+  "fallback": {
+    "min_achieved_fraction": {
+      "para_low": 0.4,
+      "para_high": 0.8
+    }
+  },
+  "partitions": {
+    "core_pos": {
+      "para_low": {
+        "family": "paraphrase",
+        "rate": 0.5,
+        "produced": 334,
+        "status": {
+          "pass": 219,
+          "regenerated": 115
+        },
+        "min_achieved_fraction": 0.4,
+        "excluded_failed_tests": {},
+        "exclusion_combos": {},
+        "exclusions_involving": {
+          "cosine": 0,
+          "length": 0,
+          "spans": 0,
+          "fraction": 0
+        },
+        "failures": {
+          "attempt_0": {
+            "variants_checked": 334,
+            "sim_ok": 0,
+            "len_ok": 0,
+            "spans_ok": 16,
+            "sentences_checked": 1805,
+            "sentences_failed_nli": 130,
+            "sentences_failed_spans": 19
+          },
+          "attempt_1": {
+            "variants_checked": 115,
+            "sim_ok": 0,
+            "len_ok": 0,
+            "spans_ok": 0,
+            "sentences_checked": 139,
+            "sentences_failed_nli": 75,
+            "sentences_failed_spans": 10
+          }
+        },
+        "achieved_fraction": {
+          "min": 0.4,
+          "p5": 0.75,
+          "median": 1.0,
+          "mean": 0.9537,
+          "max": 1.0
+        },
+        "achieved_fraction_histogram": {
+          "0.0-0.2": 0,
+          "0.2-0.4": 0,
+          "0.4-0.6": 4,
+          "0.6-0.8": 15,
+          "0.8-1.0": 316
+        },
+        "n_retried": {
+          "min": 0.0,
+          "median": 0.0,
+          "max": 3.0,
+          "total": 139.0
+        },
+        "n_reverted": {
+          "min": 0.0,
+          "median": 0.0,
+          "max": 3.0,
+          "total": 82.0
+        },
+        "sim_cos": {
+          "min": 0.8848,
+          "p5": 0.9476,
+          "median": 0.9757
+        },
+        "nli_min": {
+          "min": 0.8182,
+          "p5": 0.9651,
+          "median": 0.9965
+        },
+        "len_ratio": {
+          "min": 0.9125,
+          "median": 1.0232,
+          "max": 1.1308
+        },
+        "n_segments": {
+          "min": 7.0,
+          "median": 14.0,
+          "max": 23.0,
+          "total": 4602.0
+        },
+        "n_eligible_segments": {
+          "min": 4.0,
+          "median": 10.0,
+          "max": 19.0,
+          "total": 3440.0
+        },
+        "n_selected_segments": {
+          "min": 2.0,
+          "median": 5.0,
+          "max": 10.0,
+          "total": 1805.0
+        },
+        "truncated_generations": 2
+      },
+      "para_high": {
+        "family": "paraphrase",
+        "rate": 1.0,
+        "produced": 334,
+        "status": {
+          "regenerated": 196,
+          "pass": 129,
+          "excluded": 9
+        },
+        "min_achieved_fraction": 0.8,
+        "excluded_failed_tests": {
+          "nah:spear_phishing:gale_robinson_follow-up_from_recent_graphconnect_conference_2024_02_04_16_25_47#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:gale_robinson_important_update_from_safesecurity_2024_02_04_17_46_05#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:john_thompson_important_information_regarding_cyber_security_conference_2024_02_04_17_11_10#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:joseph_baker_exciting_opportunity_for_cybersecurity_professionals_2024_02_04_16_52_06#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:micheal_stevens_follow-up_on_the_kgc23,_upcoming_sigapp_&_safesecurity_updates_2024_02_04_16_43_02#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:moses_sharp_follow-up_on_ray_levinson's_graphconnect_conference_insights_2024_02_04_16_42_46#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:moses_sharp_graphconnect_follow-up_and_ontology_for_cyber_security_update_2024_02_04_16_48_15#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:moses_sharp_important_updates_from_graphconnect_attendance_by_ray_levinson_2024_02_04_16_25_33#para_high": [
+            "fraction"
+          ],
+          "nah:spear_phishing:robert_turner_important_announcement_from_safesecurity_2024_02_04_17_46_11#para_high": [
+            "fraction"
+          ]
+        },
+        "exclusion_combos": {
+          "fraction": 9
+        },
+        "exclusions_involving": {
+          "cosine": 0,
+          "length": 0,
+          "spans": 0,
+          "fraction": 9
+        },
+        "failures": {
+          "attempt_0": {
+            "variants_checked": 334,
+            "sim_ok": 0,
+            "len_ok": 0,
+            "spans_ok": 24,
+            "sentences_checked": 3440,
+            "sentences_failed_nli": 253,
+            "sentences_failed_spans": 34
+          },
+          "attempt_1": {
+            "variants_checked": 205,
+            "sim_ok": 0,
+            "len_ok": 0,
+            "spans_ok": 0,
+            "sentences_checked": 270,
+            "sentences_failed_nli": 135,
+            "sentences_failed_spans": 23
+          }
+        },
+        "achieved_fraction": {
+          "min": 0.6667,
+          "p5": 0.8533,
+          "median": 1.0,
+          "mean": 0.956,
+          "max": 1.0
+        },
+        "achieved_fraction_histogram": {
+          "0.0-0.2": 0,
+          "0.2-0.4": 0,
+          "0.4-0.6": 0,
+          "0.6-0.8": 9,
+          "0.8-1.0": 325
+        },
+        "n_retried": {
+          "min": 0.0,
+          "median": 1.0,
+          "max": 4.0,
+          "total": 270.0
+        },
+        "n_reverted": {
+          "min": 0.0,
+          "median": 0.0,
+          "max": 3.0,
+          "total": 149.0
+        },
+        "sim_cos": {
+          "min": 0.8273,
+          "p5": 0.9009,
+          "median": 0.9505
+        },
+        "nli_min": {
+          "min": 0.7379,
+          "p5": 0.9193,
+          "median": 0.9942
+        },
+        "len_ratio": {
+          "min": 0.8737,
+          "median": 1.0402,
+          "max": 1.1655
+        },
+        "n_segments": {
+          "min": 7.0,
+          "median": 14.0,
+          "max": 23.0,
+          "total": 4602.0
+        },
+        "n_eligible_segments": {
+          "min": 4.0,
+          "median": 10.0,
+          "max": 19.0,
+          "total": 3440.0
+        },
+        "n_selected_segments": {
+          "min": 4.0,
+          "median": 10.0,
+          "max": 19.0,
+          "total": 3440.0
+        },
+        "truncated_generations": 4
+      },
+      "obf_low": {
+        "family": "obfuscation",
+        "rate": 0.1,
+        "produced": 334,
+        "status": {
+          "pass": 334
+        },
+        "integrity_pass": 334,
+        "ops": {
+          "homoglyph": 917,
+          "digit": 876,
+          "zero_width": 923,
+          "separator": 882
+        },
+        "op_redraws": 38,
+        "n_eligible_tokens": {
+          "min": 35.0,
+          "median": 106.0,
+          "max": 190.0,
+          "total": 35810.0
+        },
+        "n_selected_tokens": {
+          "min": 4.0,
+          "median": 11.0,
+          "max": 19.0,
+          "total": 3598.0
+        }
+      },
+      "obf_high": {
+        "family": "obfuscation",
+        "rate": 0.3,
+        "produced": 334,
+        "status": {
+          "pass": 334
+        },
+        "integrity_pass": 334,
+        "ops": {
+          "homoglyph": 2778,
+          "digit": 2653,
+          "zero_width": 2653,
+          "separator": 2679
+        },
+        "op_redraws": 106,
+        "n_eligible_tokens": {
+          "min": 35.0,
+          "median": 106.0,
+          "max": 190.0,
+          "total": 35810.0
+        },
+        "n_selected_tokens": {
+          "min": 11.0,
+          "median": 32.0,
+          "max": 57.0,
+          "total": 10763.0
+        }
+      },
+      "_spans_per_record": {
+        "min": 1.0,
+        "median": 6.0,
+        "max": 16.0,
+        "total": 2084.0,
+        "by_label": {
+          "CARDINAL": 29,
+          "DATE": 26,
+          "NUMBER": 29,
+          "ORG": 1095,
+          "PERSON": 841,
+          "PLACEHOLDER": 51,
+          "TIME": 13
+        }
+      },
+      "_obfuscation_log_rows": 14361
+    },
+    "ctrl_para_legit": {
+      "para_high": {
+        "family": "paraphrase",
+        "rate": 1.0,
+        "produced": 334,
+        "status": {
+          "pass": 63,
+          "regenerated": 150,
+          "excluded": 121
+        },
+        "min_achieved_fraction": 0.8,
+        "excluded_failed_tests": {
+          "nah:enron_ham:10826570_1075855677066_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:11070476_1075855375732_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:11168105_1075855696963_JavaMail_evans_thyme#para_high": [
+            "cosine"
+          ],
+          "nah:enron_ham:11476753_1075857653064_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:11575304_1075862163667_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:11898568_1075857655215_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:12263278_1075857649705_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:12524326_1075855729362_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:12657912_1075855693014_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:12893809_1075855669480_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:13099327_1075855695394_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:13109923_1075855682514_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:13118437_1075849627344_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:13457557_1075857595203_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:13603195_1075858634098_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:14286989_1075855666059_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:14531913_1075857571925_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:15023476_1075857654287_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:15165535_1075855716141_JavaMail_evans_thyme#para_high": [
+            "cosine"
+          ],
+          "nah:enron_ham:15307395_1075855698508_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:15608495_1075858632834_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:15720273_1075857651616_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:15787537_1075855673615_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:1670364_1075855671043_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:1678403_1075855672927_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:16893800_1075858644217_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:17450211_1075849627126_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:18111482_1075857572444_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:18134938_1075857654736_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:18396036_1075855684027_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:18627096_1075857658610_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:18648627_1075855716293_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:19179178_1075855724299_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:19481442_1075858637435_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:19553083_1075855709659_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:19588036_1075855669696_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:20179025_1075858631238_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:2047280_1075858635378_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:20550064_1075857595502_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:20589038_1075857656710_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:20826693_1075855687016_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:21051369_1075849624623_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:21329206_1075858639457_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:2175808_1075855375759_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:21946320_1075855718896_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:21975671_1075855665520_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:2200629_1075857599483_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:23255281_1075862162887_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:24737799_1075855688205_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:24884773_1075862160943_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:24925859_1075855677658_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:25095902_1075858637606_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:2514232_1075855686629_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:25312358_1075857656882_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:2575288_1075857653682_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:26625142_1075858639964_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:26761712_1075857601996_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:2705303_1075855699777_JavaMail_evans_thyme#para_high": [
+            "length"
+          ],
+          "nah:enron_ham:27097403_1075857656860_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:27335635_1075857649399_JavaMail_evans_thyme#para_high": [
+            "length"
+          ],
+          "nah:enron_ham:27366520_1075857596930_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:27416256_1075857657862_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:27688281_1075857571775_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:27809873_1075863710681_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:27832524_1075857651008_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:28080899_1075855375453_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:28204961_1075857571528_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:28515033_1075857600779_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:28907577_1075855681357_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:29114721_1075857651932_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:29476741_1075857652020_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:29960923_1075857655931_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:3027933_1075862165438_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:30288267_1075857655302_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:3054198_1075857650661_JavaMail_evans_thyme#para_high": [
+            "cosine"
+          ],
+          "nah:enron_ham:30740303_1075857595609_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:30870095_1075857602254_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:31022707_1075857598615_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:31041699_1075858636662_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:31644258_1075849627250_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:32310419_1075857650380_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:32361044_1075862163502_JavaMail_evans_thyme#para_high": [
+            "cosine"
+          ],
+          "nah:enron_ham:33059747_1075858644328_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:33309159_1075857595979_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:4799329_1075857598592_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:4949589_1075857656365_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:5092291_1075858644394_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:5452401_1075858631361_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:5510987_1075857599221_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:6278810_1075858643930_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:6315150_1075857656386_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:6669330_1075857602624_JavaMail_evans_thyme#para_high": [
+            "cosine"
+          ],
+          "nah:enron_ham:7048143_1075858631317_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:7261333_1075862165117_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:7299879_1075849627274_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:7617759_1075858637628_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:8395231_1075857654134_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:enron_ham:914355_1075858639897_JavaMail_evans_thyme#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00012.58a866f18474d94989984958e1789df4#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00022.66e4bce429ab25c5d2c7e8a1a38838a0#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00085.661f10298bde7a7c873f9d90fc343d4d#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00088.1f7a2bd2452833d69c069ea025e5a3da#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00122.c0299a711b7392c9e93da37cce2fdc90#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00132.bf2db722d16c3cece885fc6bf30b717e#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00147.1ebc575c928ad6e96d625bda16fa71ec#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0015.83cd6f657e9603870fae4eb810bc5995#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00153.ed096ffdeb400b9697bb01c41814f7e6#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00180.c48e764a71e8baa907f4f623cbbf9b80#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00183.a008f2e258860eff155bb06a065f7d56#para_high": [
+            "cosine",
+            "length"
+          ],
+          "nah:hard_ham:00185.b30a53aad9d675993a9cec62cf515f2a#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00204.3f44646104dbe9da75d726e4e283b7fb#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00208.818667cfa44cba08793363ad0c1d3199#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00211.1ca67c3677fa0051ccfa27c756d32b5a#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:00223.14b06feeb8b03fed4e272140b8ed95f0#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0115.32aa502e928becbe2db939baa9697928#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0137.e182dacf304ecdeb76230d7c5374aed3#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0139.37c6b32ba39eaa510af007deef725ec2#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0141.82c48bdf90cb29370a2783a3523f3b04#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0163.0123b1afbae948c7fa80a8ab79786e16#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0196.9dc01775acba34e580ddf9a56ea6891e#para_high": [
+            "fraction"
+          ],
+          "nah:hard_ham:0202.9b71c90c298d453025eae7bbcc46018b#para_high": [
+            "fraction"
+          ]
+        },
+        "exclusion_combos": {
+          "cosine": 5,
+          "cosine+length": 1,
+          "fraction": 113,
+          "length": 2
+        },
+        "exclusions_involving": {
+          "cosine": 6,
+          "length": 3,
+          "spans": 0,
+          "fraction": 113
+        },
+        "failures": {
+          "attempt_0": {
+            "variants_checked": 334,
+            "sim_ok": 22,
+            "len_ok": 16,
+            "spans_ok": 200,
+            "sentences_checked": 3624,
+            "sentences_failed_nli": 644,
+            "sentences_failed_spans": 518
+          },
+          "attempt_1": {
+            "variants_checked": 271,
+            "sim_ok": 6,
+            "len_ok": 3,
+            "spans_ok": 0,
+            "sentences_checked": 894,
+            "sentences_failed_nli": 412,
+            "sentences_failed_spans": 397
+          }
+        },
+        "achieved_fraction": {
+          "min": 0.0,
+          "p5": 0.3333,
+          "median": 0.8616,
+          "mean": 0.7986,
+          "max": 1.0
+        },
+        "achieved_fraction_histogram": {
+          "0.0-0.2": 15,
+          "0.2-0.4": 6,
+          "0.4-0.6": 31,
+          "0.6-0.8": 63,
+          "0.8-1.0": 221
+        },
+        "n_retried": {
+          "min": 0.0,
+          "median": 2.0,
+          "max": 20.0,
+          "total": 894.0
+        },
+        "n_reverted": {
+          "min": 0.0,
+          "median": 1.0,
+          "max": 12.0,
+          "total": 599.0
+        },
+        "sim_cos": {
+          "min": 0.5507,
+          "p5": 0.7688,
+          "median": 0.9292
+        },
+        "nli_min": {
+          "min": 0.7033,
+          "p5": 0.7843,
+          "median": 0.9859
+        },
+        "len_ratio": {
+          "min": 0.8387,
+          "median": 1.0616,
+          "max": 1.8333
+        },
+        "n_segments": {
+          "min": 1.0,
+          "median": 8.0,
+          "max": 116.0,
+          "total": 4756.0
+        },
+        "n_eligible_segments": {
+          "min": 0.0,
+          "median": 7.0,
+          "max": 63.0,
+          "total": 3624.0
+        },
+        "n_selected_segments": {
+          "min": 0.0,
+          "median": 7.0,
+          "max": 63.0,
+          "total": 3624.0
+        },
+        "truncated_generations": 234
+      },
+      "_spans_per_record": {
+        "min": 0.0,
+        "median": 16.0,
+        "max": 231.0,
+        "total": 8851.0,
+        "by_label": {
+          "CARDINAL": 190,
+          "DATE": 577,
+          "EMAIL": 220,
+          "MONEY": 192,
+          "NUMBER": 3573,
+          "ORG": 1829,
+          "PERSON": 2205,
+          "PLACEHOLDER": 12,
+          "TIME": 53
+        }
+      },
+      "_obfuscation_log_rows": 0
+    }
+  },
+  "exclusions": [
+    {
+      "variant_id": "nah:enron_ham:10826570_1075855677066_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9959,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:11070476_1075855375732_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.975,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:11168105_1075855696963_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "cosine"
+      ],
+      "sim_cos": 0.6231,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:11476753_1075857653064_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8503,
+      "achieved_fraction": 0.7
+    },
+    {
+      "variant_id": "nah:enron_ham:11575304_1075862163667_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9152,
+      "achieved_fraction": 0.7333
+    },
+    {
+      "variant_id": "nah:enron_ham:11898568_1075857655215_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9628,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:12263278_1075857649705_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9118,
+      "achieved_fraction": 0.7
+    },
+    {
+      "variant_id": "nah:enron_ham:12524326_1075855729362_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8882,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:12657912_1075855693014_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.949,
+      "achieved_fraction": 0.7442
+    },
+    {
+      "variant_id": "nah:enron_ham:12893809_1075855669480_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:13099327_1075855695394_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:13109923_1075855682514_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:13118437_1075849627344_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9795,
+      "achieved_fraction": 0.7222
+    },
+    {
+      "variant_id": "nah:enron_ham:13457557_1075857595203_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.913,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:13603195_1075858634098_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.3333
+    },
+    {
+      "variant_id": "nah:enron_ham:14286989_1075855666059_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9596,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:14531913_1075857571925_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8593,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:15023476_1075857654287_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8571,
+      "achieved_fraction": 0.7273
+    },
+    {
+      "variant_id": "nah:enron_ham:15165535_1075855716141_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "cosine"
+      ],
+      "sim_cos": 0.6463,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:15307395_1075855698508_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9941,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:15608495_1075858632834_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9865,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:15720273_1075857651616_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9585,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:15787537_1075855673615_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.957,
+      "achieved_fraction": 0.3333
+    },
+    {
+      "variant_id": "nah:enron_ham:1670364_1075855671043_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9399,
+      "achieved_fraction": 0.4286
+    },
+    {
+      "variant_id": "nah:enron_ham:1678403_1075855672927_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9474,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:16893800_1075858644217_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9827,
+      "achieved_fraction": 0.4
+    },
+    {
+      "variant_id": "nah:enron_ham:17450211_1075849627126_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:18111482_1075857572444_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:18134938_1075857654736_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9829,
+      "achieved_fraction": 0.7143
+    },
+    {
+      "variant_id": "nah:enron_ham:18396036_1075855684027_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.878,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:18627096_1075857658610_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9494,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:18648627_1075855716293_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9032,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:19179178_1075855724299_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8617,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:19481442_1075858637435_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.977,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:19553083_1075855709659_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8593,
+      "achieved_fraction": 0.625
+    },
+    {
+      "variant_id": "nah:enron_ham:19588036_1075855669696_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9849,
+      "achieved_fraction": 0.4
+    },
+    {
+      "variant_id": "nah:enron_ham:20179025_1075858631238_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9106,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:2047280_1075858635378_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:20550064_1075857595502_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9742,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:20589038_1075857656710_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.923,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:20826693_1075855687016_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:21051369_1075849624623_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9727,
+      "achieved_fraction": 0.7
+    },
+    {
+      "variant_id": "nah:enron_ham:21329206_1075858639457_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9282,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:2175808_1075855375759_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9964,
+      "achieved_fraction": 0.6364
+    },
+    {
+      "variant_id": "nah:enron_ham:21946320_1075855718896_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9474,
+      "achieved_fraction": 0.4
+    },
+    {
+      "variant_id": "nah:enron_ham:21975671_1075855665520_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9694,
+      "achieved_fraction": 0.7222
+    },
+    {
+      "variant_id": "nah:enron_ham:2200629_1075857599483_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9157,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:23255281_1075862162887_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9436,
+      "achieved_fraction": 0.7778
+    },
+    {
+      "variant_id": "nah:enron_ham:24737799_1075855688205_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9446,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:24884773_1075862160943_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.986,
+      "achieved_fraction": 0.7391
+    },
+    {
+      "variant_id": "nah:enron_ham:24925859_1075855677658_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:25095902_1075858637606_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.919,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:2514232_1075855686629_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9252,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:25312358_1075857656882_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8133,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:2575288_1075857653682_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8731,
+      "achieved_fraction": 0.7083
+    },
+    {
+      "variant_id": "nah:enron_ham:26625142_1075858639964_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.935,
+      "achieved_fraction": 0.5714
+    },
+    {
+      "variant_id": "nah:enron_ham:26761712_1075857601996_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9093,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:2705303_1075855699777_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "length"
+      ],
+      "sim_cos": 0.702,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:27097403_1075857656860_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9023,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:27335635_1075857649399_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "length"
+      ],
+      "sim_cos": 0.8908,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:27366520_1075857596930_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8992,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:27416256_1075857657862_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9791,
+      "achieved_fraction": 0.4
+    },
+    {
+      "variant_id": "nah:enron_ham:27688281_1075857571775_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9911,
+      "achieved_fraction": 0.3333
+    },
+    {
+      "variant_id": "nah:enron_ham:27809873_1075863710681_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9601,
+      "achieved_fraction": 0.6
+    },
+    {
+      "variant_id": "nah:enron_ham:27832524_1075857651008_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:28080899_1075855375453_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9629,
+      "achieved_fraction": 0.6923
+    },
+    {
+      "variant_id": "nah:enron_ham:28204961_1075857571528_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9477,
+      "achieved_fraction": 0.6154
+    },
+    {
+      "variant_id": "nah:enron_ham:28515033_1075857600779_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9231,
+      "achieved_fraction": 0.4
+    },
+    {
+      "variant_id": "nah:enron_ham:28907577_1075855681357_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:29114721_1075857651932_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8415,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:29476741_1075857652020_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8598,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:29960923_1075857655931_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:3027933_1075862165438_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9448,
+      "achieved_fraction": 0.7778
+    },
+    {
+      "variant_id": "nah:enron_ham:30288267_1075857655302_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9399,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:3054198_1075857650661_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "cosine"
+      ],
+      "sim_cos": 0.6012,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:30740303_1075857595609_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8877,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:30870095_1075857602254_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.975,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:31022707_1075857598615_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.7
+    },
+    {
+      "variant_id": "nah:enron_ham:31041699_1075858636662_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9354,
+      "achieved_fraction": 0.6
+    },
+    {
+      "variant_id": "nah:enron_ham:31644258_1075849627250_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9354,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:32310419_1075857650380_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8888,
+      "achieved_fraction": 0.5714
+    },
+    {
+      "variant_id": "nah:enron_ham:32361044_1075862163502_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "cosine"
+      ],
+      "sim_cos": 0.631,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:33059747_1075858644328_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9393,
+      "achieved_fraction": 0.7391
+    },
+    {
+      "variant_id": "nah:enron_ham:33309159_1075857595979_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8746,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:4799329_1075857598592_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.914,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:enron_ham:4949589_1075857656365_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:5092291_1075858644394_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.976,
+      "achieved_fraction": 0.5455
+    },
+    {
+      "variant_id": "nah:enron_ham:5452401_1075858631361_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:5510987_1075857599221_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9363,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:6278810_1075858643930_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.956,
+      "achieved_fraction": 0.7778
+    },
+    {
+      "variant_id": "nah:enron_ham:6315150_1075857656386_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.7212,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:enron_ham:6669330_1075857602624_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "cosine"
+      ],
+      "sim_cos": 0.6229,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:enron_ham:7048143_1075858631317_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:7261333_1075862165117_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9856,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:enron_ham:7299879_1075849627274_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9373,
+      "achieved_fraction": 0.7222
+    },
+    {
+      "variant_id": "nah:enron_ham:7617759_1075858637628_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9727,
+      "achieved_fraction": 0.4
+    },
+    {
+      "variant_id": "nah:enron_ham:8395231_1075857654134_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:enron_ham:914355_1075858639897_JavaMail_evans_thyme#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.0
+    },
+    {
+      "variant_id": "nah:hard_ham:00012.58a866f18474d94989984958e1789df4#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9411,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:hard_ham:00022.66e4bce429ab25c5d2c7e8a1a38838a0#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9587,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:hard_ham:00085.661f10298bde7a7c873f9d90fc343d4d#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9949,
+      "achieved_fraction": 0.3333
+    },
+    {
+      "variant_id": "nah:hard_ham:00088.1f7a2bd2452833d69c069ea025e5a3da#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8859,
+      "achieved_fraction": 0.7222
+    },
+    {
+      "variant_id": "nah:hard_ham:00122.c0299a711b7392c9e93da37cce2fdc90#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9733,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:hard_ham:00132.bf2db722d16c3cece885fc6bf30b717e#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9606,
+      "achieved_fraction": 0.7857
+    },
+    {
+      "variant_id": "nah:hard_ham:00147.1ebc575c928ad6e96d625bda16fa71ec#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9175,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:hard_ham:0015.83cd6f657e9603870fae4eb810bc5995#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9844,
+      "achieved_fraction": 0.5263
+    },
+    {
+      "variant_id": "nah:hard_ham:00153.ed096ffdeb400b9697bb01c41814f7e6#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9116,
+      "achieved_fraction": 0.5
+    },
+    {
+      "variant_id": "nah:hard_ham:00180.c48e764a71e8baa907f4f623cbbf9b80#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9041,
+      "achieved_fraction": 0.7143
+    },
+    {
+      "variant_id": "nah:hard_ham:00183.a008f2e258860eff155bb06a065f7d56#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "cosine",
+        "length"
+      ],
+      "sim_cos": 0.5507,
+      "achieved_fraction": 1.0
+    },
+    {
+      "variant_id": "nah:hard_ham:00185.b30a53aad9d675993a9cec62cf515f2a#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9864,
+      "achieved_fraction": 0.7273
+    },
+    {
+      "variant_id": "nah:hard_ham:00204.3f44646104dbe9da75d726e4e283b7fb#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9631,
+      "achieved_fraction": 0.5714
+    },
+    {
+      "variant_id": "nah:hard_ham:00208.818667cfa44cba08793363ad0c1d3199#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9591,
+      "achieved_fraction": 0.7692
+    },
+    {
+      "variant_id": "nah:hard_ham:00211.1ca67c3677fa0051ccfa27c756d32b5a#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8815,
+      "achieved_fraction": 0.6923
+    },
+    {
+      "variant_id": "nah:hard_ham:00223.14b06feeb8b03fed4e272140b8ed95f0#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9643,
+      "achieved_fraction": 0.68
+    },
+    {
+      "variant_id": "nah:hard_ham:0115.32aa502e928becbe2db939baa9697928#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.801,
+      "achieved_fraction": 0.7273
+    },
+    {
+      "variant_id": "nah:hard_ham:0137.e182dacf304ecdeb76230d7c5374aed3#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9463,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:hard_ham:0139.37c6b32ba39eaa510af007deef725ec2#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9444,
+      "achieved_fraction": 0.55
+    },
+    {
+      "variant_id": "nah:hard_ham:0141.82c48bdf90cb29370a2783a3523f3b04#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 1.0,
+      "achieved_fraction": 0.2667
+    },
+    {
+      "variant_id": "nah:hard_ham:0163.0123b1afbae948c7fa80a8ab79786e16#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.959,
+      "achieved_fraction": 0.7308
+    },
+    {
+      "variant_id": "nah:hard_ham:0196.9dc01775acba34e580ddf9a56ea6891e#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8393,
+      "achieved_fraction": 0.3333
+    },
+    {
+      "variant_id": "nah:hard_ham:0202.9b71c90c298d453025eae7bbcc46018b#para_high",
+      "condition": "para_high",
+      "partition": "ctrl_para_legit",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.8912,
+      "achieved_fraction": 0.6667
+    },
+    {
+      "variant_id": "nah:spear_phishing:gale_robinson_follow-up_from_recent_graphconnect_conference_2024_02_04_16_25_47#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9743,
+      "achieved_fraction": 0.7778
+    },
+    {
+      "variant_id": "nah:spear_phishing:gale_robinson_important_update_from_safesecurity_2024_02_04_17_46_05#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9679,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:spear_phishing:john_thompson_important_information_regarding_cyber_security_conference_2024_02_04_17_11_10#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9746,
+      "achieved_fraction": 0.7778
+    },
+    {
+      "variant_id": "nah:spear_phishing:joseph_baker_exciting_opportunity_for_cybersecurity_professionals_2024_02_04_16_52_06#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9483,
+      "achieved_fraction": 0.7273
+    },
+    {
+      "variant_id": "nah:spear_phishing:micheal_stevens_follow-up_on_the_kgc23,_upcoming_sigapp_&_safesecurity_updates_2024_02_04_16_43_02#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9322,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:spear_phishing:moses_sharp_follow-up_on_ray_levinson's_graphconnect_conference_insights_2024_02_04_16_42_46#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9572,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:spear_phishing:moses_sharp_graphconnect_follow-up_and_ontology_for_cyber_security_update_2024_02_04_16_48_15#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9811,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:spear_phishing:moses_sharp_important_updates_from_graphconnect_attendance_by_ray_levinson_2024_02_04_16_25_33#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9616,
+      "achieved_fraction": 0.75
+    },
+    {
+      "variant_id": "nah:spear_phishing:robert_turner_important_announcement_from_safesecurity_2024_02_04_17_46_11#para_high",
+      "condition": "para_high",
+      "partition": "core_pos",
+      "reasons": [
+        "fraction"
+      ],
+      "sim_cos": 0.9936,
+      "achieved_fraction": 0.6667
+    }
+  ],
+  "dev_comparison": {
+    "dev_report": "reports/variants_dev_report.json",
+    "dev_thresholds": {
+      "thr_cos": 0.68,
+      "thr_nli": 0.7,
+      "len_ratio_min": 0.7,
+      "len_ratio_max": 1.4
+    },
+    "margin_pp": 5,
+    "per_condition": {
+      "core_pos/para_low": {
+        "eval_excluded": 0,
+        "eval_produced": 334,
+        "eval_rate": 0.0,
+        "dev_excluded": 0,
+        "dev_produced": 100,
+        "dev_rate": 0.0,
+        "difference_pp": 0.0
+      },
+      "core_pos/para_high": {
+        "eval_excluded": 9,
+        "eval_produced": 334,
+        "eval_rate": 0.0269,
+        "dev_excluded": 4,
+        "dev_produced": 100,
+        "dev_rate": 0.04,
+        "difference_pp": -1.31
+      },
+      "core_pos/obf_low": {
+        "eval_excluded": 0,
+        "eval_produced": 334,
+        "eval_rate": 0.0,
+        "dev_excluded": 0,
+        "dev_produced": 100,
+        "dev_rate": 0.0,
+        "difference_pp": 0.0
+      },
+      "core_pos/obf_high": {
+        "eval_excluded": 0,
+        "eval_produced": 334,
+        "eval_rate": 0.0,
+        "dev_excluded": 0,
+        "dev_produced": 100,
+        "dev_rate": 0.0,
+        "difference_pp": 0.0
+      },
+      "ctrl_para_legit/para_high": {
+        "eval_excluded": 121,
+        "eval_produced": 334,
+        "eval_rate": 0.3623,
+        "dev_excluded": 4,
+        "dev_produced": 100,
+        "dev_rate": 0.04,
+        "difference_pp": 32.23
+      }
+    },
+    "flags": {
+      "core_pos/para_low": false,
+      "core_pos/para_high": false,
+      "core_pos/obf_low": false,
+      "core_pos/obf_high": false,
+      "ctrl_para_legit/para_high": true
+    }
+  },
+  "config": {
+    "excluded_from_detectors": [
+      "phi"
+    ],
+    "model": {
+      "repo_id": "bartowski/Phi-3.5-mini-instruct-GGUF",
+      "filename": "Phi-3.5-mini-instruct-Q4_K_M.gguf",
+      "license": "MIT",
+      "local_dir": "models",
+      "expected_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5"
+    },
+    "llama": {
+      "n_ctx": 2048,
+      "n_batch": 256,
+      "n_threads": 16,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_tokens_factor": 3
+    },
+    "embedding": {
+      "model": "sentence-transformers/all-mpnet-base-v2"
+    },
+    "nli": {
+      "model": "cross-encoder/nli-deberta-v3-base"
+    },
+    "conditions": {
+      "para_low": {
+        "family": "paraphrase",
+        "rate": 0.5
+      },
+      "para_high": {
+        "family": "paraphrase",
+        "rate": 1.0
+      },
+      "obf_low": {
+        "family": "obfuscation",
+        "rate": 0.1
+      },
+      "obf_high": {
+        "family": "obfuscation",
+        "rate": 0.3
+      }
+    },
+    "thresholds": {
+      "thr_cos": 0.68,
+      "thr_nli": 0.7,
+      "len_ratio_min": 0.7,
+      "len_ratio_max": 1.4
+    },
+    "spans": {
+      "placeholder_phrases": [
+        "the link",
+        "the attachment",
+        "the address"
+      ],
+      "ner_labels": [
+        "PERSON",
+        "ORG",
+        "DATE",
+        "TIME",
+        "MONEY",
+        "CARDINAL"
+      ],
+      "spacy_model": "en_core_web_sm"
+    },
+    "sentence_eligibility": {
+      "min_alpha_words": 3,
+      "long_segment_words": 8
+    },
+    "obfuscation": {
+      "min_token_len": 4,
+      "homoglyph": {
+        "a": "\u0430",
+        "e": "\u0435",
+        "o": "\u043e",
+        "c": "\u0441",
+        "p": "\u0440",
+        "x": "\u0445",
+        "i": "\u0456"
+      },
+      "digit": {
+        "o": "0",
+        "l": "1",
+        "e": "3",
+        "a": "4",
+        "s": "5"
+      },
+      "separators": [
+        "-",
+        "."
+      ],
+      "zero_width": "\u200b"
+    },
+    "fallback": {
+      "min_achieved_fraction": {
+        "para_low": 0.4,
+        "para_high": 0.8
+      }
+    },
+    "target": {
+      "partition": "dev",
+      "subclass": "ephish_phish",
+      "manual_sample": {
+        "fraction": 0.1,
+        "add_all_excluded": true,
+        "add_regenerated": 10
+      }
+    },
+    "paths": {
+      "cache": "data/interim/paraphrase_cache_dev.jsonl",
+      "prompt": "prompts/paraphrase_v1.txt"
+    }
+  },
+  "eval_config": {
+    "targets": {
+      "core_pos": {
+        "conditions": [
+          "para_low",
+          "para_high",
+          "obf_low",
+          "obf_high"
+        ]
+      },
+      "ctrl_para_legit": {
+        "conditions": [
+          "para_high"
+        ]
+      }
+    },
+    "flag_exclusion_rate_above_dev_pp": 5,
+    "outputs": {
+      "variants": "data/processed/variants_eval.jsonl",
+      "obfuscation_log": "data/processed/obfuscation_log_eval.jsonl",
+      "report": "reports/variants_eval_report.json",
+      "runtime": "reports/variants_eval_runtime.json",
+      "cache": "data/interim/paraphrase_cache_eval.jsonl"
+    },
+    "dev_report": "reports/variants_dev_report.json"
+  },
+  "cache_spot_check": {
+    "partition": "core_pos",
+    "seed": 2026,
+    "rng_label": [
+      "spot_check",
+      "core_pos"
+    ],
+    "n_records": 10,
+    "records": [
+      "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19",
+      "nah:spear_phishing:ethan_hawk_urgent_important_information_about_graphconnect_2024_02_04_17_11_30",
+      "nah:spear_phishing:gale_robinson_important_security_announcement_-_immediate_action_required_2024_02_04_16_51_56",
+      "nah:spear_phishing:jennifer_singer_important_message_from_safesecurity_2024_02_04_17_28_20",
+      "nah:spear_phishing:john_thompson_important_update_for_safesecurity_employees_2024_02_04_17_46_17",
+      "nah:spear_phishing:lars_treble_urgent_update_cybersecurity_threat_2024_02_04_17_11_12",
+      "nah:spear_phishing:michael_reed_urgent_important_information_regarding_cyber_security_2024_02_04_17_43_24",
+      "nah:spear_phishing:moses_sharp_graphconnect_follow-up_and_ontology_for_cyber_security_update_2024_02_04_16_48_15",
+      "nah:spear_phishing:robert_mitchell_important_security_update_2024_02_04_16_52_20",
+      "nah:spear_phishing:robert_turner_important_update_for_safesecurity_employees_2024_02_04_17_34_45"
+    ],
+    "n_variants": 20,
+    "n_generations": 179,
+    "n_identical": 171,
+    "cache_rows_missing": 0,
+    "spans_identical_to_eval_run": true,
+    "sentence_selection_identical_to_eval_run": true,
+    "mismatches": [
+      {
+        "variant_id": "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19#para_high",
+        "idx": 5,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "Considering your proficiency in cyber security and your leadership position within the engineering team, we are confident that your knowledge and input will be extremely beneficial to us.",
+        "fresh_raw": "Considering your proficiency in cyber security and your leadership position within the engineering team, we are confident that your knowledge and input will prove extremely beneficial to us.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19#para_high",
+        "idx": 6,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "We cordially encourage you to join our privileged pre-launch initiative, allowing you to trial and contribute your valuable feedback on our state-of-the-art solution.",
+        "fresh_raw": "We cordially encourage you to join our privileged pre-launch initiative, allowing you to trial and offer your valuable feedback on our state-of-the-art innovation.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:ethan_hawk_important_announcement_from_safesecurity_2024_02_04_17_28_19#para_high",
+        "idx": 12,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "Your unwavering commitment and diligence towards achieving superior standards are deeply valued.",
+        "fresh_raw": "Your unwavering dedication and commitment to achieving superior quality are deeply valued.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:ethan_hawk_urgent_important_information_about_graphconnect_2024_02_04_17_11_30#para_high",
+        "idx": 2,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "I am writing to inform you about an important announcement concerning an impending occasion that you might find extremely beneficial.",
+        "fresh_raw": "I am writing to inform you about an important update concerning an imminent event that you might find extremely beneficial.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:gale_robinson_important_security_announcement_-_immediate_action_required_2024_02_04_16_51_56#para_high",
+        "idx": 6,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "Our team has crafted a unique strategy that specifically targets this weakness and boosts the total safety of our infrastructure.",
+        "fresh_raw": "Our team has crafted a unique approach that specifically targets this weakness and boosts the total security of our systems.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:jennifer_singer_important_message_from_safesecurity_2024_02_04_17_28_20#para_high",
+        "idx": 6,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "Considering your substantial achievements and proficiency in the field, I felt compelled to inform you about an essential tool that I am convinced will augment your understanding and proficiency in the realm of cybersecurity.",
+        "fresh_raw": "Considering your substantial achievements and proficiency in the field, I felt compelled to inform you about a beneficial tool I think will augment your understanding and competence in cybersecurity.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:michael_reed_urgent_important_information_regarding_cyber_security_2024_02_04_17_43_24#para_high",
+        "idx": 9,
+        "attempt": 0,
+        "reason": "output differs",
+        "cached_raw": "The document offers crucial insights and tactics that can aid in bolstering our cyber security framework.",
+        "fresh_raw": "The document offers crucial insights and tactics that can aid in bolstering our cyber security defenses.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      },
+      {
+        "variant_id": "nah:spear_phishing:moses_sharp_graphconnect_follow-up_and_ontology_for_cyber_security_update_2024_02_04_16_48_15#para_high",
+        "idx": 5,
+        "attempt": 1,
+        "reason": "output differs",
+        "cached_raw": "I am confident that keeping abreast with this content is essential for the successful completion of our duties.",
+        "fresh_raw": "I am confident that keeping abreast with this content is essential for the completion of our duties.",
+        "cached_finish": "stop",
+        "fresh_finish": "stop"
+      }
+    ],
+    "identical": false,
+    "llama": {
+      "n_ctx": 2048,
+      "n_batch": 256,
+      "n_threads": 16,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "max_tokens_factor": 3
+    },
+    "model_sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5",
+    "prompt_sha256": "3a8078410aa17f8acd4a2f9f42eaa535332304f2c56571b0e0efa3072d6778d1",
+    "per_condition": {
+      "para_high": 10,
+      "para_low": 10
+    },
+    "runtime_s": 436.2
+  }
+}

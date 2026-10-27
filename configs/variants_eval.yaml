@@ -1,0 +1,19 @@
+# Evaluation-variant targets (Section 3.2.3, Table 3.2). Every transformation setting (model,
+# decoding, conditions, thresholds, fallback, spans, obfuscation menu) comes from configs/variants.yaml,
+# which is frozen; this file only names which partitions receive which conditions and where the
+# outputs go. Used by: python scripts/05_derive_variants.py --target eval
+targets:
+  core_pos:        {conditions: [para_low, para_high, obf_low, obf_high]}   # 334 spear-phishing originals
+  ctrl_para_legit: {conditions: [para_high]}                                 # paraphrased legitimate control:
+                                                                             #   high-intensity paraphrase only;
+                                                                             #   obfuscation is not applied to
+                                                                             #   legitimate email (Section 3.2.3)
+flag_exclusion_rate_above_dev_pp: 5                                          # flag a condition whose exclusion rate
+                                                                             #   exceeds the dev rate by > 5 points
+outputs:
+  variants: data/processed/variants_eval.jsonl
+  obfuscation_log: data/processed/obfuscation_log_eval.jsonl
+  report: reports/variants_eval_report.json
+  runtime: reports/variants_eval_runtime.json
+  cache: data/interim/paraphrase_cache_eval.jsonl
+dev_report: reports/variants_dev_report.json                                 # exclusion rates to compare with

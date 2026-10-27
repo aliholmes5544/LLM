@@ -208,3 +208,72 @@ reports/variants_calibration.json (sections provisional_run and frozen_run).
   PABAK 0.90 / 0.90 / 1.00; Cohen's kappa 0.00 / 0.00 / 1.00 and Fleiss' kappa -0.02, which are
   uninformative here because 59 of 60 ratings fall in one category.
 - Thresholds unchanged: cosine 0.68 (calibrated, provisional run), NLI 0.70 (pre-specified).
+
+## Step 05 evaluation variants (2026-10-26; single frozen run on core_pos and ctrl_para_legit)
+Derived once with the frozen configs/variants.yaml (cosine 0.68, NLI 0.70, length 0.70-1.40,
+minimum achieved fraction 0.40 low / 0.80 high; run_variants_eval.sh refuses to start if the file
+differs from HEAD) by `python scripts/05_derive_variants.py --target eval` at commit a8dbb6f, then
+run a second time against the generation cache and the three outputs compared by hash, then a cache
+spot check (scripts/05c_spot_check_cache.py). No manual sample is drawn from evaluation data; the
+dev residual-error estimate (2/36 among accepted paraphrases) stands. Targets (configs/
+variants_eval.yaml): core_pos 334 spear_llm x para_low, para_high, obf_low, obf_high;
+ctrl_para_legit 334 (enron_ham 222, hard_ham 112) x para_high only; 668 unique records, 1,002
+paraphrase pairs, 668 obfuscation pairs, 1,670 rows in data/processed/variants_eval.jsonl. The
+only overlap with another partition is the intended one (ctrl_para_legit is a seeded sample of
+core_neg); no training, dev or valid item is touched.
+- Protected spans: 10,935 over 668 records. core_pos 2,084 (median 6 per record; ORG 1,095,
+  PERSON 841, PLACEHOLDER 51, CARDINAL 29, NUMBER 29, DATE 26, TIME 13). ctrl_para_legit 8,851
+  (median 16, max 231; NUMBER 3,573, PERSON 2,205, ORG 1,829, DATE 577, EMAIL 220, MONEY 192,
+  CARDINAL 190, TIME 53, PLACEHOLDER 12).
+- Section 3.2.3 obfuscation on core_pos: obf_low 334 variants, 3,598 edits (homoglyph 917, digit
+  876, zero-width 923, separator 882; 38 redraws), integrity 334/334; obf_high 334 variants,
+  10,763 edits (2,778 / 2,653 / 2,653 / 2,679; 106 redraws), integrity 334/334. Eligible tokens
+  per body: min 35, median 106, max 190 (35,810 in total).
+- Section 3.2.3 paraphrase on core_pos, para_low (half of the eligible sentences; 1,805 of 3,440
+  selected): 219 pass / 115 regenerated / 0 excluded. First attempt: 130 sentences failed NLI,
+  19 failed the span test; 139 sentences retried, of which 75 failed NLI and 10 spans again; 82
+  sentences reverted to the original. Achieved fraction min 0.40 / 5th percentile 0.75 / median
+  1.00 / mean 0.954. Final-body cosine min 0.885, 5th percentile 0.948, median 0.976; length ratio
+  0.913-1.131; 2 truncated generations.
+- Section 3.2.3 paraphrase on core_pos, para_high (all 3,440 eligible sentences): 129 pass / 196
+  regenerated / 9 excluded (2.7 %). All 9 exclusions are for achieved fraction below 0.80 (0.667-
+  0.778) with cosine 0.932-0.994; no exclusion involves cosine, length or spans. First attempt:
+  253 sentences failed NLI, 34 spans; 270 retried, 135 failed NLI and 23 spans again; 149 reverted.
+  Achieved fraction min 0.667 / 5th percentile 0.853 / median 1.00 / mean 0.956. Final-body cosine
+  min 0.827, 5th percentile 0.901, median 0.951; length ratio 0.874-1.166; 4 truncated generations.
+- Section 3.2.3 paraphrased legitimate control (ctrl_para_legit, para_high, 3,624 eligible
+  sentences; bodies min 1 / median 8 / max 116 segments): 63 pass / 150 regenerated / 121 excluded
+  (36.2 %; 113 fraction, 5 cosine, 2 length, 1 cosine and length; enron_ham 98 of 222, hard_ham 23
+  of 112). First attempt: 644 sentences failed NLI, 518 spans; 894 retried, 412 failed NLI and 397
+  spans again; 599 reverted; 234 truncated generations. Achieved fraction min 0.00 / 5th percentile
+  0.333 / median 0.862 / mean 0.799. Final-body cosine min 0.551, 5th percentile 0.769, median
+  0.929; length ratio 0.839-1.833. Open question: docs/QUESTIONS.md item 7.
+- Comparison with the dev exclusion rates (reports/variants_eval_report.json, dev_comparison):
+  core_pos/para_low 0.0 % vs 0.0 %; core_pos/para_high 2.7 % vs 4.0 % (-1.3 points); obf_low and
+  obf_high 0.0 % vs 0.0 %; ctrl_para_legit/para_high 36.2 % vs 4.0 % (+32.2 points, flagged, the
+  only condition above the 5-point margin).
+- Table 3.2 and Section 3.2.4 counts as derived: accepted variants para_low 334, para_high 325,
+  obf_low 334, obf_high 334 (1,327 items where the text says 1,336); controls 213 paraphrased
+  legitimate + 334 modern legitimate (547 where the text says 668); items per detector per
+  prompting strategy 334 + 1,002 + 1,327 + 547 = 3,210 (text: 3,340). These figures hold if the
+  author keeps option (i) of question 7; they change if the control is handled otherwise.
+- Section 3.8 determinism: run 1 took 29,903 s (8 h 18 min; 13:24-21:43 UTC), of which 364.8 min
+  for the 7,064 first-attempt sentence generations (about 3.1 s per sentence, 16 threads, CPU) and
+  24.8 min for the first-attempt checks. The cache (data/interim/paraphrase_cache_eval.jsonl,
+  gitignored) holds 8,228 rows: 7,064 attempt-0 and 1,164 attempt-1 generations, exactly the
+  distinct (record, sentence, attempt) triples in the variants file (para_low sentences share
+  their keys with para_high, since the generation seed depends on record, sentence index and
+  attempt only). Run 2 against the cache: 10,172 hits, 0 misses, 1,940.8 s; variants_eval.jsonl,
+  obfuscation_log_eval.jsonl and variants_eval_report.json byte-identical to run 1 (sha256
+  a4672bb6..., d7a8865c..., 38daee49...). The report hash changed afterwards only because the spot
+  check attaches its result under cache_spot_check.
+- Section 3.8 cache spot check (reports/variants_eval_spot_check.json): 10 core_pos records drawn
+  with derive_rng(seed, "spot_check", "core_pos"), 20 paraphrase variants, 179 sentence
+  generations repeated with the same seeds and the cache bypassed, 436 s. Protected spans and
+  sentence selection identical to the eval run; no cache row missing; 171 of 179 generations
+  byte-identical (95.5 %), 8 differ (7 at attempt 0, 1 at attempt 1, in 6 records, all with
+  finish reason "stop"): same sentence structure, one to three words substituted (e.g. "will be"
+  vs "will prove", "strategy" vs "approach", "framework" vs "defenses"). Generation with
+  llama-cpp-python 0.3.36 on this CPU at temperature 0.7 is therefore not bit-reproducible for
+  every sentence; the reproducibility of the variants rests on the cached generations and the
+  released variants file, not on regenerating them (docs/QUESTIONS.md item 8).

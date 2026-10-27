@@ -346,7 +346,7 @@
   "manual_sample": {
     "file": "reports/manual_review_sample_dev.csv",
     "kept_existing_rated_sample": true,
-    "rows_rated": 57,
+    "rows_rated": 60,
     "would_pick_now": {
       "rows": 54,
       "per_origin": {

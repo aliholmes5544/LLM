@@ -2,8 +2,13 @@
 """
 05_derive_variants.py — derive paraphrased and obfuscated variants and check them (Section 3.2.3).
 
-Development set only: the 100 dev `ephish_phish` emails (LLM-generated, personalized). The
-script asserts before doing anything that none of them belongs to an evaluation partition.
+Two targets:
+  --target dev  (default): the 100 dev `ephish_phish` emails (LLM-generated, personalized), used to
+                calibrate the checks; asserted disjoint from every evaluation partition.
+  --target eval: the partitions and conditions named in configs/variants_eval.yaml (Table 3.2):
+                core_pos x four conditions, ctrl_para_legit x para_high only. Run once with the frozen
+                configs/variants.yaml (run_variants_eval.sh checks it is identical to HEAD, runs twice
+                and compares hashes). No manual sample is drawn; the dev residual-error estimate stands.
 
 Stages:
   1. protected spans per record (regex + spaCy NER; placeholders always protected)
@@ -18,10 +23,13 @@ Stages:
   6. outputs, report and the manual-review sample (stratified 10 % + every excluded
      paraphrase + a seeded sample of regenerated ones, each flagged with auto_outcome)
 
-Usage:  python scripts/05_derive_variants.py [--conditions a,b] [--limit N] [--selftest] [--skip-download]
-Output: data/processed/variants_dev.jsonl, data/processed/obfuscation_log_dev.jsonl,
-        reports/variants_dev_report.json, reports/manual_review_sample_dev.csv,
-        reports/variants_dev_runtime.json (timings only; not byte-stable)
+Usage:  python scripts/05_derive_variants.py [--target dev|eval] [--conditions a,b] [--limit N] [--dry-run]
+                                             [--selftest] [--skip-download]
+Output (dev):  data/processed/variants_dev.jsonl, data/processed/obfuscation_log_dev.jsonl,
+               reports/variants_dev_report.json, reports/manual_review_sample_dev.csv,
+               reports/variants_dev_runtime.json (timings only; not byte-stable)
+Output (eval): the paths in configs/variants_eval.yaml (variants_eval.jsonl, obfuscation_log_eval.jsonl,
+               reports/variants_eval_report.json with the comparison against the dev exclusion rates)
 """
 import argparse
 import csv
@@ -52,11 +60,25 @@ from variants.rng import derive_rng, llama_seed                        # noqa: E
 
 CFG = load_config()
 VCFG = load_config("variants.yaml")
+ECFG = load_config("variants_eval.yaml")                               # eval targets and output paths only
 SEED = CFG["seed"]
 PROC = ROOT / "data" / "processed"
 REPORTS = ROOT / "reports"
 EVAL_PARTITIONS = ("core_pos", "core_neg", "ctrl_para_legit", "ctrl_modern_legit", "gen_phish", "gen_legit")
 VARIANT_CHECKS = ("sim_ok", "len_ok", "spans_ok")
+PROGRESS_EVERY = 50                                                     # states between progress lines
+
+
+def progress(i: int, n: int, t0: float, label: str) -> None:
+    """One stdout line every PROGRESS_EVERY items (and at the end) for the long eval run."""
+    if i % PROGRESS_EVERY == 0 or i == n:
+        el = time.time() - t0
+        eta = el / i * (n - i) if i else 0.0
+        print(f"  {label}: {i}/{n}  elapsed {el / 60:.1f} min  eta {eta / 60:.1f} min", flush=True)
+
+
+def sha256_text(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 # ---- helpers ---------------------------------------------------------------
@@ -90,21 +112,57 @@ def sha256_file(path: Path) -> str:
 
 
 # ---- stage 0: targets and the evaluation-partition assertion ----------------
-def load_targets(limit: int) -> tuple:
+def load_targets(target: str, limit: int, cond_filter: list) -> tuple:
+    """Plan of (record, condition) pairs. dev: the configured partition/subclass (variants.yaml: target),
+    asserted disjoint from every evaluation partition. eval: the partitions and conditions named in
+    configs/variants_eval.yaml, asserted to touch no training or development item. Returns
+    (records, by_cond, pairs, info): unique records, records per condition, paraphrase/obfuscation pairs
+    in condition order, and the description written to the report."""
     recs = [json.loads(l) for l in open_utf8(PROC / "records.jsonl")]
     by_id = {r["id"]: r for r in recs}
     parts = json.loads(read_text(PROC / "partitions.json"))
-    t = VCFG["target"]
-    targets = sorted(i for i in parts[t["partition"]] if by_id[i]["subclass"] == t["subclass"])
     eval_ids = set().union(*(set(parts[k]) for k in EVAL_PARTITIONS))
-    assert set(targets).isdisjoint(eval_ids), "step 05 must never touch an evaluation partition"
-    assert targets, f"no {t['subclass']} records in partition {t['partition']}"
-    info = {"partition": t["partition"], "subclass": t["subclass"], "n_available": len(targets),
-            "eval_partitions_checked": list(EVAL_PARTITIONS), "n_eval_ids": len(eval_ids), "disjoint": True}
-    if limit:
-        targets = targets[:limit]
-    info["n_records"] = len(targets)
-    return [by_id[i] for i in targets], info
+    if target == "dev":
+        t = VCFG["target"]
+        ids = sorted(i for i in parts[t["partition"]] if by_id[i]["subclass"] == t["subclass"])
+        assert set(ids).isdisjoint(eval_ids), "step 05 must never touch an evaluation partition"
+        assert ids, f"no {t['subclass']} records in partition {t['partition']}"
+        info = {"partition": t["partition"], "subclass": t["subclass"], "n_available": len(ids),
+                "eval_partitions_checked": list(EVAL_PARTITIONS), "n_eval_ids": len(eval_ids), "disjoint": True}
+        if limit:
+            ids = ids[:limit]
+        info["n_records"] = len(ids)
+        groups = {t["partition"]: {"ids": ids, "conditions": [c for c in VCFG["conditions"] if c in cond_filter]}}
+    else:
+        groups, info = {}, {"target": "eval", "partitions": {}}
+        for part, spec in ECFG["targets"].items():
+            assert part in EVAL_PARTITIONS, f"{part} is not an evaluation partition"
+            bad = [c for c in spec["conditions"] if c not in VCFG["conditions"]]
+            assert not bad, f"unknown conditions {bad} for {part}"
+            ids = sorted(parts[part])
+            if limit:
+                ids = ids[:limit]
+            groups[part] = {"ids": ids, "conditions": list(spec["conditions"])}
+            info["partitions"][part] = {"n_available": len(parts[part]), "n_records": len(ids),
+                                        "conditions": list(spec["conditions"]),
+                                        "subclasses": dict(Counter(by_id[i]["subclass"] for i in ids))}
+        touched = set().union(*(set(g["ids"]) for g in groups.values()))
+        overlap = {k: len(touched & set(parts[k])) for k in parts if k not in groups}
+        protected = {k: n for k, n in overlap.items() if k not in EVAL_PARTITIONS and n}
+        assert not protected, f"evaluation variants would touch non-evaluation items: {protected}"
+        # ctrl_para_legit is by design a seeded sample of core_neg (Table 3.2), so an overlap with core_neg is expected
+        info.update({"n_records_unique": len(touched), "overlap_with_other_partitions": overlap,
+                     "disjoint_from_train_dev_valid": True})
+    order = list(VCFG["conditions"])
+    by_cond = {c: [by_id[i] for g in groups.values() if c in g["conditions"] for i in g["ids"]] for c in order}
+    by_cond = {c: rs for c, rs in by_cond.items() if rs}
+    pairs = [(r, c) for c in by_cond for r in by_cond[c]]
+    seen, records = set(), []
+    for g in groups.values():
+        for i in g["ids"]:
+            if i not in seen:
+                seen.add(i); records.append(by_id[i])
+    return records, by_cond, pairs, info
 
 
 # ---- stage 1: protected spans ----------------------------------------------
@@ -204,25 +262,30 @@ class ParaState:
         return round((len(self.selected) - len(self.reverted)) / len(self.selected), 4) if self.selected else 1.0
 
 
-def run_paraphrase(records: list, conds: dict, spans_by_id: dict, model_path: Path, model_sha: str, timings: dict) -> tuple:
-    """Attempt 0 for all -> checks -> retry failed sentences -> checks + fallback. Returns (rows, meta)."""
+def run_paraphrase(pairs: list, conds: dict, spans_by_id: dict, model_path: Path, model_sha: str,
+                   timings: dict, cache_path: Path) -> tuple:
+    """Attempt 0 for all (record, condition) pairs -> checks -> retry failed sentences -> checks + fallback.
+    Returns (rows, meta)."""
     prompt_text = read_text(ROOT / VCFG["paths"]["prompt"]).strip()
-    para = pp.Paraphraser(model_path, model_sha, prompt_text, VCFG["llama"], ROOT / VCFG["paths"]["cache"])
+    para = pp.Paraphraser(model_path, model_sha, prompt_text, VCFG["llama"], cache_path)
     ck = Checkers(VCFG["embedding"]["model"], VCFG["nli"]["model"])
     min_frac = VCFG["fallback"]["min_achieved_fraction"]
-    states = [ParaState(r, c, conds[c]["rate"], spans_by_id[r["id"]]) for c in conds for r in records]
+    states = [ParaState(r, c, conds[c]["rate"], spans_by_id[r["id"]]) for r, c in pairs]
+    n = len(states)
 
     t0 = time.time()
-    for st in states:
+    for i, st in enumerate(states, start=1):
         st.generate(para, st.selected, 0)
+        progress(i, n, t0, "paraphrase attempt 0")
     para.close(); gc.collect()
     timings["paraphrase_attempt_0"] = round(time.time() - t0, 1)
 
     t0 = time.time()
     ck.load()
-    for st in states:
+    for i, st in enumerate(states, start=1):
         st.check_sentences(st.selected, 0, ck)
         st.check_variant(0, ck)
+        progress(i, n, t0, "checks attempt 0")
     entail_idx = ck.entail_idx
     ck.close(); gc.collect()
     timings["checks_attempt_0"] = round(time.time() - t0, 1)
@@ -234,18 +297,19 @@ def run_paraphrase(records: list, conds: dict, spans_by_id: dict, model_path: Pa
             retry[id(st)] = failed if failed else list(st.selected)   # variant-level failure only: redo all
     if retry:
         t0 = time.time()
-        for st in states:
-            if id(st) in retry:
-                st.generate(para, retry[id(st)], 1)
+        todo = [st for st in states if id(st) in retry]
+        for i, st in enumerate(todo, start=1):
+            st.generate(para, retry[id(st)], 1)
+            progress(i, len(todo), t0, "paraphrase attempt 1")
         para.close(); gc.collect()
         timings["paraphrase_attempt_1"] = round(time.time() - t0, 1)
         t0 = time.time()
         ck.load()
-        for st in states:
-            if id(st) in retry:
-                st.check_sentences(retry[id(st)], 1, ck)
-                st.revert_failed()                                     # sentence-level fallback
-                st.check_variant(1, ck)
+        for i, st in enumerate(todo, start=1):
+            st.check_sentences(retry[id(st)], 1, ck)
+            st.revert_failed()                                     # sentence-level fallback
+            st.check_variant(1, ck)
+            progress(i, len(todo), t0, "checks attempt 1")
         ck.close(); gc.collect()
         timings["checks_attempt_1"] = round(time.time() - t0, 1)
 
@@ -399,17 +463,38 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="process only the first N target records")
     ap.add_argument("--selftest", action="store_true", help="run synthetic round-trip tests and exit")
     ap.add_argument("--skip-download", action="store_true", help="fail if the GGUF is not already present")
+    ap.add_argument("--target", choices=("dev", "eval"), default="dev",
+                    help="dev: calibration target from variants.yaml; eval: partitions from variants_eval.yaml")
+    ap.add_argument("--dry-run", action="store_true", help="print the plan (records, conditions, pairs) and exit")
     args = ap.parse_args()
     if args.selftest:
         from variants.selftest import run
         return run()
 
-    conds = {c: VCFG["conditions"][c] for c in args.conditions.split(",") if c}
+    cond_filter = [c for c in args.conditions.split(",") if c]
+    if args.target == "eval" and cond_filter != list(VCFG["conditions"]):
+        raise SystemExit("--conditions is not accepted with --target eval; the conditions come from configs/variants_eval.yaml")
     timings, t_start = {}, time.time()
-    records, target = load_targets(args.limit)
+    records, by_cond, pairs, target = load_targets(args.target, args.limit, cond_filter)
     by_id = {r["id"]: r for r in records}
-    print(f"targets: {target['n_records']} {target['subclass']} records from '{target['partition']}' "
-          f"(disjoint from {len(EVAL_PARTITIONS)} evaluation partitions, {target['n_eval_ids']} ids)")
+    conds = {c: VCFG["conditions"][c] for c in by_cond}
+    if args.target == "dev":
+        out = {"variants": PROC / "variants_dev.jsonl", "obfuscation_log": PROC / "obfuscation_log_dev.jsonl",
+               "report": REPORTS / "variants_dev_report.json", "runtime": REPORTS / "variants_dev_runtime.json",
+               "cache": ROOT / VCFG["paths"]["cache"]}
+        print(f"targets: {target['n_records']} {target['subclass']} records from '{target['partition']}' "
+              f"(disjoint from {len(EVAL_PARTITIONS)} evaluation partitions, {target['n_eval_ids']} ids)")
+    else:
+        out = {k: ROOT / v for k, v in ECFG["outputs"].items()}
+        for part, p in target["partitions"].items():
+            print(f"targets: {part}: {p['n_records']} records {p['subclasses']} -> {p['conditions']}")
+        print(f"targets: {target['n_records_unique']} unique records; overlap with other partitions "
+              f"{target['overlap_with_other_partitions']} (ctrl_para_legit is a sample of core_neg by design)")
+    plan = {c: len(rs) for c, rs in by_cond.items()}
+    print(f"plan: {plan}  paraphrase pairs {sum(n for c, n in plan.items() if conds[c]['family'] == 'paraphrase')}  "
+          f"cache {out['cache'].relative_to(ROOT)}")
+    if args.dry_run:
+        return 0
 
     model_info = {"paraphrase_model": VCFG["model"], "excluded_from_detectors": VCFG["excluded_from_detectors"],
                   "llama": VCFG["llama"], "embedding": VCFG["embedding"]["model"], "nli": VCFG["nli"]["model"]}
@@ -427,14 +512,15 @@ def main() -> int:
     t0 = time.time()
     for c, spec in conds.items():
         if spec["family"] == "obfuscation":
-            r, log = derive_obfuscation(records, c, spec["rate"], spans_by_id)
+            r, log = derive_obfuscation(by_cond[c], c, spec["rate"], spans_by_id)
             rows.extend(r); obf_log.extend(log)
             print(f"{c}: {len(r)} variants, {len(log)} edits, integrity {sum(x['checks']['integrity_ok'] for x in r)}/{len(r)}")
     timings["obfuscation"] = round(time.time() - t0, 1)
 
     para_conds = {c: s for c, s in conds.items() if s["family"] == "paraphrase"}
-    if para_conds:
-        prow, meta = run_paraphrase(records, para_conds, spans_by_id, model_path, model_sha, timings)
+    para_pairs = [(r, c) for r, c in pairs if c in para_conds]
+    if para_pairs:
+        prow, meta = run_paraphrase(para_pairs, para_conds, spans_by_id, model_path, model_sha, timings, out["cache"])
         rows.extend(prow)
         model_info.update(meta)
         for c in para_conds:
@@ -449,31 +535,88 @@ def main() -> int:
     rows.sort(key=lambda r: (order[r["condition"]], r["source_id"]))
     obf_log.sort(key=lambda e: (order[e["variant_id"].split("#")[1]], e["variant_id"], e["position"]))
     PROC.mkdir(parents=True, exist_ok=True)
-    with open_utf8(PROC / "variants_dev.jsonl", "w") as fh:
+    with open_utf8(out["variants"], "w") as fh:
         for r in rows:
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
-    with open_utf8(PROC / "obfuscation_log_dev.jsonl", "w") as fh:
+    with open_utf8(out["obfuscation_log"], "w") as fh:
         for e in obf_log:
             fh.write(json.dumps(e, ensure_ascii=False) + "\n")
 
-    sample = write_manual_sample(rows, by_id, conds, REPORTS / "manual_review_sample_dev.csv")
     cache_stats = {k: model_info.pop(k, None) for k in ("cache_hits", "cache_misses")}   # run-dependent -> runtime file
-    report = {"seed": SEED, "target": target, "model": model_info, "thresholds": VCFG["thresholds"],
-              "fallback": VCFG["fallback"], "conditions": summarise(rows, conds, spans_by_id, len(obf_log)),
-              "manual_sample": sample, "config": VCFG}
-    write_json(REPORTS / "variants_dev_report.json", report)
+    if args.target == "dev":
+        sample = write_manual_sample(rows, by_id, conds, REPORTS / "manual_review_sample_dev.csv")
+        report = {"seed": SEED, "target": target, "model": model_info, "thresholds": VCFG["thresholds"],
+                  "fallback": VCFG["fallback"], "conditions": summarise(rows, conds, spans_by_id, len(obf_log)),
+                  "manual_sample": sample, "config": VCFG}
+    else:
+        sample = None
+        report = eval_report(rows, obf_log, spans_by_id, target, model_info)
+    write_json(out["report"], report)
     timings["total"] = round(time.time() - t_start, 1)
-    write_json(REPORTS / "variants_dev_runtime.json",
-               {"finished_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"), "seconds": timings,
-                "cache": cache_stats})
+    write_json(out["runtime"], {"finished_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+                                "seconds": timings, "cache": cache_stats,
+                                "config_sha256": report.get("config_sha256")})
 
-    print(f"\nvariants -> {(PROC / 'variants_dev.jsonl').relative_to(ROOT)}  ({len(rows)} rows)")
-    if sample.get("kept_existing_rated_sample"):
+    print(f"\nvariants -> {out['variants'].relative_to(ROOT)}  ({len(rows)} rows)")
+    if sample is None:
+        print("manual sample: none (evaluation data are not reviewed; the dev residual-error estimate stands)")
+        for key, flag in report["dev_comparison"]["flags"].items():
+            if flag:
+                print(f"FLAG: {key} exclusion rate exceeds the dev rate by more than {ECFG['flag_exclusion_rate_above_dev_pp']} points")
+    elif sample.get("kept_existing_rated_sample"):
         print(f"manual sample -> {sample['file']}  (kept: {sample['rows_rated']} rated rows; a fresh draw would give {sample['would_pick_now']})")
     else:
         print(f"manual sample -> {sample['file']}  ({sample['rows']} rows: {sample['per_origin']})")
-    print(f"report -> reports/variants_dev_report.json   runtime {timings['total']} s")
+    print(f"report -> {out['report'].relative_to(ROOT)}   runtime {timings['total']} s")
     return 0
+
+
+def eval_report(rows: list, obf_log: list, spans_by_id: dict, target: dict, model_info: dict) -> dict:
+    """Per-partition summaries (same fields as the dev report), the exclusion list with reasons, and the
+    comparison of exclusion rates with the dev run (flag above the configured margin). The cache spot check
+    written by scripts/05c_spot_check_cache.py is re-attached when present, so a rerun keeps it."""
+    parts = json.loads(read_text(PROC / "partitions.json"))
+    partitions = {}
+    for part, spec in ECFG["targets"].items():
+        ids = set(parts[part])
+        prow = [r for r in rows if r["source_id"] in ids and r["condition"] in spec["conditions"]]
+        conds = {c: VCFG["conditions"][c] for c in spec["conditions"]}
+        vids = {r["variant_id"] for r in prow}
+        n_log = sum(e["variant_id"] in vids for e in obf_log)
+        partitions[part] = summarise(prow, conds, {i: spans_by_id[i] for i in ids if i in spans_by_id}, n_log)
+    exclusions = [{"variant_id": r["variant_id"], "condition": r["condition"],
+                   "partition": next(p for p, s in ECFG["targets"].items() if r["source_id"] in set(parts[p])),
+                   "reasons": r["checks"].get("failed_tests", ["integrity"] if not r["checks"].get("integrity_ok", True) else []),
+                   "sim_cos": r["checks"].get(f"attempt_{r['checks'].get('final_attempt', 0)}", {}).get("sim_cos"),
+                   "achieved_fraction": r["checks"].get("achieved_fraction")}
+                  for r in rows if r["status"] == "excluded"]
+    dev = json.loads(read_text(ROOT / ECFG["dev_report"]))
+    margin = ECFG["flag_exclusion_rate_above_dev_pp"]
+    comparison, flags = {}, {}
+    for part, summ in partitions.items():
+        for c, entry in summ.items():
+            if c.startswith("_"):
+                continue
+            d = dev["conditions"][c]
+            dev_rate = d["status"].get("excluded", 0) / d["produced"]
+            rate = entry["status"].get("excluded", 0) / entry["produced"]
+            key = f"{part}/{c}"
+            comparison[key] = {"eval_excluded": entry["status"].get("excluded", 0), "eval_produced": entry["produced"],
+                               "eval_rate": round(rate, 4), "dev_excluded": d["status"].get("excluded", 0),
+                               "dev_produced": d["produced"], "dev_rate": round(dev_rate, 4),
+                               "difference_pp": round(100 * (rate - dev_rate), 2)}
+            flags[key] = 100 * (rate - dev_rate) > margin
+    config_sha = {"configs/variants.yaml": sha256_text(ROOT / "configs" / "variants.yaml"),
+                  "configs/variants_eval.yaml": sha256_text(ROOT / "configs" / "variants_eval.yaml"),
+                  VCFG["paths"]["prompt"]: sha256_text(ROOT / VCFG["paths"]["prompt"])}
+    spot = ROOT / "reports" / "variants_eval_spot_check.json"
+    spot_check = json.loads(read_text(spot)) if spot.exists() else None
+    return {"seed": SEED, "target": target, "config_sha256": config_sha, "model": model_info,
+            "thresholds": VCFG["thresholds"], "fallback": VCFG["fallback"], "partitions": partitions,
+            "exclusions": exclusions,
+            "dev_comparison": {"dev_report": ECFG["dev_report"], "dev_thresholds": dev["thresholds"],
+                               "margin_pp": margin, "per_condition": comparison, "flags": flags},
+            "config": VCFG, "eval_config": ECFG, "cache_spot_check": spot_check}
 
 
 if __name__ == "__main__":

@@ -41,7 +41,7 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 | 02 | audit raw sources | done, tested |
 | 03 | normalize, neutralize placeholders, dedup across collections | done, tested |
 | 04 | partitions + leakage check | done, tested (no leakage) |
-| 05 | variants (paraphrase, obfuscation) + meaning checks, **dev set first** | next — spec in `docs/TASK_05_variants.md` |
+| 05 | variants (paraphrase, obfuscation) + meaning checks, dev set first, then eval | done: dev calibrated (thresholds frozen), eval derived 2026-10-26 and determinism-checked; open questions 7 and 8 in `docs/QUESTIONS.md` |
 | 06 | prompting / inference (llama.cpp GGUF backend) | not started |
 | 07 | baselines | not started |
 | 08 | evaluation + statistics | not started |
@@ -53,6 +53,10 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 - After cross-collection dedup: hard_ham 308, enron_ham 1,610, traditional 2,654.
 - Partitions: core_pos 334, core_neg 1,002 (308 hard + 694 enron), controls 334+334,
   gen 1,000+1,000 (salutation named 599 / generic 330 / none 71), dev 400, train 3,033, valid 337.
+- Eval variants (reports/variants_eval_report.json): core_pos para_low 334/334 accepted, para_high
+  325/334 (9 excluded, fraction), obf_low and obf_high 334/334 (integrity 100%); ctrl_para_legit
+  para_high 213/334 (121 excluded, 36.2%, flagged; QUESTIONS.md item 7). Two cache-sharing runs
+  byte-identical; cache spot check 171/179 generations identical (QUESTIONS.md item 8).
 
 ## Working with the thesis author
 - The author reviews methodology with a separate advisor chat; this repo implements what
