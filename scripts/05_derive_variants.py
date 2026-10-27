@@ -611,12 +611,15 @@ def eval_report(rows: list, obf_log: list, spans_by_id: dict, target: dict, mode
                   VCFG["paths"]["prompt"]: sha256_text(ROOT / VCFG["paths"]["prompt"])}
     spot = ROOT / "reports" / "variants_eval_spot_check.json"
     spot_check = json.loads(read_text(spot)) if spot.exists() else None
+    fixed = ROOT / "reports" / "variants_eval_fixed_artifacts.json"          # written by 05d; re-attached here
+    fixed_artifacts = json.loads(read_text(fixed)) if fixed.exists() else None
     return {"seed": SEED, "target": target, "config_sha256": config_sha, "model": model_info,
             "thresholds": VCFG["thresholds"], "fallback": VCFG["fallback"], "partitions": partitions,
             "exclusions": exclusions,
             "dev_comparison": {"dev_report": ECFG["dev_report"], "dev_thresholds": dev["thresholds"],
                                "margin_pp": margin, "per_condition": comparison, "flags": flags},
-            "config": VCFG, "eval_config": ECFG, "cache_spot_check": spot_check}
+            "config": VCFG, "eval_config": ECFG, "cache_spot_check": spot_check,
+            "fixed_artifacts": fixed_artifacts}
 
 
 if __name__ == "__main__":

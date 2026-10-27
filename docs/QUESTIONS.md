@@ -44,6 +44,11 @@
    methodology text should specify first. Either way the thesis text should say that the control
    exclusion rate is not comparable with the dev estimate because the dev paraphrases came from
    E-PhishLLM only.
+   **Answered 2026-10-27 (author):** option (i). No threshold changed. Diagnosis only
+   (scripts/05d_control_exclusion_diagnosis.py, reports/control_exclusion_diagnosis.json): the
+   exclusions are sentence-level reverts on short, span-dense Enron bodies with few eligible
+   sentences (1-4 eligible: 60 of 119 excluded; enron_ham 44.1 % vs hard_ham 20.5 %); interpretation
+   in docs/CHANGES_FOR_THESIS.md (2026-10-27 entry). Control kept at 213 accepted variants.
 
 8. **Generation is not bit-reproducible on this backend (spot check 171/179).** Two runs of the
    evaluation derivation that share the generation cache are byte-identical, but regenerating 179
@@ -60,3 +65,9 @@
    the derivation to be reproducible by others. The variants are derived from Nahmias et al.
    (2024), CC BY-NC-SA 4.0, so publishing them under the same licence is permitted; the decision
    and the wording are the author's.
+   **Answered 2026-10-27 (author):** data/processed/variants_eval.jsonl and
+   data/interim/paraphrase_cache_eval.jsonl are the fixed evaluation artifact; downstream steps are
+   byte-reproducible from them (run 2), generation is seeded but not bit-reproducible on the CPU
+   backend (8/179 sentences differed by 1-3 words). sha256 of both files recorded in
+   reports/variants_eval_report.json (fixed_artifacts) and docs/CHANGES_FOR_THESIS.md. Archived at
+   submission under CC BY-NC-SA 4.0 (Nahmias licence), not in git.

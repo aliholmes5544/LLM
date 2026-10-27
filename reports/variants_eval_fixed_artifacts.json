@@ -1,0 +1,18 @@
+{
+  "decision": "The derived variants file and the generation cache are the fixed evaluation artifact. Every step downstream of generation is byte-reproducible from them (run 2 of run_variants_eval.sh reproduced run 1 byte-identically from the cache). Generation itself is seeded but not bit-reproducible on the CPU backend: in the cache spot check 8 of 179 sampled sentences differed by 1-3 words. Both files are archived at submission under CC BY-NC-SA 4.0, the licence of the Nahmias et al. (2024) data they derive from; they are not committed to git.",
+  "licence": "CC BY-NC-SA 4.0 (Nahmias et al., 2024)",
+  "archived_at_submission": true,
+  "in_git": false,
+  "files": {
+    "data/processed/variants_eval.jsonl": {
+      "sha256": "a4672bb621a3bb6107c58a19ce66d30efd05979dc36fed2771704d1ffe3fb7a9",
+      "bytes": 5604858,
+      "rows": 1670
+    },
+    "data/interim/paraphrase_cache_eval.jsonl": {
+      "sha256": "694cd11b27045dfd6d7256b6f2bfae366e77d6c9d1be6fb02b9e6b0aac6297d7",
+      "bytes": 4714876,
+      "rows": 8228
+    }
+  }
+}

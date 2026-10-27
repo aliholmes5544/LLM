@@ -1,0 +1,519 @@
+{
+  "question": "docs/QUESTIONS.md item 7",
+  "thresholds_changed": false,
+  "source": {
+    "variants": "data/processed/variants_eval.jsonl",
+    "report": "reports/variants_eval_report.json"
+  },
+  "word_bins": [
+    "0-49",
+    "50-99",
+    "100-199",
+    "200-399",
+    "400+"
+  ],
+  "eligible_sentence_bins": [
+    "0",
+    "1-4",
+    "5-9",
+    "10-19",
+    "20+"
+  ],
+  "partitions": {
+    "ctrl_para_legit": {
+      "condition": "para_high",
+      "description": "control (paraphrased legitimate)",
+      "min_achieved_fraction": 0.8,
+      "n_variants": 334,
+      "n_excluded": 121,
+      "exclusion_rate": 0.3623,
+      "excluded": {
+        "n": 121,
+        "source_collection": {
+          "enron_ham": 98,
+          "hard_ham": 23
+        },
+        "body_words": {
+          "n": 121,
+          "min": 5,
+          "p25": 47.0,
+          "median": 95,
+          "p75": 270.0,
+          "max": 599,
+          "mean": 183.3
+        },
+        "n_segments": {
+          "n": 121,
+          "min": 1,
+          "p25": 3.0,
+          "median": 5,
+          "p75": 14.0,
+          "max": 74,
+          "mean": 10.4
+        },
+        "n_eligible_sentences": {
+          "n": 121,
+          "min": 1,
+          "p25": 2.0,
+          "median": 5,
+          "p75": 11.0,
+          "max": 43,
+          "mean": 7.9
+        },
+        "n_eligible_below_5": 60,
+        "n_eligible_zero": 0,
+        "protected_spans_per_record": {
+          "n": 121,
+          "min": 0,
+          "p25": 7.0,
+          "median": 13,
+          "p75": 40.0,
+          "max": 231,
+          "mean": 32.5
+        },
+        "n_reverted_sentences": {
+          "n": 121,
+          "min": 0,
+          "p25": 1.0,
+          "median": 2,
+          "p75": 4.0,
+          "max": 11,
+          "mean": 2.7
+        },
+        "truncated_generations": {
+          "variants_with_any": 54,
+          "total": 117
+        },
+        "body_identical_to_original": 15,
+        "first_attempt_cosine": {
+          "n": 121,
+          "min": 0.3761,
+          "p25": 0.7557,
+          "median": 0.8593,
+          "p75": 0.9188,
+          "max": 1.0,
+          "mean": 0.8245
+        },
+        "achieved_fraction": {
+          "n": 121,
+          "min": 0.0,
+          "p25": 0.5,
+          "median": 0.6667,
+          "p75": 0.7391,
+          "max": 1.0,
+          "mean": 0.5688,
+          "histogram": {
+            "0.0-0.2": 15,
+            "0.2-0.4": 6,
+            "0.4-0.6": 29,
+            "0.6-0.8": 63,
+            "0.8-1.0": 8
+          }
+        },
+        "status": {
+          "excluded": 121
+        },
+        "failed_tests": {
+          "fraction": 113,
+          "cosine": 6,
+          "length": 3
+        }
+      },
+      "accepted": {
+        "n": 213,
+        "source_collection": {
+          "enron_ham": 124,
+          "hard_ham": 89
+        },
+        "body_words": {
+          "n": 213,
+          "min": 5,
+          "p25": 66.0,
+          "median": 141,
+          "p75": 333.0,
+          "max": 599,
+          "mean": 216.3
+        },
+        "n_segments": {
+          "n": 213,
+          "min": 1,
+          "p25": 5.0,
+          "median": 10,
+          "p75": 24.0,
+          "max": 116,
+          "mean": 16.4
+        },
+        "n_eligible_sentences": {
+          "n": 213,
+          "min": 0,
+          "p25": 4.0,
+          "median": 8,
+          "p75": 19.0,
+          "max": 63,
+          "mean": 12.5
+        },
+        "n_eligible_below_5": 62,
+        "n_eligible_zero": 3,
+        "protected_spans_per_record": {
+          "n": 213,
+          "min": 0,
+          "p25": 6.0,
+          "median": 17,
+          "p75": 34.0,
+          "max": 159,
+          "mean": 23.1
+        },
+        "n_reverted_sentences": {
+          "n": 213,
+          "min": 0,
+          "p25": 0.0,
+          "median": 1,
+          "p75": 2.0,
+          "max": 12,
+          "mean": 1.3
+        },
+        "truncated_generations": {
+          "variants_with_any": 61,
+          "total": 117
+        },
+        "body_identical_to_original": 3,
+        "first_attempt_cosine": {
+          "n": 213,
+          "min": 0.4427,
+          "p25": 0.8379,
+          "median": 0.8871,
+          "p75": 0.9346,
+          "max": 1.0,
+          "mean": 0.8789
+        },
+        "achieved_fraction": {
+          "n": 213,
+          "min": 0.8,
+          "p25": 0.8611,
+          "median": 0.9333,
+          "p75": 1.0,
+          "max": 1.0,
+          "mean": 0.9292,
+          "histogram": {
+            "0.0-0.2": 0,
+            "0.2-0.4": 0,
+            "0.4-0.6": 0,
+            "0.6-0.8": 0,
+            "0.8-1.0": 213
+          }
+        },
+        "status": {
+          "pass": 63,
+          "regenerated": 150
+        },
+        "failed_tests": {}
+      },
+      "exclusion_rate_by_source_collection": {
+        "enron_ham": {
+          "n": 222,
+          "excluded": 98,
+          "rate": 0.4414
+        },
+        "hard_ham": {
+          "n": 112,
+          "excluded": 23,
+          "rate": 0.2054
+        }
+      },
+      "exclusion_rate_by_body_words": {
+        "0-49": {
+          "n": 72,
+          "excluded": 31,
+          "rate": 0.4306
+        },
+        "50-99": {
+          "n": 71,
+          "excluded": 31,
+          "rate": 0.4366
+        },
+        "100-199": {
+          "n": 73,
+          "excluded": 24,
+          "rate": 0.3288
+        },
+        "200-399": {
+          "n": 47,
+          "excluded": 10,
+          "rate": 0.2128
+        },
+        "400+": {
+          "n": 71,
+          "excluded": 25,
+          "rate": 0.3521
+        }
+      },
+      "exclusion_rate_by_eligible_sentences": {
+        "0": {
+          "n": 3,
+          "excluded": 0,
+          "rate": 0.0
+        },
+        "1-4": {
+          "n": 119,
+          "excluded": 60,
+          "rate": 0.5042
+        },
+        "5-9": {
+          "n": 77,
+          "excluded": 23,
+          "rate": 0.2987
+        },
+        "10-19": {
+          "n": 70,
+          "excluded": 26,
+          "rate": 0.3714
+        },
+        "20+": {
+          "n": 65,
+          "excluded": 12,
+          "rate": 0.1846
+        }
+      },
+      "fraction_exclusions": {
+        "n": 113,
+        "with_fewer_than_5_eligible_sentences": 53,
+        "with_zero_eligible_sentences": 0,
+        "fraction_equals_(eligible-reverted)/eligible": 113,
+        "reverted_sentences_total": 325
+      }
+    },
+    "core_pos": {
+      "condition": "para_high",
+      "description": "spear-phishing originals",
+      "min_achieved_fraction": 0.8,
+      "n_variants": 334,
+      "n_excluded": 9,
+      "exclusion_rate": 0.0269,
+      "excluded": {
+        "n": 9,
+        "source_collection": {
+          "other (spear_llm)": 9
+        },
+        "body_words": {
+          "n": 9,
+          "min": 103,
+          "p25": 132.0,
+          "median": 134,
+          "p75": 164.0,
+          "max": 237,
+          "mean": 150.2
+        },
+        "n_segments": {
+          "n": 9,
+          "min": 10,
+          "p25": 10.0,
+          "median": 12,
+          "p75": 14.0,
+          "max": 15,
+          "mean": 12.1
+        },
+        "n_eligible_sentences": {
+          "n": 9,
+          "min": 8,
+          "p25": 8.0,
+          "median": 9,
+          "p75": 9.0,
+          "max": 12,
+          "mean": 9.1
+        },
+        "n_eligible_below_5": 0,
+        "n_eligible_zero": 0,
+        "protected_spans_per_record": {
+          "n": 9,
+          "min": 4,
+          "p25": 5.0,
+          "median": 6,
+          "p75": 9.0,
+          "max": 12,
+          "mean": 7.2
+        },
+        "n_reverted_sentences": {
+          "n": 9,
+          "min": 2,
+          "p25": 2.0,
+          "median": 2,
+          "p75": 3.0,
+          "max": 3,
+          "mean": 2.3
+        },
+        "truncated_generations": {
+          "variants_with_any": 0,
+          "total": 0
+        },
+        "body_identical_to_original": 0,
+        "first_attempt_cosine": {
+          "n": 9,
+          "min": 0.8978,
+          "p25": 0.9213,
+          "median": 0.9294,
+          "p75": 0.9547,
+          "max": 0.9785,
+          "mean": 0.9386
+        },
+        "achieved_fraction": {
+          "n": 9,
+          "min": 0.6667,
+          "p25": 0.75,
+          "median": 0.75,
+          "p75": 0.75,
+          "max": 0.7778,
+          "mean": 0.7444,
+          "histogram": {
+            "0.0-0.2": 0,
+            "0.2-0.4": 0,
+            "0.4-0.6": 0,
+            "0.6-0.8": 9,
+            "0.8-1.0": 0
+          }
+        },
+        "status": {
+          "excluded": 9
+        },
+        "failed_tests": {
+          "fraction": 9
+        }
+      },
+      "accepted": {
+        "n": 325,
+        "source_collection": {
+          "other (spear_llm)": 325
+        },
+        "body_words": {
+          "n": 325,
+          "min": 59,
+          "p25": 148.0,
+          "median": 181,
+          "p75": 208.0,
+          "max": 324,
+          "mean": 180.8
+        },
+        "n_segments": {
+          "n": 325,
+          "min": 7,
+          "p25": 12.0,
+          "median": 14,
+          "p75": 15.0,
+          "max": 23,
+          "mean": 13.8
+        },
+        "n_eligible_sentences": {
+          "n": 325,
+          "min": 4,
+          "p25": 9.0,
+          "median": 10,
+          "p75": 12.0,
+          "max": 19,
+          "mean": 10.3
+        },
+        "n_eligible_below_5": 2,
+        "n_eligible_zero": 0,
+        "protected_spans_per_record": {
+          "n": 325,
+          "min": 1,
+          "p25": 4.0,
+          "median": 6,
+          "p75": 8.0,
+          "max": 16,
+          "mean": 6.2
+        },
+        "n_reverted_sentences": {
+          "n": 325,
+          "min": 0,
+          "p25": 0.0,
+          "median": 0,
+          "p75": 1.0,
+          "max": 2,
+          "mean": 0.4
+        },
+        "truncated_generations": {
+          "variants_with_any": 4,
+          "total": 4
+        },
+        "body_identical_to_original": 0,
+        "first_attempt_cosine": {
+          "n": 325,
+          "min": 0.8273,
+          "p25": 0.9317,
+          "median": 0.9474,
+          "p75": 0.9608,
+          "max": 0.986,
+          "mean": 0.942
+        },
+        "achieved_fraction": {
+          "n": 325,
+          "min": 0.8,
+          "p25": 0.9091,
+          "median": 1.0,
+          "p75": 1.0,
+          "max": 1.0,
+          "mean": 0.9619,
+          "histogram": {
+            "0.0-0.2": 0,
+            "0.2-0.4": 0,
+            "0.4-0.6": 0,
+            "0.6-0.8": 0,
+            "0.8-1.0": 325
+          }
+        },
+        "status": {
+          "regenerated": 196,
+          "pass": 129
+        },
+        "failed_tests": {}
+      },
+      "exclusion_rate_by_source_collection": {
+        "other (spear_llm)": {
+          "n": 334,
+          "excluded": 9,
+          "rate": 0.0269
+        }
+      },
+      "exclusion_rate_by_body_words": {
+        "50-99": {
+          "n": 6,
+          "excluded": 0,
+          "rate": 0.0
+        },
+        "100-199": {
+          "n": 216,
+          "excluded": 8,
+          "rate": 0.037
+        },
+        "200-399": {
+          "n": 112,
+          "excluded": 1,
+          "rate": 0.0089
+        }
+      },
+      "exclusion_rate_by_eligible_sentences": {
+        "1-4": {
+          "n": 2,
+          "excluded": 0,
+          "rate": 0.0
+        },
+        "5-9": {
+          "n": 120,
+          "excluded": 7,
+          "rate": 0.0583
+        },
+        "10-19": {
+          "n": 212,
+          "excluded": 2,
+          "rate": 0.0094
+        }
+      },
+      "fraction_exclusions": {
+        "n": 9,
+        "with_fewer_than_5_eligible_sentences": 0,
+        "with_zero_eligible_sentences": 0,
+        "fraction_equals_(eligible-reverted)/eligible": 9,
+        "reverted_sentences_total": 21
+      }
+    }
+  }
+}

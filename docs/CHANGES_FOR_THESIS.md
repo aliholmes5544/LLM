@@ -277,3 +277,48 @@ core_neg); no training, dev or valid item is touched.
   llama-cpp-python 0.3.36 on this CPU at temperature 0.7 is therefore not bit-reproducible for
   every sentence; the reproducibility of the variants rests on the cached generations and the
   released variants file, not on regenerating them (docs/QUESTIONS.md item 8).
+
+## Step 05 control-exclusion diagnosis and reproducibility decision (2026-10-27; no threshold changed)
+Author's decisions on docs/QUESTIONS.md items 7 and 8. Diagnosis by scripts/05d_control_exclusion_
+diagnosis.py, output reports/control_exclusion_diagnosis.json; nothing was re-derived.
+- Section 3.2.3, paraphrased legitimate control (ctrl_para_legit/para_high, 121 of 334 excluded,
+  36.2 %). Excluded versus accepted variants: body length median 95 vs 141 words; eligible
+  sentences median 5 vs 8; protected spans per record median 13 vs 17; variants with at least one
+  truncated generation 54 of 121 (44.6 %) vs 61 of 213 (28.6 %); achieved fraction median 0.667
+  vs 0.933. Source collection: enron_ham 98 of 222 excluded (44.1 %), hard_ham 23 of 112 (20.5 %).
+  Exclusion rate by eligible sentences: 1-4 sentences 60 of 119 (50.4 %), 5-9 23 of 77 (29.9 %),
+  10-19 26 of 70 (37.1 %), 20 or more 12 of 65 (18.5 %); by body length: under 50 words 31 of 72
+  (43.1 %), 50-99 31 of 71 (43.7 %), 100-199 24 of 73 (32.9 %), 200-399 10 of 47 (21.3 %), 400 or
+  more 25 of 71 (35.2 %). Of the 113 exclusions for achieved fraction, all 113 have fraction equal to
+  (eligible - reverted) / eligible, so the mechanism is entirely sentence-level reverts (325 reverted
+  sentences after a failed retry), and 53 of the 113 have fewer than 5 eligible sentences, where the
+  0.80 minimum leaves no room for a single revert (4 sentences, 1 reverted: 0.75). Fifteen excluded
+  variants had every selected sentence reverted (fraction 0.0) and are byte-identical to the
+  original; three accepted variants have no eligible sentence at all (fraction recorded as 1.0) and
+  are likewise identical to the original.
+- Interpretation (analytical, for the thesis text): the control exclusions are not a sign that the
+  paraphraser changes the meaning of legitimate mail more often; they follow from the interaction
+  of three properties of the Enron and hard-ham material with the frozen rules. The bodies are short
+  and fragmentary (median 8 segments, many with 1-4 eligible sentences), so one sentence that fails
+  the NLI or span test and is reverted after its retry already drops the achieved fraction below
+  0.80; they are dense in protected spans (names, numbers, e-mail addresses, 16 per record against
+  6 for the spear-phishing originals), which the 3.8B paraphraser drops or alters more often (518 of
+  3,624 first-attempt sentences failed the span test, against 34 of 3,440 for core_pos); and they
+  contain long run-on lines that hit the generation length limit (234 truncated generations against
+  4). The spear-phishing originals, by contrast, are uniform 7-23 segment prose with few spans, and
+  their 9 exclusions all fall in bodies with 5-9 eligible sentences (7 of 120, 5.8 %, against 2 of
+  212 with 10-19 sentences). The thresholds are not changed. The control is kept at 213 accepted
+  variants, reported with this breakdown; the thesis should state that the control's exclusion rate
+  is not comparable with the dev estimate (dev paraphrases were E-PhishLLM text only) and that the
+  three unchanged accepted controls are counted as controls with no paraphrasable sentence.
+- Section 3.8, reproducibility decision: data/processed/variants_eval.jsonl and data/interim/
+  paraphrase_cache_eval.jsonl are the fixed evaluation artifact. Every step downstream of
+  generation is byte-reproducible from them (run 2 reproduced run 1 byte-identically from the
+  cache); generation itself is seeded but not bit-reproducible on the CPU backend (8 of 179 sampled
+  sentences differed by 1-3 words). sha256 recorded in reports/variants_eval_report.json
+  (fixed_artifacts) and reports/variants_eval_fixed_artifacts.json:
+  variants_eval.jsonl a4672bb621a3bb6107c58a19ce66d30efd05979dc36fed2771704d1ffe3fb7a9
+  (5,604,858 bytes, 1,670 rows); paraphrase_cache_eval.jsonl
+  694cd11b27045dfd6d7256b6f2bfae366e77d6c9d1be6fb02b9e6b0aac6297d7 (4,714,876 bytes, 8,228 rows).
+  Both files are archived at submission under CC BY-NC-SA 4.0 (the Nahmias et al., 2024, licence),
+  not in git.
