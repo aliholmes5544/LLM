@@ -42,7 +42,7 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 | 03 | normalize, neutralize placeholders, dedup across collections | done, tested |
 | 04 | partitions + leakage check | done, tested (no leakage) |
 | 05 | variants (paraphrase, obfuscation) + meaning checks, dev set first, then eval | done: dev calibrated (thresholds frozen), eval derived 2026-10-26 and determinism-checked; questions 7 and 8 answered 2026-10-27 (control 210 after the unchanged rule; variants file + cache are the fixed artifact, hashes in the report) |
-| 06 | prompting / inference (llama.cpp GGUF backend) | not started |
+| 06 | prompting / inference (llama.cpp GGUF backend) | in progress: item 1 done 2026-10-27 (configs/models.yaml, configs/detection.yaml, prompts/*.txt, extract_label + tests, few-shot examples drawn; QUESTIONS.md items 9 and 10 open); no model downloaded, no inference run |
 | 07 | baselines | not started |
 | 08 | evaluation + statistics | not started |
 

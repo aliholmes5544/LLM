@@ -364,3 +364,49 @@ rows). The development set is unaffected: none of its 400 variants is identical 
   reports/variants_eval_report.json (fixed_artifacts). The previous variants hash (a4672bb6...) is
   superseded. The spot check (171/179) remains valid: spans, sentence selection and generations are
   untouched by the rule.
+
+## Step 06 item 1: detector set, decoding, prompts, label rule, few-shot examples (2026-10-27; no model run)
+Implements TASK_06 sections 1, 2 and 4 (Chapter 3 Sections 3.5 to 3.7). No weights were downloaded and no
+inference was run; everything below is configuration and code, frozen only after the dev smoke test (item 2).
+- Section 3.5, paraphraser exclusion: configs/variants.yaml names the paraphrase model
+  bartowski/Phi-3.5-mini-instruct-GGUF (Phi-3.5-mini-instruct, 3.8B, MIT; excluded_from_detectors: [phi]).
+  None of the six detectors (Llama 3.1, Mistral, Gemma 2, Qwen2.5) belongs to the Phi family, so no
+  substitution is needed and the table of TASK_06 section 1 stands.
+- Section 3.5, detector set (configs/models.yaml): GGUF Q4_K_M files from the bartowski repositories,
+  original repository, file size and licence per model: llama31-8b = Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf
+  (4.92 GB; card licence "llama3.1", LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, open-weight; gated);
+  mistral-7b = Mistral-7B-Instruct-v0.3-Q4_K_M.gguf (4.37 GB; apache-2.0); gemma2-9b = gemma-2-9b-it-Q4_K_M.gguf
+  (5.76 GB; card licence "gemma", Gemma Terms of Use, open-weight; gated); qwen25-7b =
+  Qwen2.5-7B-Instruct-Q4_K_M.gguf (4.68 GB; apache-2.0); qwen25-14b = Qwen2.5-14B-Instruct-Q4_K_M.gguf
+  (8.99 GB; apache-2.0; Colab T4); gemma2-27b = gemma-2-27b-it-Q4_K_M.gguf (16.65 GB; gemma; Colab L4).
+  Licence strings are the model-card front-matter values read on 2026-10-27; sha256 of each file is
+  filled in by 06_download_models.py on first download. Context 4,096 tokens; the chat template embedded
+  in each GGUF is applied. Gemma 2 has no system role: the system text is prepended to the user message
+  (QUESTIONS.md item 9).
+- Section 3.6, decoding (configs/detection.yaml): greedy (temperature 0, top-p 1.0, repeat penalty 1.0,
+  sampler seed 2026), max_tokens 16 for zero_shot / few_shot / role and 256 for cot, no stop sequences
+  beyond the template end token, one run per cell.
+- Section 3.5, prompts (prompts/zero_shot.txt, few_shot.txt, cot.txt, role.txt; "### system" / "### user"
+  sections, placeholders {subject} and {body}): the output rule in all four is "Answer with exactly one
+  word: PHISHING or LEGITIMATE."; cot asks for a few sentences of analysis and then "FINAL: PHISHING" or
+  "FINAL: LEGITIMATE"; role replaces the system message by an email-security-analyst persona, user message
+  identical to zero_shot (checked by diff); few_shot inserts four labelled examples as "Example n /
+  Subject / Body / Answer" blocks before the item. Hashes are recorded at freezing (item 2).
+- Section 3.5, few-shot examples (scripts/06_select_fewshot.py, prompts/few_shot_examples.json,
+  reports/fewshot_selection.json): drawn once from fewshot_pool with seed 2026, admissible body length 20
+  to 200 words, no PERSON/ORG entity token shared with a core_pos original (spaCy en_core_web_sm; 204
+  protected tokens), no near-duplicate of an evaluation item; 21 candidates examined, 16 rejected for
+  length, 1 for a shared persona token, 0 near-duplicates; the second run reproduced both files
+  byte-identically. Chosen (prompt order phish, legit, phish, legit):
+  nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424 (161 words),
+  nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme (80 words),
+  nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c (131 words),
+  nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme (26 words). The file stores ids and sha256 of
+  subject and body only; the texts are rendered from records.jsonl at run time (no data in git).
+  Observations for the author in QUESTIONS.md item 10.
+- Section 3.6, label extraction (scripts/common.py: extract_label): lowercase; for cot, the text after the
+  last "final:" (whole output if absent); punctuation and whitespace runs stripped; whole-word search for
+  "phishing" and "legitimate"; exactly one present gives the label (returned as the record class values
+  phish / legit), both, neither or empty gives "invalid", which is scored as incorrect and reported per
+  cell with a sensitivity analysis excluding it (step 07). 15 unit tests in tests/test_extract_label.py
+  pass (python -m unittest discover tests).

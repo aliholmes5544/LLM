@@ -1,0 +1,71 @@
+{
+  "seed": 2026,
+  "pool": "fewshot_pool",
+  "pool_size": 3033,
+  "rules": {
+    "min_words": 20,
+    "max_words": 200,
+    "persona_check": {
+      "against_partition": "core_pos",
+      "spacy_model": "en_core_web_sm",
+      "ner_labels": [
+        "PERSON",
+        "ORG"
+      ],
+      "min_token_chars": 3
+    },
+    "near_dup_jaccard": 0.8,
+    "order": [
+      "phish",
+      "legit",
+      "phish",
+      "legit"
+    ]
+  },
+  "examples": [
+    {
+      "slot": 1,
+      "id": "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+      "class": "phish",
+      "label": "PHISHING",
+      "subclass": "traditional",
+      "source": "nahmias",
+      "n_words": 161,
+      "subject_sha256": "9bf516d49d0c2e88f0056a099ee9b721ad7c94af229f71bff2ccb0267487cb53",
+      "body_sha256": "a50bb0db2f699438bd233b6228ab9d3dc0affd5899c4e5a1ba2d7460bca11cb6"
+    },
+    {
+      "slot": 2,
+      "id": "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+      "class": "legit",
+      "label": "LEGITIMATE",
+      "subclass": "enron_ham",
+      "source": "nahmias",
+      "n_words": 80,
+      "subject_sha256": "61a57484fc961a80d8a56e302fe8c9cc2bee85242e8ffa05253e722375634a95",
+      "body_sha256": "679c52ca9364ec4b3c457a2695b7cb19a0c00f67c76f467ce499a578761deef0"
+    },
+    {
+      "slot": 3,
+      "id": "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+      "class": "phish",
+      "label": "PHISHING",
+      "subclass": "traditional",
+      "source": "nahmias",
+      "n_words": 131,
+      "subject_sha256": "3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d5",
+      "body_sha256": "abc108340cde1aac041f939e75197b92ed0dd0a4b3c50a382bfbdad23f6faa03"
+    },
+    {
+      "slot": 4,
+      "id": "nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme",
+      "class": "legit",
+      "label": "LEGITIMATE",
+      "subclass": "enron_ham",
+      "source": "nahmias",
+      "n_words": 26,
+      "subject_sha256": "97d5c3187aac6dcb99564287ab0be6ac579d2562bf4f8b3601af3c5f831a5a0c",
+      "body_sha256": "8ae7e853c17de898bbd9894924571ad885768e7b57cb153e99fdeef840879b5b"
+    }
+  ]
+}

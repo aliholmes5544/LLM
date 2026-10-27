@@ -1,0 +1,38 @@
+### system
+You classify emails. Given only the subject line and the body text of an email, decide whether it is a phishing attempt or a legitimate message.
+
+### user
+Decide whether an email is phishing or legitimate. Four labelled examples are given first, then the email to classify.
+
+Example 1
+Subject: {ex1_subject}
+Body:
+{ex1_body}
+Answer: {ex1_label}
+
+Example 2
+Subject: {ex2_subject}
+Body:
+{ex2_body}
+Answer: {ex2_label}
+
+Example 3
+Subject: {ex3_subject}
+Body:
+{ex3_body}
+Answer: {ex3_label}
+
+Example 4
+Subject: {ex4_subject}
+Body:
+{ex4_body}
+Answer: {ex4_label}
+
+Now decide whether the following email is phishing or legitimate.
+
+Subject: {subject}
+
+Body:
+{body}
+
+Answer with exactly one word: PHISHING or LEGITIMATE.

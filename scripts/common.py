@@ -72,3 +72,32 @@ def salutation_class(body: str) -> str:
         return "none"
     name = m.group(1).strip().lower()
     return "generic" if any(name == g or name.startswith(g + " ") for g in GENERIC) else "named"
+
+
+# ---- label extraction (TASK_06 section 4, decision 4; Section 3.6) ---------
+LABEL_TOKENS = {"phishing": "phish", "legitimate": "legit"}   # answer word -> record `class` value
+INVALID = "invalid"
+_FINAL_RE = re.compile(r"final\s*:")
+_NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
+
+
+def extract_label(text: str, strategy: str) -> str:
+    """Deterministic label extraction, no retries (decision 4).
+
+    1. Normalise: lowercase.
+    2. If strategy == "cot": keep only the text after the LAST occurrence of "final:" (the whole output if
+       there is none). This happens before punctuation is stripped because the marker contains a colon.
+    3. Strip punctuation (every non-alphanumeric run becomes a space) and whitespace runs.
+    4. Whole-word search for "phishing" and "legitimate". Exactly one present -> "phish" / "legit" (the
+       record `class` values, so predictions compare directly with the truth); both, neither or empty -> "invalid".
+    The rule is a pure token test: negations are not interpreted ("not phishing" -> "phish"), and any extra
+    words after the answer count only if they contain the other label word.
+    """
+    span = (text or "").lower()
+    if strategy == "cot":
+        hits = list(_FINAL_RE.finditer(span))
+        if hits:
+            span = span[hits[-1].end():]
+    words = set(_NON_ALNUM_RE.sub(" ", span).split())
+    found = [label for token, label in LABEL_TOKENS.items() if token in words]
+    return found[0] if len(found) == 1 else INVALID

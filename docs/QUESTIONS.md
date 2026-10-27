@@ -75,3 +75,45 @@
    backend (8/179 sentences differed by 1-3 words). sha256 of both files recorded in
    reports/variants_eval_report.json (fixed_artifacts) and docs/CHANGES_FOR_THESIS.md. Archived at
    submission under CC BY-NC-SA 4.0 (Nahmias licence), not in git.
+
+## Step 06 — detection (2026-10-27)
+
+9. **System message on models whose chat template has no system role.** TASK_06 section 2 puts the
+   task definition (and, for `role`, the analyst persona) in the system message. The Gemma 2 chat
+   template has only `user` and `model` turns; the model card of the GGUF notes "this model does not
+   support a System prompt", and the embedded Jinja template rejects a system message. Implemented
+   rule (configs/models.yaml `system_role: false`, configs/detection.yaml
+   `system_role_fallback: prepend_to_user`): for gemma2-9b and gemma2-27b the system text is prepended
+   to the user message, separated by a blank line, in every strategy; the prompt text itself is
+   unchanged. Mistral-7B-Instruct-v0.3 accepts a system message but its own template folds it into the
+   first user turn, so the two Gemma models receive the same wording as every other model, only in one
+   turn. Consequence for the thesis: the `role` strategy differs from `zero_shot` by the system text
+   for four models and by a user-message prefix for the two Gemma models; this is stated in Section
+   3.5 and the per-model rendering is recorded in the raw results (prompt_hash per model). Please
+   confirm or specify another handling.
+
+10. **Few-shot examples: length cap and the scope of the persona check.** TASK_06 fixes the pool
+    (`fewshot_pool` = traditional phishing + Enron ham), the counts (2 + 2), the seed and the
+    persona/organisation rule, but not the example length. Four unrestricted examples (traditional
+    phishing median 414 words, up to 600) plus a 600-word item would not fit n_ctx 4,096 with the
+    prompt, so scripts/06_select_fewshot.py admits only bodies of 20 to 200 words
+    (configs/detection.yaml `few_shot.min_words/max_words`; 254 of 2,299 traditional and 437 of 734
+    Enron bodies qualify). The persona/organisation rule is implemented as: no PERSON or ORG entity
+    token (spaCy en_core_web_sm, the step 05 model, tokens of at least 3 letters) shared with any
+    `core_pos` original; `core_neg` is not included because its Enron mail shares "Enron" and Enron
+    staff names with every Enron example and the rule's purpose is the SafeSecurity cast
+    (METHODOLOGY_3.2.md Section 3.2.1). The step 04 near-duplicate check is re-applied to the chosen
+    examples. Result (seed 2026, derive_rng("few_shot", class)): 21 candidates examined, 16 rejected
+    for length, 1 for persona (shared tokens "mitchell", "williams"), 0 near-duplicates; chosen, in
+    prompt order phish / legit / phish / legit:
+    nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424 (161 words, advance-fee fraud),
+    nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme (80 words, trading worksheet),
+    nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c (131 words, advance-fee fraud),
+    nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme (26 words, a forwarded-message stub:
+    header lines and "Here is the raw data file"). Two points for the author: (a) both phishing
+    examples are 419-style fraud, which is what the Nahmias traditional collection mostly contains,
+    so the examples do not show a credential-phishing pattern; (b) the fourth example is admissible
+    under the 20-word minimum but carries little content. The draw is final under the current rule
+    (no cherry-picking); if the author prefers a higher minimum (e.g. 40 words) the draw is repeated
+    once with the new rule before any smoke test and the change is logged here and in
+    CHANGES_FOR_THESIS.md. Nothing has been run against any model yet.

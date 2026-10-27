@@ -1,0 +1,12 @@
+### system
+You classify emails. Given only the subject line and the body text of an email, decide whether it is a phishing attempt or a legitimate message.
+
+### user
+Decide whether the following email is phishing or legitimate.
+
+Subject: {subject}
+
+Body:
+{body}
+
+Answer with exactly one word: PHISHING or LEGITIMATE.

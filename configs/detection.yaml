@@ -1,0 +1,67 @@
+# Detection stage (TASK_06; Chapter 3 Sections 3.5 to 3.7). Every setting here is developed on the `dev`
+# partition only, to fix output-format compliance and never to improve accuracy, and is frozen (hash
+# recorded in reports/detection_run_report.json) before any evaluation item is processed. The random seed
+# is inherited from configs/data.yaml. Models are listed in configs/models.yaml.
+
+input_fields: [subject, body]      # text only: never sender, headers, URLs, attachments (CLAUDE.md)
+
+decoding:                          # identical for every model, strategy and tier (decision 2)
+  temperature: 0.0                 # greedy; one run per cell, repeated runs would be redundant
+  top_p: 1.0
+  repeat_penalty: 1.0              # disabled (the llama-cpp-python default is 1.1)
+  seed_from: data.yaml             # llama sampler seed = seed in configs/data.yaml
+  max_tokens:
+    zero_shot: 16
+    few_shot: 16
+    role: 16
+    cot: 256
+  stop: []                         # only the chat template end-of-turn token ends a generation
+
+context:
+  n_ctx: 4096                      # sufficient for bodies <= 600 words plus the longest prompt
+  on_overflow: truncate_body_at_sentence_boundary   # logged per item as truncated_input and counted
+
+prompts:                           # plain text, placeholders {subject} and {body}; full text in the appendix
+  dir: prompts
+  section_markers: {system: "### system", user: "### user"}
+  strategies:
+    zero_shot: zero_shot.txt       # reference condition for RQ3
+    few_shot: few_shot.txt         # zero_shot + 4 fixed labelled examples ({exN_subject}, {exN_body}, {exN_label})
+    cot: cot.txt                   # zero_shot instruction + analysis, then "FINAL: <label>"
+    role: role.txt                 # zero_shot with an email-security-analyst system message
+  system_role_fallback: prepend_to_user   # models whose template has no system role (models.yaml)
+
+few_shot:                          # scripts/06_select_fewshot.py; drawn once, identical for every model and item
+  examples_file: prompts/few_shot_examples.json   # ids and hashes only; texts are rendered from records.jsonl
+  pool: fewshot_pool               # = train: traditional phishing + Enron ham (step 04)
+  n_per_class: {phish: 2, legit: 2}
+  subclass: {phish: traditional, legit: enron_ham}
+  order: [phish, legit, phish, legit]
+  min_words: 20                    # context budget: 4 examples + a 600-word item must fit n_ctx
+  max_words: 200
+  persona_check:                   # no PERSON/ORG entity token shared with a Nahmias spear-phishing original
+    against_partition: core_pos
+    spacy_model: en_core_web_sm    # same model as step 05
+    ner_labels: [PERSON, ORG]
+    min_token_chars: 3
+  near_dup_check: true             # step 04 rule (word-trigram Jaccard, threshold from data.yaml) vs evaluation items
+
+labels:                            # decision 4; scripts/common.py: extract_label
+  answer_words: {phish: PHISHING, legit: LEGITIMATE}
+  invalid: invalid                 # both, neither or empty -> scored as incorrect; rate reported per cell
+  cot_marker: "final:"             # text after the last marker is parsed; whole output if absent
+
+items:                             # evaluation item set per (model, strategy); counts are read, never hard-coded
+  originals: [core_pos, core_neg, ctrl_modern_legit]
+  variants: data/processed/variants_eval.jsonl    # accepted rows only (fixed artifact)
+  generalization: [gen_phish, gen_legit]          # reported separately
+  dev_variants: data/processed/variants_dev.jsonl
+
+smoke:                             # scripts/06_smoke_dev.py gate before any evaluation run
+  partition: dev
+  n_items: 20
+  per_class: 10
+  max_invalid_rate: 0.10
+
+output:
+  raw_dir: results/raw             # results/raw/{model}/{strategy}/{partition}.jsonl, one row per item

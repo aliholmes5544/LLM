@@ -1,0 +1,105 @@
+# Detector models (TASK_06 section 1, decision 1; Chapter 3 Section 3.5). Six open-weight instruction-tuned
+# models, GGUF Q4_K_M, run through llama.cpp (llama-cpp-python, pinned in requirements.txt) on every tier so
+# that the backend is identical; tier settings (threads, GPU layers) affect speed only.
+#
+# Weights are downloaded by scripts/06_download_models.py into `local_dir` (gitignored). `sha256` is null
+# until that script fills it in on the first download; afterwards it is verified on every run and frozen.
+# `gguf_bytes` is the file size listed by the Hugging Face repository on 2026-10-27 (sanity check only).
+# `license` is the `license` value of the original model card front matter, followed by the agreement
+# title where the card names one; `license_class` distinguishes OSI licences from open-weight agreements
+# (Section 2.3.3). Exclusion rule: the paraphrase model family (configs/variants.yaml,
+# excluded_from_detectors: [phi]) must not appear here; checked 2026-10-27, none of the six is a Phi model.
+#
+# chat_template: "embedded" = the tokenizer.chat_template stored in the GGUF, applied by llama-cpp-python
+# (no hand-written format). system_role: whether that template accepts a system message. Where it does not
+# (Gemma 2), scripts/06_run_detection.py prepends the system text to the user message, separated by a blank
+# line, for every strategy (docs/QUESTIONS.md item 9).
+
+quantization: Q4_K_M
+n_ctx: 4096
+local_dir: models
+
+models:
+  llama31-8b:
+    name: Meta-Llama-3.1-8B-Instruct
+    params_b: 8
+    original_repo: meta-llama/Llama-3.1-8B-Instruct        # gated: HF_TOKEN with the licence accepted
+    gguf_repo: bartowski/Meta-Llama-3.1-8B-Instruct-GGUF
+    gguf_file: Meta-Llama-3.1-8B-Instruct-Q4_K_M.gguf
+    gguf_bytes: 4920739232
+    sha256: null
+    license: "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)"
+    license_class: open-weight
+    chat_template: embedded
+    system_role: true
+    tier: laptop
+
+  mistral-7b:
+    name: Mistral-7B-Instruct-v0.3
+    params_b: 7
+    original_repo: mistralai/Mistral-7B-Instruct-v0.3
+    gguf_repo: bartowski/Mistral-7B-Instruct-v0.3-GGUF
+    gguf_file: Mistral-7B-Instruct-v0.3-Q4_K_M.gguf
+    gguf_bytes: 4372812000
+    sha256: null
+    license: "apache-2.0"
+    license_class: open-source
+    chat_template: embedded      # [INST] ... [/INST]; the template folds a system message into the user turn
+    system_role: true
+    tier: laptop
+
+  gemma2-9b:
+    name: gemma-2-9b-it
+    params_b: 9
+    original_repo: google/gemma-2-9b-it                    # gated: HF_TOKEN with the terms accepted
+    gguf_repo: bartowski/gemma-2-9b-it-GGUF
+    gguf_file: gemma-2-9b-it-Q4_K_M.gguf
+    gguf_bytes: 5761057728
+    sha256: null
+    license: "gemma (Gemma Terms of Use)"
+    license_class: open-weight
+    chat_template: embedded      # <start_of_turn>user ...; the model card notes it does not support a system prompt
+    system_role: false
+    tier: laptop
+
+  qwen25-7b:
+    name: Qwen2.5-7B-Instruct
+    params_b: 7
+    original_repo: Qwen/Qwen2.5-7B-Instruct
+    gguf_repo: bartowski/Qwen2.5-7B-Instruct-GGUF
+    gguf_file: Qwen2.5-7B-Instruct-Q4_K_M.gguf
+    gguf_bytes: 4683074240
+    sha256: null
+    license: "apache-2.0"
+    license_class: open-source
+    chat_template: embedded      # ChatML (<|im_start|>system / user / assistant)
+    system_role: true
+    tier: laptop
+
+  qwen25-14b:
+    name: Qwen2.5-14B-Instruct
+    params_b: 14
+    original_repo: Qwen/Qwen2.5-14B-Instruct
+    gguf_repo: bartowski/Qwen2.5-14B-Instruct-GGUF
+    gguf_file: Qwen2.5-14B-Instruct-Q4_K_M.gguf
+    gguf_bytes: 8988110976
+    sha256: null
+    license: "apache-2.0"
+    license_class: open-source
+    chat_template: embedded
+    system_role: true
+    tier: colab_t4
+
+  gemma2-27b:
+    name: gemma-2-27b-it
+    params_b: 27
+    original_repo: google/gemma-2-27b-it                   # gated: HF_TOKEN with the terms accepted
+    gguf_repo: bartowski/gemma-2-27b-it-GGUF
+    gguf_file: gemma-2-27b-it-Q4_K_M.gguf
+    gguf_bytes: 16645381632
+    sha256: null
+    license: "gemma (Gemma Terms of Use)"
+    license_class: open-weight
+    chat_template: embedded
+    system_role: false
+    tier: colab_l4

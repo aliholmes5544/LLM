@@ -1,0 +1,165 @@
+{
+  "seed": 2026,
+  "examined": 21,
+  "rejected": {
+    "legit:length": 3,
+    "phish:length": 13,
+    "phish:persona": 1
+  },
+  "protected_tokens": 204,
+  "chosen": [
+    "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+    "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+    "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+    "nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme"
+  ],
+  "candidates": [
+    {
+      "id": "nah:traditional_phishing:ac2629a7f6954e376f4d2e49426c9271",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 393,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:2e2fc806ca9032f1d179b30bf3bf0a25",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 509,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:b238edb5fb1b174b5077a1d050c127a3",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 362,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:3141c34d38623e3abb2090a0fc49a8a0",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 312,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:a2b87fd6edd0b1127f4ec95e697f40c3",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 361,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:91929cad685db8472e7dac33e7005503",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 189,
+      "rejected": "persona",
+      "shared_tokens": [
+        "mitchell",
+        "williams"
+      ]
+    },
+    {
+      "id": "nah:traditional_phishing:05a65e4cf8329e49c934c1d330c6aca4",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 451,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:2aadabdb6225d29303ca0f44b76e4406",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 310,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:4b595c883c02507ea7808977f784aa18",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 355,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:2d44e4193f790b97e1ec01c999f9b919",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 403,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 161
+    },
+    {
+      "id": "nah:traditional_phishing:3acf8d2d685c4ca45d5767517e597364",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 559,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:8342f917c512285d325c980b14519661",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 344,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:10e9320dd797b5a1213d50acb58ad51e",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 416,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:de8b24edb66c5332fbd247893e4b5d52",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 599,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+      "class": "phish",
+      "subclass": "traditional",
+      "n_words": 131
+    },
+    {
+      "id": "nah:enron_ham:22019695_1075855726850_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 7,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 80
+    },
+    {
+      "id": "nah:enron_ham:9742416_1075857656558_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 223,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:33025919_1075857594206_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 212,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 26
+    }
+  ]
+}
