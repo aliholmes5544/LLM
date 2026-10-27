@@ -37,8 +37,9 @@ few_shot:                          # scripts/06_select_fewshot.py; drawn once, i
   n_per_class: {phish: 2, legit: 2}
   subclass: {phish: traditional, legit: enron_ham}
   order: [phish, legit, phish, legit]
-  min_words: 20                    # context budget: 4 examples + a 600-word item must fit n_ctx
-  max_words: 200
+  min_words: 40                    # context budget: 4 examples + a 600-word item must fit n_ctx (20 before the
+  max_words: 200                   #   2026-10-27 redraw, QUESTIONS.md item 10)
+  max_same_label_jaccard: 0.30     # the two examples of one label: word-level Jaccard similarity below this
   persona_check:                   # no PERSON/ORG entity token shared with a Nahmias spear-phishing original
     against_partition: core_pos
     spacy_model: en_core_web_sm    # same model as step 05

@@ -11,7 +11,11 @@ seed and used unchanged for every model and every item. Candidates are visited i
       the spaCy model of step 05 (persona/organisation rule: the examples must not teach a detector the
       SafeSecurity cast), and
   (c) it has no near-duplicate (word-trigram Jaccard >= threshold) among the evaluation items (the step 04
-      leakage rule, re-applied to the chosen examples).
+      leakage rule, re-applied to the chosen examples), and
+  (d) its word-level Jaccard similarity to an example of the same label accepted before it is below
+      few_shot.max_same_label_jaccard, so the two examples of a label are not near-copies of each other.
+Rules (a) and (d) were set by the author on 2026-10-27 (QUESTIONS.md item 10; first draw: 20-word minimum,
+no rule (d)); the earlier ids are logged in docs/CHANGES_FOR_THESIS.md.
 The pool is train = traditional phishing + Enron ham only (never spear, never E-PhishLLM; step 04).
 
 Output: prompts/few_shot_examples.json (slot order, ids, labels and sha256 of subject and body; no text,
@@ -27,7 +31,7 @@ from collections import Counter
 
 import spacy
 
-from common import ROOT, load_config, open_utf8, write_json, trigrams
+from common import ROOT, load_config, open_utf8, write_json, trigrams, norm_key
 from variants.rng import derive_rng
 
 CFG = load_config()
@@ -43,6 +47,12 @@ STOP = {"inc", "ltd", "llc", "corp", "corporation", "company", "co", "team", "th
 
 def sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def word_jaccard(a: str, b: str) -> float:
+    """Jaccard similarity of the normalised word sets of two bodies."""
+    wa, wb = set(norm_key(a).split()), set(norm_key(b).split())
+    return len(wa & wb) / len(wa | wb) if wa | wb else 0.0
 
 
 def entity_tokens(text: str, nlp, labels: set, min_chars: int) -> set:
@@ -106,6 +116,14 @@ def main() -> int:
                     if dup:
                         entry["rejected"] = "near_dup"
                         entry["near_dup_of"] = dup
+                    else:
+                        for prev in chosen[cls]:
+                            jac = word_jaccard(r["body"], recs[prev]["body"])
+                            if jac >= FS["max_same_label_jaccard"]:
+                                entry["rejected"] = "similar"
+                                entry["similar_to"] = prev
+                                entry["word_jaccard"] = round(jac, 3)
+                                break
             examined.append(entry)
             if "rejected" in entry:
                 rejected[(cls, entry["rejected"])] += 1
@@ -120,12 +138,15 @@ def main() -> int:
         i = chosen[cls][taken[cls]]
         taken[cls] += 1
         r = recs[i]
+        same = [recs[s["id"]]["body"] for s in slots if s["class"] == cls]
         slots.append({"slot": slot, "id": i, "class": cls, "label": words[cls], "subclass": r["subclass"],
+                      "word_jaccard_to_same_label": round(word_jaccard(r["body"], same[0]), 3) if same else None,
                       "source": r["source"], "n_words": r["n_words"],
                       "subject_sha256": sha256(r["subject"]), "body_sha256": sha256(r["body"])})
 
     out = {"seed": SEED, "pool": FS["pool"], "pool_size": len(pool),
            "rules": {"min_words": FS["min_words"], "max_words": FS["max_words"],
+                     "max_same_label_jaccard": FS["max_same_label_jaccard"],
                      "persona_check": pc, "near_dup_jaccard": thr, "order": FS["order"]},
            "examples": slots}
     write_json(ROOT / FS["examples_file"], out)

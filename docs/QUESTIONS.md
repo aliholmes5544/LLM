@@ -91,6 +91,8 @@
    for four models and by a user-message prefix for the two Gemma models; this is stated in Section
    3.5 and the per-model rendering is recorded in the raw results (prompt_hash per model). Please
    confirm or specify another handling.
+   **Answered 2026-10-27 (author):** confirmed. The system text is prepended to the user message for the
+   Gemma 2 models; the handling is noted in the run report.
 
 10. **Few-shot examples: length cap and the scope of the persona check.** TASK_06 fixes the pool
     (`fewshot_pool` = traditional phishing + Enron ham), the counts (2 + 2), the seed and the
@@ -117,3 +119,8 @@
     (no cherry-picking); if the author prefers a higher minimum (e.g. 40 words) the draw is repeated
     once with the new rule before any smoke test and the change is logged here and in
     CHANGES_FOR_THESIS.md. Nothing has been run against any model yet.
+    **Answered 2026-10-27 (author):** redraw once with minimum body length 40 words (maximum 200) and
+    the added rule that the two examples of the same label have word-level Jaccard similarity below
+    0.30. Done before any model was run: slots 1 to 3 unchanged, slot 4 now
+    nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme (99 words); same-label Jaccard 0.15
+    (phishing) and 0.08 (legitimate). Old and new ids and the rule are logged in CHANGES_FOR_THESIS.md.

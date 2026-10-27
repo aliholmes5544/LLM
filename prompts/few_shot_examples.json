@@ -3,8 +3,9 @@
   "pool": "fewshot_pool",
   "pool_size": 3033,
   "rules": {
-    "min_words": 20,
+    "min_words": 40,
     "max_words": 200,
+    "max_same_label_jaccard": 0.3,
     "persona_check": {
       "against_partition": "core_pos",
       "spacy_model": "en_core_web_sm",
@@ -29,6 +30,7 @@
       "class": "phish",
       "label": "PHISHING",
       "subclass": "traditional",
+      "word_jaccard_to_same_label": null,
       "source": "nahmias",
       "n_words": 161,
       "subject_sha256": "9bf516d49d0c2e88f0056a099ee9b721ad7c94af229f71bff2ccb0267487cb53",
@@ -40,6 +42,7 @@
       "class": "legit",
       "label": "LEGITIMATE",
       "subclass": "enron_ham",
+      "word_jaccard_to_same_label": null,
       "source": "nahmias",
       "n_words": 80,
       "subject_sha256": "61a57484fc961a80d8a56e302fe8c9cc2bee85242e8ffa05253e722375634a95",
@@ -51,6 +54,7 @@
       "class": "phish",
       "label": "PHISHING",
       "subclass": "traditional",
+      "word_jaccard_to_same_label": 0.15,
       "source": "nahmias",
       "n_words": 131,
       "subject_sha256": "3733cd977ff8eb18b987357e22ced99f46097f31ecb239e878ae63760e83e4d5",
@@ -58,14 +62,15 @@
     },
     {
       "slot": 4,
-      "id": "nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme",
+      "id": "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme",
       "class": "legit",
       "label": "LEGITIMATE",
       "subclass": "enron_ham",
+      "word_jaccard_to_same_label": 0.08,
       "source": "nahmias",
-      "n_words": 26,
-      "subject_sha256": "97d5c3187aac6dcb99564287ab0be6ac579d2562bf4f8b3601af3c5f831a5a0c",
-      "body_sha256": "8ae7e853c17de898bbd9894924571ad885768e7b57cb153e99fdeef840879b5b"
+      "n_words": 99,
+      "subject_sha256": "74351d27506dd83687d90b1caace848a2de10d06728ac8e403927ee1e008915e",
+      "body_sha256": "d6cd2cb377c045117dfe449f5007c633a359d669864d1eff67611c72dad6e552"
     }
   ]
 }

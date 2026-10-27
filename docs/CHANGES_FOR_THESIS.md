@@ -410,3 +410,27 @@ inference was run; everything below is configuration and code, frozen only after
   phish / legit), both, neither or empty gives "invalid", which is scored as incorrect and reported per
   cell with a sensitivity analysis excluding it (step 07). 15 unit tests in tests/test_extract_label.py
   pass (python -m unittest discover tests).
+
+## Step 06 few-shot redraw (2026-10-27; author's decision on QUESTIONS.md item 10)
+- Section 3.5, few-shot example rules: minimum body length raised from 20 to 40 words (maximum 200
+  unchanged) and a new rule that the two examples of the same label must have word-level Jaccard
+  similarity below 0.30 (configs/detection.yaml few_shot.min_words / max_same_label_jaccard;
+  scripts/06_select_fewshot.py rule (d)). The persona/organisation rule, the near-duplicate rule, the pool,
+  the seed and the derivation of the random streams are unchanged. The draw was repeated once, before any
+  model was run.
+- Old ids (first draw, 20-word minimum, no similarity rule; prompt order phish, legit, phish, legit):
+  nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424 (161 words),
+  nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme (80),
+  nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c (131),
+  nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme (26, forwarded-message stub).
+- New ids (final): slots 1 to 3 unchanged; slot 4 is now
+  nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme (99 words, a reply about a gym appointment with
+  the quoted original message). Same-label word Jaccard: phishing pair 0.15, legitimate pair 0.08 (both
+  below 0.30). Selection: 30 candidates examined, 23 rejected for length, 3 for a shared PERSON/ORG token
+  with a spear-phishing original ("mitchell"/"williams", "john"/"williams", "john"/"taylor"), 0 for
+  near-duplication, 0 for similarity (reports/fewshot_selection.json). Both phishing examples remain
+  advance-fee fraud messages, which is the dominant content of the Nahmias traditional collection; the
+  thesis states this when describing the few-shot condition.
+- QUESTIONS.md item 9 confirmed: for the two Gemma 2 models the system text is prepended to the user
+  message; the run report (reports/smoke_dev_report.json, later reports/detection_run_report.json) carries
+  this note.

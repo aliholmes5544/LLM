@@ -1,8 +1,9 @@
 {
   "seed": 2026,
-  "examined": 21,
+  "examined": 30,
   "rejected": {
-    "legit:length": 3,
+    "legit:length": 10,
+    "legit:persona": 2,
     "phish:length": 13,
     "phish:persona": 1
   },
@@ -11,7 +12,7 @@
     "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
     "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
     "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
-    "nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme"
+    "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
   ],
   "candidates": [
     {
@@ -159,7 +160,78 @@
       "id": "nah:enron_ham:14352313_1075858637544_JavaMail_evans_thyme",
       "class": "legit",
       "subclass": "enron_ham",
-      "n_words": 26
+      "n_words": 26,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:7320375_1075858631562_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 487,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:7181067_1075857602318_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 269,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:11144839_1075855671195_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 150,
+      "rejected": "persona",
+      "shared_tokens": [
+        "john",
+        "williams"
+      ]
+    },
+    {
+      "id": "nah:enron_ham:14770138_1075855668570_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 241,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:6898356_1075858636514_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 579,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:20696726_1075857653260_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 9,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:20807917_1075857570536_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 31,
+      "rejected": "length"
+    },
+    {
+      "id": "nah:enron_ham:32652955_1075857601452_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 127,
+      "rejected": "persona",
+      "shared_tokens": [
+        "john",
+        "taylor"
+      ]
+    },
+    {
+      "id": "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme",
+      "class": "legit",
+      "subclass": "enron_ham",
+      "n_words": 99
     }
   ]
 }
