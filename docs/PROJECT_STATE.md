@@ -41,11 +41,19 @@
 
 ---
 
-## 4. حالة الفصل ١ (مكتمل، معتمد)
+## 4. حالة الفصل ١ (مكتمل، معتمد — أُعيد بناؤه على قالب الدكتور، 2026-10-18)
 
-1.1 Introduction and Background · 1.2 Spear-Phishing and the Weaponization of LLMs · **1.3 Threat Model (جديد، نهائيّ)** · 1.4 The Detection Challenge · 1.5 Open-Source LLMs as a Prospective Detection Approach · 1.6 Problem Statement · 1.7 Research Aim, Questions, and Objectives · 1.8 Significance and Contributions · 1.9 Scope and Delimitations.
+**الهيكل النهائيّ (قالب القسم):** 1.1 Background and Context · 1.2 Problem Statement · **1.2.1 Threat Model** · 1.3 Motivation · 1.4 Research Objectives · 1.5 Research Questions · 1.6 Scope and Limitations · 1.7 Contributions · 1.8 Thesis Organization.
 
-**Threat Model (§1.3) — المحتوى المعتمد:** goal (deliver + evade) · capabilities (LLM access without jailbreak [Saha Roy 2024]; automated reconnaissance [Hazell 2023; Czybik 2026; Kim 2025b]; refinement e.g. paraphrasing [Chen 2026]; obfuscation = study-defined controlled transformation) · knowledge = **black-box, non-adaptive** (plausible setting; consistent with Chen; matches design) · defender = open model, local, text only (subject+body), no fine-tuning · assumptions: generator not cooperative (generator-agnostic, vs Paladin), attacker non-adaptive · out of scope: adaptive/partial-knowledge attacker; prompt-injection against the detector.
+**الملفّ المعتمد:** `Chapter1_v3_template.docx` (في outputs). الفحص الآليّ: الفقرات الـ 66 الأصليّة كلّها حاضرة، لا إحالة يتيمة، التعديلات المؤجَّلة #1–#4 مطبَّقة، Kim 2025b مصحَّح، التكرار مخفَّض (GPT-family 5→3 مرّات)، تقييد «hosted API/services» للنماذج التجاريّة، جملة «study evaluates only the first condition» في نموذج التهديد.
+
+**خريطة الترقيم القديم → الجديد:** 1.1+1.2→1.1 · 1.3→**1.2.1** · 1.4+1.5→1.3 · 1.6→1.2 · 1.7→1.4+1.5 · 1.8→1.7 · 1.9→**1.6** · (جديد) 1.8.
+
+**Threat Model (§1.2.1) — المحتوى المعتمد:** goal (deliver + evade; **study evaluates only the detection condition**) · capabilities (LLM access without jailbreak [Saha Roy 2024]; automated reconnaissance [Hazell 2023; Czybik 2026; Kim 2025b]; refinement e.g. paraphrasing [Chen 2026]; obfuscation = study-defined controlled transformation) · knowledge = **black-box, non-adaptive** (plausible setting; consistent with Chen; matches design) · defender = open model, local, text only (subject+body), no fine-tuning · assumptions: generator not cooperative (generator-agnostic, vs Paladin), attacker non-adaptive · out of scope: adaptive/partial-knowledge attacker; prompt-injection against the detector.
+
+**1.8 Thesis Organization:** مكتوب لخمسة فصول (Intro / Lit Review / Methodology / Results & Discussion / Conclusion) — يُعدَّل إن اختلف قالب الدكتور.
+
+**مؤجَّل للتنسيق فقط:** أنماط العناوين (H1/H2/H3) وتوحيد المتن على Normal؛ قائمة المراجع الـ19 الملحقة بالملفّ تُزال عند التجميع.
 
 ---
 
@@ -70,20 +78,13 @@ Overview (unnumbered) · 2.1–2.9 · Figure 2.1 (open vs proprietary) · Figure
 
 ---
 
-## 7. التعديلات المؤجَّلة لجلسة التنسيق (10)
+## 7. التعديلات المؤجَّلة — **لا شيء متبقٍّ** (العشرة كلّها طُبّقت: #1–#4 في إعادة بناء الفصل ١، #5–#9 في إعادة بناء الفصل ٢، #10 التنسيق يتولّاه LaTeX)
 
-| # | الفصل | الموضع | التغيير |
-|---|---|---|---|
-| 1 | 1 | §1.9 | "produced within the study" → "drawn from published research datasets rather than generated within the study, and the paraphrased and obfuscated variants ... are derived from those emails as controlled transformations" |
-| 2 | 1 | §1.7 O1 | إضافة "published" قبل AI-generated spear-phishing samples |
-| 3 | 1 | عنوان §1.3 | النمط → Heading 3 (حاليًّا نمط لصق) |
-| 4 | 1 | §1.4 | "section 1.2" → "Section 1.2" |
-| 5 | 2 | §2.4 ف2 (آخرها) | إضافة: "More recently, Pajola et al. (2025) released E-PhishLLM, a dataset of LLM-generated phishing and benign emails built from synthetic user profiles, and evaluated a range of detectors on it, including two proprietary models prompted zero-shot; they report that detectors which perform near-perfectly on existing datasets perform much lower on E-PhishLLM, and the models they prompted were, again, proprietary." |
-| 6 | 2 | §2.8 ف4 (بعد جملة Koide) | إضافة: "The zero-shot evaluation of proprietary models on LLM-generated phishing by Pajola et al. (2025) likewise leaves the open-model case untested." |
-| 7 | 2 | Table 2.1 | صفّ قبل Pang: Pajola et al. (2025) / Proprietary (two, zero-shot) / ✓ / ✗ (LLM-generated phishing, not spear-specific) / E-PhishLLM; detectors perform much lower than on existing datasets |
-| 8 | 2 | §2.5 | Kim et al. (2025) → (2025a) في موضعين |
-| 9 | refs | — | إضافة Pajola |
-| 10 | 1+2 | عامّ | عنوانا الفصلين: em dash → ":"، نمط Heading 1، إزالة رمز النقطة؛ توحيد أنماط المتن على Normal؛ Table 2.1 يُعرض صحيحًا لكن بنيته RTL (لا تغيّر اتّجاهه)؛ تحديث جدول المحتويات |
+**الفصل ٢ — الحالة النهائيّة (2026-10-21):** Word مكتمل بهيكل الدكتور (13 عنوانًا)، وLaTeX مكتمل ومدفوع (آخر commit `f3a3438`). 28 مفتاح استشهاد، شكلان (`fig:open-vs-proprietary` في 2.3.3، `fig:confusion-matrix` في 2.3.5، كلاهما PNG مائيّ مولَّد)، Table 2.1 (`tab:lit-compare`، 7 صفوف، الملاحظة داخل العوّامة، ✓/✗ بخطّ DejaVu). labels الأقسام الفرعيّة: `sec:lit-phishing`, `sec:lit-detection`, `sec:lit-offensive`, `sec:lit-defensive`, `sec:lit-open`, `sec:lit-prompting`, `sec:lit-eval`.
+
+**تعديلات المحتوى المقبولة من جولتَي الملاحظات (مطبَّقة في Word وLaTeX):** فقرة نطاق المراجعة في 2.1 (narrative; Crossref/arXiv check) · «a spear-phishing attack combines reconnaissance» · قيد أمانة التفسير في 2.3.2 · Nasution «the best of the larger ones… reached or exceeded 90%» (الملخّص يناقض الجداول) · اعتماد Precision/F1 على نسبة الفئة في 2.3.5 · إحالة الفصل 3 في 2.3.4 · عنوان عمود «open = locally deployable» + ملاحظة «not whether the cited study ran the model locally» · «labeled training data… nor the labeled data still needed for evaluation and for few-shot examples» في 2.5.
+
+**المراجع — الحالة:** 33 مدخلًا في `reference.bib`، فُحصت ضدّ Crossref/arXiv (`reports/reference_check.md`). تصحيحات: عنوان Saha Roy المنشور، Kytidou 19(6) 4356–4379، Kim 2025a رقم العدد 1، Goldenits eid، FBI `shortauthor`. **فحوص ما قبل التسليم (تعليقات داخل الملفّ):** Chen v4 أعاد التسمية — تُقرأ ويُقرَّر؛ Koide بقي 2025 (نسخة SecureComm)؛ Czybik بلا DOI — يُتحقّق من صفحة USENIX.
 
 ملاحظة: نسبة 61٪/32٪ (موجّه/عامّ في E-PhishLLM) **قياسي أنا** — تُذكر في الفصل ٣ فقط، لا في الفصل ٢.
 
@@ -120,6 +121,40 @@ Overview (unnumbered) · 2.1–2.9 · Figure 2.1 (open vs proprietary) · Figure
 
 ---
 
+
+## 9b. الخطوة 05 — النتائج النهائيّة على مجموعة التطوير (2026-10-25، مجمَّدة)
+
+- **العتبات المجمَّدة:** `thr_cos = 0.68` (أعلى قيمة يجتازها ≥95% من المحفوظات بشريًّا: 97.1%)؛ `thr_nli = 0.70` مثبَّتة مسبقًا — **غير قابلة للمعايرة** لأن fallback الجمليّ يُعيد كلّ جملة <0.70 قبل القياس (censored). الباقي كما في `configs/variants.yaml`.
+- **التقييم البشريّ:** ثلاثة مقيّمين A/B/C، 60 صفًّا (57 + 3 صياغات تغيّر نصّها)، تسمية الأغلبيّة، لا صفّ منقسم. اتّفاق المعنى 86.7/95.0/91.7%، PABAK 0.73/0.90/0.83، Fleiss 0.16 (مفارقة الانتشار: 55/60 محفوظ — يُبلَّغ بالثلاثة). B: ثلاثة «not» خطأ تطبيق («link missing» في رسائل بلا رابط) — **يبقى**، الأغلبيّة تتكفّل.
+- **cosine لا يميّز المعنى:** الاستبعادات بـ cosine وحده (0.625، 0.686، 0.731، 0.752، 0.794): أربعة محفوظة بالإجماع، والـ«جزئيّ» (0.731) في وسطها. خفض العتبة من 0.80 إلى 0.68 أعاد 4 من 5. eph:14228#para_high (0.625) يبقى مستبعدًا — حالة سليمة رفضتها العتبة، تُذكر.
+- **خفض العتبة غيّر نصّ 8 صياغات** (المحاولة الأولى صارت مقبولة) → أُعيد تقييمها على النصّ المقبول. eph:12308#para_high «جزئيّ» في النسختين — المُعيد صياغتها يُفسد هذه الرسالة بثبات.
+- **الخطأ المتبقّي (مقبولات، عتبات مجمَّدة):** صياغة 2/36 = 5.6% [Wilson 1.5–18.1%] (12308#para_high، 14356#para_high: invoice→bill of lading)؛ تشويش 0/20؛ الكلّ 2/56 = 3.6% [1.0–12.1%]؛ «not» = 0. لا شرط يُراجَع كاملًا (قاعدة 5%).
+- **المقروئيّة (20 تشويش):** أغلبيّة 1 في 20/20؛ صفر = 0/10 في كلّ شرط؛ 2 مرّة واحدة. ⇒ الشدّتان مقروءتان؛ **التشويش ملحوظ لقارئ متأنٍّ** — خاصّيّة الشرط تُذكر في وصفه.
+- **عدّ التطوير (cos 0.68):** para_low 81/19/0، para_high 76/20/4 (1 cosine + 3 fraction)، obf 100/100 سلامة.
+- **حوادث تُذكر في الفصل 4:** (1) `auto_outcome`/`failed_tests` كانا ظاهرين للمقيّمين؛ (2) ترميز cp1256 شوّه العرض في 29 صفًّا — أُعيد تقييم التشويش على نصّ نظيف ولم تتغيّر تسمية واحدة.
+- **الملفّات:** `reports/manual_review_sample_dev.csv` (60 صفًّا، أعمدة `_prov`/`_cp1256` للسجلّ)، `reports/readability_dev.xlsx`، `reports/variants_calibration_provisional.json`، `reports/ratings_merge_dev.json`، `scripts/05a_merge_ratings.py`، `docs/CHANGES_FOR_THESIS.md`.
+- **التالي:** تشغيل 05 **مرّة واحدة** على core_pos وctrl_para_legit بالإعدادات المجمَّدة (لا مراجعة يدويّة على بيانات التقييم) → ثم الخطوة 06 (النماذج/التوجيه/الاستدلال).
+
+---
+
+
+## 9c. الخطوة 05 على مجموعة الاختبار — منتهية (2026-10-27) · الخطوة 06 — مواصفة معتمدة
+
+- **اشتقاق التقييم (تشغيل واحد، إعدادات مجمَّدة، commit a8dbb6f→3d3a10b):** core_pos 334 × {para_low, para_high, obf_low, obf_high} + ctrl_para_legit 334 × {para_high} (المنهجيّة §3.2.3: لا تشويش على الشرعيّ). 8 h 18 min على CPU (3.1–3.5 s/توليد؛ 7,064 توليد أوّل + 1,164 إعادة). **التطابق:** تشغيلان متطابقان بايتًا من الذاكرة. **الفحص العيّنيّ بلا ذاكرة:** 171/179 جملة متطابقة، 8 اختلفت بكلمة–3 ⇒ التوليد seeded لكنه **غير متطابق بايتًا على CPU** (خاصّيّة llama.cpp). **القرار:** `variants_eval.jsonl` + `paraphrase_cache_eval.jsonl` هما القطعة الثابتة (بصمتاهما في `reports/variants_eval_fixed_artifacts.json`)؛ تُؤرشفان عند التسليم تحت CC BY-NC-SA 4.0، لا في git. صياغة §3.8 (الآن 4.2.1/3.7) تقول ذلك.
+- **العدّ:** core_pos para_low 334/0، para_high 325/9 (fraction)، obf 334/334 سلامة 100%؛ ctrl_para_legit 213 مقبول / 121 مستبعد (36.2%). **تشخيص (Q7):** رسائل Enron قصيرة (وسيط 95 كلمة، 5 جمل مؤهَّلة) حيث لا تسمح عتبة 0.80 بإعادة جملة واحدة؛ enron_ham 44% مستبعد مقابل hard_ham 20%. خاصّيّة البيانات لا المنهج؛ **لا تغيير في العتبات**. تصحيح منطقيّ لاحق: المتغيّر المطابق للأصل حرفيًّا يُستبعد («unchanged») ⇒ الضوابط المتوقّعة 210. **Table 3.2:** ≈3,210 عنصرًا لكلّ كاشف لكلّ استراتيجيّة (يُقرأ العدد النهائيّ من `CHANGES_FOR_THESIS.md`).
+- **الخطوة 06 — القرارات الأربعة مقفلة (2026-10-27)، المواصفة في `docs/TASK_06_detection.md`:**
+  1. **النماذج (6، GGUF Q4_K_M، llama.cpp):** Llama-3.1-8B-Instruct، Mistral-7B-Instruct-v0.3، gemma-2-9b-it، Qwen2.5-7B-Instruct (جهاز) · Qwen2.5-14B-Instruct (Colab T4) · gemma-2-27b-it (Colab L4). عمود ترخيص لكلّ نموذج. **مُعيد الصياغة في 05 يُستبعد من الكواشف** (يُقرأ من `configs/variants.yaml`؛ المرجّح Phi-3.5).
+  2. **التوجيه (4):** zero_shot (مرجع) · few_shot (4 أمثلة ثابتة 2+2 من `fewshot_pool`، فحص الشخصيّات) · cot (`FINAL: X`) · role. فكّ ترميز حتميّ (T=0، seed)، تشغيل واحد. تطوير الموجِّهات على `dev` فقط ولإصلاح الامتثال للصيغة لا الدقّة؛ تجميد ببصمة.
+  3. **الخطوط المرجعيّة:** tfidf_lr، tfidf_svm (بروتوكول Nahmias)، DistilBERT مضبوط (T4)، + **مرجع مملوك zero-shot فقط** (≈2–4$، يُتخطّى بلا مفتاح؛ النطاق يسمح: «points of comparison»).
+  4. **الاستخراج:** تطبيع → (cot: بعد آخر `final:`) → رمز واحد فقط = التصنيف؛ كلاهما/لا شيء/فارغ = `invalid` → يُحتسب خطأً + نسبة + تحليل حساسيّة؛ لا إعادة محاولة.
+  - **بوّابة الدخان:** invalid ≤10% لكلّ خليّة على dev قبل أيّ تشغيل تقييم. **الخطر الأكبر: الزمن** (~77k استدلال) — يُقاس في خطوة 3 من ترتيب العمل قبل الالتزام؛ قد يُنقل مزيد إلى Colab.
+- **تحسينات إن بقي وقت (بالترتيب):** معيار اختيار النماذج مكتوبًا في 3.5 → تحليل أخطاء نوعيّ (30 رسالة) → حساسيّة صياغة الموجِّه على dev → few-shot بـ 8 → 70B على A100 → واجهة Gradio للمناقشة.
+- **الفصل 3 — ما يُكتب من الملفّات ومتى:** 3.1 جديد · 3.2 ← §3.1 القديمة + Table 3.1 · 3.4 ← Figure 3.1 (تُعاد مائيّة) · 3.5/3.6/3.7 ← TASK_05 + TASK_06 + configs + الكود **بعد** بناء 06 (يُكتب عن كود يعمل) · 3.3 Requirements جديد (من CLAUDE.md والقواعد) · 3.8 جديد. ملفّات مطلوبة من `~/llm`: README، CLAUDE.md، docs/METHODOLOGY_3.2.md، docs/TASK_05_variants.md، docs/TASK_06_detection.md، docs/CHANGES_FOR_THESIS.md، configs/*.yaml، prompts/*، requirements.txt، شجرة scripts/.
+- **GitHub:** مفتاح SSH جديد `llm-thesis-wsl` بلا كلمة مرور؛ الدفع يعمل من WSL. Windows Update يجب إيقافه مؤقّتًا أثناء التشغيلات الطويلة (أعاد التشغيل ليلة 26–27/10 دون ضرر).
+- **التالي:** أمر الخطوة 06 بند 1 (إعدادات، موجِّهات، استخراج، اختبارات) → مراجعة الموجِّهات وأمثلة few-shot → دخان على dev → قياس الزمن → تقييم.
+
+---
+
 ## 10. خطّة الفصل ٣ (Methodology)
 
 | § | القسم | الحالة |
@@ -148,6 +183,23 @@ Figure 3.1 (pipeline, 6 stages + baseline branch) تُرسم بعد اعتماد
 
 ---
 
+
+## 11b. مستودع الرسالة (LaTeX / GitLab) — الحقائق الثابتة (2026-10-18)
+
+- **المستودع:** `https://gitlab.com/jbj-theses/2026_bakhit_mashan-thesis` → محلّيًّا `C:\Users\dohaq\Documents\2026_bakhit_mashan-thesis`. بناء بـ `make` → `thesis.pdf`؛ مراجعة الدكتور بـ `make diff REV=ORIG_HEAD`. **أغلق thesis.pdf في Acrobat قبل make.**
+- **قاعدة البنية (دليل الطالب + ردّ الدكتور 2026-10-19):** `\chapter` و`\section` وlabels الفصول و`\input` ثابتة. **`\subsection` حرّة** (إضافة/تسمية/ترتيب/حذف، ولها labels خاصّة بنا بادئة `sec:`) — نصّ الدكتور: "You can change \subsections but not \sections (structure)". استبدال محتوى شكل/جدول نائب مع إبقاء label **مسموح** (داخل القسم). `CLAUDE.md` في جذر المستودع يحمل القواعد.
+- **Labels:** الفصول فقط: `ch:intro`, `ch:lit`, `ch:system`, `ch:eval`, `ch:conclusion`. لا labels للأقسام → إحالات الأقسام نصّ عاديّ («Section 1.6»). استثناء موافَق عليه: `sec:threat-model`. أشكال/جداول القالب لها labels (`fig:intro-overview`, `tab:rq`, `fig:architecture`, `tab:results`, `eq:score`…).
+- **المراجع:** `reference.bib` (مفرد)، biblatex + biber، نمط APA. أوامر: `\parencite{key}` = (Author, Year)، `\textcite{key}` = Author (Year). 33 مدخلًا، مفاتيح = اسم المؤلّف الأوّل + السنة (`kim2025a` طبّيّ، `kim2025b` وكلاء الويب). أرقام المقالات في `eid`.
+- **الاختصارات:** حزمة `acronym`، ملفّ `frontmatter/abbreviations.tex`؛ لا يظهر اختصار في القائمة إلا عبر أوامر الحزمة. LLM مضاف. الباقي (AI, API, GGUF, NLI, TF-IDF, CoT…) دفعة واحدة بعد الفصل 2.
+- **الأشكال:** مجلّد `figures/`، تسمية `chNN_<name>_eng.png`، PNG ملوّن بأسلوب مائيّ (كأسلوب الدكتور)، ≈2096 بكسل عرضًا، `width=\textwidth`، تعليق بصيغتين (قصير لقائمة الأشكال + طويل يبدأ بالعنوان الغامق). Figure 1.1 = خريطة الفصول الخمسة (مولَّدة من الوصف الذي أعددته). أشكال 2.x و3.1 تُعاد بالأسلوب نفسه في وقتها.
+- **قالب الفصول 3–5 (مُلزِم):** الفصل 3 «Methodology and Proposed System»: 3.1 Intro · 3.2 Research Methodology · 3.3 System Requirements (3.3.1 Functional, 3.3.2 Non-functional) · 3.4 System Architecture · 3.5 Components and Design · 3.6 Proposed Algorithm · 3.7 Implementation Details · 3.8 Summary. الفصل 4 «Evaluation and Results»: 4.1 Intro · 4.2 Experimental Setup (4.2.1 Environment, **4.2.2 Dataset**) · 4.3 Evaluation Metrics · 4.4 Baseline Methods · 4.5 Results · 4.6 Comparison with State of the Art · 4.7 Discussion · 4.8 Threats to Validity · 4.9 Summary. الفصل 5: 5.1 Summary · 5.2 Answers to the RQs · 5.3 Contributions · 5.4 Limitations · 5.5 Future Work · 5.6 Concluding Remarks.
+- **إعادة توزيع خطّة الفصل 3 القديمة:** §3.2 Data (المعتمد) → **4.2.2** · Metrics/Statistics → 4.3 · Baselines → 4.4 · Environment → 4.2.1 · Figure 3.1 pipeline → 3.4 · وحدات الكود → 3.5 · إجراء اشتقاق المتغيّرات/الكشف كـ pseudo-code → 3.6 · المستودع/GGUF/Colab → 3.7. **الفصل 3 يبدأ بجملة صريحة:** the proposed system is an evaluation framework, not a new detector.
+- **الفصل 2 — القرار:** الخيار ب، **سبعة أقسام فرعيّة**: 2.1 Introduction (= الفقرة الافتتاحيّة القديمة) · 2.2 Background Concepts {2.2.1 Phishing and Spear-Phishing ← 2.1؛ 2.2.2 Conventional and ML Approaches ← 2.2} · 2.3 Related Work {2.3.1 Offensive ← 2.3؛ 2.3.2 Defensive ← 2.4؛ 2.3.3 Open vs Proprietary ← 2.5؛ 2.3.4 Prompting ← 2.6؛ 2.3.5 Datasets, Metrics, and Evaluation Practices in Prior Work ← 2.7} · 2.4 Comparative Analysis (2.8 ف1، ف2، ف4 + Table 2.1 + الملاحظة) · 2.5 Research Gap (2.8 ف3 الخصائص الثلاث، Nahmias، Paladin، فقرة الأسئلة) · 2.6 Chapter Summary ← 2.9. الشكلان يحتفظان برقميهما. إحالات تتغيّر: المقدّمة (7 أرقام + الجملة الأخيرة)، 2.3.2 ف2 «Section 2.2»→2.2.2، 2.3.2 ف6 «Section 2.8»→2.4 و2.5، 2.3.4 ف2 «Section 2.4»→2.3.2، ملاحظة الجدول «Section 2.5»→2.3.3، الملخّص «Section 2.8»→2.4 و2.5 + الجملة الأخيرة لقالب الفصلين 3/4. فقرة الجدول تحتاج افتتاحًا جديدًا يعرّف الخصائص الثلاث (لأن فقرتها انتقلت إلى 2.5). تعديلات Pajola #5–#7 وKim #8 تُدمج في المرور.
+- **حالة الصبّ:** الفصل 1 كامل (`1dae8ff`)، الفصل 2 كامل (`f3a3438`). Figure 1.1 = خريطة الفصول الخمسة (PNG مائيّ مولَّد). التالي: الفصل 3 على قالب «Proposed System». Word يبقى المرجع للمراجعة؛ كلّ تعديل يُطبَّق في النسختين.
+- **أوامر Claude Code الثابتة:** الأمر 1 (ملء قسم) / الأمر 2 (إضافة فرعيّ موافَق عليه) / الأمر 3 (تسليم). commit بعد كلّ قسم، push في آخر الجلسة، لا تعديل أثناء مراجعة الدكتور.
+
+---
+
 ## 12. مسودّة §3.1 (بانتظار المراجعة)
 
 **Chapter 3: Methodology**
@@ -160,7 +212,7 @@ Three factors are manipulated. The first is the detector model, since the second
 
 The evaluation data are assembled from published research datasets rather than generated for this study, a choice made deliberately and discussed in Section 3.2. The core test set is the collection of LLM-generated spear-phishing emails released by Nahmias et al. (2024), which has the advantage of being the dataset used by the study identified in Section 2.8 as the most closely related, so that the results obtained here can be set directly against theirs; legitimate and traditional phishing email come from the Enron and SpamAssassin corpora that accompany it. A second, larger set of LLM-generated phishing and benign email, E-PhishLLM (Pajola et al., 2025), is used separately to examine whether findings on the core set generalize to a more varied collection; it is reported apart from the core results rather than merged with them, for reasons set out in Section 3.2.1.
 
-Two design decisions follow directly from the threat model in Section 1.3. First, the paraphrased and obfuscated variants are produced before, and independently of, any detector being run, so that no transformation is tuned against a particular model; this is the black-box, non-adaptive setting the threat model specifies. Second, the detectors receive the subject and body text of each email and nothing else: no sender metadata, headers, URLs, or attachments, consistent with the scope in Section 1.9. In the Nahmias et al. (2024) data this requires stripping the HTML markup in which bodies are stored, and in E-PhishLLM hyperlinks are already replaced by a placeholder token; both steps are described in Section 3.2.2.
+Two design decisions follow directly from the threat model in Section 1.2.1. First, the paraphrased and obfuscated variants are produced before, and independently of, any detector being run, so that no transformation is tuned against a particular model; this is the black-box, non-adaptive setting the threat model specifies. Second, the detectors receive the subject and body text of each email and nothing else: no sender metadata, headers, URLs, or attachments, consistent with the scope in Section 1.6. In the Nahmias et al. (2024) data this requires stripping the HTML markup in which bodies are stored, and in E-PhishLLM hyperlinks are already replaced by a placeholder token; both steps are described in Section 3.2.2.
 
 The experimental procedure is organized as a single pipeline, summarized in Figure 3.1. Published datasets are assembled and normalized to a common text representation; variants are derived from the spear-phishing emails and checked for preserved meaning; each email, in each condition, is presented to each model under each prompting strategy with fixed decoding settings; the model's free-text output is reduced to a binary label by a deterministic rule; and the resulting labels are scored against ground truth and compared across factors. The same pipeline, with the prompting stage replaced by training and inference, produces the baseline results. Every stage records the information needed to rerun it, which Section 3.8 specifies, because the reproducibility claimed in Section 2.8 depends on it.
 
