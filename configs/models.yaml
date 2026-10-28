@@ -1,10 +1,18 @@
 # Detector models (TASK_06 section 1, decision 1; Chapter 3 Section 3.5). Six open-weight instruction-tuned
-# models, GGUF Q4_K_M, run through llama.cpp (llama-cpp-python, pinned in requirements.txt) on every tier so
-# that the backend is identical; tier settings (threads, GPU layers) affect speed only.
+# models, GGUF Q4_K_M, run through llama.cpp (llama-cpp-python, pinned in requirements.txt) with identical
+# decoding everywhere; tier settings (threads, GPU layers) affect speed only.
 #
-# Weights are downloaded by scripts/06_download_models.py into `local_dir` (gitignored). `sha256` is null
-# until that script fills it in on the first download; afterwards it is verified on every run and frozen.
-# `gguf_bytes` is the file size listed by the Hugging Face repository on 2026-10-27 (sanity check only).
+# Where inference runs (QUESTIONS.md item 11, decided 2026-10-28): ALL evaluation inference for all six
+# models runs on Colab GPUs (`eval_tier`: colab_t4 for the 7B to 14B models, colab_l4 for gemma-2-27b), so
+# that every detector is measured on the same class of hardware (no hardware confound in RQ2) and because
+# the CPU projection (about 173 h) was not practical. The laptop (`smoke_tiers` containing laptop) is used
+# only for development and the dev smoke test (scripts/06_smoke_dev.py); its results never enter Chapter 4.
+#
+# Weights are downloaded by scripts/06_download_models.py into `local_dir` (gitignored) and verified against
+# `sha256` on every load. The four 7B to 9B hashes were computed from the downloaded files on 2026-10-27 and
+# equal the Hugging Face LFS metadata; the 14B and 27B hashes were taken from the Hugging Face LFS metadata
+# on 2026-10-28 and are verified by the downloader on Colab before any inference. `gguf_bytes` is the file
+# size listed by the repository (sanity check only).
 # `license` is the `license` value of the original model card front matter, followed by the agreement
 # title where the card names one; `license_class` distinguishes OSI licences from open-weight agreements
 # (Section 2.3.3). Exclusion rule: the paraphrase model family (configs/variants.yaml,
@@ -12,16 +20,17 @@
 #
 # chat_template: "embedded" = the tokenizer.chat_template stored in the GGUF, applied by llama-cpp-python
 # (no hand-written format). system_role: whether that template accepts a system message. Where it does not
-# (Gemma 2), scripts/06_run_detection.py prepends the system text to the user message, separated by a blank
-# line, for every strategy (docs/QUESTIONS.md item 9).
+# (Gemma 2), the runner prepends the system text to the user message, separated by a blank line, for every
+# strategy (docs/QUESTIONS.md item 9).
 
 quantization: Q4_K_M
 n_ctx: 4096
 local_dir: models
-runtime:                       # tier -> runtime settings file (speed only)
-  laptop: local.yaml
-  colab_t4: cloud.yaml
-  colab_l4: cloud.yaml
+
+tiers:                         # runtime settings file (speed only) and the backend each tier must report
+  laptop:   {runtime: local.yaml, backend: cpu,  use: "development and dev smoke tests only"}
+  colab_t4: {runtime: cloud.yaml, backend: cuda, use: "evaluation inference, 7B to 14B models (T4, 15 GB)"}
+  colab_l4: {runtime: cloud.yaml, backend: cuda, use: "evaluation inference, gemma-2-27b (L4, 24 GB)"}
 
 models:
   llama31-8b:
@@ -36,7 +45,8 @@ models:
     license_class: open-weight
     chat_template: embedded
     system_role: true
-    tier: laptop
+    eval_tier: colab_t4
+    smoke_tiers: [laptop, colab_t4]
 
   mistral-7b:
     name: Mistral-7B-Instruct-v0.3
@@ -50,7 +60,8 @@ models:
     license_class: open-source
     chat_template: embedded      # [INST] ... [/INST]; the template folds a system message into the user turn
     system_role: true
-    tier: laptop
+    eval_tier: colab_t4
+    smoke_tiers: [laptop, colab_t4]
 
   gemma2-9b:
     name: gemma-2-9b-it
@@ -64,7 +75,8 @@ models:
     license_class: open-weight
     chat_template: embedded      # <start_of_turn>user ...; the model card notes it does not support a system prompt
     system_role: false
-    tier: laptop
+    eval_tier: colab_t4
+    smoke_tiers: [laptop, colab_t4]
 
   qwen25-7b:
     name: Qwen2.5-7B-Instruct
@@ -78,7 +90,8 @@ models:
     license_class: open-source
     chat_template: embedded      # ChatML (<|im_start|>system / user / assistant)
     system_role: true
-    tier: laptop
+    eval_tier: colab_t4
+    smoke_tiers: [laptop, colab_t4]
 
   qwen25-14b:
     name: Qwen2.5-14B-Instruct
@@ -87,12 +100,13 @@ models:
     gguf_repo: bartowski/Qwen2.5-14B-Instruct-GGUF
     gguf_file: Qwen2.5-14B-Instruct-Q4_K_M.gguf
     gguf_bytes: 8988110976
-    sha256: null
+    sha256: e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008   # HF LFS metadata 2026-10-28
     license: "apache-2.0"
     license_class: open-source
     chat_template: embedded
     system_role: true
-    tier: colab_t4
+    eval_tier: colab_t4
+    smoke_tiers: [colab_t4]
 
   gemma2-27b:
     name: gemma-2-27b-it
@@ -101,9 +115,10 @@ models:
     gguf_repo: bartowski/gemma-2-27b-it-GGUF
     gguf_file: gemma-2-27b-it-Q4_K_M.gguf
     gguf_bytes: 16645381632
-    sha256: null
+    sha256: 503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23   # HF LFS metadata 2026-10-28
     license: "gemma (Gemma Terms of Use)"
     license_class: open-weight
     chat_template: embedded
     system_role: false
-    tier: colab_l4
+    eval_tier: colab_l4
+    smoke_tiers: [colab_l4]

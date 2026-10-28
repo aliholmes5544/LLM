@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-06_download_models.py — download and pin the detector GGUF files (TASK_06 sections 1 and 5; Section 3.7).
+06_download_models.py — download and verify the detector GGUF files (TASK_06 sections 1 and 5; Section 3.7).
 
 For every selected model in configs/models.yaml: check the exclusion rule (configs/variants.yaml
 excluded_from_detectors must not match the model name), download gguf_file from gguf_repo into models/
-(gitignored; HF_TOKEN from .env when present), compute sha256, verify it against the recorded value or,
-when the value is still null, write it into configs/models.yaml (text edit that keeps the comments), and
-record size, licence string and time in reports/models_download_report.json (merged per model).
+(gitignored; HF_TOKEN from .env or the environment when present), compute sha256, verify it against the
+recorded value (or, when the value is still null, write it into configs/models.yaml as a text edit that
+keeps the comments), and record size, licence string and time in reports/models_download_report.json
+(merged per model).
 
+Selection: --models, or every model whose eval_tier equals --tier or whose smoke_tiers contain it
+(--tier all selects everything).
 Usage: python scripts/06_download_models.py [--tier laptop|colab_t4|colab_l4|all] [--models k1,k2] [--dry-run]
 """
 import argparse
@@ -39,6 +42,12 @@ def excluded_family(name: str, families: list) -> str:
     return next((f for f in families if f.lower() in low), "")
 
 
+def selected(mcfg: dict, tier: str) -> list:
+    if tier == "all":
+        return list(mcfg["models"])
+    return [k for k, e in mcfg["models"].items() if e["eval_tier"] == tier or tier in e.get("smoke_tiers", [])]
+
+
 def pin_sha(key: str, sha: str) -> None:
     """Replace `sha256: null` inside the block of model `key` in configs/models.yaml, keeping everything else."""
     path = ROOT / "configs" / "models.yaml"
@@ -62,7 +71,7 @@ def main() -> int:
     a = ap.parse_args()
     mcfg = load_config("models.yaml")
     families = load_config("variants.yaml").get("excluded_from_detectors", [])
-    keys = [k for k in mcfg["models"] if a.tier == "all" or mcfg["models"][k]["tier"] == a.tier]
+    keys = selected(mcfg, a.tier)
     if a.models:
         keys = [k for k in a.models.split(",") if k in mcfg["models"]]
     local = ROOT / mcfg["local_dir"]
@@ -98,7 +107,7 @@ def main() -> int:
             print(f"[{key}] WARNING size {size} differs from gguf_bytes {e['gguf_bytes']}")
         report[key] = {"name": e["name"], "gguf_repo": e["gguf_repo"], "gguf_file": e["gguf_file"], "bytes": size,
                        "sha256": sha, "status": status, "license": e["license"], "license_class": e["license_class"],
-                       "quantization": mcfg["quantization"], "tier": e["tier"],
+                       "quantization": mcfg["quantization"], "eval_tier": e["eval_tier"],
                        "checked_at": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                        "huggingface_hub": huggingface_hub.__version__}
         write_json(REPORT, report)

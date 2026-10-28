@@ -133,3 +133,10 @@
     GGUF, same decoding; only threads and GPU layers differ, which configs/cloud.yaml records); (c) reduce the
     generalisation set to a seeded subsample, which changes Table 3.2 and must be recorded in CHANGES_FOR_THESIS.md.
     (a) and (b) are not methodological changes. Awaiting the author's decision before 06_run_detection.py is run.
+
+    **Answered 2026-10-28 (author):** all evaluation inference for all six models runs on Colab GPUs (T4 for the
+    four laptop-tier models and Qwen2.5-14B; L4 for gemma-2-27b); the laptop is used for development and smoke tests
+    only. Reason: identical hardware for all models removes a confound in RQ2, and the CPU projection (173 h) is not
+    practical. The generalisation set is not subsampled. Implemented in configs/models.yaml (eval_tier, smoke_tiers),
+    scripts/06_run_detection.py (--backend recorded per row) and notebooks/cloud_run.ipynb; estimate in
+    CHANGES_FOR_THESIS.md.

@@ -467,3 +467,55 @@ inference was run; everything below is configuration and code, frozen only after
   Few-shot prompts are 4 to 5 times longer (median about 1,000 tokens) but cost only about 0.5 s more per item;
   cot costs 2 to 4 times a single-word strategy. Whether to move part of the laptop tier to Colab is the
   author's decision (QUESTIONS.md item 11).
+
+## Step 06: all evaluation inference moves to Colab GPUs; detection runner and notebook (2026-10-28)
+- Decision (QUESTIONS.md item 11, author, 2026-10-28): all evaluation inference for all six detectors runs on
+  Colab GPUs, the T4 runtime for the four 7B to 9B models and Qwen2.5-14B, the L4 runtime for gemma-2-27b. The
+  laptop is used for development and the dev smoke test only. Reasons given: identical hardware class for every
+  model removes a confound in RQ2, and the CPU projection (about 173 h) is not practical. The generalisation set
+  is not subsampled. Sections 3.7 and 4.2.1: "every detector was run with llama-cpp-python 0.3.36 (CUDA build,
+  Q4_K_M, n_ctx 4,096, greedy decoding, fixed seed) on Colab GPUs: NVIDIA T4 (15 GB) for the 7B to 14B models
+  and NVIDIA L4 (24 GB) for the 27B model; the laptop CPU served development and the dev smoke test." The earlier
+  sentence about running the small models on the laptop is withdrawn. configs/models.yaml records eval_tier and
+  smoke_tiers per model; every result row records the backend (cpu / cuda); the run report records the GPU name
+  and the llama-cpp-python version per cell.
+- Evaluation item set per (model, strategy), read from the data by scripts/detect/items.py (Table 3.2): 5,207 =
+  core_pos 334 originals + 1,327 variants (para_low 334, para_high 325, obf_low 334, obf_high 334) + core_neg
+  1,002 + ctrl_modern_legit 334 + ctrl_para_legit para_high 210 + gen_phish 1,000 + gen_legit 1,000. Per model 4
+  x 5,207 = 20,828 inferences; six models 124,968 inferences. Development set (dev originals + accepted dev
+  variants): 796 items.
+- GPU time and cost estimate (Section 3.7; to be replaced by the measured values from
+  reports/smoke_gpu_report.json and reports/detection_run_report.json). Assumptions: llama.cpp prompt processing
+  / generation speeds of 1000 / 30 tokens per s for 7B to 9B Q4_K_M on a T4,
+  500 / 15 for 14B on a T4 and 600 / 12 for 27B on an L4
+  (community figures for the T4 range from 35 to 43 generated tokens per s for 8B Q4_K_M, so these are
+  conservative); median prompt and output token counts per strategy from the dev smoke test (Qwen tokens for
+  the 14B, Gemma tokens for the 27B); 0.05 s call overhead; a factor of 1.3 for model loading, Drive
+  synchronisation, smoke runs and session restarts. Estimated hours per model: llama31-8b T4 9.7 h; mistral-7b T4 9.3 h; gemma2-9b T4 8.0 h; qwen25-7b T4 6.6 h; qwen25-14b T4 12.9 h; gemma2-27b L4 16.6 h.
+  Totals: T4 about 47 h, L4 about 17 h. Compute units at the rates measured by
+  C. McCormick (March 2026): T4 1.19 and L4 1.71 units per hour, giving about
+  55 + 28 = 84 units (USD 8 at USD 0.10 per unit); with the
+  higher community figures (T4 1.76, L4 assumed 2.57) about 125 units (USD
+  12). Google publishes no units-per-hour table; the live rate shown in the Colab resource
+  panel is authoritative. Pay-as-you-go: 100 units = USD 9.99. Sessions are limited in length and can
+  disconnect, hence the per-item resumability of the runner and the Drive synchronisation every 10 minutes.
+- Hashes of the two Colab-only files were pinned from the Hugging Face LFS metadata (2026-10-28) and are verified
+  by scripts/06_download_models.py before any inference: Qwen2.5-14B-Instruct-Q4_K_M.gguf 8,988,110,976 bytes,
+  sha256 e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008; gemma-2-27b-it-Q4_K_M.gguf
+  16,645,381,632 bytes, sha256 503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23. The four
+  hashes computed on the laptop on 2026-10-27 equal the LFS metadata of their files.
+- New code (TASK_06 section 5): scripts/06_run_detection.py (one row per item, resumable at item level,
+  refuses to overwrite a finished eval file without --force --reason, refuses eval runs when the frozen configs
+  or prompts differ from HEAD or when the tier is not the model's eval_tier; --backend recorded in every row;
+  GPU name, llama-cpp-python version and per-session timings in reports/detection_run_report.json);
+  scripts/06_compare_smoke.py (per-cell percent agreement of labels and of raw outputs between two smoke runs,
+  reports/smoke_backend_agreement.json); scripts/detect/stats.py; notebooks/cloud_run.ipynb (Drive mount,
+  clone at a tag, CUDA wheel of llama-cpp-python 0.3.36 from the official index, sha256-verified downloads,
+  data pulled from Drive with the fixed-artefact hash check, GPU smoke test with CPU agreement, resumable eval
+  cells, results synced to Drive); requirements-detect.txt. Trial of the runner on the laptop (dev partition,
+  qwen25-7b zero_shot, first 6 then 8 items): resume added exactly the 2 missing items, a third call reported
+  the cell complete, the backend and tier guards refused as designed; the trial outputs were deleted.
+- Cross-backend reproducibility: greedy decoding on a GPU is not guaranteed to reproduce CPU outputs token for
+  token (different kernels, accumulation order); cell 7 of the notebook measures the agreement between the
+  committed CPU smoke run (results/smoke_dev/) and the GPU run on the same 20 dev items per cell, and the
+  thesis reports it. The CPU smoke rows predate the backend field ("unrecorded" in the comparison).

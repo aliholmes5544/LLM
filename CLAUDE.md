@@ -20,6 +20,8 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 - **Report everything.** Any record dropped, truncated, replaced, excluded or regenerated is
   counted in a JSON report under `reports/`. The thesis cites these files.
 - **Text only.** Detectors see `subject` and `body` only. Never feed sender, headers, URLs.
+- **Eval inference on GPU only.** Every evaluation cell runs on its `eval_tier` (Colab T4 / L4,
+  `notebooks/cloud_run.ipynb`); the laptop runs dev smoke tests only. `06_run_detection.py` enforces this.
 
 ## Conventions
 - Python 3.10+, standard library first; third-party only via `requirements.txt` (pinned on release).
@@ -42,7 +44,7 @@ evaluation framework" promised in the thesis (Contribution 4). Methodology text 
 | 03 | normalize, neutralize placeholders, dedup across collections | done, tested |
 | 04 | partitions + leakage check | done, tested (no leakage) |
 | 05 | variants (paraphrase, obfuscation) + meaning checks, dev set first, then eval | done: dev calibrated (thresholds frozen), eval derived 2026-10-26 and determinism-checked; questions 7 and 8 answered 2026-10-27 (control 210 after the unchanged rule; variants file + cache are the fixed artifact, hashes in the report) |
-| 06 | prompting / inference (llama.cpp GGUF backend) | in progress: item 1 done 2026-10-27 (configs, prompts, extract_label + tests, few-shot examples; Q9 and Q10 answered); laptop-tier GGUFs downloaded and sha256-pinned 2026-10-27; dev smoke test 2026-10-28 PASSED all 16 cells (6/320 invalid, all Mistral; no truncation; reports/smoke_dev_report.json); projected CPU time about 107 h core + 66 h generalisation (QUESTIONS.md item 11); 06_run_detection.py and baselines not written |
+| 06 | prompting / inference (llama.cpp GGUF backend) | in progress: configs, prompts, extract_label + tests, few-shot examples frozen (2026-10-27); laptop GGUFs sha256-pinned; dev smoke test PASSED all 16 cells on CPU (2026-10-28, reports/smoke_dev_report.json); decision Q11: ALL eval inference on Colab GPUs (T4: 7B to 14B, L4: 27B), laptop = dev/smoke only; 06_run_detection.py, 06_compare_smoke.py and notebooks/cloud_run.ipynb written and trial-run on dev; tag v0.6-detection-ready; eval runs, baselines (07_), proprietary reference and integrity check not started |
 | 07 | baselines | not started |
 | 08 | evaluation + statistics | not started |
 

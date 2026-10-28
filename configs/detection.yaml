@@ -54,9 +54,11 @@ labels:                            # decision 4; scripts/common.py: extract_labe
 
 items:                             # evaluation item set per (model, strategy); counts are read, never hard-coded
   originals: [core_pos, core_neg, ctrl_modern_legit]
-  variants: data/processed/variants_eval.jsonl    # accepted rows only (fixed artifact)
+  variants: data/processed/variants_eval.jsonl    # accepted rows only (fixed artifact): status pass or regenerated
+  variant_sources: [core_pos, ctrl_para_legit]    # a variant inherits the partition and label of its source record
   generalization: [gen_phish, gen_legit]          # reported separately
   dev_variants: data/processed/variants_dev.jsonl
+  dev_variant_sources: [dev]
 
 smoke:                             # scripts/06_smoke_dev.py gate before any evaluation run
   partition: dev

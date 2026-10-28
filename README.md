@@ -54,6 +54,30 @@ paraphrase model's family is listed under `excluded_from_detectors`). The GGUF (
 check models are downloaded into `models/` on first run. Paraphrase generations are cached in
 `data/interim/`, so reruns are fast and byte-identical.
 
+## Detection (step 06, Sections 3.5 to 3.7)
+
+Six open-weight detectors (GGUF Q4_K_M, llama-cpp-python 0.3.36) x four prompting strategies, decoding
+frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-tested on `dev` only.
+
+| script | what it does | output |
+|---|---|---|
+| `scripts/06_select_fewshot.py` | draws the 4 fixed few-shot examples from `fewshot_pool` (persona, length, similarity rules) | `prompts/few_shot_examples.json`, `reports/fewshot_selection.json` |
+| `scripts/06_download_models.py` | downloads the GGUF files of a tier into `models/`, verifies sha256, records licences | `reports/models_download_report.json` |
+| `scripts/06_smoke_dev.py` | every model x strategy on 20 dev items; gate: invalid rate <= 10 % per cell | `results/smoke_dev/`, `reports/smoke_dev_report.json` |
+| `scripts/06_compare_smoke.py` | agreement between two smoke runs (CPU laptop vs GPU Colab) | `reports/smoke_backend_agreement.json` |
+| `scripts/06_run_detection.py` | one resumable (model, strategy, partition) cell, one row per item, backend recorded | `results/raw/{model}/{strategy}/{partition}.jsonl`, `reports/detection_run_report.json` |
+| `notebooks/cloud_run.ipynb` | Colab: clone at a tag, CUDA wheel, verified downloads, data from Drive, GPU smoke test, eval cells synced to Drive | `results/raw/`, `reports/` on Drive |
+
+All evaluation inference runs on Colab GPUs (`eval_tier` in `configs/models.yaml`: T4 for the 7B to 14B
+models, L4 for gemma-2-27b); the laptop runs development and the dev smoke test (`docs/QUESTIONS.md` item 11).
+
+```bash
+python scripts/06_download_models.py --tier laptop          # 4 GGUFs, 19.7 GB
+python scripts/06_smoke_dev.py --tier laptop                 # CPU smoke test, dev only
+python scripts/06_run_detection.py --model qwen25-7b --strategy zero_shot --partition dev --tier laptop --limit 20
+# evaluation: notebooks/cloud_run.ipynb on Colab (TAG = v0.6-detection-ready), then copy results/raw and reports back
+```
+
 ## Status
 
 - [x] 01–04 data construction and audit (Section 3.2.1–3.2.4)

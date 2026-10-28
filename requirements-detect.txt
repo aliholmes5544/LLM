@@ -1,0 +1,10 @@
+# Detection stage only (notebooks/cloud_run.ipynb on Colab): the subset of requirements.txt that
+# scripts/06_*.py import. Same pinned versions as the laptop; no torch / spacy / transformers here.
+# llama-cpp-python must be the CUDA build of the SAME version. Install it first from the official wheel
+# index (cu124 for CUDA 12.x runtimes, cu130 for CUDA 13.x), then this file:
+#   pip install llama-cpp-python==0.3.36 --prefer-binary --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124
+#   pip install -r requirements-detect.txt
+pyyaml==6.0.3
+numpy==2.5.4
+huggingface_hub==1.33.0
+llama-cpp-python==0.3.36

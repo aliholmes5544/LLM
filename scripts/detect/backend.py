@@ -6,10 +6,12 @@ value, the chat template embedded in the GGUF is applied by llama-cpp-python, de
 configs/detection.yaml (greedy, fixed seed, per-strategy max_tokens) and is identical on every tier; the
 tier file (configs/local.yaml or cloud.yaml) sets threads, batch and GPU layers only. A prompt that would
 not fit n_ctx together with the answer has its body truncated at a sentence boundary and the item is
-flagged truncated_input.
+flagged truncated_input. The backend ("cpu" or "cuda") is resolved from the tier and the installed build
+and recorded in every result row (QUESTIONS.md item 11: all evaluation inference runs on cuda).
 """
 import gc
 import re
+import subprocess
 import time
 
 from common import ROOT
@@ -17,6 +19,36 @@ from detect.prompts import sha256_file
 
 TEMPLATE_MARGIN = 64                      # tokens the chat template adds around system + user text
 SENTENCE_END_RE = re.compile(r"[.!?][\"')\]]*\s")
+BACKENDS = ("cpu", "cuda")
+
+
+def gpu_name() -> str:
+    """Name of the first NVIDIA GPU, or "" when nvidia-smi is absent."""
+    try:
+        r = subprocess.run(["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
+                           capture_output=True, text=True, timeout=20)
+        return r.stdout.strip().splitlines()[0].strip() if r.returncode == 0 and r.stdout.strip() else ""
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+
+def build_supports_gpu() -> bool:
+    import llama_cpp
+    return bool(llama_cpp.llama_supports_gpu_offload())
+
+
+def resolve_backend(requested: str, tier: dict, tier_name: str, tiers: dict) -> str:
+    """cpu when the tier offloads no layers, cuda otherwise; checks the request and the installed build."""
+    want = "cpu" if tier["n_gpu_layers"] == 0 else "cuda"
+    declared = tiers[tier_name]["backend"]
+    if declared != want:
+        raise SystemExit(f"tier {tier_name} declares backend {declared} but its runtime file implies {want}")
+    if requested not in ("auto", want):
+        raise SystemExit(f"--backend {requested} contradicts tier {tier_name} (backend {want})")
+    if want == "cuda" and not build_supports_gpu():
+        raise SystemExit("this llama-cpp-python build has no GPU offload; install the CUDA wheel "
+                         "(notebooks/cloud_run.ipynb) or use a cpu tier")
+    return want
 
 
 class Detector:
@@ -30,6 +62,7 @@ class Detector:
         if verify_sha and self.entry.get("sha256") and self.model_hash != self.entry["sha256"]:
             raise ValueError(f"{self.path.name}: sha256 {self.model_hash} differs from configs/models.yaml")
         self.n_ctx = dcfg["context"]["n_ctx"]
+        self.backend = "cpu" if tier["n_gpu_layers"] == 0 else "cuda"
         t0 = time.perf_counter()
         self.llm = Llama(model_path=str(self.path), n_ctx=self.n_ctx, n_threads=tier["n_threads"],
                          n_batch=tier["n_batch"], n_gpu_layers=tier["n_gpu_layers"], seed=seed, verbose=False)

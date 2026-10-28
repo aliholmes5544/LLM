@@ -1,5 +1,7 @@
 # Colab tier runtime settings (TASK_06 section 1): these affect speed only, never decoding or outputs.
-# T4 (Qwen2.5-14B) or L4 (gemma-2-27b); all layers offloaded, same llama-cpp-python version as the laptop.
+# Used for colab_t4 (7B to 14B models, T4 15 GB) and colab_l4 (gemma-2-27b, L4 24 GB): every layer is
+# offloaded to the GPU (n_gpu_layers -1), the same llama-cpp-python version as the laptop (CUDA wheel from
+# the official index, see notebooks/cloud_run.ipynb). n_threads matters only for the small CPU-side work.
 tier: colab
 n_threads: 4
 n_batch: 512
