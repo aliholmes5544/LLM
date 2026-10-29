@@ -519,3 +519,8 @@ inference was run; everything below is configuration and code, frozen only after
   token (different kernels, accumulation order); cell 7 of the notebook measures the agreement between the
   committed CPU smoke run (results/smoke_dev/) and the GPU run on the same 20 dev items per cell, and the
   thesis reports it. The CPU smoke rows predate the backend field ("unrecorded" in the comparison).
+- 2026-10-29, first Colab resume: the runner refused (exit 1) a cell whose eval file was already complete, which
+  aborted the notebook loop. Fixed in v0.6.1-detection-ready: a complete file whose rows carry the current prompt
+  and model hashes is skipped with exit 0 and left untouched; the refusal remains for --force without --reason
+  and for hash mismatches (scripts/detect/resume.py, tests/test_resume.py). Results produced under
+  v0.6-detection-ready are unaffected (same code path for inference).

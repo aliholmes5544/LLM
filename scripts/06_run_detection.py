@@ -7,11 +7,13 @@ item_id, partition, condition, label_true, model, strategy, raw_output, label_pr
 model_hash, n_prompt_tokens, n_output_tokens, finish_reason, latency_s, truncated_input, backend.
 
 Resumable: rows already in the file are kept and their items skipped (the file is appended row by row, so
-an interrupted session loses at most the item in flight). A finished eval file is never overwritten: the
-script refuses unless --force --reason "..." is given, in which case the old file is archived next to it
-and the reason is logged in reports/detection_run_report.json. Eval runs also require configs/detection.yaml,
-configs/models.yaml and prompts/ to be identical to the committed HEAD (frozen artefacts), and refuse
-existing rows whose prompt or model hash differs from the current ones.
+an interrupted session loses at most the item in flight). A complete file whose rows carry the current prompt
+and model hashes is reported as "already complete, skipping" and left untouched (exit 0, so the notebook's
+loop over cells continues). A finished eval file is never overwritten: rerunning needs --force --reason "...",
+which archives the old file next to it and logs the reason in reports/detection_run_report.json; --force
+without --reason is refused (exit 1), as are existing rows whose prompt or model hash differs from the
+current ones (scripts/detect/resume.py, unit-tested). Eval runs also require configs/detection.yaml,
+configs/models.yaml and prompts/ to be identical to the committed HEAD (frozen artefacts).
 
 Per-cell statistics (invalid rate, latencies, tokens, truncations), the backend (cpu / cuda), the GPU name,
 the llama-cpp-python version, the runtime settings and all hashes go to reports/detection_run_report.json
@@ -34,6 +36,7 @@ from common import ROOT, load_config, read_text, write_json, open_utf8, extract_
 from detect.backend import Detector, gpu_name, resolve_backend
 from detect.items import load_records, load_partitions, eval_items, dev_items, count_items
 from detect.prompts import load_prompt, load_fewshot, render, messages, sha256_file
+from detect.resume import decide, SKIP, FORCE
 from detect.stats import cell_stats
 
 REPORT = ROOT / "reports" / "detection_run_report.json"
@@ -133,13 +136,11 @@ def main() -> int:
     if extra and not a.limit:
         raise SystemExit(f"{out.relative_to(ROOT)} holds {len(extra)} rows outside the current item set "
                          f"(e.g. {sorted(extra)[0]}); the item set changed, refusing to continue")
-    finished = bool(rows) and set(expected) <= have
-    if finished and a.partition == "eval":
-        if not a.force:
-            raise SystemExit(f"{out.relative_to(ROOT)} is finished ({len(rows)} rows); refusing to overwrite. "
-                             f"Rerun with --force --reason \"...\" to archive it and run the cell again.")
-        if not a.reason.strip():
-            raise SystemExit("--force requires --reason")
+    action = decide(rows, expected, prompt_hash, entry.get("sha256"), a.force, a.reason)
+    if action == SKIP:
+        print(f"{cell_key}: already complete ({len(rows)} rows), skipping")
+        return 0
+    if action == FORCE:
         archive = out.with_name(f"{a.partition}.overwritten-{now().replace(':', '')}.jsonl")
         out.rename(archive)
         report["forced_overwrites"].append({"cell": cell_key, "archived_to": str(archive.relative_to(ROOT)),
@@ -147,15 +148,7 @@ def main() -> int:
                                             "git_commit": git("rev-parse", "--short", "HEAD")})
         write_json(REPORT, report)
         print(f"forced: archived {archive.relative_to(ROOT)} ({len(rows)} rows); reason: {a.reason.strip()}")
-        rows, have, finished = [], set(), False
-    elif finished:
-        print(f"{cell_key}: already complete ({len(rows)} rows); nothing to do")
-        return 0
-
-    for r in rows:
-        if r["prompt_hash"] != prompt_hash or r["model_hash"] != entry.get("sha256", r["model_hash"]):
-            raise SystemExit(f"{out.relative_to(ROOT)}: existing rows carry prompt/model hashes that differ from "
-                             f"the current ones; the cell cannot be resumed with changed artefacts")
+        rows, have = [], set()
 
     todo = [i for i in items if i["item_id"] not in have]
     print(f"{cell_key}: {len(expected)} items ({count_items(items)}); {len(have)} done, {len(todo)} to run; "
