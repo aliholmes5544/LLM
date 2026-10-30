@@ -524,3 +524,34 @@ inference was run; everything below is configuration and code, frozen only after
   and model hashes is skipped with exit 0 and left untouched; the refusal remains for --force without --reason
   and for hash mismatches (scripts/detect/resume.py, tests/test_resume.py). Results produced under
   v0.6-detection-ready are unaffected (same code path for inference).
+
+## Pre-registration of secondary analyses and the statistical plan (2026-10-31; nothing computed)
+
+- QUESTIONS.md item 12 pre-registers, before any evaluation score was computed (results/raw exists on Drive,
+  no metric has been calculated), five fixed elements: (a) an unweighted majority-vote ensemble of the six
+  detectors reported as a seventh detector, (b) a CoT rationale cue analysis with a lexicon frozen on dev,
+  (c) a descriptive hard-core analysis of items all six models miss versus none, with a seeded 30-item
+  qualitative sample, (d) a cost-robustness frontier of GPU latency against robustness delta, and (e) the
+  statistical plan for step 07 (robustness delta as primary metric, cluster bootstrap CIs with B = 2000 and
+  seed 2026 clustered on the original email, McNemar for paired comparisons, Holm correction per research
+  question with uncorrected p-values shown, differences in proportions with CIs, invalid scored incorrect in
+  the primary analysis and excluded in a sensitivity analysis, generalisation partitions never pooled).
+- Wording for Section 3.2 (Research Methodology, pre-registration): "The secondary analyses and the
+  statistical plan were fixed in writing (repository file docs/QUESTIONS.md, item 12, committed 2026-10-31)
+  before any evaluation metric was computed. The commit precedes every evaluation score in the repository
+  history, so the analyses reported in Chapter 4 can be distinguished from exploratory ones; any departure
+  from the plan is logged in the same file with its date and reason."
+- Wording for Section 3.6 (Proposed Algorithm, secondary analyses): "Beyond the primary comparisons, four
+  pre-registered secondary analyses are defined. An ensemble detector takes, for each strategy, the majority
+  vote of the six models per item; an invalid output is an abstention, and a 3-3 tie or fewer than four valid
+  votes is scored as invalid; it is reported as a seventh detector without weighting or tuning. A rationale
+  cue analysis applies a lexicon of eight cue categories (urgency, link or URL, sender or domain mismatch,
+  credential or payment request, grammar or spelling, impersonation or authority, attachment, generic
+  greeting), built and frozen on the development partition only, to the chain-of-thought outputs, and reports
+  cue frequency per model and condition and its change between an original and its paraphrase, split by
+  whether the prediction flipped from correct to incorrect. A hard-core analysis contrasts items misclassified
+  by all six models under zero-shot prompting with items misclassified by none, by condition, body length,
+  source and partition, and codes a seeded stratified sample of 30 all-six failures into a qualitative error
+  taxonomy. A cost-robustness frontier plots the median latency per inference on the uniform GPU backend
+  against the robustness delta, one point per model and strategy. The statistical plan is stated in Section
+  4.3." (The plan itself, item (e), belongs with the metrics in Section 4.3 under the chapter template.)

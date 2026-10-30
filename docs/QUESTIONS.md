@@ -140,3 +140,40 @@
     practical. The generalisation set is not subsampled. Implemented in configs/models.yaml (eval_tier, smoke_tiers),
     scripts/06_run_detection.py (--backend recorded per row) and notebooks/cloud_run.ipynb; estimate in
     CHANGES_FOR_THESIS.md.
+
+## Pre-registration before step 07 (2026-10-31)
+
+12. **Pre-registered secondary analyses and statistical plan (declared 2026-10-31, before any evaluation
+    score was computed; results/raw exists but no metric has been calculated).** Declared by the author so
+    that the analyses below can be reported as planned rather than exploratory. Nothing in this item was
+    informed by an evaluation result: the only numbers seen so far are dev-partition smoke statistics
+    (invalid rate, latency, token counts) and the eval item counts.
+
+    (a) Ensemble detector: for each strategy, majority vote of the six detectors per item; an invalid
+    prediction is an abstention; a 3-3 tie or fewer than 4 valid votes is scored as invalid. Reported as a
+    seventh detector with the same metrics and deltas. No weighting, no tuning.
+
+    (b) CoT rationale cue analysis: a fixed cue lexicon with the categories urgency, link/URL, sender/domain
+    mismatch, credential/payment request, grammar/spelling, impersonation/authority, attachment, generic
+    greeting. The lexicon (regex per category) is built and frozen from the dev-partition CoT outputs only,
+    before being applied to eval. Report cue frequency per model and condition, and the change in cue
+    frequency between an original and its paraphrase, split by whether the prediction flipped from correct
+    to incorrect.
+
+    (c) Hard-core analysis: items misclassified by all six models under zero_shot versus items misclassified
+    by none, described by condition, body length, source and partition; a 30-item stratified random sample
+    (seeded) of all-six failures for a qualitative error taxonomy coded by the author; descriptive only.
+
+    (d) Cost-robustness frontier: median latency per inference (measured on the uniform GPU backend) against
+    robustness delta, one point per (model, strategy).
+
+    (e) Statistical plan for step 07: primary metric is the robustness delta (original minus variant) in
+    sensitivity for phishing and in specificity for legitimate controls; 95% cluster bootstrap CIs with the
+    original email as the cluster (B = 2000, seed 2026); McNemar for paired original-vs-variant comparisons;
+    Holm correction within each family of comparisons (a family = one research question's set of tests),
+    with uncorrected p-values also shown; effect sizes reported as differences in proportions with CIs;
+    invalid outputs scored as incorrect in the primary analysis and excluded in a sensitivity analysis; the
+    generalisation partitions reported separately and never pooled with the core set.
+
+    Status: declared, not implemented. The git commit that records this item precedes every evaluation
+    metric in the repository; any later change to (a) to (e) is logged here with its date and reason.
