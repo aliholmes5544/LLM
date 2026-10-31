@@ -177,3 +177,35 @@
 
     Status: declared, not implemented. The git commit that records this item precedes every evaluation
     metric in the repository; any later change to (a) to (e) is logged here with its date and reason.
+
+## Step 06 integrity check of the evaluation results (2026-10-31)
+
+13. **Mistral-7B received no system message in any strategy (found by 06_check_integrity.py, 2026-10-31).**
+    Evidence: for every item the role prompt of Mistral-7B has the same token count as its zero_shot prompt
+    (5,207 of 5,207 items; the five other models show exactly +32 tokens for the longer role system text), and
+    the two cells' raw outputs are byte-identical on all 5,207 items; the CPU smoke test shows the same
+    pattern (20 of 20). Cause, verified on the laptop by loading the GGUF vocabulary and rendering the
+    runner's messages: the template embedded in Mistral-7B-Instruct-v0.3-Q4_K_M.gguf supports only user and
+    assistant turns, llama-cpp-python 0.3.36 maps it to its built-in "mistral-instruct" formatter, and that
+    formatter silently drops every message whose role is not user or assistant. The messages the runner built
+    did contain the system text (system_role: true in configs/models.yaml); it was discarded at formatting.
+    Item 9's premise that the Mistral template folds the system message into the first user turn was wrong,
+    and the smoke test could not detect the loss because it checks output format only. The item sets, hashes,
+    backend, GPU and parser checks all pass for the four Mistral cells; they are complete, valid runs of a
+    different prompt than intended: user turn only (task instruction, email, output rule, and for few_shot the
+    examples, for cot the reasoning instruction), without the one-sentence system framing, and with role
+    identical to zero_shot. The other five models are unaffected.
+    Options: (a) set system_role: false for mistral-7b (the prepend rule already used for Gemma 2, item 9),
+    add a guard in scripts/detect/backend.py that refuses to run a model whose chat format resolved to a
+    built-in llama-cpp-python formatter while system_role is true, rerun the Mistral dev smoke test (gate),
+    then rerun the four Mistral eval cells on the T4 with --force --reason "system message dropped by
+    formatter, item 13" (the runner archives the current files next to the new ones; about 6.3 h of
+    inference, about 7 compute units) and rerun 06_check_integrity.py; the thesis then states that
+    Mistral-7B, like Gemma 2, receives the system text in the user turn. (b) Keep the current Mistral files,
+    report Mistral under "no system framing" for zero_shot, few_shot and cot, and exclude the Mistral role cell
+    (no role condition exists for it); this leaves RQ3 incomplete for one of six models and makes the Mistral
+    columns not comparable with the others. Recommendation: (a); it is cheap, keeps the design uniform and is
+    still a change made before any evaluation score was computed (the pre-registration of item 12 is not
+    affected, as no metric has been calculated). Until answered, no Mistral result is used in step 07 and the
+    current Mistral files stay in results/raw/ unchanged (they are what was run; the integrity report records
+    their hashes and the failed check).

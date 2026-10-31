@@ -66,6 +66,7 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/06_smoke_dev.py` | every model x strategy on 20 dev items; gate: invalid rate <= 10 % per cell | `results/smoke_dev/`, `reports/smoke_dev_report.json` |
 | `scripts/06_compare_smoke.py` | agreement between two smoke runs (CPU laptop vs GPU Colab) | `reports/smoke_backend_agreement.json` |
 | `scripts/06_run_detection.py` | one resumable (model, strategy, partition) cell, one row per item, backend recorded | `results/raw/{model}/{strategy}/{partition}.jsonl`, `reports/detection_run_report.json` |
+| `scripts/06_check_integrity.py` | verifies every `results/raw/*/*/eval.jsonl`: exact item set, no duplicates, frozen prompt and model hashes, backend cuda, GPU of the eval tier, labels reproducible from raw outputs, system text delivered (role prompt longer than zero_shot) | `reports/integrity_check.json` |
 | `notebooks/cloud_run.ipynb` | Colab: clone at a tag, CUDA wheel, verified downloads, data from Drive, GPU smoke test, eval cells synced to Drive | `results/raw/`, `reports/` on Drive |
 
 All evaluation inference runs on Colab GPUs (`eval_tier` in `configs/models.yaml`: T4 for the 7B to 14B
@@ -75,7 +76,8 @@ models, L4 for gemma-2-27b); the laptop runs development and the dev smoke test 
 python scripts/06_download_models.py --tier laptop          # 4 GGUFs, 19.7 GB
 python scripts/06_smoke_dev.py --tier laptop                 # CPU smoke test, dev only
 python scripts/06_run_detection.py --model qwen25-7b --strategy zero_shot --partition dev --tier laptop --limit 20
-# evaluation: notebooks/cloud_run.ipynb on Colab (TAG = v0.6-detection-ready), then copy results/raw and reports back
+# evaluation: notebooks/cloud_run.ipynb on Colab (TAG = v0.6.1-detection-ready), then copy results/raw and reports back
+python scripts/06_check_integrity.py                        # 2026-10-31: 20/24 pass, Mistral cells see QUESTIONS.md item 13
 ```
 
 ## Status

@@ -1,0 +1,2557 @@
+{
+  "cells": {
+    "llama31-8b/zero_shot/eval": {
+      "n": 5207,
+      "invalid": 1,
+      "invalid_rate": 0.0002,
+      "pred_counts": {
+        "legit": 3273,
+        "phish": 1933,
+        "invalid": 1
+      },
+      "latency_median_s": 0.32,
+      "latency_mean_s": 0.38,
+      "latency_max_s": 4.01,
+      "latency_total_s": 1975.1,
+      "prompt_tokens_median": 255,
+      "prompt_tokens_max": 3057,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5160,
+        "length": 47
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "llama31-8b",
+      "strategy": "zero_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
+      "model_load_s": 21.7,
+      "system_role": true,
+      "license": "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)",
+      "prompt_file": "prompts/zero_shot.txt",
+      "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "prompt_hash": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "f2f7997",
+      "git_describe": "v0.6-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-28T21:20:58Z",
+          "finished_at": "2026-10-28T21:53:58Z",
+          "items_run": 5207,
+          "wall_s": 1979.4,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "llama31-8b/few_shot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 3595,
+        "legit": 1612
+      },
+      "latency_median_s": 0.35,
+      "latency_mean_s": 0.42,
+      "latency_max_s": 4.41,
+      "latency_total_s": 2164.9,
+      "prompt_tokens_median": 1010,
+      "prompt_tokens_max": 3812,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "llama31-8b",
+      "strategy": "few_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
+      "model_load_s": 2.1,
+      "system_role": true,
+      "license": "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)",
+      "prompt_file": "prompts/few_shot.txt",
+      "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
+      "prompt_hash": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5:6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+      "few_shot_examples": {
+        "file": "prompts/few_shot_examples.json",
+        "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+        "ids": [
+          "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+          "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+          "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+          "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+        ]
+      },
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "f2f7997",
+      "git_describe": "v0.6-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-28T21:54:16Z",
+          "finished_at": "2026-10-28T22:30:29Z",
+          "items_run": 5207,
+          "wall_s": 2173.3,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "llama31-8b/cot/eval": {
+      "n": 5207,
+      "invalid": 2,
+      "invalid_rate": 0.0004,
+      "pred_counts": {
+        "legit": 3896,
+        "phish": 1309,
+        "invalid": 2
+      },
+      "latency_median_s": 3.5,
+      "latency_mean_s": 3.63,
+      "latency_max_s": 10.09,
+      "latency_total_s": 18887.1,
+      "prompt_tokens_median": 291,
+      "prompt_tokens_max": 3093,
+      "output_tokens_median": 86,
+      "finish_reasons": {
+        "stop": 5204,
+        "length": 3
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "llama31-8b",
+      "strategy": "cot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
+      "model_load_s": 21.7,
+      "system_role": true,
+      "license": "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T05:35:31Z",
+          "finished_at": "2026-10-29T06:40:39Z",
+          "items_run": 1191,
+          "wall_s": 3908.3,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "llama31-8b/role/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 2721,
+        "phish": 2486
+      },
+      "latency_median_s": 0.33,
+      "latency_mean_s": 0.38,
+      "latency_max_s": 4.14,
+      "latency_total_s": 1991.1,
+      "prompt_tokens_median": 287,
+      "prompt_tokens_max": 3089,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5187,
+        "length": 20
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "llama31-8b",
+      "strategy": "role",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
+      "model_load_s": 2.1,
+      "system_role": true,
+      "license": "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)",
+      "prompt_file": "prompts/role.txt",
+      "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "prompt_hash": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T06:40:56Z",
+          "finished_at": "2026-10-29T07:14:12Z",
+          "items_run": 5207,
+          "wall_s": 1995.5,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "mistral-7b/zero_shot/eval": {
+      "n": 5207,
+      "invalid": 117,
+      "invalid_rate": 0.0225,
+      "pred_counts": {
+        "phish": 3134,
+        "legit": 1956,
+        "invalid": 117
+      },
+      "latency_median_s": 0.38,
+      "latency_mean_s": 0.45,
+      "latency_max_s": 4.61,
+      "latency_total_s": 2355.7,
+      "prompt_tokens_median": 235,
+      "prompt_tokens_max": 3333,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5048,
+        "length": 159
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "mistral-7b",
+      "strategy": "zero_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
+      "model_load_s": 16.3,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/zero_shot.txt",
+      "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "prompt_hash": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T07:14:47Z",
+          "finished_at": "2026-10-29T07:54:12Z",
+          "items_run": 5207,
+          "wall_s": 2365.2,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "mistral-7b/few_shot/eval": {
+      "n": 5207,
+      "invalid": 15,
+      "invalid_rate": 0.0029,
+      "pred_counts": {
+        "phish": 3080,
+        "legit": 2112,
+        "invalid": 15
+      },
+      "latency_median_s": 0.44,
+      "latency_mean_s": 0.51,
+      "latency_max_s": 4.46,
+      "latency_total_s": 2643.8,
+      "prompt_tokens_median": 1141,
+      "prompt_tokens_max": 3920,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5061,
+        "length": 146
+      },
+      "truncated_input": 1,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "mistral-7b",
+      "strategy": "few_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
+      "model_load_s": 1.6,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/few_shot.txt",
+      "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
+      "prompt_hash": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5:6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+      "few_shot_examples": {
+        "file": "prompts/few_shot_examples.json",
+        "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+        "ids": [
+          "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+          "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+          "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+          "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+        ]
+      },
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T07:54:27Z",
+          "finished_at": "2026-10-29T08:38:56Z",
+          "items_run": 5207,
+          "wall_s": 2668.6,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "mistral-7b/cot/eval": {
+      "n": 5207,
+      "invalid": 288,
+      "invalid_rate": 0.0553,
+      "pred_counts": {
+        "phish": 3558,
+        "invalid": 288,
+        "legit": 1361
+      },
+      "latency_median_s": 2.76,
+      "latency_mean_s": 2.92,
+      "latency_max_s": 10.86,
+      "latency_total_s": 15220.0,
+      "prompt_tokens_median": 279,
+      "prompt_tokens_max": 3377,
+      "output_tokens_median": 70,
+      "finish_reasons": {
+        "stop": 5198,
+        "length": 9
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "mistral-7b",
+      "strategy": "cot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
+      "model_load_s": 1.6,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T08:39:11Z",
+          "finished_at": "2026-10-29T12:53:02Z",
+          "items_run": 5207,
+          "wall_s": 15230.7,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "mistral-7b/role/eval": {
+      "n": 5207,
+      "invalid": 117,
+      "invalid_rate": 0.0225,
+      "pred_counts": {
+        "phish": 3134,
+        "legit": 1956,
+        "invalid": 117
+      },
+      "latency_median_s": 0.38,
+      "latency_mean_s": 0.45,
+      "latency_max_s": 4.62,
+      "latency_total_s": 2354.1,
+      "prompt_tokens_median": 235,
+      "prompt_tokens_max": 3333,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5048,
+        "length": 159
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "mistral-7b",
+      "strategy": "role",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
+      "model_load_s": 1.6,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/role.txt",
+      "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "prompt_hash": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T12:53:17Z",
+          "finished_at": "2026-10-29T13:32:42Z",
+          "items_run": 5207,
+          "wall_s": 2364.9,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-9b/zero_shot/eval": {
+      "n": 5207,
+      "invalid": 4,
+      "invalid_rate": 0.0008,
+      "pred_counts": {
+        "phish": 2981,
+        "legit": 2222,
+        "invalid": 4
+      },
+      "latency_median_s": 0.47,
+      "latency_mean_s": 0.54,
+      "latency_max_s": 4.72,
+      "latency_total_s": 2813.7,
+      "prompt_tokens_median": 237,
+      "prompt_tokens_max": 2935,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "strategy": "zero_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "model_load_s": 25.4,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/zero_shot.txt",
+      "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "prompt_hash": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T13:33:31Z",
+          "finished_at": "2026-10-29T14:20:37Z",
+          "items_run": 5207,
+          "wall_s": 2825.9,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-9b/few_shot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 2602,
+        "phish": 2605
+      },
+      "latency_median_s": 0.52,
+      "latency_mean_s": 0.6,
+      "latency_max_s": 5.2,
+      "latency_total_s": 3108.1,
+      "prompt_tokens_median": 1051,
+      "prompt_tokens_max": 3749,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "strategy": "few_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "model_load_s": 2.6,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/few_shot.txt",
+      "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
+      "prompt_hash": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5:6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+      "few_shot_examples": {
+        "file": "prompts/few_shot_examples.json",
+        "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+        "ids": [
+          "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+          "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+          "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+          "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+        ]
+      },
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T14:20:58Z",
+          "finished_at": "2026-10-29T15:13:18Z",
+          "items_run": 5207,
+          "wall_s": 3139.8,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-9b/cot/eval": {
+      "n": 5207,
+      "invalid": 21,
+      "invalid_rate": 0.004,
+      "pred_counts": {
+        "phish": 2743,
+        "invalid": 21,
+        "legit": 2443
+      },
+      "latency_median_s": 2.84,
+      "latency_mean_s": 2.94,
+      "latency_max_s": 7.36,
+      "latency_total_s": 15313.7,
+      "prompt_tokens_median": 272,
+      "prompt_tokens_max": 2970,
+      "output_tokens_median": 53,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "strategy": "cot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "model_load_s": 2.6,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T15:13:38Z",
+          "finished_at": "2026-10-29T19:29:05Z",
+          "items_run": 5207,
+          "wall_s": 15326.4,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-9b/role/eval": {
+      "n": 5207,
+      "invalid": 3,
+      "invalid_rate": 0.0006,
+      "pred_counts": {
+        "phish": 3317,
+        "legit": 1887,
+        "invalid": 3
+      },
+      "latency_median_s": 0.48,
+      "latency_mean_s": 0.54,
+      "latency_max_s": 4.66,
+      "latency_total_s": 2807.1,
+      "prompt_tokens_median": 269,
+      "prompt_tokens_max": 2967,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "strategy": "role",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "model_load_s": 2.5,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/role.txt",
+      "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "prompt_hash": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T19:29:25Z",
+          "finished_at": "2026-10-29T20:16:25Z",
+          "items_run": 5207,
+          "wall_s": 2820.3,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-7b/zero_shot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 3845,
+        "phish": 1362
+      },
+      "latency_median_s": 0.29,
+      "latency_mean_s": 0.35,
+      "latency_max_s": 3.45,
+      "latency_total_s": 1809.0,
+      "prompt_tokens_median": 234,
+      "prompt_tokens_max": 3047,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "strategy": "zero_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "model_load_s": 20.4,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/zero_shot.txt",
+      "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "prompt_hash": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T20:17:05Z",
+          "finished_at": "2026-10-29T20:47:24Z",
+          "items_run": 5207,
+          "wall_s": 1818.1,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-7b/few_shot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 4291,
+        "phish": 916
+      },
+      "latency_median_s": 0.32,
+      "latency_mean_s": 0.38,
+      "latency_max_s": 3.74,
+      "latency_total_s": 1973.2,
+      "prompt_tokens_median": 1028,
+      "prompt_tokens_max": 3841,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "strategy": "few_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "model_load_s": 2.0,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/few_shot.txt",
+      "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
+      "prompt_hash": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5:6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+      "few_shot_examples": {
+        "file": "prompts/few_shot_examples.json",
+        "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+        "ids": [
+          "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+          "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+          "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+          "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+        ]
+      },
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T20:47:40Z",
+          "finished_at": "2026-10-29T21:20:57Z",
+          "items_run": 5207,
+          "wall_s": 1996.9,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-7b/cot/eval": {
+      "n": 5207,
+      "invalid": 5,
+      "invalid_rate": 0.001,
+      "pred_counts": {
+        "legit": 3233,
+        "phish": 1969,
+        "invalid": 5
+      },
+      "latency_median_s": 2.09,
+      "latency_mean_s": 2.05,
+      "latency_max_s": 9.56,
+      "latency_total_s": 10676.1,
+      "prompt_tokens_median": 270,
+      "prompt_tokens_max": 3083,
+      "output_tokens_median": 52,
+      "finish_reasons": {
+        "stop": 5201,
+        "length": 6
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "strategy": "cot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "model_load_s": 1.9,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-29T21:21:14Z",
+          "finished_at": "2026-10-30T00:19:20Z",
+          "items_run": 5207,
+          "wall_s": 10686.2,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-7b/role/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 3429,
+        "phish": 1778
+      },
+      "latency_median_s": 0.3,
+      "latency_mean_s": 0.35,
+      "latency_max_s": 3.49,
+      "latency_total_s": 1822.4,
+      "prompt_tokens_median": 266,
+      "prompt_tokens_max": 3079,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "strategy": "role",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "model_load_s": 1.9,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/role.txt",
+      "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "prompt_hash": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T00:19:36Z",
+          "finished_at": "2026-10-30T00:50:08Z",
+          "items_run": 5207,
+          "wall_s": 1831.7,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-14b/zero_shot/eval": {
+      "n": 5207,
+      "invalid": 2,
+      "invalid_rate": 0.0004,
+      "pred_counts": {
+        "legit": 3265,
+        "phish": 1940,
+        "invalid": 2
+      },
+      "latency_median_s": 0.58,
+      "latency_mean_s": 0.71,
+      "latency_max_s": 7.44,
+      "latency_total_s": 3690.8,
+      "prompt_tokens_median": 234,
+      "prompt_tokens_max": 3047,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5174,
+        "length": 33
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-14b",
+      "strategy": "zero_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008",
+      "model_load_s": 39.2,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/zero_shot.txt",
+      "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "prompt_hash": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T00:51:24Z",
+          "finished_at": "2026-10-30T01:53:03Z",
+          "items_run": 5207,
+          "wall_s": 3699.4,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-14b/few_shot/eval": {
+      "n": 5207,
+      "invalid": 7,
+      "invalid_rate": 0.0013,
+      "pred_counts": {
+        "legit": 2890,
+        "phish": 2310,
+        "invalid": 7
+      },
+      "latency_median_s": 0.66,
+      "latency_mean_s": 0.79,
+      "latency_max_s": 8.2,
+      "latency_total_s": 4107.2,
+      "prompt_tokens_median": 1028,
+      "prompt_tokens_max": 3841,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5173,
+        "length": 34
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-14b",
+      "strategy": "few_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008",
+      "model_load_s": 3.2,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/few_shot.txt",
+      "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
+      "prompt_hash": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5:6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+      "few_shot_examples": {
+        "file": "prompts/few_shot_examples.json",
+        "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+        "ids": [
+          "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+          "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+          "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+          "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+        ]
+      },
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T01:53:33Z",
+          "finished_at": "2026-10-30T03:02:24Z",
+          "items_run": 5207,
+          "wall_s": 4130.4,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-14b/cot/eval": {
+      "n": 5207,
+      "invalid": 60,
+      "invalid_rate": 0.0115,
+      "pred_counts": {
+        "legit": 2722,
+        "phish": 2425,
+        "invalid": 60
+      },
+      "latency_median_s": 7.07,
+      "latency_mean_s": 7.32,
+      "latency_max_s": 20.23,
+      "latency_total_s": 38114.8,
+      "prompt_tokens_median": 270,
+      "prompt_tokens_max": 3083,
+      "output_tokens_median": 85,
+      "finish_reasons": {
+        "stop": 5204,
+        "length": 3
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-14b",
+      "strategy": "cot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008",
+      "model_load_s": 37.4,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T09:30:39Z",
+          "finished_at": "2026-10-30T18:06:37Z",
+          "items_run": 4190,
+          "wall_s": 30958.0,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-14b/role/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 3092,
+        "phish": 2115
+      },
+      "latency_median_s": 0.63,
+      "latency_mean_s": 0.74,
+      "latency_max_s": 7.8,
+      "latency_total_s": 3860.4,
+      "prompt_tokens_median": 266,
+      "prompt_tokens_max": 3079,
+      "output_tokens_median": 3,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-14b",
+      "strategy": "role",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008",
+      "model_load_s": 3.2,
+      "system_role": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/role.txt",
+      "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "prompt_hash": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T18:07:10Z",
+          "finished_at": "2026-10-30T19:11:42Z",
+          "items_run": 5207,
+          "wall_s": 3871.6,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-27b/zero_shot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2986,
+        "legit": 2221
+      },
+      "latency_median_s": 0.63,
+      "latency_mean_s": 0.71,
+      "latency_max_s": 5.08,
+      "latency_total_s": 3674.8,
+      "prompt_tokens_median": 237,
+      "prompt_tokens_max": 2935,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "strategy": "zero_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "model_load_s": 5.3,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/zero_shot.txt",
+      "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "prompt_hash": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T20:09:43Z",
+          "finished_at": "2026-10-30T21:11:09Z",
+          "items_run": 5207,
+          "wall_s": 3685.1,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4"
+        }
+      ]
+    },
+    "gemma2-27b/few_shot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 3297,
+        "legit": 1910
+      },
+      "latency_median_s": 0.66,
+      "latency_mean_s": 0.74,
+      "latency_max_s": 5.51,
+      "latency_total_s": 3857.6,
+      "prompt_tokens_median": 1051,
+      "prompt_tokens_max": 3749,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "strategy": "few_shot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "model_load_s": 5.2,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/few_shot.txt",
+      "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
+      "prompt_hash": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5:6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+      "few_shot_examples": {
+        "file": "prompts/few_shot_examples.json",
+        "sha256": "6232e206d26430af4f05c1a7e59bee609d06b82d3e1ac65a4a132b4c8d67ac2d",
+        "ids": [
+          "nah:traditional_phishing:84a636ab9a6e223503fc0a0d35767424",
+          "nah:enron_ham:15899597_1075855716918_JavaMail_evans_thyme",
+          "nah:traditional_phishing:8f1706e54180856389c7d570674b2f2c",
+          "nah:enron_ham:32834965_1075858643952_JavaMail_evans_thyme"
+        ]
+      },
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T21:12:03Z",
+          "finished_at": "2026-10-30T22:16:49Z",
+          "items_run": 5207,
+          "wall_s": 3886.2,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4"
+        }
+      ]
+    },
+    "gemma2-27b/cot/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2790,
+        "legit": 2417
+      },
+      "latency_median_s": 4.33,
+      "latency_mean_s": 4.4,
+      "latency_max_s": 8.57,
+      "latency_total_s": 22934.5,
+      "prompt_tokens_median": 272,
+      "prompt_tokens_max": 2970,
+      "output_tokens_median": 54,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "strategy": "cot",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "model_load_s": 5.2,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-30T22:17:42Z",
+          "finished_at": "2026-10-31T04:40:08Z",
+          "items_run": 5207,
+          "wall_s": 22946.0,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4"
+        }
+      ]
+    },
+    "gemma2-27b/role/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 3116,
+        "legit": 2091
+      },
+      "latency_median_s": 0.63,
+      "latency_mean_s": 0.71,
+      "latency_max_s": 5.08,
+      "latency_total_s": 3675.9,
+      "prompt_tokens_median": 269,
+      "prompt_tokens_max": 2967,
+      "output_tokens_median": 4,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "strategy": "role",
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "model_load_s": 5.2,
+      "system_role": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/role.txt",
+      "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "prompt_hash": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+      },
+      "git_commit": "9b2b455",
+      "git_describe": "v0.6.1-detection-ready",
+      "sessions": [
+        {
+          "started_at": "2026-10-31T04:41:02Z",
+          "finished_at": "2026-10-31T05:42:29Z",
+          "items_run": 5207,
+          "wall_s": 3687.5,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4"
+        }
+      ]
+    }
+  },
+  "forced_overwrites": [],
+  "system_role_note": "Models with system_role false (Gemma 2) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
+  "updated_at": "2026-10-31T05:42:29Z"
+}

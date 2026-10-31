@@ -555,3 +555,108 @@ inference was run; everything below is configuration and code, frozen only after
   taxonomy. A cost-robustness frontier plots the median latency per inference on the uniform GPU backend
   against the robustness delta, one point per model and strategy. The statistical plan is stated in Section
   4.3." (The plan itself, item (e), belongs with the metrics in Section 4.3 under the chapter template.)
+
+## Step 06: all 24 detection cells run on Colab GPUs; GPU/CPU smoke agreement; integrity check (2026-10-28 to 2026-10-31)
+
+- Every evaluation cell (6 models x 4 strategies, 5,207 items each, 124,968 rows) was run once on its
+  eval_tier with notebooks/cloud_run.ipynb at tags v0.6-detection-ready (two llama31-8b cells) and
+  v0.6.1-detection-ready (all others): Tesla T4 for llama31-8b, mistral-7b, gemma2-9b, qwen25-7b and qwen25-14b,
+  NVIDIA L4 for gemma2-27b; llama-cpp-python 0.3.36 CUDA build, backend cuda in every row. Runs took place
+  2026-10-28 21:20 UTC to 2026-10-31 05:42 UTC. Two cells were resumed after a Colab session ended
+  (llama31-8b/cot, qwen25-14b/cot); the run report records only the last session of each, so inference-time
+  totals below are sums of the per-item latencies. No cell was forced or overwritten. results/raw/ (79 MB)
+  is committed to git as the thesis artefact; the Colab logs (logs/) are not.
+- scripts/06_check_integrity.py (TASK_06 section 6 item 8; reports/integrity_check.json): every cell has
+  exactly the expected 5,207 items (same item builder as the runner), no duplicates, prompt and model hashes
+  equal to the frozen values in every row, backend cuda in every row, the GPU of the run report equal to the
+  model's eval_tier, label_pred reproducible from raw_output with the frozen parser in every row, and the
+  sha256 of each results file recorded as a fixed-artefact hash. Result: 20 of 24 cells pass. The four
+  Mistral-7B cells fail one check, system_text_delivered, described next.
+- **Finding (2026-10-31): Mistral-7B never received the system message.** The role and zero_shot prompts share
+  the user text and differ only in the system text (the role text is longer). For the five other models every
+  item's role prompt is exactly 32 tokens longer than its zero_shot prompt; for Mistral-7B the two prompts have
+  the same token count on all 5,207 items and the two cells' raw outputs are byte-identical on all 5,207
+  items. Cause, verified on the laptop with the GGUF's vocabulary only: the chat template embedded in
+  Mistral-7B-Instruct-v0.3-Q4_K_M.gguf is the old Mistral template that supports only user and assistant
+  turns, and llama-cpp-python 0.3.36 maps it to its built-in "mistral-instruct" formatter
+  (guess_chat_format_from_gguf_metadata), whose format_mistral_instruct() silently discards messages whose
+  role is not user or assistant. The runner's chat messages for Mistral therefore contained the system text,
+  but the formatter dropped it before tokenisation. The statement in QUESTIONS.md item 9 that "Mistral-7B
+  accepts a system message but its own template folds it into the first user turn" was wrong. The CPU smoke
+  test showed the same symptom (identical zero_shot and role outputs and token counts) and nobody compared the
+  two cells. Consequences: in all four Mistral cells the model saw only the user turn, which still contains
+  the task instruction and the output rule, so the cells are well-defined zero_shot, few_shot and cot runs
+  without the one-sentence system framing that the other models received; the Mistral role cell is not a role
+  run at all (it equals zero_shot). Options and the recommended remedy are in QUESTIONS.md item 13; until it is
+  answered, no Mistral result is used in step 07. The other five models are unaffected (Llama 3.1, Qwen2.5 via
+  their GGUF templates with a system turn; Gemma 2 via the prepend rule of item 9).
+- Note on Llama 3.1: its official chat template inserts the lines "Cutting Knowledge Date: December 2023" and
+  "Today Date: 26 Jul 2024" into the system turn (the date is a template constant, not the run date), so the
+  Llama prompts carry these two lines before the system text. Deterministic and identical for every item; it
+  is why the Llama prompts are about 20 tokens longer than the Qwen prompts for the same text.
+- GPU/CPU smoke agreement (reports/smoke_backend_agreement.json; the same 20 dev items per cell, 4 laptop
+  models x 4 strategies = 320 inferences on the laptop CPU on 2026-10-28 and on the T4 the same day): labels
+  agree on 316 of 320 (98.8%), every cell at or above 95%. Three of the four disagreements are Mistral-7B
+  outputs that were invalid on CPU and valid on GPU (eph:11599 under zero_shot and role: "Insufficient
+  information to determine with certainty" on CPU, LEGITIMATE on GPU; eph:7515 under cot: the FINAL line was
+  followed by a run-on sentence on CPU). One is a genuine label flip, qwen25-7b/cot on eph:5768 (phish on CPU,
+  legit on GPU; the rationale text differs from the first sentence on). Raw outputs are byte-identical in
+  10 of 16 cells (all single-word cells except mistral-7b zero_shot and role at 95%); the four CoT cells
+  are byte-identical in 25 to 45% of items only, because long greedy generations diverge once a single token
+  differs, while reaching the same label in all but one item.
+- Wording for Section 4.2.1 (Environment): "All evaluation inference ran on Google Colab GPUs with the same
+  GGUF files, decoding settings and llama-cpp-python build (0.3.36, CUDA) for every model: a Tesla T4 (15 GB)
+  for the five models of up to 14B parameters and an NVIDIA L4 (24 GB) for gemma-2-27b. The laptop CPU was
+  used only for development and for a 20-item smoke test on the development partition. Before the evaluation
+  the smoke test was repeated on the T4; the extracted labels agreed with the CPU run on 316 of 320 inferences
+  (98.8%, every cell at or above 95%). Three of the four disagreements were Mistral-7B outputs that were
+  invalid on the CPU and valid on the GPU; one was a label flip in the chain-of-thought condition of
+  Qwen2.5-7B. The raw outputs were byte-identical in 10 of 16 cells; chain-of-thought rationales differed in
+  wording in most items while yielding the same label."
+- Wording for Section 4.8 (Threats to validity): "Greedy decoding is deterministic for a given software build
+  and hardware, but not across hardware: the CPU and GPU runs of the same 320 development inferences differed
+  in four labels (1.2%) and in the wording of most chain-of-thought rationales. The evaluation therefore uses
+  one hardware configuration per model, uniform across the six models, and archives the raw outputs so that
+  every score can be recomputed from them. The 1.2% cross-backend disagreement is a floor on the measurement
+  noise against which small differences between models or strategies should be read. The decision to run all
+  evaluation inference on GPUs was taken before any evaluation item was processed (docs/QUESTIONS.md item 11)."
+- Measured latency per inference on the GPU (median seconds per cell, from reports/detection_run_report.json;
+  last column: total inference time of the model's four cells in hours):
+
+| model | GPU | zero_shot | few_shot | cot | role | hours |
+|---|---|---|---|---|---|---|
+| llama31-8b | Tesla T4 | 0.32 | 0.35 | 3.50 | 0.33 | 6.9 |
+| mistral-7b | Tesla T4 | 0.38 | 0.44 | 2.76 | 0.38 | 6.3 |
+| gemma2-9b | Tesla T4 | 0.47 | 0.52 | 2.84 | 0.48 | 6.7 |
+| qwen25-7b | Tesla T4 | 0.29 | 0.32 | 2.09 | 0.30 | 4.5 |
+| qwen25-14b | Tesla T4 | 0.58 | 0.66 | 7.07 | 0.63 | 13.8 |
+| gemma2-27b | NVIDIA L4 | 0.63 | 0.66 | 4.33 | 0.63 | 9.5 |
+
+  Single-word strategies take 0.3 to 0.7 s per item on the GPU (against 2.9 to 4.9 s on the laptop CPU in the
+  smoke test); CoT takes 2.1 to 7.1 s. Total inference time 38.2 h on the T4 and 9.5 h on the L4
+  (47.7 h), against the 2026-10-28 estimate of about 47 h and 17 h; the single-word cells were
+  faster than estimated and the CoT cells slower.
+- Invalid outputs per cell (count and rate of the 5,207 items; scored as incorrect in the primary analysis,
+  excluded in the pre-registered sensitivity analysis, QUESTIONS.md item 12e):
+
+| model | zero_shot | few_shot | cot | role |
+|---|---|---|---|---|
+| llama31-8b | 1 (0.02%) | 0 (0.00%) | 2 (0.04%) | 0 (0.00%) |
+| mistral-7b | 117 (2.25%) | 15 (0.29%) | 288 (5.53%) | 117 (2.25%) |
+| gemma2-9b | 4 (0.08%) | 0 (0.00%) | 21 (0.40%) | 3 (0.06%) |
+| qwen25-7b | 0 (0.00%) | 0 (0.00%) | 5 (0.10%) | 0 (0.00%) |
+| qwen25-14b | 2 (0.04%) | 7 (0.13%) | 60 (1.15%) | 0 (0.00%) |
+| gemma2-27b | 0 (0.00%) | 0 (0.00%) | 0 (0.00%) | 0 (0.00%) |
+
+  Total 642 of 124,968 rows (0.51%). The maximum is mistral-7b/cot at 5.53%, below the 10% smoke
+  gate; gemma2-27b produced no invalid output in any strategy. The Mistral counts were produced without the
+  system message (finding above) and will change if the cells are rerun.
+- Truncated inputs: 1 of 124,968 rows (mistral-7b/few_shot; the few-shot prompt is the longest and the Mistral
+  tokenizer the least compact, so one body was cut at a sentence boundary to fit n_ctx 4,096). No other cell
+  truncated any input. The runner's truncated_input flag identifies the row.
+- Cost: Colab charged 1.15 compute units per hour on the T4 and 1.94 on the L4 during these runs (author's
+  reading of the Colab usage page), about 60 compute units in total for the 24 cells including model downloads,
+  the GPU smoke test and idle time (100 compute units cost USD 9.99, so about USD 6). Inference time alone at
+  those rates gives 44 + 18 = 62 compute units, consistent with the billed figure. The 2026-10-28 estimate
+  (84 to 125 compute units) was conservative. Rerunning the four Mistral cells would take about 6.3 h of T4
+  inference, about 7 compute units.
