@@ -1,0 +1,253 @@
+{
+  "a": "results/smoke_dev",
+  "b": "results/smoke_gpu",
+  "compared_at": "2026-10-28T21:20:15Z",
+  "cells": {
+    "gemma2-9b/cot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 40.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 13.42,
+      "latency_median_b_s": 3.15,
+      "disagreements": []
+    },
+    "gemma2-9b/few_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 4.93,
+      "latency_median_b_s": 0.58,
+      "disagreements": []
+    },
+    "gemma2-9b/role": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 4.43,
+      "latency_median_b_s": 0.49,
+      "disagreements": []
+    },
+    "gemma2-9b/zero_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 4.61,
+      "latency_median_b_s": 0.48,
+      "disagreements": []
+    },
+    "llama31-8b/cot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 40.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 14.5,
+      "latency_median_b_s": 2.77,
+      "disagreements": []
+    },
+    "llama31-8b/few_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 4.45,
+      "latency_median_b_s": 0.35,
+      "disagreements": []
+    },
+    "llama31-8b/role": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 3.15,
+      "latency_median_b_s": 0.3,
+      "disagreements": []
+    },
+    "llama31-8b/zero_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 3.63,
+      "latency_median_b_s": 0.31,
+      "disagreements": []
+    },
+    "mistral-7b/cot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 95.0,
+      "raw_identical_pct": 45.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 11.42,
+      "latency_median_b_s": 2.6,
+      "disagreements": [
+        {
+          "item_id": "eph:7515",
+          "label_true": "legit",
+          "a": "invalid",
+          "b": "legit",
+          "a_raw": " FINAL: LEGITIMATE. The email appears to be a request for design modifications to ensure safety regulations are met, which is a common communication in a professional setting. The sender is identified",
+          "b_raw": " FINAL: LEGITIMATE\n\nLEGITIMATE"
+        }
+      ]
+    },
+    "mistral-7b/few_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 5.22,
+      "latency_median_b_s": 0.49,
+      "disagreements": []
+    },
+    "mistral-7b/role": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 95.0,
+      "raw_identical_pct": 95.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 4.34,
+      "latency_median_b_s": 0.45,
+      "disagreements": [
+        {
+          "item_id": "eph:11599",
+          "label_true": "phish",
+          "a": "invalid",
+          "b": "legit",
+          "a_raw": " Insufficient information to determine with certainty. However, it's important to",
+          "b_raw": " LEGITIMATE"
+        }
+      ]
+    },
+    "mistral-7b/zero_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 95.0,
+      "raw_identical_pct": 95.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 4.01,
+      "latency_median_b_s": 0.42,
+      "disagreements": [
+        {
+          "item_id": "eph:11599",
+          "label_true": "phish",
+          "a": "invalid",
+          "b": "legit",
+          "a_raw": " Insufficient information to determine with certainty. However, it's important to",
+          "b_raw": " LEGITIMATE"
+        }
+      ]
+    },
+    "qwen25-7b/cot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 95.0,
+      "raw_identical_pct": 25.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 7.44,
+      "latency_median_b_s": 2.21,
+      "disagreements": [
+        {
+          "item_id": "eph:5768",
+          "label_true": "phish",
+          "a": "phish",
+          "b": "legit",
+          "a_raw": "The email contains a link that is not scrutinized for authenticity, and it requests immediate action to avoid performance issues, which is a common tactic in phishing attempts. However, the email also",
+          "b_raw": "The email contains a link that is not analyzed or verified, and it is asking the recipient to install software without further verification, which is a common tactic in phishing attempts. However, the"
+        }
+      ]
+    },
+    "qwen25-7b/few_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 3.79,
+      "latency_median_b_s": 0.37,
+      "disagreements": []
+    },
+    "qwen25-7b/role": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 3.36,
+      "latency_median_b_s": 0.3,
+      "disagreements": []
+    },
+    "qwen25-7b/zero_shot": {
+      "n": 20,
+      "n_only_a": 0,
+      "n_only_b": 0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
+      "same_prompt_and_model_hash": true,
+      "backend_a": "unrecorded",
+      "backend_b": "cuda",
+      "latency_median_a_s": 2.87,
+      "latency_median_b_s": 0.34,
+      "disagreements": []
+    }
+  },
+  "overall_label_agreement_pct": 98.8,
+  "n_items_compared": 320
+}

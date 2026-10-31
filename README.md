@@ -71,13 +71,16 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 
 All evaluation inference runs on Colab GPUs (`eval_tier` in `configs/models.yaml`: T4 for the 7B to 14B
 models, L4 for gemma-2-27b); the laptop runs development and the dev smoke test (`docs/QUESTIONS.md` item 11).
+Gemma 2 and Mistral-7B receive the system text prepended to the user turn (`system_role: false`; `docs/QUESTIONS.md` items 9 and 13). The first Mistral run, made without the system text, is archived under `results/archive/mistral-7b_v1_no_system_text/`.
 
 ```bash
 python scripts/06_download_models.py --tier laptop          # 4 GGUFs, 19.7 GB
 python scripts/06_smoke_dev.py --tier laptop                 # CPU smoke test, dev only
 python scripts/06_run_detection.py --model qwen25-7b --strategy zero_shot --partition dev --tier laptop --limit 20
-# evaluation: notebooks/cloud_run.ipynb on Colab (TAG = v0.6.1-detection-ready), then copy results/raw and reports back
-python scripts/06_check_integrity.py                        # 2026-10-31: 20/24 pass, Mistral cells see QUESTIONS.md item 13
+python -m unittest tests.test_system_text                    # system text reaches every model (QUESTIONS.md item 13)
+# evaluation: notebooks/cloud_run.ipynb on Colab (TAG = v0.6.2-detection-ready; MODELS = "mistral-7b" for the rerun),
+# then copy results/raw and reports back
+python scripts/06_check_integrity.py                        # every cell: item set, hashes, backend, GPU, parser, system text
 ```
 
 ## Status

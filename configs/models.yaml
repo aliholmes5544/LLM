@@ -19,9 +19,12 @@
 # excluded_from_detectors: [phi]) must not appear here; checked 2026-10-27, none of the six is a Phi model.
 #
 # chat_template: "embedded" = the tokenizer.chat_template stored in the GGUF, applied by llama-cpp-python
-# (no hand-written format). system_role: whether that template accepts a system message. Where it does not
-# (Gemma 2), the runner prepends the system text to the user message, separated by a blank line, for every
-# strategy (docs/QUESTIONS.md item 9).
+# (no hand-written format). system_role: whether the system message reaches the model through that path.
+# Where it does not (Gemma 2: the template rejects a system turn; Mistral-7B: llama-cpp-python maps its
+# template to the built-in "mistral-instruct" formatter, which drops system messages, found 2026-10-31),
+# the runner prepends the system text to the user message, separated by a blank line, for every strategy
+# (docs/QUESTIONS.md items 9 and 13). scripts/detect/backend.py refuses a built-in formatter with
+# system_role true; tests/test_system_text.py checks delivery for every model whose GGUF is present.
 
 quantization: Q4_K_M
 n_ctx: 4096
@@ -58,8 +61,9 @@ models:
     sha256: 1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6
     license: "apache-2.0"
     license_class: open-source
-    chat_template: embedded      # [INST] ... [/INST]; the template folds a system message into the user turn
-    system_role: true
+    chat_template: embedded      # [INST] ... [/INST]; llama-cpp-python uses its built-in "mistral-instruct"
+                                 # formatter for this template, which DROPS system messages (item 13), hence:
+    system_role: false           # since 2026-10-31 (v0.6.2); the v1 cells run with true are in results/archive/
     eval_tier: colab_t4
     smoke_tiers: [laptop, colab_t4]
 

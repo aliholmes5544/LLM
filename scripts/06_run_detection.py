@@ -41,7 +41,7 @@ from detect.stats import cell_stats
 
 REPORT = ROOT / "reports" / "detection_run_report.json"
 FROZEN = ("configs/detection.yaml", "configs/models.yaml", "prompts")
-SYSTEM_ROLE_NOTE = ("Models with system_role false (Gemma 2) receive the system text prepended to the user "
+SYSTEM_ROLE_NOTE = ("Models with system_role false (Gemma 2; Mistral-7B since 2026-10-31, QUESTIONS.md item 13) receive the system text prepended to the user "
                     "message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).")
 
 
@@ -195,7 +195,8 @@ def main() -> int:
                "items_by_partition_condition": count_items(items), "limit": a.limit or None,
                "tier": a.tier, "runtime": tier, "backend": backend, "gpu": gpu or None,
                "llama_cpp_python": llama_cpp.__version__, "model_sha256": det.model_hash, "model_load_s": det.load_s,
-               "system_role": entry["system_role"], "license": entry["license"],
+               "system_role": entry["system_role"], "chat_format": det.chat_format,
+               "builtin_formatter": det.builtin_formatter, "license": entry["license"],
                "prompt_file": prompt["file"], "prompt_sha256": prompt["sha256"], "prompt_hash": prompt_hash,
                "few_shot_examples": {"file": fewshot["file"], "sha256": fewshot["sha256"],
                                      "ids": [e["id"] for e in fewshot["examples"]]} if fewshot else None,

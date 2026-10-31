@@ -660,3 +660,84 @@ inference was run; everything below is configuration and code, frozen only after
   those rates gives 44 + 18 = 62 compute units, consistent with the billed figure. The 2026-10-28 estimate
   (84 to 125 compute units) was conservative. Rerunning the four Mistral cells would take about 6.3 h of T4
   inference, about 7 compute units.
+
+## Mistral-7B: system text delivered by prepend; v1 cells archived; notebook fixes (2026-10-31, v0.6.2-detection-ready)
+
+- **What was wrong.** In all four Mistral-7B evaluation cells (and in its CPU and GPU smoke tests) the model
+  never received the system message. llama-cpp-python 0.3.36 recognises the chat template embedded in
+  Mistral-7B-Instruct-v0.3-Q4_K_M.gguf (user and assistant turns only) and formats the conversation with its
+  built-in "mistral-instruct" formatter instead of the GGUF's Jinja template; that formatter copies user and
+  assistant messages and silently drops any other role. configs/models.yaml declared system_role: true for
+  Mistral, so the runner sent the system text as a separate message and it was discarded before tokenisation.
+  Mistral therefore saw only the user turn: the task instruction, the email and the output rule (plus the four
+  examples under few_shot and the reasoning instruction under cot), without the one-sentence system framing
+  that every other model received, and its role cell was the zero_shot cell under another name (same prompt
+  tokens, byte-identical outputs on all 5,207 items). The 2026-10-27 smoke report had already recorded
+  chat_format "mistral-instruct" for Mistral, but the consequence was not recognised; QUESTIONS.md item 9
+  stated, wrongly, that the Mistral template folds the system message into the first user turn.
+- **How it was found.** scripts/06_check_integrity.py (2026-10-31) compares, per model, the prompt token count
+  of the role cell with that of the zero_shot cell for every item: the two user texts are identical and the role
+  system text is longer, so the difference must be positive (it is exactly 32 tokens for the five other models);
+  for Mistral it was 0 on every item. The cause was then verified on the laptop by loading the GGUF vocabulary
+  only and rendering the runner's messages through llama-cpp-python's formatter selection (the rendered Mistral
+  prompt contained no system text). No evaluation metric had been computed at that point; the pre-registration
+  of QUESTIONS.md item 12 stands.
+- **What changed (option (a) of item 13, author's decision 2026-10-31).** (1) configs/models.yaml: system_role
+  false for mistral-7b, so detect.prompts.messages() prepends the system text to the user turn, separated by a
+  blank line, exactly as for the two Gemma 2 models (item 9); the prompt files are unchanged (same prompt_hash).
+  (2) scripts/detect/backend.py: a Detector now records the chat format llama-cpp-python chose and refuses
+  (SystemExit) to run any model that would go through a built-in formatter while system_role is true; the run
+  and smoke reports record chat_format and builtin_formatter per model. render_chat_prompt() reproduces the
+  exact prompt string create_chat_completion builds. (3) tests/test_system_text.py: for every model whose GGUF
+  is present, the rendered zero_shot and role prompts must contain the system text, and the role prompt must be
+  longer than the zero_shot prompt by the tokens of the extra system text (within 2); and a built-in formatter
+  must come with system_role false. 28 tests pass on the laptop (the four laptop GGUFs; qwen25-14b and
+  gemma2-27b are checked by the same test on Colab, cell 6 of the notebook, after their download).
+  (4) notebooks/cloud_run.ipynb: cell 3 changes to /content before removing an old clone and keeps the model
+  weights in /content/models (symlinked as models/ in the repo dir) so they survive a re-clone; cell 5 moves
+  the Drive copies of a model whose results folder was removed from the repository at the tag and archived
+  under results/archive/<model>_v*/ into DRIVE_DIR/results/archive/ once (marker file), so those cells start
+  fresh while later partial results still restore; cell 6 runs tests/test_system_text.py on the downloaded
+  models; the MODELS parameter still selects a subset (MODELS = "mistral-7b" for the rerun).
+- **Which results were archived.** results/archive/mistral-7b_v1_no_system_text/ holds, unchanged, the four v1
+  Mistral evaluation cells (raw/{strategy}/eval.jsonl, 5,207 rows each, Colab T4, 2026-10-29), the v1 CPU
+  smoke rows (smoke_dev/, 2026-10-27) and GPU smoke rows (smoke_gpu/, 2026-10-28), and copies of
+  detection_run_report.json, integrity_check.json, smoke_dev_report.json and smoke_backend_agreement.json as
+  they stood with the v1 cells; README.md in that folder explains them. They were removed from results/raw/,
+  results/smoke_dev/ and results/smoke_gpu/ (git mv, history preserved). reports/integrity_check.json now
+  reports 20 of 20 present cells passing and the four Mistral cells missing until the rerun; the live
+  detection_run_report.json still lists the v1 Mistral cells until the runner replaces them, and
+  smoke_backend_agreement.json still contains the v1 Mistral comparison until the notebook recomputes it.
+- **Mistral CPU smoke test rerun (laptop, 2026-10-31, system text prepended; same 20 dev items):**
+
+| cell | invalid v1 | invalid v2 | prompt tokens v1 | prompt tokens v2 | median s v1 | median s v2 | predictions v2 |
+|---|---|---|---|---|---|---|---|
+| zero_shot | 2/20 | 0/20 | 245 | 278 | 4.0 | 3.7 | {'phish': 9, 'legit': 11} |
+| few_shot | 0/20 | 0/20 | 1151 | 1184 | 4.7 | 4.7 | {'phish': 10, 'legit': 10} |
+| cot | 2/20 | 0/20 | 289 | 322 | 11.4 | 12.6 | {'phish': 9, 'legit': 11} |
+| role | 2/20 | 0/20 | 245 | 310 | 4.1 | 3.6 | {'phish': 10, 'legit': 10} |
+
+  Gate (invalid <= 10% per cell): PASS in every cell; 0 invalid of 80 against 6 of 80 in v1. The
+  prompt token medians now exceed the v1 values by the system text (role by about 32 tokens more than
+  zero_shot, as for the other models). Dev-set label agreement between v1 and v2 rows: zero_shot 18/20, few_shot 20/20, cot 16/20, role 18/20 (descriptive,
+  dev only; not an evaluation result). The Mistral GPU smoke test and the four evaluation cells are rerun on
+  Colab with TAG v0.6.2-detection-ready and MODELS = "mistral-7b"; about 6.3 h of T4 inference (7 compute
+  units) by the v1 timings.
+- **Wording for Section 3.7 (Implementation details):** "Each detector receives the prompt through the chat
+  template embedded in its GGUF file, applied by llama-cpp-python. Two templates do not carry a system message
+  to the model: Gemma 2 rejects the system role, and the Mistral-7B template is handled by a built-in formatter
+  of llama-cpp-python that discards system messages. For these three models the system text is prepended to
+  the user turn, separated by a blank line, in every strategy; the prompt text is identical for all six models.
+  The framework verifies delivery before any run: a model routed through a built-in formatter is refused unless
+  this prepend rule is configured, a unit test renders the prompts of every model and checks that the role
+  prompt exceeds the zero-shot prompt by exactly the system text, and the integrity check applies the same
+  test to the prompt token counts recorded in every results file."
+- **Wording for Section 4.8 (Threats to validity):** "A first run of the four Mistral-7B cells was made with the
+  system text sent as a system message, which llama-cpp-python's formatter for this model silently dropped; the
+  model saw the user turn only, and its role condition was identical to zero-shot. The defect was detected by
+  the integrity check on the recorded prompt token counts before any evaluation score had been computed, the
+  cells were rerun with the system text prepended to the user turn, and the first run is archived with the
+  repository as evidence (results/archive/). The episode shows that prompt delivery must be verified at the
+  token level, not inferred from the API; it also means that for three of the six models the system text
+  reaches the model inside the user turn, a difference in position, not in wording, that is stated with the
+  results."

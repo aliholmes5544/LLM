@@ -209,3 +209,11 @@
     affected, as no metric has been calculated). Until answered, no Mistral result is used in step 07 and the
     current Mistral files stay in results/raw/ unchanged (they are what was run; the integrity report records
     their hashes and the failed check).
+    **Answered 2026-10-31 (author):** option (a). Implemented in v0.6.2-detection-ready: system_role false for
+    mistral-7b (prepend as for Gemma 2), guard in scripts/detect/backend.py against built-in formatters with
+    system_role true, tests/test_system_text.py (system text delivered, role longer than zero_shot by the system
+    tokens, for every model whose GGUF is present; run on Colab for the 14B and 27B), v1 Mistral cells and
+    smoke rows archived under results/archive/mistral-7b_v1_no_system_text/, Mistral CPU smoke test rerun
+    (0 invalid of 80, gate PASS in every cell), notebook fixes. The four Mistral evaluation cells and the
+    Mistral GPU smoke test are rerun on Colab (TAG v0.6.2-detection-ready, MODELS mistral-7b). Details and
+    thesis wording in CHANGES_FOR_THESIS.md (2026-10-31, v0.6.2).

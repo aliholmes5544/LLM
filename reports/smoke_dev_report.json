@@ -82,88 +82,99 @@
     },
     "mistral-7b/zero_shot": {
       "n": 20,
-      "invalid": 2,
-      "invalid_rate": 0.1,
-      "gate_pass": true,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
         "phish": 9,
-        "invalid": 2,
-        "legit": 9
+        "legit": 11
       },
-      "latency_median_s": 3.96,
-      "latency_max_s": 12.33,
-      "latency_total_s": 111.8,
-      "prompt_tokens_median": 245,
-      "prompt_tokens_max": 812,
+      "latency_median_s": 3.74,
+      "latency_mean_s": 5.33,
+      "latency_max_s": 11.01,
+      "latency_total_s": 106.7,
+      "prompt_tokens_median": 278,
+      "prompt_tokens_max": 845,
       "output_tokens_median": 5,
       "finish_reasons": {
-        "stop": 18,
-        "length": 2
+        "stop": 20
       },
-      "truncated_input": 0
+      "truncated_input": 0,
+      "backends": {
+        "cpu": 20
+      },
+      "gate_pass": true
     },
     "mistral-7b/few_shot": {
       "n": 20,
       "invalid": 0,
       "invalid_rate": 0.0,
-      "gate_pass": true,
       "pred_counts": {
         "phish": 10,
         "legit": 10
       },
-      "latency_median_s": 4.7,
-      "latency_max_s": 16.27,
-      "latency_total_s": 132.6,
-      "prompt_tokens_median": 1151,
-      "prompt_tokens_max": 1718,
+      "latency_median_s": 4.65,
+      "latency_mean_s": 6.69,
+      "latency_max_s": 15.92,
+      "latency_total_s": 133.7,
+      "prompt_tokens_median": 1184,
+      "prompt_tokens_max": 1751,
       "output_tokens_median": 4,
       "finish_reasons": {
         "stop": 20
       },
-      "truncated_input": 0
+      "truncated_input": 0,
+      "backends": {
+        "cpu": 20
+      },
+      "gate_pass": true
     },
     "mistral-7b/cot": {
       "n": 20,
-      "invalid": 2,
-      "invalid_rate": 0.1,
-      "gate_pass": true,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
-        "phish": 11,
-        "legit": 7,
-        "invalid": 2
+        "phish": 9,
+        "legit": 11
       },
-      "latency_median_s": 11.39,
-      "latency_max_s": 22.8,
-      "latency_total_s": 261.9,
-      "prompt_tokens_median": 289,
-      "prompt_tokens_max": 856,
-      "output_tokens_median": 70,
+      "latency_median_s": 12.55,
+      "latency_mean_s": 13.83,
+      "latency_max_s": 25.86,
+      "latency_total_s": 276.5,
+      "prompt_tokens_median": 322,
+      "prompt_tokens_max": 889,
+      "output_tokens_median": 75,
       "finish_reasons": {
         "stop": 20
       },
-      "truncated_input": 0
+      "truncated_input": 0,
+      "backends": {
+        "cpu": 20
+      },
+      "gate_pass": true
     },
     "mistral-7b/role": {
       "n": 20,
-      "invalid": 2,
-      "invalid_rate": 0.1,
-      "gate_pass": true,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
-        "phish": 9,
-        "invalid": 2,
-        "legit": 9
+        "phish": 10,
+        "legit": 10
       },
-      "latency_median_s": 4.11,
-      "latency_max_s": 12.27,
-      "latency_total_s": 110.9,
-      "prompt_tokens_median": 245,
-      "prompt_tokens_max": 812,
-      "output_tokens_median": 5,
+      "latency_median_s": 3.58,
+      "latency_mean_s": 5.06,
+      "latency_max_s": 11.23,
+      "latency_total_s": 101.1,
+      "prompt_tokens_median": 310,
+      "prompt_tokens_max": 877,
+      "output_tokens_median": 4,
       "finish_reasons": {
-        "stop": 18,
-        "length": 2
+        "stop": 20
       },
-      "truncated_input": 0
+      "truncated_input": 0,
+      "backends": {
+        "cpu": 20
+      },
+      "gate_pass": true
     },
     "gemma2-9b/zero_shot": {
       "n": 20,
@@ -480,12 +491,12 @@
     ]
   },
   "config_sha256": {
-    "detection.yaml": "62ccb7b4ac99b04c72f249879736098e73c5f5fc88b2da71263b4e809ade8900",
-    "models.yaml": "3ade86000b3f47b22bb866ca47d95f739aa54f243814c4256b017eb4d5cc33a8"
+    "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+    "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
   },
   "llama_cpp_python": "0.3.36",
-  "git_commit": "3058064",
-  "system_role_note": "Models with system_role false (Gemma 2) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
+  "git_commit": "da369c3",
+  "system_role_note": "Models with system_role false (Gemma 2; Mistral-7B since 2026-10-31, QUESTIONS.md item 13) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
   "models": {
     "llama31-8b": {
       "sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
@@ -496,10 +507,11 @@
     },
     "mistral-7b": {
       "sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
-      "load_s": 5.6,
-      "system_role": true,
-      "license": "apache-2.0",
-      "chat_format": "mistral-instruct"
+      "load_s": 8.0,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
+      "license": "apache-2.0"
     },
     "gemma2-9b": {
       "sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
@@ -516,6 +528,8 @@
       "chat_format": "chat_template.default"
     }
   },
-  "updated_at": "2026-10-27T21:26:09Z",
-  "gate_all_pass": true
+  "updated_at": "2026-10-31T10:43:31Z",
+  "gate_all_pass": true,
+  "backend": "cpu",
+  "gpu": null
 }

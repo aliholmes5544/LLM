@@ -71,7 +71,7 @@ def main() -> int:
         "llama_cpp_python": llama_cpp.__version__,
         "git_commit": subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, capture_output=True,
                                      text=True).stdout.strip(),
-        "system_role_note": "Models with system_role false (Gemma 2) receive the system text prepended to the "
+        "system_role_note": "Models with system_role false (Gemma 2; Mistral-7B since 2026-10-31, QUESTIONS.md item 13) receive the system text prepended to the "
                             "user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
     })
     print(f"smoke: {len(items)} dev items, models {keys}, strategies {strategies}, tier {a.tier}, backend {backend}, "
@@ -86,7 +86,8 @@ def main() -> int:
         det = Detector(key, mcfg, dcfg, tier, seed)
         print(f"[{key}] loaded in {det.load_s} s; sha256 {det.model_hash[:12]}; system_role {entry['system_role']}", flush=True)
         report.setdefault("models", {})[key] = {"sha256": det.model_hash, "load_s": det.load_s,
-                                                 "system_role": entry["system_role"], "license": entry["license"]}
+                                                 "system_role": entry["system_role"], "chat_format": det.chat_format,
+                                                 "builtin_formatter": det.builtin_formatter, "license": entry["license"]}
         for s in todo:
             p, max_tokens = prompts[s], dcfg["decoding"]["max_tokens"][s]
             ex = fewshot["examples"] if s == "few_shot" else None

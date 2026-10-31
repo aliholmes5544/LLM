@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-31T10:14:40Z",
+  "checked_at": "2026-10-31T10:31:36Z",
   "raw_dir": "results/raw",
   "n_expected_items": 5207,
   "expected_items_by_partition_condition": {
@@ -44,9 +44,14 @@
     "colab_t4": "Tesla T4",
     "colab_l4": "NVIDIA L4"
   },
-  "n_cells": 24,
+  "n_cells": 20,
   "n_pass": 20,
-  "missing_cells": [],
+  "missing_cells": [
+    "mistral-7b/zero_shot",
+    "mistral-7b/few_shot",
+    "mistral-7b/cot",
+    "mistral-7b/role"
+  ],
   "all_pass": false,
   "system_text_delivered": {
     "llama31-8b": {
@@ -59,13 +64,7 @@
       "pass": true
     },
     "mistral-7b": {
-      "checked": true,
-      "n_items": 5207,
-      "n_items_role_not_longer": 5207,
-      "token_diff_role_minus_zero_shot": {
-        "0": 5207
-      },
-      "pass": false
+      "checked": false
     },
     "gemma2-9b": {
       "checked": true,
@@ -105,9 +104,9 @@
     }
   },
   "totals": {
-    "rows": 124968,
-    "invalid": 642,
-    "truncated_input": 1
+    "rows": 104140,
+    "invalid": 105,
+    "truncated_input": 0
   },
   "cells": {
     "llama31-8b/zero_shot": {
@@ -460,366 +459,6 @@
         }
       },
       "failed_checks": []
-    },
-    "mistral-7b/zero_shot": {
-      "file": "results/raw/mistral-7b/zero_shot/eval.jsonl",
-      "file_sha256": "23d2fa1900771a82b13a2038e6f288c772e21720bddbf254b8aea657257b6510",
-      "model": "mistral-7b",
-      "strategy": "zero_shot",
-      "eval_tier": "colab_t4",
-      "pass": false,
-      "checks": {
-        "parses": true,
-        "no_duplicates": true,
-        "exact_item_set": true,
-        "rows_fields_ok": true,
-        "rows_item_metadata_ok": true,
-        "rows_model_or_strategy_field_ok": true,
-        "rows_prompt_hash_ok": true,
-        "rows_model_hash_ok": true,
-        "rows_backend_ok": true,
-        "rows_label_pred_not_reproducible_ok": true,
-        "rows_invalid_flag_ok": true,
-        "run_report_cell_present": true,
-        "gpu_matches_eval_tier": true,
-        "run_report_consistent": true,
-        "system_text_delivered": false
-      },
-      "malformed_lines": 0,
-      "duplicate_item_ids": [],
-      "n_rows": 5207,
-      "n_expected": 5207,
-      "missing": 0,
-      "extra": 0,
-      "missing_examples": [],
-      "extra_examples": [],
-      "rows_bad_fields": 0,
-      "rows_bad_item_metadata": 0,
-      "rows_bad_model_or_strategy_field": 0,
-      "rows_bad_prompt_hash": 0,
-      "rows_bad_model_hash": 0,
-      "rows_bad_backend": 0,
-      "rows_bad_label_pred_not_reproducible": 0,
-      "rows_bad_invalid_flag": 0,
-      "run_report": {
-        "gpu": [
-          "Tesla T4"
-        ],
-        "n": 5207,
-        "complete": true,
-        "tier": "colab_t4",
-        "llama_cpp_python": "0.3.36",
-        "git_describe": "v0.6.1-detection-ready",
-        "sessions": 1,
-        "items_run_in_recorded_sessions": 5207,
-        "latency_median_s": 0.38,
-        "latency_total_s": 2355.7
-      },
-      "gpu_expected": "Tesla T4",
-      "invalid": 117,
-      "invalid_rate": 0.0225,
-      "truncated_input": 0,
-      "finish_reasons": {
-        "stop": 5048,
-        "length": 159
-      },
-      "items_by_partition_condition": {
-        "core_pos": {
-          "original": 334,
-          "para_low": 334,
-          "para_high": 325,
-          "obf_low": 334,
-          "obf_high": 334
-        },
-        "core_neg": {
-          "original": 1002
-        },
-        "ctrl_modern_legit": {
-          "original": 334
-        },
-        "ctrl_para_legit": {
-          "para_high": 210
-        },
-        "gen_phish": {
-          "original": 1000
-        },
-        "gen_legit": {
-          "original": 1000
-        }
-      },
-      "failed_checks": [
-        "system_text_delivered"
-      ]
-    },
-    "mistral-7b/few_shot": {
-      "file": "results/raw/mistral-7b/few_shot/eval.jsonl",
-      "file_sha256": "79446d3c20f2d43ae1e007ac31a4cc5bc0c413b1e85cd6b04d7ff6a915a4aebf",
-      "model": "mistral-7b",
-      "strategy": "few_shot",
-      "eval_tier": "colab_t4",
-      "pass": false,
-      "checks": {
-        "parses": true,
-        "no_duplicates": true,
-        "exact_item_set": true,
-        "rows_fields_ok": true,
-        "rows_item_metadata_ok": true,
-        "rows_model_or_strategy_field_ok": true,
-        "rows_prompt_hash_ok": true,
-        "rows_model_hash_ok": true,
-        "rows_backend_ok": true,
-        "rows_label_pred_not_reproducible_ok": true,
-        "rows_invalid_flag_ok": true,
-        "run_report_cell_present": true,
-        "gpu_matches_eval_tier": true,
-        "run_report_consistent": true,
-        "system_text_delivered": false
-      },
-      "malformed_lines": 0,
-      "duplicate_item_ids": [],
-      "n_rows": 5207,
-      "n_expected": 5207,
-      "missing": 0,
-      "extra": 0,
-      "missing_examples": [],
-      "extra_examples": [],
-      "rows_bad_fields": 0,
-      "rows_bad_item_metadata": 0,
-      "rows_bad_model_or_strategy_field": 0,
-      "rows_bad_prompt_hash": 0,
-      "rows_bad_model_hash": 0,
-      "rows_bad_backend": 0,
-      "rows_bad_label_pred_not_reproducible": 0,
-      "rows_bad_invalid_flag": 0,
-      "run_report": {
-        "gpu": [
-          "Tesla T4"
-        ],
-        "n": 5207,
-        "complete": true,
-        "tier": "colab_t4",
-        "llama_cpp_python": "0.3.36",
-        "git_describe": "v0.6.1-detection-ready",
-        "sessions": 1,
-        "items_run_in_recorded_sessions": 5207,
-        "latency_median_s": 0.44,
-        "latency_total_s": 2643.8
-      },
-      "gpu_expected": "Tesla T4",
-      "invalid": 15,
-      "invalid_rate": 0.0029,
-      "truncated_input": 1,
-      "finish_reasons": {
-        "stop": 5061,
-        "length": 146
-      },
-      "items_by_partition_condition": {
-        "core_pos": {
-          "original": 334,
-          "para_low": 334,
-          "para_high": 325,
-          "obf_low": 334,
-          "obf_high": 334
-        },
-        "core_neg": {
-          "original": 1002
-        },
-        "ctrl_modern_legit": {
-          "original": 334
-        },
-        "ctrl_para_legit": {
-          "para_high": 210
-        },
-        "gen_phish": {
-          "original": 1000
-        },
-        "gen_legit": {
-          "original": 1000
-        }
-      },
-      "failed_checks": [
-        "system_text_delivered"
-      ]
-    },
-    "mistral-7b/cot": {
-      "file": "results/raw/mistral-7b/cot/eval.jsonl",
-      "file_sha256": "ba262a076d4a664accdf2d7ccb004eb64dd7d6e2d3a302ca36dc6b6f569de350",
-      "model": "mistral-7b",
-      "strategy": "cot",
-      "eval_tier": "colab_t4",
-      "pass": false,
-      "checks": {
-        "parses": true,
-        "no_duplicates": true,
-        "exact_item_set": true,
-        "rows_fields_ok": true,
-        "rows_item_metadata_ok": true,
-        "rows_model_or_strategy_field_ok": true,
-        "rows_prompt_hash_ok": true,
-        "rows_model_hash_ok": true,
-        "rows_backend_ok": true,
-        "rows_label_pred_not_reproducible_ok": true,
-        "rows_invalid_flag_ok": true,
-        "run_report_cell_present": true,
-        "gpu_matches_eval_tier": true,
-        "run_report_consistent": true,
-        "system_text_delivered": false
-      },
-      "malformed_lines": 0,
-      "duplicate_item_ids": [],
-      "n_rows": 5207,
-      "n_expected": 5207,
-      "missing": 0,
-      "extra": 0,
-      "missing_examples": [],
-      "extra_examples": [],
-      "rows_bad_fields": 0,
-      "rows_bad_item_metadata": 0,
-      "rows_bad_model_or_strategy_field": 0,
-      "rows_bad_prompt_hash": 0,
-      "rows_bad_model_hash": 0,
-      "rows_bad_backend": 0,
-      "rows_bad_label_pred_not_reproducible": 0,
-      "rows_bad_invalid_flag": 0,
-      "run_report": {
-        "gpu": [
-          "Tesla T4"
-        ],
-        "n": 5207,
-        "complete": true,
-        "tier": "colab_t4",
-        "llama_cpp_python": "0.3.36",
-        "git_describe": "v0.6.1-detection-ready",
-        "sessions": 1,
-        "items_run_in_recorded_sessions": 5207,
-        "latency_median_s": 2.76,
-        "latency_total_s": 15220.0
-      },
-      "gpu_expected": "Tesla T4",
-      "invalid": 288,
-      "invalid_rate": 0.0553,
-      "truncated_input": 0,
-      "finish_reasons": {
-        "stop": 5198,
-        "length": 9
-      },
-      "items_by_partition_condition": {
-        "core_pos": {
-          "original": 334,
-          "para_low": 334,
-          "para_high": 325,
-          "obf_low": 334,
-          "obf_high": 334
-        },
-        "core_neg": {
-          "original": 1002
-        },
-        "ctrl_modern_legit": {
-          "original": 334
-        },
-        "ctrl_para_legit": {
-          "para_high": 210
-        },
-        "gen_phish": {
-          "original": 1000
-        },
-        "gen_legit": {
-          "original": 1000
-        }
-      },
-      "failed_checks": [
-        "system_text_delivered"
-      ]
-    },
-    "mistral-7b/role": {
-      "file": "results/raw/mistral-7b/role/eval.jsonl",
-      "file_sha256": "f8ebf56b1a187796485fa072db0fc7c5bde3a1ee2108caea4e4d0c451735092b",
-      "model": "mistral-7b",
-      "strategy": "role",
-      "eval_tier": "colab_t4",
-      "pass": false,
-      "checks": {
-        "parses": true,
-        "no_duplicates": true,
-        "exact_item_set": true,
-        "rows_fields_ok": true,
-        "rows_item_metadata_ok": true,
-        "rows_model_or_strategy_field_ok": true,
-        "rows_prompt_hash_ok": true,
-        "rows_model_hash_ok": true,
-        "rows_backend_ok": true,
-        "rows_label_pred_not_reproducible_ok": true,
-        "rows_invalid_flag_ok": true,
-        "run_report_cell_present": true,
-        "gpu_matches_eval_tier": true,
-        "run_report_consistent": true,
-        "system_text_delivered": false
-      },
-      "malformed_lines": 0,
-      "duplicate_item_ids": [],
-      "n_rows": 5207,
-      "n_expected": 5207,
-      "missing": 0,
-      "extra": 0,
-      "missing_examples": [],
-      "extra_examples": [],
-      "rows_bad_fields": 0,
-      "rows_bad_item_metadata": 0,
-      "rows_bad_model_or_strategy_field": 0,
-      "rows_bad_prompt_hash": 0,
-      "rows_bad_model_hash": 0,
-      "rows_bad_backend": 0,
-      "rows_bad_label_pred_not_reproducible": 0,
-      "rows_bad_invalid_flag": 0,
-      "run_report": {
-        "gpu": [
-          "Tesla T4"
-        ],
-        "n": 5207,
-        "complete": true,
-        "tier": "colab_t4",
-        "llama_cpp_python": "0.3.36",
-        "git_describe": "v0.6.1-detection-ready",
-        "sessions": 1,
-        "items_run_in_recorded_sessions": 5207,
-        "latency_median_s": 0.38,
-        "latency_total_s": 2354.1
-      },
-      "gpu_expected": "Tesla T4",
-      "invalid": 117,
-      "invalid_rate": 0.0225,
-      "truncated_input": 0,
-      "finish_reasons": {
-        "stop": 5048,
-        "length": 159
-      },
-      "items_by_partition_condition": {
-        "core_pos": {
-          "original": 334,
-          "para_low": 334,
-          "para_high": 325,
-          "obf_low": 334,
-          "obf_high": 334
-        },
-        "core_neg": {
-          "original": 1002
-        },
-        "ctrl_modern_legit": {
-          "original": 334
-        },
-        "ctrl_para_legit": {
-          "para_high": 210
-        },
-        "gen_phish": {
-          "original": 1000
-        },
-        "gen_legit": {
-          "original": 1000
-        }
-      },
-      "failed_checks": [
-        "system_text_delivered"
-      ]
     },
     "gemma2-9b/zero_shot": {
       "file": "results/raw/gemma2-9b/zero_shot/eval.jsonl",
