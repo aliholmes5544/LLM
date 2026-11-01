@@ -985,3 +985,21 @@ inference was run; everything below is configuration and code, frozen only after
   deterministically. The truncation of long legitimate e-mails at 512 tokens is a limitation of the DistilBERT
   baseline only and may affect its false positive rate on the Enron and SpamAssassin negatives; it does not
   touch the spear-phishing items."
+
+## Step 07 item 1: scoring item table built; no metric computed (2026-11-01)
+
+- docs/TASK_07_scoring.md (approved 2026-11-01) committed first. scripts/07_build_items.py (functions in
+  scripts/scoring/items.py, tests/test_build_items.py, 6 tests; whole suite 44 tests pass) verifies the sha256
+  and row count of the 27 input files against reports/integrity_check.json, joins every prediction with its
+  item's partition, condition, item class, partition set, cluster (source e-mail id), source, subclass and body
+  length, and writes results/scores/items.parquet (140,589 rows x 20 columns; sha256
+  857b43eb24d3f57c0cd05444291556b816b35bd68292df3d475268ac43ec0dbc) and results/scores/pairs.csv (1,537 accepted variants
+  paired with their originals; sha256 4e953bb64eb5a6bcbcb9b3a426038d727e7872e43d2b0a5cb42c1dc146affa9e); reports/items_build_report.json holds the input
+  and output hashes. A rebuild is byte-identical (--check). pandas 3.1.0 and pyarrow 26.0.0 pinned.
+- Structure (Section 4.2.2): 5,207 items per cell over 3,670 clusters; item classes
+  {'gen_legit': 1000, 'gen_phish': 1000, 'legit_core_neg': 1002, 'legit_ctrl_modern': 334, 'legit_ctrl_para': 210, 'phish_original': 334, 'phish_variant': 1327}; pairs per condition {'legit_ctrl_para/para_high': 210, 'phish_variant/obf_high': 334, 'phish_variant/obf_low': 334, 'phish_variant/para_high': 325, 'phish_variant/para_low': 334}. All 210 paraphrased legitimate controls
+  descend from core_neg records, so every control variant has an original prediction in every cell.
+- No prediction was compared with its label: the table carries label_true and label_pred side by side and has
+  no correctness column (asserted by a test); the pre-registration of QUESTIONS.md item 12 stands.
+- Nine points where TASK_07 is ambiguous or extends item 12 are written to QUESTIONS.md item 15 for the author;
+  (g), the basis of the CoT cue lexicon, must be answered before step 2, the others before step 3.

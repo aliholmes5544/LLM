@@ -67,6 +67,7 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/06_compare_smoke.py` | agreement between two smoke runs (CPU laptop vs GPU Colab) | `reports/smoke_backend_agreement.json` |
 | `scripts/06_run_detection.py` | one resumable (model, strategy, partition) cell, one row per item, backend recorded | `results/raw/{model}/{strategy}/{partition}.jsonl`, `reports/detection_run_report.json` |
 | `scripts/06_run_baselines.py` | one (baseline, partition) cell: TF-IDF + LR / SVM (train on `train`, C on `valid`, laptop) or DistilBERT (Colab T4, `notebooks/cloud_baselines.ipynb`); runner schema, `config_hash` + `model_hash`, resumable, fixed thresholds | `results/raw/baseline_{key}/supervised/{valid,eval}.jsonl`, `reports/baselines_report.json` |
+| `scripts/07_build_items.py` | step 07 item table: hash-verified join of the 27 eval files with partition, condition, item class, cluster (source e-mail) and body length; no metric | `results/scores/items.parquet`, `results/scores/pairs.csv`, `reports/items_build_report.json` |
 | `scripts/06_check_integrity.py` | verifies every `results/raw/*/*/eval.jsonl`: exact item set, no duplicates, frozen prompt and model hashes, backend cuda, GPU of the eval tier, labels reproducible from raw outputs, system text delivered (role prompt longer than zero_shot) | `reports/integrity_check.json` |
 | `notebooks/cloud_run.ipynb` | Colab: clone at a tag, CUDA wheel, verified downloads, data from Drive, GPU smoke test, eval cells synced to Drive | `results/raw/`, `reports/` on Drive |
 

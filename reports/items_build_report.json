@@ -1,0 +1,286 @@
+{
+  "n_files": 27,
+  "n_rows": 140589,
+  "n_items_per_cell": 5207,
+  "detectors": [
+    [
+      "baseline_distilbert",
+      "baseline"
+    ],
+    [
+      "baseline_tfidf_lr",
+      "baseline"
+    ],
+    [
+      "baseline_tfidf_svm",
+      "baseline"
+    ],
+    [
+      "gemma2-27b",
+      "llm"
+    ],
+    [
+      "gemma2-9b",
+      "llm"
+    ],
+    [
+      "llama31-8b",
+      "llm"
+    ],
+    [
+      "mistral-7b",
+      "llm"
+    ],
+    [
+      "qwen25-14b",
+      "llm"
+    ],
+    [
+      "qwen25-7b",
+      "llm"
+    ]
+  ],
+  "cells": [
+    "llama31-8b/zero_shot",
+    "llama31-8b/few_shot",
+    "llama31-8b/cot",
+    "llama31-8b/role",
+    "mistral-7b/zero_shot",
+    "mistral-7b/few_shot",
+    "mistral-7b/cot",
+    "mistral-7b/role",
+    "gemma2-9b/zero_shot",
+    "gemma2-9b/few_shot",
+    "gemma2-9b/cot",
+    "gemma2-9b/role",
+    "qwen25-7b/zero_shot",
+    "qwen25-7b/few_shot",
+    "qwen25-7b/cot",
+    "qwen25-7b/role",
+    "qwen25-14b/zero_shot",
+    "qwen25-14b/few_shot",
+    "qwen25-14b/cot",
+    "qwen25-14b/role",
+    "gemma2-27b/zero_shot",
+    "gemma2-27b/few_shot",
+    "gemma2-27b/cot",
+    "gemma2-27b/role",
+    "baseline_tfidf_lr/supervised",
+    "baseline_tfidf_svm/supervised",
+    "baseline_distilbert/supervised"
+  ],
+  "files": [
+    {
+      "file": "results/raw/llama31-8b/zero_shot/eval.jsonl",
+      "sha256": "e336851604272f034a48c3651ff759f604cc9bed8e475708c21c26c7c7429a4f",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/llama31-8b/few_shot/eval.jsonl",
+      "sha256": "9d999ccc65e60ed4852229fcabc162c6ea20a2602ed3cb2d6094532daeaf65ac",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/llama31-8b/cot/eval.jsonl",
+      "sha256": "4a980e68f7013781467634034e67b653a84d6415e20aff23fe3943e7596cffba",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/llama31-8b/role/eval.jsonl",
+      "sha256": "5cf764e9b4a64baa55f720861d9d464bc9e90de2244f650b1e85a988eff30f73",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/mistral-7b/zero_shot/eval.jsonl",
+      "sha256": "ae398b4ea3bf1a1a17162d2c6907ecc6b9bbd1f3d71ca2dc9bd0f22bf41fb659",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/mistral-7b/few_shot/eval.jsonl",
+      "sha256": "cc3319ae78c0b13be79ec0cf7bcfa43dcb9a028139f12ffa2157263de3431380",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/mistral-7b/cot/eval.jsonl",
+      "sha256": "12af2b005f6987d20618f54ed068eeecfc52dd3bbd6541bab6fbe5e41ab278d4",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/mistral-7b/role/eval.jsonl",
+      "sha256": "705704b8c260b57ec583f43f4dc5d3ba44ddc7c4565b1dcc2c39626e75a3b758",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-9b/zero_shot/eval.jsonl",
+      "sha256": "d3d54c9b17788205d7a18668b7569881899a6b5e5899f4f22e8090161143d060",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-9b/few_shot/eval.jsonl",
+      "sha256": "3868c990f976ff7353d93b28967a8bf352f5395e9b461041bdfd38be7e6493a9",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-9b/cot/eval.jsonl",
+      "sha256": "b27a440bba812d172be6721530ac4741b3c2339c3e11de48f67828606cde07f5",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-9b/role/eval.jsonl",
+      "sha256": "541c58d4f88a1b46aec11b1b8c6da29ba7ddb8b0d02aed5ecf72c2a81649b34b",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-7b/zero_shot/eval.jsonl",
+      "sha256": "b178352c3ae1c9cfb0da3fb089c23c65ba4c98f427257d2b0c1815844703cdb3",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-7b/few_shot/eval.jsonl",
+      "sha256": "d77126c801f63acfc329b6902967cc6485ef757ad2f50de4912f5bc6ec766233",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-7b/cot/eval.jsonl",
+      "sha256": "cb61c580e642c4115bd109553dd52e49a7bc70849f15159c6cbcf396ee7d88cd",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-7b/role/eval.jsonl",
+      "sha256": "babfdc4873dc3482f5d86c7091ad8bff36f23338714ed2f86c1132e7154f1870",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-14b/zero_shot/eval.jsonl",
+      "sha256": "81359a659613702f27b8c12b7bc500e575f0e3c835350f39579dc4d8b4ce2c3c",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-14b/few_shot/eval.jsonl",
+      "sha256": "2bb52d2689eab3fa13b49b52586ae2daa3ef5c5f642a042705692a7b62b4eb54",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-14b/cot/eval.jsonl",
+      "sha256": "777f28e6d58f764190f879463d692e90f10136332c43fcf307eaa7baeadc678a",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/qwen25-14b/role/eval.jsonl",
+      "sha256": "872e8441799d4ef452d59e9712166f447a8c0798a07eb1566a2be8bdb1b34ba0",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-27b/zero_shot/eval.jsonl",
+      "sha256": "978b08708b5f279959546d86004cb95580ecca6beb815f9203d707fcddcdad7b",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-27b/few_shot/eval.jsonl",
+      "sha256": "63116a234eb11a144e455f4e4c77449648b75b3bedb8678552e8fcceb7ce8003",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-27b/cot/eval.jsonl",
+      "sha256": "49cda4312ec0511509aae5f4704d5ec2d00e731915c018562d41d9a2580a9b69",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/gemma2-27b/role/eval.jsonl",
+      "sha256": "41e8d0fd459d0793a4f2d5f97939c61fe1b88e4019f897149996e0ab9d473fd8",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/baseline_tfidf_lr/supervised/eval.jsonl",
+      "sha256": "9d1b88fe170ebc74d27bcbe62a04352071e93485548e6dd2e0edbf6853ffd973",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/baseline_tfidf_svm/supervised/eval.jsonl",
+      "sha256": "90f6ff53e6b0ce3b1b9d2608e7db3a5a5eed0e425bea70b6813bc023815f1c4b",
+      "n_rows": 5207
+    },
+    {
+      "file": "results/raw/baseline_distilbert/supervised/eval.jsonl",
+      "sha256": "ef6a404ddcf08332b0304b21bca7b689b349b44a71476d16927002fba45478e3",
+      "n_rows": 5207
+    }
+  ],
+  "items_by_class": {
+    "gen_legit": 1000,
+    "gen_phish": 1000,
+    "legit_core_neg": 1002,
+    "legit_ctrl_modern": 334,
+    "legit_ctrl_para": 210,
+    "phish_original": 334,
+    "phish_variant": 1327
+  },
+  "items_by_partition_condition": {
+    "core_neg": {
+      "original": 1002
+    },
+    "core_pos": {
+      "original": 334,
+      "para_low": 334,
+      "para_high": 325,
+      "obf_low": 334,
+      "obf_high": 334
+    },
+    "ctrl_modern_legit": {
+      "original": 334
+    },
+    "ctrl_para_legit": {
+      "para_high": 210
+    },
+    "gen_legit": {
+      "original": 1000
+    },
+    "gen_phish": {
+      "original": 1000
+    }
+  },
+  "n_clusters": 3670,
+  "pairs_by_condition": {
+    "legit_ctrl_para/para_high": 210,
+    "phish_variant/obf_high": 334,
+    "phish_variant/obf_low": 334,
+    "phish_variant/para_high": 325,
+    "phish_variant/para_low": 334
+  },
+  "columns": [
+    "detector",
+    "kind",
+    "strategy",
+    "item_id",
+    "cluster",
+    "partition",
+    "condition",
+    "item_class",
+    "partition_set",
+    "label_true",
+    "label_pred",
+    "invalid",
+    "score",
+    "source",
+    "subclass",
+    "body_words",
+    "latency_s",
+    "n_prompt_tokens",
+    "truncated_input",
+    "backend"
+  ],
+  "built_at": "2026-11-01T06:45:18Z",
+  "integrity_checked_at": "2026-11-01T06:34:18Z",
+  "variants_file_sha256": "d898cece2d0f5d399a036bdeab8d63c9246b4eb91fd8298c299285b354d46389",
+  "outputs": {
+    "items.parquet": "857b43eb24d3f57c0cd05444291556b816b35bd68292df3d475268ac43ec0dbc",
+    "pairs.csv": "4e953bb64eb5a6bcbcb9b3a426038d727e7872e43d2b0a5cb42c1dc146affa9e"
+  },
+  "versions": {
+    "pandas": "3.1.0",
+    "pyarrow": "26.0.0"
+  },
+  "git_commit": "efd7576",
+  "git_describe": "v0.6.5-step06-complete-1-gefd7576",
+  "note": "No metric computed; label_true and label_pred are carried side by side for scripts/07_score.py."
+}

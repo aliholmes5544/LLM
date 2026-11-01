@@ -242,3 +242,75 @@
     e-mails does not clearly permit their transfer to a third-party API; (3) a proprietary comparison is noted
     as future work in Chapter 5. scripts/06_run_proprietary.py is not written; `proprietary_ref` is removed from
     the TASK_06 definition of done and from CLAUDE.md. Item closed; tag v0.6.4-baselines-ready.
+
+
+## Step 07 scoring specification: points that need the author's decision before any score is computed (2026-11-01)
+
+15. **Ambiguities in docs/TASK_07_scoring.md and places where it extends QUESTIONS.md item 12.** Found while
+    implementing step 1 (item table) and preparing step 2 (cue lexicon); none is resolved here. (a) to (f)
+    concern step 3 only; (g) must be answered before step 2.
+
+    (a) **Research-question numbering.** TASK_07 section 0 names RQ1 = robustness, RQ2 = model size, RQ3 =
+    prompting strategy, and the Holm families F-RQ1, F-RQ2, F-RQ3 follow that scheme. The thesis (PROJECT_STATE
+    section 2; METHODOLOGY_3.2 Tables; Table 3.1) has RQ1 = effectiveness, RQ2 = comparison across open models
+    and the ML/DL baselines, RQ3 = zero-shot vs prompt-engineered, RQ4 = robustness under paraphrase and
+    obfuscation; "model size" is one contrast inside RQ2, not a research question. Which labels go into the
+    output files, tables and the CHANGES wording, and does the size family cover only the two size pairs
+    (Qwen 7B vs 14B, Gemma 9B vs 27B) or every model comparison of RQ2 (including detectors vs baselines)?
+    Item 12e says "a family = one research question's set of tests".
+
+    (b) **Family membership of the other McNemar tests.** TASK_07 section 3 puts only the zero_shot tests of the
+    six models (6 x 4 phishing conditions + 6 control tests = 30) into F-RQ1. deltas_long.csv also carries a
+    McNemar p for every paired test under few_shot, cot and role (T4), for the three baselines and for the
+    ensemble (item 12a: "scored as a seventh detector in every table"). Options: (i) those p-values are shown
+    uncorrected only, with the family column empty; (ii) one family per strategy (F-RQ1 is the zero_shot one);
+    (iii) one family holding all 7 detectors x 4 strategies x 5 tests plus the baselines. Default if
+    unanswered: none; step 3 does not start.
+
+    (c) **p-value of a bootstrap contrast.** F-RQ2 and F-RQ3 are "tested by cluster-bootstrap difference of
+    deltas" and Holm-corrected, but no p-value is defined for a bootstrap contrast. Options: (i) two-sided
+    percentile bootstrap p = 2 x min(P*(diff <= 0), P*(diff >= 0)), floored at 1/B, with the same B = 2000 and
+    the per-table RNG stream; (ii) CIs only for RQ2/RQ3 contrasts, no p and no Holm. Item 12e is silent on this.
+
+    (d) **Cue-change split.** Item 12b splits the original-vs-paraphrase cue change by "whether the prediction
+    flipped from correct to incorrect" (two groups); TASK_07 section 4(b) uses four groups (stayed correct /
+    flipped to incorrect / stayed incorrect / flipped to correct). The four-way split contains the two-way one.
+    Confirm, and log it in item 12 as a refinement with today's date (the log must precede the computation).
+
+    (e) **Hard-core sample.** Item 12c and TASK_07 section 4(c) ask for a seeded stratified sample of 30 all-six
+    failures without naming the strata. Options: (i) by condition (original, para_low, para_high, obf_low,
+    obf_high: 6 each); (ii) by condition x source (Nahmias phishing vs legitimate corpora); (iii) by item class.
+    "All six" = the six language models under zero_shot, baselines excluded (reading of item 12c), to confirm.
+    Invalid counts as misclassified (primary rule), to confirm.
+
+    (f) **Power note.** TASK_07 section 3 asks for the McNemar power "under typical discordance" and "state the
+    computed figure". Power depends on the assumed discordant proportion. Options: (i) a priori assumption
+    stated now (for example 10%, 15% and 20% discordance for a 5-point paired drop, n = 334, alpha 0.05);
+    (ii) the observed discordance of the zero_shot cells, which is post hoc and would be labelled as such.
+
+    (g) **Basis of the CoT cue lexicon (blocks step 2).** The only dev CoT outputs in the repository are the
+    smoke sets: 20 dev items (10 phishing, 10 legitimate) x 9 cells (CPU: gemma2-9b, llama31-8b, mistral-7b,
+    qwen25-7b; GPU: the same four plus qwen25-14b) = 180 rationales about 20 distinct e-mails; gemma2-27b has no
+    dev CoT output at all. TASK_07 section 0 names exactly these files. Options: (i) freeze the lexicon on these
+    180 rationales as specified; (ii) first run the cot strategy on the full dev partition (400 originals + the
+    accepted dev variants) for the four laptop models on the CPU (dev only, permitted by CLAUDE.md; roughly
+    400 to 580 items x 4 models x about 12 s = 5 to 8 h of laptop time) and freeze on that; (iii) (ii) plus
+    qwen25-14b and gemma2-27b on Colab (about 1 compute unit). The lexicon's regexes would be written by hand
+    from reading the dev rationales and frozen with a hash; a larger basis reduces the risk that an eval
+    rationale uses a phrasing the lexicon never saw, which would then be a (documented) limitation, not an
+    error. Recommendation: (ii), because the cost is one laptop night and the lexicon is applied to 31,242 eval
+    rationales.
+
+    (h) **Sensitivity analysis on paired deltas.** Item 12e: invalid outputs are "excluded in a sensitivity
+    analysis". For an unpaired rate the exclusion is clear; for a paired delta and its McNemar test, options:
+    (i) drop a pair when either member is invalid (keeps the pairing; same n for original and variant);
+    (ii) drop invalid items from each condition separately (unpaired denominators). The ensemble (item 12a)
+    turns ties and sparse votes into invalid, so this choice affects it most.
+
+    (i) **Readings taken as given unless corrected** (no decision needed if correct): spec(original) is reported
+    separately for core_neg (1,002) and ctrl_modern_legit (334), as the TASK_07 table lists them; the paired
+    specificity for the control delta uses the 210 core_neg originals that have an accepted para_high variant;
+    acc, bal_acc and f1_phish on "core originals" use core_pos + core_neg + ctrl_modern_legit (1,670 items);
+    the bootstrap RNG of a table is derive_rng(2026, "bootstrap", <table name>) in the project's seeding scheme,
+    so every table is reproducible independently of execution order; the hard-core "body length" is the word
+    count of the scored text (body_words in items.parquet).
