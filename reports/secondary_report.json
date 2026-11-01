@@ -1,0 +1,84 @@
+{
+  "computed_at": "2026-11-01T15:50:17Z",
+  "inputs": {
+    "scoring_report_outputs": {
+      "metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
+      "deltas_long.csv": "8053a31a421f0c900809c5761da9f871d95aa9015a68b534b5dfc8228dcfa9b3",
+      "contrasts.csv": "b68073b9d6d4519aa6694a2639cbb915afc989e05dc6787b41e6e43d05028ccc",
+      "ensemble_predictions.csv": "631475ca60b86569bb35fac950c0d9dc6b37254163d9acb2afe65cf92481f959"
+    },
+    "cot_eval_files": {
+      "results/raw/llama31-8b/cot/eval.jsonl": "4a980e68f7013781467634034e67b653a84d6415e20aff23fe3943e7596cffba",
+      "results/raw/mistral-7b/cot/eval.jsonl": "12af2b005f6987d20618f54ed068eeecfc52dd3bbd6541bab6fbe5e41ab278d4",
+      "results/raw/gemma2-9b/cot/eval.jsonl": "b27a440bba812d172be6721530ac4741b3c2339c3e11de48f67828606cde07f5",
+      "results/raw/qwen25-7b/cot/eval.jsonl": "cb61c580e642c4115bd109553dd52e49a7bc70849f15159c6cbcf396ee7d88cd",
+      "results/raw/qwen25-14b/cot/eval.jsonl": "777f28e6d58f764190f879463d692e90f10136332c43fcf307eaa7baeadc678a",
+      "results/raw/gemma2-27b/cot/eval.jsonl": "49cda4312ec0511509aae5f4704d5ec2d00e731915c018562d41d9a2580a9b69"
+    },
+    "lexicon_sha256": "e209c7a565add8bf7d88595b94d3f7174535ec93c6b35206225c58b8f43822fd",
+    "items_parquet": "857b43eb24d3f57c0cd05444291556b816b35bd68292df3d475268ac43ec0dbc"
+  },
+  "seed": 2026,
+  "cues": {
+    "n_cot_rows": 31242,
+    "n_empty_rationale_by_model": {
+      "llama31-8b": 0,
+      "mistral-7b": 475,
+      "gemma2-9b": 0,
+      "qwen25-7b": 908,
+      "qwen25-14b": 0,
+      "gemma2-27b": 0
+    },
+    "pairs_used": 8962,
+    "pairs_excluded_empty_rationale": 260
+  },
+  "hardcore": {
+    "n_items": 5207,
+    "by_hard_group": {
+      "none": 2850,
+      "some": 2255,
+      "all_six": 102
+    },
+    "all_six_by_group": {
+      "gen_phish": 39,
+      "legit_core_neg": 34,
+      "legit_ctrl_para": 14,
+      "phish_original": 7,
+      "phish_para_low": 5,
+      "phish_para_high": 3
+    },
+    "sample_available_by_condition": {
+      "para_low": 5,
+      "para_high": 3,
+      "obf_low": 0,
+      "obf_high": 0
+    },
+    "sample_allocation": {
+      "para_low": 5,
+      "para_high": 3,
+      "obf_low": 0,
+      "obf_high": 0
+    },
+    "sample_n": 8,
+    "sample_text_file": "data/processed/hardcore_sample_text.jsonl (git-ignored data)"
+  },
+  "frontier_rows": 27,
+  "outputs": {
+    "ensemble_votes.csv": "d9240a3d370321cb4647db55f5c1dc0724535b0aa1b3227e3143731f1eb90e9e",
+    "cues_frequency.csv": "df233e89d34c5c2ed4b8b6953d7602b12e98b8fb29608793e2349a7c01d063bc",
+    "cues_change.csv": "624ac928ec08bd4f6814d0b6591f0a895c1fe5ebe07d2aceddf0f3bf6db8be64",
+    "cues_pairs.csv": "9fecfa84811c78a9fbfef0f56e0a1092c275e349fc20193107e3cede580c303a",
+    "hardcore_items.csv": "102a8a165f057cb936d7d67acce9e6dbee2403e21766d7c010e341309599ddab",
+    "hardcore_summary.csv": "e26b6e42ca82494e59682597df1b6156706a2ec259221eddf9854b912d6d7fb0",
+    "frontier.csv": "9a19ab4fe51e94e3c7a9c6aa4c234b7b86828c2830b7098042b4a03916c337b5",
+    "reports/hardcore_sample.csv": "fc068d89e1dc7be5ccb8b912517adab302e0bb2d75a35f55fed71b8a7d2a4e39"
+  },
+  "runtime_s": 12.3,
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0"
+  },
+  "git_commit": "f450c3e",
+  "git_describe": "v0.7.0-devcot-2-gf450c3e"
+}

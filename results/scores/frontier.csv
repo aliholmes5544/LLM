@@ -1,0 +1,28 @@
+detector,kind,strategy,latency_median_s,latency_mean_s,backend,gpu,tier,delta_sens_para_high,ci_lo_para_high,ci_hi_para_high,delta_sens_obf_high,ci_lo_obf_high,ci_hi_obf_high
+llama31-8b,llm,zero_shot,0.32,0.38,cuda,Tesla T4,colab_t4,-0.221538,-0.273846,-0.169231,-0.778443,-0.823353,-0.730539
+llama31-8b,llm,few_shot,0.35,0.42,cuda,Tesla T4,colab_t4,-0.00307692,-0.00923077,0,-0.00299401,-0.00898204,0
+llama31-8b,llm,cot,3.5,3.63,cuda,Tesla T4,colab_t4,-0.187692,-0.233846,-0.147615,-0.805389,-0.847305,-0.763398
+llama31-8b,llm,role,0.33,0.38,cuda,Tesla T4,colab_t4,-0.267692,-0.320077,-0.215385,-0.52994,-0.580838,-0.473054
+mistral-7b,llm,zero_shot,0.4,0.47,cuda,Tesla T4,colab_t4,-0.212308,-0.261538,-0.166154,-0.302395,-0.350299,-0.254491
+mistral-7b,llm,few_shot,0.45,0.53,cuda,Tesla T4,colab_t4,-0.153846,-0.193846,-0.113846,-0.230539,-0.272455,-0.185629
+mistral-7b,llm,cot,3.07,3.11,cuda,Tesla T4,colab_t4,-0.175385,-0.221538,-0.129231,-0.266467,-0.314371,-0.218563
+mistral-7b,llm,role,0.41,0.47,cuda,Tesla T4,colab_t4,-0.181538,-0.227692,-0.138462,-0.233533,-0.281437,-0.191617
+gemma2-9b,llm,zero_shot,0.47,0.54,cuda,Tesla T4,colab_t4,-0.0461538,-0.0707692,-0.0246154,-0.0748503,-0.101871,-0.0479042
+gemma2-9b,llm,few_shot,0.52,0.6,cuda,Tesla T4,colab_t4,-0.175385,-0.218538,-0.132308,-0.245509,-0.290494,-0.200599
+gemma2-9b,llm,cot,2.84,2.94,cuda,Tesla T4,colab_t4,-0.104615,-0.144615,-0.0646154,-0.173653,-0.215569,-0.134731
+gemma2-9b,llm,role,0.48,0.54,cuda,Tesla T4,colab_t4,-0.0276923,-0.0461538,-0.0123077,-0.0359281,-0.0568862,-0.0179641
+qwen25-7b,llm,zero_shot,0.29,0.35,cuda,Tesla T4,colab_t4,-0.144615,-0.193846,-0.0953846,-0.320359,-0.371257,-0.269461
+qwen25-7b,llm,few_shot,0.32,0.38,cuda,Tesla T4,colab_t4,-0.110769,-0.153846,-0.0707692,-0.284431,-0.332335,-0.233533
+qwen25-7b,llm,cot,2.09,2.05,cuda,Tesla T4,colab_t4,-0.0184615,-0.0830769,0.0430769,-0.209581,-0.263473,-0.152695
+qwen25-7b,llm,role,0.3,0.35,cuda,Tesla T4,colab_t4,-0.181538,-0.233846,-0.132308,-0.383234,-0.437126,-0.329341
+qwen25-14b,llm,zero_shot,0.58,0.71,cuda,Tesla T4,colab_t4,-0.190769,-0.236923,-0.141538,-0.57485,-0.628743,-0.523952
+qwen25-14b,llm,few_shot,0.66,0.79,cuda,Tesla T4,colab_t4,-0.116923,-0.166154,-0.0707692,-0.329341,-0.38024,-0.278443
+qwen25-14b,llm,cot,7.07,7.32,cuda,Tesla T4,colab_t4,-0.123077,-0.172308,-0.0738462,-0.242515,-0.290419,-0.197605
+qwen25-14b,llm,role,0.63,0.74,cuda,Tesla T4,colab_t4,-0.190769,-0.24,-0.141538,-0.526946,-0.580838,-0.473054
+gemma2-27b,llm,zero_shot,0.63,0.71,cuda,NVIDIA L4,colab_l4,-0.00615385,-0.0184615,0.00615385,-0.0209581,-0.0389222,-0.00898204
+gemma2-27b,llm,few_shot,0.66,0.74,cuda,NVIDIA L4,colab_l4,0.00307692,0,0.00923077,0,0,0
+gemma2-27b,llm,cot,4.33,4.4,cuda,NVIDIA L4,colab_l4,-0.0492308,-0.08,-0.0215385,-0.0988024,-0.131737,-0.0688623
+gemma2-27b,llm,role,0.63,0.71,cuda,NVIDIA L4,colab_l4,-0.00923077,-0.0215385,0,-0.0149701,-0.0299401,-0.00299401
+baseline_tfidf_lr,baseline,supervised,0,0,cpu,,laptop,-0.0184615,-0.0338462,-0.00615385,0.0269461,0.011976,0.0449102
+baseline_tfidf_svm,baseline,supervised,0,0,cpu,,laptop,-0.393846,-0.452308,-0.338462,0.0329341,-0.0149701,0.0838323
+baseline_distilbert,baseline,supervised,0.01,0.01,cuda,Tesla T4,colab_t4,-0.184615,-0.230769,-0.138462,-0.200599,-0.248503,-0.155689

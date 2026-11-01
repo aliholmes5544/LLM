@@ -1,0 +1,5 @@
+strategy,n_items,ensemble_invalid,valid_votes_0,valid_votes_1,valid_votes_2,valid_votes_3,valid_votes_4,valid_votes_5,valid_votes_6,majority_0,majority_1,majority_2,majority_3,majority_4,majority_5,majority_6,unanimous
+cot,5207,253,0,0,0,0,2,152,5053,0,0,0,301,764,1203,2939,2939
+few_shot,5207,317,0,0,0,0,0,12,5195,0,0,0,321,877,1853,2156,2156
+role,5207,428,0,0,0,0,0,3,5204,0,0,0,428,796,925,3058,3058
+zero_shot,5207,416,0,0,0,0,0,17,5190,0,0,0,418,926,911,2952,2952

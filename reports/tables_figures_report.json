@@ -1,0 +1,45 @@
+{
+  "tables": {
+    "tab_t1_capability.tex": "09d9e6b3d1d983bfe38c9d51dc21a4c54f74ec5728be15a4cb6edef2c22f45d5",
+    "tab_t2_sens_by_condition.tex": "f71e2a9d7bf26905aa79f293fa67d1172cb28b4013b40356c68d5c873084d0d9",
+    "tab_t3_deltas_zero_shot.tex": "df378092a51255fb7d7533e15f51b83015ff0d8c60789bb7cae5da8b755e0485",
+    "tab_t4_deltas_by_strategy.tex": "b2feda818620f47171149cbb889345916c1cda022e90bfffa93a10051a5b097b",
+    "tab_t5_size_contrasts.tex": "5457e6ab62d9937b4f768716bb4db5b72cff855583db20bdb48213d3659cf451",
+    "tab_t6_strategy_contrasts.tex": "7dc9730fb486a128ff040a2f3df74e52f61deb1a06c98ce0483ea207a698a895",
+    "tab_t7_invalid_rates.tex": "7097a2c1513e8faf94952282926cd0517419ab74318aa94374080ce29842fdef",
+    "tab_t8_generalisation.tex": "ca765cdaba5215b0979e921b138faa049a36da0d7328c2b1869dda454b550349",
+    "tab_t9_ensemble.tex": "a1e407b5faa9f91dac44ac14948b30a0867acdfda6e9dccca9d03ffd3fc971da",
+    "tab_t10_cues.tex": "f0b54c0e1b74a03a893473df2fcde9168996332ca2df0a6db1f7b88d36ae3cff",
+    "tab_t11_hardcore.tex": "e7ecb4dfe9426635d51b11f37e0baee52b3a8d4e9b058bbbb6b78925acae3cf1",
+    "tab_a1_sensitivity_no_invalid.tex": "0fda73f354788bd67fd0a6a2a43d3df8bba26ad38ae46ac99f362f183bca7578"
+  },
+  "figures": {
+    "ch04_f1_sens_by_condition_eng.png": "2874d4917e756582f260ce40665e1ccec13e6c5087174ca72db9c7ead9c6bb9b",
+    "ch04_f2_delta_heatmap_eng.png": "d035f0f6ddd9ab5674a47d01b1f21fdbfb695e741197243e52fc6d25a91400c3",
+    "ch04_f3_size_effect_eng.png": "47a019a9dc66fd57990420edcdb1d9a01e4dc681ec2bbe57921f31780801e360",
+    "ch04_f4_strategy_effect_eng.png": "3267ca20fd9603161f155d36e07c2485187dd8c1ea7a835aacde43f49e8417c0",
+    "ch04_f5_frontier_eng.png": "63f0e689679e7e835dcdf798273ef0b2ec4dd4b15ae3071a29f2efc6bd5264d1",
+    "ch04_f6_cue_change_eng.png": "d19e384887822e0eef23206e46621869cb74d13ef2c3565389a06fcb293c8856",
+    "ch04_f7_generalisation_eng.png": "e78164fba4ad9b4b03aa026b7fdf6e43667dedd6f7e463d31f9487f5ec0ac2e4"
+  },
+  "inputs": {
+    "metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
+    "deltas_long.csv": "8053a31a421f0c900809c5761da9f871d95aa9015a68b534b5dfc8228dcfa9b3",
+    "contrasts.csv": "b68073b9d6d4519aa6694a2639cbb915afc989e05dc6787b41e6e43d05028ccc",
+    "cues_frequency.csv": "df233e89d34c5c2ed4b8b6953d7602b12e98b8fb29608793e2349a7c01d063bc",
+    "cues_change.csv": "624ac928ec08bd4f6814d0b6591f0a895c1fe5ebe07d2aceddf0f3bf6db8be64",
+    "hardcore_summary.csv": "e26b6e42ca82494e59682597df1b6156706a2ec259221eddf9854b912d6d7fb0",
+    "ensemble_votes.csv": "d9240a3d370321cb4647db55f5c1dc0724535b0aa1b3227e3143731f1eb90e9e",
+    "frontier.csv": "9a19ab4fe51e94e3c7a9c6aa4c234b7b86828c2830b7098042b4a03916c337b5"
+  },
+  "matplotlib": "3.11.2",
+  "palette": [
+    "#2a78d6",
+    "#eb6834",
+    "#1baf7a",
+    "#eda100",
+    "#e87ba4",
+    "#008300"
+  ],
+  "git_commit": "f450c3e"
+}

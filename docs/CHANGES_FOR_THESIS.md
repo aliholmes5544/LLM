@@ -1162,3 +1162,218 @@ inference was run; everything below is configuration and code, frozen only after
   four prediction outcomes."
 - Step 3 (the first and only computation of the scores) has not started; it waits for the author's go-ahead
   and the answers to item 16.
+
+## Step 07 step 3: scores computed, the first and only computation (2026-11-01, v0.7.1-scored)
+
+Computed once under QUESTIONS.md item 12 (refinements 1 to 7) and the decisions of items 15 and 16, from
+results/scores/items.parquet (hash-verified) by scripts/07_score.py, 07_secondary.py and 07_tables_figures.py
+(scripts/scoring/stats.py, score.py, ensemble.py, output.py; tests/test_scoring.py, 10 tests, whole suite 71 OK).
+Runtime: scoring 48 s, secondary analyses 12 s, tables and figures a few seconds (laptop CPU).
+Re-runs of 07_score.py --check and 07_secondary.py --check reproduce every CSV byte for byte (the test suite
+runs the scoring check). Outputs: results/scores/metrics_long.csv (1147 rows), deltas_long.csv
+(310), contrasts.csv (88), ensemble_predictions.csv, ensemble_votes.csv, cues_frequency.csv, cues_change.csv,
+cues_pairs.csv, hardcore_items.csv, hardcore_summary.csv, frontier.csv; results/tables/tab_t1 to t11 and a1
+(.tex, booktabs, no caption); figures/ch04_f1 to f7_eng.png (300 dpi); reports/scoring_report.json,
+secondary_report.json, tables_figures_report.json, hardcore_sample.csv. Families: {'F-RQ2': 8, 'F-RQ3': 36, 'F-RQ4': 30, 'S-baselines': 15, 'S-cot': 30, 'S-ensemble': 20, 'S-few_shot': 30, 'S-role': 30}.
+Power note (Section 4.8, a priori): exact McNemar, 334 pairs, 10% discordant, 5-point drop, alpha 0.05:
+power 0.80. Observed discordance of the 30 F-RQ4 tests (post hoc, descriptive): median 0.19, range 0.003 to 0.78.
+
+**Headline numbers (primary analysis, invalid = incorrect).**
+
+T1, capability on the 1,670 core originals (zero-shot for the models):
+
+  | detector | acc | bal. acc | F1 phish | sens (334) | spec core (1,002) | spec modern (334) |
+  |---|---|---|---|---|---|---|
+  | Llama-3.1-8B | 0.707 | 0.525 | 0.233 | 0.222 | 0.772 | 0.997 |
+  | Mistral-7B | 0.651 | 0.630 | 0.409 | 0.596 | 0.554 | 0.997 |
+  | Gemma-2-9B | 0.778 | 0.833 | 0.626 | 0.925 | 0.660 | 0.985 |
+  | Qwen2.5-7B | 0.799 | 0.594 | 0.334 | 0.251 | 0.915 | 1.000 |
+  | Qwen2.5-14B | 0.851 | 0.692 | 0.534 | 0.425 | 0.945 | 0.997 |
+  | Gemma-2-27B | 0.841 | 0.893 | 0.712 | 0.979 | 0.754 | 0.964 |
+  | ensemble | 0.742 | 0.629 | 0.467 | 0.440 | 0.757 | 0.997 |
+  | TF-IDF+LR | 0.835 | 0.889 | 0.703 | 0.979 | 0.880 | 0.554 |
+  | TF-IDF+SVM | 0.859 | 0.721 | 0.583 | 0.491 | 0.984 | 0.853 |
+  | DistilBERT | 0.843 | 0.771 | 0.624 | 0.650 | 0.946 | 0.728 |
+
+T2, sensitivity by condition, zero-shot (and the control specificity on the 210 paraphrased legitimate e-mails):
+
+  | model | original | para_low | para_high | obf_low | obf_high | spec para_high_ctrl |
+  |---|---|---|---|---|---|---|
+  | Llama-3.1-8B | 0.222 | 0.365 | 0.449 | 0.913 | 1.000 | 0.638 |
+  | Mistral-7B | 0.596 | 0.731 | 0.815 | 0.814 | 0.898 | 0.390 |
+  | Gemma-2-9B | 0.925 | 0.964 | 0.972 | 1.000 | 1.000 | 0.462 |
+  | Qwen2.5-7B | 0.251 | 0.356 | 0.403 | 0.497 | 0.572 | 0.867 |
+  | Qwen2.5-14B | 0.425 | 0.545 | 0.622 | 0.979 | 1.000 | 0.833 |
+  | Gemma-2-27B | 0.979 | 0.982 | 0.985 | 1.000 | 1.000 | 0.624 |
+
+T3, family F-RQ4 (30 tests, Holm within the family); delta = rate(original) minus rate(variant), so a negative
+delta means the variant is detected more often than its original:
+
+  | model | condition | pairs | delta [95% CI] | b/c | McNemar p | Holm p |
+  |---|---|---|---|---|---|---|
+  | Llama-3.1-8B | para_low | 334 | -0.144 [-0.189, -0.102] | 8/56 | 5.6e-10 | 1e-08 |
+  | Llama-3.1-8B | para_high | 325 | -0.222 [-0.274, -0.169] | 11/83 | 8e-15 | 1.7e-13 |
+  | Llama-3.1-8B | obf_low | 334 | -0.692 [-0.737, -0.641] | 0/231 | 5.8e-70 | 1.7e-68 |
+  | Llama-3.1-8B | obf_high | 334 | -0.778 [-0.823, -0.731] | 0/260 | 1.1e-78 | 3.2e-77 |
+  | Llama-3.1-8B | para_high_ctrl | 210 | +0.171 [+0.119, +0.219] | 38/2 | 1.5e-09 | 2.2e-08 |
+  | Mistral-7B | para_low | 334 | -0.135 [-0.177, -0.093] | 6/51 | 5.7e-10 | 1e-08 |
+  | Mistral-7B | para_high | 325 | -0.212 [-0.262, -0.166] | 3/72 | 3.7e-18 | 8.2e-17 |
+  | Mistral-7B | obf_low | 334 | -0.219 [-0.263, -0.174] | 1/74 | 4e-21 | 9.3e-20 |
+  | Mistral-7B | obf_high | 334 | -0.302 [-0.350, -0.254] | 0/101 | 7.9e-31 | 2e-29 |
+  | Mistral-7B | para_high_ctrl | 210 | +0.190 [+0.133, +0.252] | 45/5 | 4.2e-09 | 5.9e-08 |
+  | Gemma-2-9B | para_low | 334 | -0.039 [-0.063, -0.018] | 1/14 | 0.00098 | 0.0049 |
+  | Gemma-2-9B | para_high | 325 | -0.046 [-0.071, -0.025] | 1/16 | 0.00027 | 0.0016 |
+  | Gemma-2-9B | obf_low | 334 | -0.075 [-0.105, -0.048] | 0/25 | 6e-08 | 7.2e-07 |
+  | Gemma-2-9B | obf_high | 334 | -0.075 [-0.102, -0.048] | 0/25 | 6e-08 | 7.2e-07 |
+  | Gemma-2-9B | para_high_ctrl | 210 | +0.238 [+0.176, +0.300] | 52/2 | 1.6e-13 | 3.3e-12 |
+  | Qwen2.5-7B | para_low | 334 | -0.105 [-0.147, -0.060] | 11/46 | 3.3e-06 | 2.6e-05 |
+  | Qwen2.5-7B | para_high | 325 | -0.145 [-0.194, -0.095] | 12/59 | 1.3e-08 | 1.8e-07 |
+  | Qwen2.5-7B | obf_low | 334 | -0.246 [-0.290, -0.201] | 0/82 | 4.1e-25 | 9.9e-24 |
+  | Qwen2.5-7B | obf_high | 334 | -0.320 [-0.371, -0.269] | 1/108 | 3.4e-31 | 8.8e-30 |
+  | Qwen2.5-7B | para_high_ctrl | 210 | +0.076 [+0.043, +0.114] | 16/0 | 3.1e-05 | 0.00021 |
+  | Qwen2.5-14B | para_low | 334 | -0.120 [-0.165, -0.072] | 13/53 | 7.2e-07 | 6.5e-06 |
+  | Qwen2.5-14B | para_high | 325 | -0.191 [-0.237, -0.142] | 8/70 | 1.7e-13 | 3.3e-12 |
+  | Qwen2.5-14B | obf_low | 334 | -0.554 [-0.605, -0.500] | 0/185 | 4.1e-56 | 1.1e-54 |
+  | Qwen2.5-14B | obf_high | 334 | -0.575 [-0.629, -0.524] | 0/192 | 3.2e-58 | 8.9e-57 |
+  | Qwen2.5-14B | para_high_ctrl | 210 | +0.110 [+0.071, +0.152] | 23/0 | 2.4e-07 | 2.4e-06 |
+  | Gemma-2-27B | para_low | 334 | -0.003 [-0.009, +0.000] | 0/1 | 1 | 1 |
+  | Gemma-2-27B | para_high | 325 | -0.006 [-0.018, +0.006] | 1/3 | 0.62 | 1 |
+  | Gemma-2-27B | obf_low | 334 | -0.021 [-0.036, -0.009] | 0/7 | 0.016 | 0.062 |
+  | Gemma-2-27B | obf_high | 334 | -0.021 [-0.039, -0.009] | 0/7 | 0.016 | 0.062 |
+  | Gemma-2-27B | para_high_ctrl | 210 | +0.167 [+0.114, +0.219] | 36/1 | 5.5e-10 | 1e-08 |
+
+  26 of 30 tests have Holm p < 0.05. All 24 phishing deltas are at or below zero (24 negative, range -0.778 to
+  -0.003); all 6 control deltas are positive (+0.076 to +0.238): paraphrasing legitimate mail costs
+  specificity in every model.
+
+T5, F-RQ2 size contrasts (difference = delta(larger) minus delta(smaller); 6 of 8 Holm p < 0.05):
+
+  | contrast | condition | delta smaller | delta larger | difference [95% CI] | bootstrap p | Holm p |
+  |---|---|---|---|---|---|---|
+  | qwen25-14b vs qwen25-7b | para_low | -0.105 | -0.120 | -0.015 [-0.069, +0.042] | 0.653 | 0.653 |
+  | qwen25-14b vs qwen25-7b | para_high | -0.145 | -0.191 | -0.046 [-0.111, +0.015] | 0.16 | 0.32 |
+  | qwen25-14b vs qwen25-7b | obf_low | -0.246 | -0.554 | -0.308 [-0.377, -0.239] | 0.0005 | 0.004 |
+  | qwen25-14b vs qwen25-7b | obf_high | -0.320 | -0.575 | -0.254 [-0.329, -0.180] | 0.0005 | 0.004 |
+  | gemma2-27b vs gemma2-9b | para_low | -0.039 | -0.003 | +0.036 [+0.015, +0.060] | 0.001 | 0.004 |
+  | gemma2-27b vs gemma2-9b | para_high | -0.046 | -0.006 | +0.040 [+0.012, +0.068] | 0.011 | 0.033 |
+  | gemma2-27b vs gemma2-9b | obf_low | -0.075 | -0.021 | +0.054 [+0.033, +0.081] | 0.0005 | 0.004 |
+  | gemma2-27b vs gemma2-9b | obf_high | -0.075 | -0.021 | +0.054 [+0.033, +0.078] | 0.0005 | 0.004 |
+
+T6, F-RQ3 strategy contrasts (difference = delta(strategy) minus delta(zero-shot)); 13 of 36 have Holm p < 0.05:
+
+  | model | contrast | condition | delta zero-shot | delta strategy | difference [95% CI] | Holm p |
+  |---|---|---|---|---|---|---|
+  | Llama-3.1-8B | few_shot vs zero_shot | para_high | -0.222 | -0.003 | +0.218 [+0.163, +0.271] | 0.018 |
+  | Llama-3.1-8B | few_shot vs zero_shot | obf_high | -0.778 | -0.003 | +0.775 [+0.731, +0.817] | 0.018 |
+  | Llama-3.1-8B | role vs zero_shot | obf_high | -0.778 | -0.530 | +0.249 [+0.204, +0.293] | 0.018 |
+  | Gemma-2-9B | few_shot vs zero_shot | para_high | -0.046 | -0.175 | -0.129 [-0.172, -0.086] | 0.018 |
+  | Gemma-2-9B | few_shot vs zero_shot | obf_high | -0.075 | -0.246 | -0.171 [-0.213, -0.132] | 0.018 |
+  | Gemma-2-9B | cot vs zero_shot | obf_high | -0.075 | -0.174 | -0.099 [-0.132, -0.069] | 0.018 |
+  | Gemma-2-9B | role vs zero_shot | obf_high | -0.075 | -0.036 | +0.039 [+0.018, +0.060] | 0.018 |
+  | Qwen2.5-7B | cot vs zero_shot | para_high | -0.145 | -0.018 | +0.126 [+0.046, +0.197] | 0.025 |
+  | Qwen2.5-14B | few_shot vs zero_shot | obf_high | -0.575 | -0.329 | +0.246 [+0.198, +0.296] | 0.018 |
+  | Qwen2.5-14B | cot vs zero_shot | obf_high | -0.575 | -0.243 | +0.332 [+0.278, +0.386] | 0.018 |
+  | Qwen2.5-14B | role vs zero_shot | obf_high | -0.575 | -0.527 | +0.048 [+0.018, +0.081] | 0.025 |
+  | Gemma-2-27B | few_shot vs zero_shot | obf_high | -0.021 | +0.000 | +0.021 [+0.006, +0.039] | 0.018 |
+  | Gemma-2-27B | cot vs zero_shot | obf_high | -0.021 | -0.099 | -0.078 [-0.105, -0.048] | 0.018 |
+
+  Few-shot Llama-3.1-8B reaches sensitivity 0.997 with specificity 0.549 on core legitimate and 0.728 on modern
+  legitimate mail: its "robustness" under few-shot is a collapse to the phishing label, not detection. Best
+  strategy per model by balanced accuracy on core originals: Llama-3.1-8B few_shot, Mistral-7B cot, Gemma-2-9B zero_shot, Qwen2.5-7B cot, Qwen2.5-14B cot, Gemma-2-27B zero_shot.
+
+T8, generalisation set (E-PhishLLM, 1,000 + 1,000; zero-shot / supervised), reported apart from the core set:
+
+  | detector | gen sens | gen spec |
+  |---|---|---|
+  | Llama-3.1-8B | 0.646 | 0.998 |
+  | Mistral-7B | 0.767 | 0.995 |
+  | Gemma-2-9B | 0.887 | 0.976 |
+  | Qwen2.5-7B | 0.558 | 1.000 |
+  | Qwen2.5-14B | 0.663 | 0.999 |
+  | Gemma-2-27B | 0.960 | 0.954 |
+  | TF-IDF+LR | 0.660 | 0.587 |
+  | TF-IDF+SVM | 0.434 | 0.829 |
+  | DistilBERT | 0.465 | 0.701 |
+
+T9, ensemble (majority of six, invalid = abstention; tie or < 4 valid votes = invalid):
+
+  | strategy | unanimous items | ensemble invalid | sens original | spec core |
+  |---|---|---|---|---|
+  | cot | 2939 | 253 (4.9%) | 0.704 | 0.835 |
+  | few_shot | 2156 | 317 (6.1%) | 0.734 | 0.750 |
+  | role | 3058 | 428 (8.2%) | 0.578 | 0.615 |
+  | zero_shot | 2952 | 416 (8.0%) | 0.440 | 0.757 |
+
+T10, cue analysis (CoT rationales, six models pooled, share of non-empty rationales asserting the cue, %;
+qwen25-7b wrote no rationale for 908 of its 5,207 outputs, the other models for none or almost none):
+
+  | category | phish original | para_high | obf_high | legit core | legit para ctrl | gen phish |
+  |---|---|---|---|---|---|---|
+  | urgency | 29.5 | 35.1 | 43.3 | 5.1 | 5.5 | 58.2 |
+  | link_url | 80.9 | 88.4 | 89.0 | 22.3 | 24.6 | 53.7 |
+  | sender_mismatch | 3.1 | 3.3 | 3.9 | 8.4 | 9.8 | 6.6 |
+  | credential_payment | 10.9 | 13.4 | 13.5 | 14.9 | 16.5 | 49.4 |
+  | grammar_spelling | 0.1 | 1.4 | 87.6 | 1.9 | 5.6 | 0.2 |
+  | impersonation_authority | 21.2 | 17.8 | 12.1 | 5.1 | 5.8 | 20.2 |
+  | attachment | 3.2 | 5.6 | 4.6 | 6.5 | 8.4 | 25.2 |
+  | generic_greeting | 9.5 | 12.8 | 25.1 | 1.4 | 2.2 | 15.3 |
+
+  Cue change by outcome (pairs with a rationale on both sides; excluded for an empty rationale: 260 of
+  9222): para_high 1166 stayed correct, 86 flipped to incorrect, 385 stayed incorrect,
+  297 flipped to correct; obf_high 1237 / 13 / 84 / 605. Under obfuscation the grammar/spelling
+  cue is asserted in 87.6% of rationales against 0.1% on the originals, and it is gained in the
+  flipped-to-correct pairs; under paraphrase the pairs that flipped to incorrect lost the link/URL cue most often
+  (figure F6, table T10).
+
+T11, hard core (zero-shot, six models): 102 items missed by all six, 2850 by none, 2255 by some.
+All-six failures by group: {'gen_phish': 39, 'legit_core_neg': 34, 'legit_ctrl_para': 14, 'phish_original': 7, 'phish_para_low': 5, 'phish_para_high': 3}. Only 8 lie in the pre-registered strata, so
+reports/hardcore_sample.csv has 8 rows (QUESTIONS.md item 17; coding guide docs/HARDCORE_CODING_GUIDE.md).
+
+**Reading for the research questions (three sentences each, Section 4.7).**
+
+- RQ4 (robustness, the headline): the pre-registered expectation of a sensitivity loss under paraphrase and
+  obfuscation is not what the data show; every zero-shot phishing delta is at or below zero, and 26 of the 30
+  F-RQ4 tests are significant after Holm, almost all in the direction of the variant being easier to detect
+  (Llama-3.1-8B 0.22 on originals against 1.00 under high obfuscation; Qwen2.5-14B 0.43 against
+  1.00). The two Gemma models are the only detectors near the ceiling on the originals (0.93 and
+  0.98) and show the smallest deltas. The control delta is positive for every model (+0.08 to +0.24
+  specificity lost on paraphrased legitimate mail), so the paraphraser itself reads as a phishing signal.
+- RQ2 (comparison): capability on the originals splits the field, Gemma-2-27B (balanced accuracy 0.89, F1 0.71)
+  and Gemma-2-9B (0.83) against Llama-3.1-8B (0.53) and Qwen2.5-7B (0.59), which miss most spear-phishing
+  originals. The TF-IDF + logistic-regression baseline trained on traditional phishing matches the best model on
+  sensitivity (0.98) but pays on modern legitimate mail (specificity 0.55); DistilBERT sits in the middle
+  (balanced accuracy 0.77). Size helps within a family (6 of 8 size contrasts significant), but family matters more
+  than size: Gemma-2-9B beats Qwen2.5-14B on every phishing condition.
+- RQ3 (prompting): 13 of 36 strategy contrasts are significant after Holm, but the direction and size depend on the
+  model: chain-of-thought lifts the weak zero-shot models (Qwen2.5-7B sensitivity 0.25 to 0.64 on originals, Qwen2.5-14B
+  0.43 to 0.76) and costs Gemma-2-27B (0.98 to 0.90). Few-shot turns Llama-3.1-8B into a constant
+  phishing label (sensitivity 1.00, specificity 0.55), which the contrasts read as perfect robustness; the
+  balanced-accuracy column of T1/T4 is the safeguard against that reading. No strategy is best for every model.
+- RQ1 (effectiveness): as direct zero-shot detectors of AI-generated spear-phishing, the six open models range
+  from balanced accuracy 0.53 to 0.89 on the core originals, with invalid-output rates below 0.2% in
+  every cell. On the E-PhishLLM generalisation set the ranking holds (Gemma-2-27B sensitivity 0.96, specificity
+  0.95; Llama-3.1-8B 0.65 / 1.00). The majority ensemble does not beat its best member (sensitivity
+  0.44 on originals, 8.0% invalid from ties and abstentions).
+
+**Wording for Section 4.3 (statistics; replaces the draft of 2026-11-01):** "Every rate is reported with a 95%
+percentile cluster-bootstrap confidence interval (B = 2,000, seed 2026, one random stream per table derived from
+the table name), clusters being the source e-mails so that an original and its variants are resampled together.
+The primary outcome for RQ4 is the paired change in sensitivity, rate(original) minus rate(variant), on the
+originals that have an accepted variant in that condition, tested with the exact McNemar test on the discordant
+pairs; the control outcome is the paired change in specificity on the 210 legitimate e-mails with an accepted
+paraphrase. The headline family F-RQ4 holds the 30 zero-shot tests (24 phishing, 6 control); the size contrasts
+(F-RQ2, 8) and the strategy contrasts (F-RQ3, 36) are differences of paired deltas tested by the same cluster
+bootstrap with a two-sided percentile p floored at 1/B; Holm's correction is applied within each family and the
+uncorrected p is shown as well. Invalid outputs count as incorrect; a sensitivity analysis drops the invalid items
+and, for paired tests, the pairs with an invalid member (Appendix Table A1). An a priori power note: with 334
+pairs, 10% discordance and a five-point paired drop, the exact McNemar test has power 0.80 at alpha 0.05; the
+observed discordance of the zero-shot tests (median 0.19) is reported as a post hoc descriptive check."
+
+**Wording for Section 4.5 (results, opening paragraph):** "Table T2 and Figure F1 carry the main result. Under the
+zero-shot prompt the six models detect between 22% and 98% of the 334 AI-generated spear-phishing
+originals, and none of them detects fewer of the paraphrased or obfuscated variants than of the originals: all
+24 paired deltas are at or below zero and 26 of the 30 pre-registered tests are significant after Holm's
+correction. Obfuscation is the clearest case, with four models at a sensitivity of 1.00 on the high-intensity
+variants; the chain-of-thought rationales show why, as the grammar-and-spelling cue is asserted in 87.6% of them
+against 0.1% for the originals (Table T10). The control condition shows the other face of the same effect:
+paraphrased legitimate e-mails lose between 8 and 24 points of specificity in every model."

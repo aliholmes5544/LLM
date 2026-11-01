@@ -68,6 +68,9 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/06_run_detection.py` | one resumable (model, strategy, partition) cell, one row per item, backend recorded | `results/raw/{model}/{strategy}/{partition}.jsonl`, `reports/detection_run_report.json` |
 | `scripts/06_run_baselines.py` | one (baseline, partition) cell: TF-IDF + LR / SVM (train on `train`, C on `valid`, laptop) or DistilBERT (Colab T4, `notebooks/cloud_baselines.ipynb`); runner schema, `config_hash` + `model_hash`, resumable, fixed thresholds | `results/raw/baseline_{key}/supervised/{valid,eval}.jsonl`, `reports/baselines_report.json` |
 | `scripts/07_build_items.py` | step 07 item table: hash-verified join of the 27 eval files with partition, condition, item class, cluster (source e-mail) and body length; no metric | `results/scores/items.parquet`, `results/scores/pairs.csv`, `reports/items_build_report.json` |
+| `scripts/07_score.py` | step 07 step 3: primary metrics with cluster-bootstrap CIs, paired deltas with exact McNemar and Holm per family, F-RQ2/F-RQ3 contrasts, majority ensemble; `--check` re-runs and compares byte for byte | `results/scores/{metrics_long,deltas_long,contrasts,ensemble_predictions}.csv`, `reports/scoring_report.json` |
+| `scripts/07_secondary.py` | step 07 secondary analyses: ensemble votes, CoT cue frequency and cue change by outcome (frozen lexicon), hard core and its seeded sample, cost-robustness frontier; `--check` | `results/scores/{ensemble_votes,cues_*,hardcore_*,frontier}.csv`, `reports/hardcore_sample.csv`, `reports/secondary_report.json` |
+| `scripts/07_tables_figures.py` | LaTeX tables T1 to T11 and A1 (booktabs, no caption) and figures F1 to F7 (300 dpi) from the CSVs | `results/tables/tab_*.tex`, `figures/ch04_*_eng.png`, `reports/tables_figures_report.json` |
 | `scripts/07_freeze_lexicon.py` | step 07 step 2: applies the frozen CoT cue lexicon (`configs/cue_lexicon.yaml`, `scripts/scoring/cues.py`) to the dev rationales only (six `cot/dev.jsonl` cells + smoke sets), reports counts, polarity and seeded examples; `--check` reproduces the report | `reports/cue_lexicon_dev_report.json` |
 | `scripts/06_check_integrity.py` | verifies every `results/raw/*/*/eval.jsonl`: exact item set, no duplicates, frozen prompt and model hashes, backend cuda, GPU of the eval tier, labels reproducible from raw outputs, system text delivered (role prompt longer than zero_shot) | `reports/integrity_check.json` |
 | `notebooks/cloud_run.ipynb` | Colab: clone at a tag, CUDA wheel, verified downloads, data from Drive, GPU smoke test, eval cells synced to Drive | `results/raw/`, `reports/` on Drive |
@@ -91,6 +94,9 @@ python scripts/06_run_baselines.py --baseline tfidf_svm --partition valid
 python scripts/06_run_baselines.py --baseline tfidf_svm --partition eval
 python scripts/07_build_items.py            # step 07 item table (no metric)
 python scripts/07_freeze_lexicon.py         # step 07 step 2: cue lexicon on dev rationales only
+python scripts/07_score.py                  # step 07 step 3: scores (computed once; --check reproduces)
+python scripts/07_secondary.py              # ensemble votes, cues, hard core, frontier
+python scripts/07_tables_figures.py         # tables and figures for Chapter 4
 # distilbert: notebooks/cloud_baselines.ipynb on a Colab T4 (trains once, checkpoint hash recorded), then copy back
 ```
 
@@ -100,4 +106,4 @@ python scripts/07_freeze_lexicon.py         # step 07 step 2: cue lexicon on dev
 - [x] 05 variant derivation + meaning checks on the development set (Section 3.2.3) — thresholds await the manual rating (05b)
 - [ ] 06 prompting / inference (Sections 3.4, 3.6)
 - [x] 07 baselines (Section 3.5): tfidf_lr, tfidf_svm (laptop) and distilbert (Colab T4); 3/3 pass the integrity check
-- [ ] 08 evaluation and statistics (Section 3.7)
+- [x] 08 evaluation and statistics (Section 4.3, 4.5): scores computed once (v0.7.1-scored); tables and figures in results/tables and figures/

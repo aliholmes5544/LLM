@@ -1,0 +1,93 @@
+{
+  "computed_at": "2026-11-01T15:43:08Z",
+  "note": "First and only computation of the evaluation scores (TASK_07 step 3); plan in QUESTIONS.md item 12.",
+  "inputs": {
+    "items.parquet": "857b43eb24d3f57c0cd05444291556b816b35bd68292df3d475268ac43ec0dbc",
+    "pairs.csv": "4e953bb64eb5a6bcbcb9b3a426038d727e7872e43d2b0a5cb42c1dc146affa9e"
+  },
+  "items_build_report_built_at": "2026-11-01T06:45:18Z",
+  "n_cells": 31,
+  "cells": [
+    "llama31-8b/zero_shot",
+    "mistral-7b/zero_shot",
+    "gemma2-9b/zero_shot",
+    "qwen25-7b/zero_shot",
+    "qwen25-14b/zero_shot",
+    "gemma2-27b/zero_shot",
+    "llama31-8b/few_shot",
+    "mistral-7b/few_shot",
+    "gemma2-9b/few_shot",
+    "qwen25-7b/few_shot",
+    "qwen25-14b/few_shot",
+    "gemma2-27b/few_shot",
+    "llama31-8b/cot",
+    "mistral-7b/cot",
+    "gemma2-9b/cot",
+    "qwen25-7b/cot",
+    "qwen25-14b/cot",
+    "gemma2-27b/cot",
+    "llama31-8b/role",
+    "mistral-7b/role",
+    "gemma2-9b/role",
+    "qwen25-7b/role",
+    "qwen25-14b/role",
+    "gemma2-27b/role",
+    "ensemble/zero_shot",
+    "ensemble/few_shot",
+    "ensemble/cot",
+    "ensemble/role",
+    "baseline_tfidf_lr/supervised",
+    "baseline_tfidf_svm/supervised",
+    "baseline_distilbert/supervised"
+  ],
+  "B": 2000,
+  "seed": 2026,
+  "families": {
+    "F-RQ2": 8,
+    "F-RQ3": 36,
+    "F-RQ4": 30,
+    "S-baselines": 15,
+    "S-cot": 30,
+    "S-ensemble": 20,
+    "S-few_shot": 30,
+    "S-role": 30
+  },
+  "power_note": {
+    "n_pairs": 334,
+    "discordant": 0.1,
+    "drop": 0.05,
+    "alpha": 0.05,
+    "power": 0.7965428022610813,
+    "basis": "a priori (item 12 refinement 5)"
+  },
+  "observed_discordance_F_RQ4": {
+    "min": 0.0029940119760479044,
+    "median": 0.19461077844311378,
+    "max": 0.7784431137724551,
+    "basis": "post hoc descriptive check"
+  },
+  "analyses": [
+    "primary",
+    "no_invalid"
+  ],
+  "rows": {
+    "metrics_long": 1147,
+    "deltas_long": 310,
+    "contrasts": 88,
+    "ensemble_predictions": 20828
+  },
+  "outputs": {
+    "metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
+    "deltas_long.csv": "8053a31a421f0c900809c5761da9f871d95aa9015a68b534b5dfc8228dcfa9b3",
+    "contrasts.csv": "b68073b9d6d4519aa6694a2639cbb915afc989e05dc6787b41e6e43d05028ccc",
+    "ensemble_predictions.csv": "631475ca60b86569bb35fac950c0d9dc6b37254163d9acb2afe65cf92481f959"
+  },
+  "runtime_s": 48.0,
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0"
+  },
+  "git_commit": "f450c3e",
+  "git_describe": "v0.7.0-devcot-2-gf450c3e"
+}

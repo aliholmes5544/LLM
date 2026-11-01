@@ -1,0 +1,14 @@
+\begin{tabular}{llrrrlrr}
+\toprule
+Contrast (larger vs smaller) & Condition & Pairs & $\Delta$ smaller & $\Delta$ larger & Difference (larger $-$ smaller) [95\% CI] & Bootstrap p & Holm p \\
+\midrule
+Qwen2.5 14B vs 7B & para. low & 334 & -0.105 & -0.120 & -0.015 [-0.069, 0.042] & 0.653 & 0.653 \\
+Qwen2.5 14B vs 7B & para. high & 325 & -0.145 & -0.191 & -0.046 [-0.111, 0.015] & 0.160 & 0.320 \\
+Qwen2.5 14B vs 7B & obf. low & 334 & -0.246 & -0.554 & -0.308 [-0.377, -0.239] & $<$0.001 & 0.004 \\
+Qwen2.5 14B vs 7B & obf. high & 334 & -0.320 & -0.575 & -0.254 [-0.329, -0.180] & $<$0.001 & 0.004 \\
+Gemma-2 27B vs 9B & para. low & 334 & -0.039 & -0.003 & 0.036 [0.015, 0.060] & 0.001 & 0.004 \\
+Gemma-2 27B vs 9B & para. high & 325 & -0.046 & -0.006 & 0.040 [0.012, 0.068] & 0.011 & 0.033 \\
+Gemma-2 27B vs 9B & obf. low & 334 & -0.075 & -0.021 & 0.054 [0.033, 0.081] & $<$0.001 & 0.004 \\
+Gemma-2 27B vs 9B & obf. high & 334 & -0.075 & -0.021 & 0.054 [0.033, 0.078] & $<$0.001 & 0.004 \\
+\bottomrule
+\end{tabular}

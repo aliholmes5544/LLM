@@ -175,8 +175,12 @@
     invalid outputs scored as incorrect in the primary analysis and excluded in a sensitivity analysis; the
     generalisation partitions reported separately and never pooled with the core set.
 
-    Status: declared, not implemented. The git commit that records this item precedes every evaluation
-    metric in the repository; any later change to (a) to (e) is logged here with its date and reason.
+    Status: declared 2026-10-31, not implemented at that date. The git commit that records this item precedes
+    every evaluation metric in the repository; any later change to (a) to (e) is logged here with its date and
+    reason. **Implemented 2026-11-01 (TASK_07 step 3, the first and only computation of the scores, commit
+    "Step 07: scores computed (first and only computation)", tag v0.7.1-scored)** under (a) to (e) with
+    refinements (1) to (7) below and the decisions of items 15 and 16; the only departure from the plan that the
+    data forced is the hard-core sample size (item 17).
 
     **Refinements logged 2026-11-01, before any score was computed (decisions on item 15, author):**
     (1) Families named by the thesis research questions: F-RQ4 = the 30 zero_shot McNemar tests (24 phishing
@@ -409,5 +413,31 @@
     number of pairs excluded for this reason is reported; the polarity heuristic is applied as frozen and its
     known failure modes (a "lack of X, the Y, ..." list leaks the negation onto Y; "without verifying the
     attachment" negates an existing attachment) are stated as a limitation in Section 4.8, not corrected by hand.
+
+    **Answered 2026-11-01 (author), item closed:** (a) confirmed, frequency = asserted mentions, negated in a
+    separate column; (b) confirmed, denominator = rationales with text, empty-rationale rate as its own column;
+    (c) keep the four judgment-call sub-patterns in the primary cue analysis as frozen, no exclusion variant (the
+    categories were pre-registered and the lexicon is frozen; an exclusion variant would add analyses not in the
+    plan); (d) confirmed. Implemented in scripts/07_secondary.py (cues_frequency.csv, cues_change.csv, cues_pairs.csv).
+
+## Step 07 step 3 computed: hard-core sample smaller than pre-registered (2026-11-01)
+
+17. **Hard-core sample (item 12c, refinement 4): only 8 eligible items, not 30.** Under zero_shot, 102 of the
+    5,207 items are misclassified by all six language models, but only 8 of them lie in the four pre-registered
+    strata (phishing variants: para_low 5, para_high 3, obf_low 0, obf_high 0). The
+    other all-six failures are 39 generalisation-set phishing e-mails, 34 core legitimate e-mails,
+    14 paraphrased legitimate controls and 7 phishing originals. The script applied the rule as written
+    (minimum 5 per condition "when available", proportional allocation) and drew all 8 eligible items
+    (seed 2026); reports/hardcore_sample.csv holds them with the coding columns, and the texts are in
+    data/processed/hardcore_sample_text.jsonl. This is reported as a result in itself (obfuscation and, to a
+    lesser degree, paraphrase make the phishing e-mails easier for every model, so near-unanimous misses are rare
+    on variants). Options for the qualitative coding, for the author to decide; none changes a computed number:
+    (i) code the 8 items as drawn (the pre-registered sample, undersized);
+    (ii) add, as a clearly labelled post hoc extension, the 7 phishing originals missed by all six (the same
+    coding guide applies) and a seeded sample of the 48 legitimate e-mails called phishing by all six (false
+    positives, which need a different code list);
+    (iii) also sample the 39 generalisation-set failures (E-PhishLLM), reported apart from the core set.
+    Recommendation: (ii), because the false positives are where the hard core actually is, and the coding guide
+    (docs/HARDCORE_CODING_GUIDE.md) can take a second code list for them.
 
     **Answer (author):** pending.
