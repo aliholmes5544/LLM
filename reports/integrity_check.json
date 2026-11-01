@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-01T05:51:59Z",
+  "checked_at": "2026-11-01T06:34:18Z",
   "raw_dir": "results/raw",
   "n_expected_items": 5207,
   "expected_items_by_partition_condition": {
@@ -47,7 +47,7 @@
   "n_cells": 24,
   "n_pass": 24,
   "missing_cells": [],
-  "all_pass": false,
+  "all_pass": true,
   "system_text_delivered": {
     "llama31-8b": {
       "checked": true,
@@ -105,11 +105,9 @@
     }
   },
   "baselines": {
-    "n_checked": 2,
-    "n_pass": 2,
-    "missing": [
-      "distilbert"
-    ],
+    "n_checked": 3,
+    "n_pass": 3,
+    "missing": [],
     "cells": {
       "tfidf_lr": {
         "file": "results/raw/baseline_tfidf_lr/supervised/eval.jsonl",
@@ -208,6 +206,68 @@
         "pred_counts": {
           "phish": 1723,
           "legit": 3484
+        },
+        "items_by_partition_condition": {
+          "core_pos": {
+            "original": 334,
+            "para_low": 334,
+            "para_high": 325,
+            "obf_low": 334,
+            "obf_high": 334
+          },
+          "core_neg": {
+            "original": 1002
+          },
+          "ctrl_modern_legit": {
+            "original": 334
+          },
+          "ctrl_para_legit": {
+            "para_high": 210
+          },
+          "gen_phish": {
+            "original": 1000
+          },
+          "gen_legit": {
+            "original": 1000
+          }
+        },
+        "failed_checks": []
+      },
+      "distilbert": {
+        "file": "results/raw/baseline_distilbert/supervised/eval.jsonl",
+        "file_sha256": "ef6a404ddcf08332b0304b21bca7b689b349b44a71476d16927002fba45478e3",
+        "baseline": "distilbert",
+        "model": "baseline_distilbert",
+        "eval_tier": "colab_t4",
+        "backend_expected": "cuda",
+        "pass": true,
+        "checks": {
+          "parses": true,
+          "no_duplicates": true,
+          "exact_item_set": true,
+          "report_entry_present": true,
+          "report_consistent": true,
+          "rows_fields_ok": true,
+          "rows_item_metadata_ok": true,
+          "rows_model_or_strategy_field_ok": true,
+          "rows_config_hash_ok": true,
+          "rows_model_hash_ok": true,
+          "rows_backend_ok": true,
+          "rows_label_pred_not_reproducible_ok": true,
+          "rows_invalid_flag_ok": true
+        },
+        "malformed_lines": 0,
+        "n_rows": 5207,
+        "n_expected": 5207,
+        "missing": 0,
+        "extra": 0,
+        "rows_bad": {},
+        "config_hash": "2ea481b1d2739def4506a133a0dccd1c6a01c9594b643bba78961a14d2081bd7",
+        "model_hash": "274764c766ff7a29dfd440822ba5a64f332a6a5ba3976be16422308472af6db1",
+        "truncated_input": 330,
+        "pred_counts": {
+          "phish": 2185,
+          "legit": 3022
         },
         "items_by_partition_condition": {
           "core_pos": {

@@ -935,3 +935,53 @@ inference was run; everything below is configuration and code, frozen only after
   attempted here because the data licences do not clearly permit transfer to a third-party service, and it
   would require either a corpus released under terms that allow it or a provider agreement on retention and
   training use."
+
+## Step 06 complete: DistilBERT baseline on Colab T4; 24 cells + 3 baselines pass the integrity check (2026-11-01, v0.6.5-step06-complete)
+
+- Run: notebooks/cloud_baselines.ipynb at REF v0.6.4-baselines-ready (commit cf6a308), Tesla T4, torch
+  2.11.0+cu130, transformers 5.19.0, pretrained distilbert-base-uncased at Hugging Face snapshot
+  12040accade4e8a0f71eabdb258fecc2e7e948be. Training on `train` (3,033 e-mails: 2,299 traditional phishing, 734 Enron
+  ham) with the frozen settings (3 epochs, lr 2e-5, batch 16, max 512 tokens, AdamW, weight decay 0.01, linear
+  schedule, fp32, seed 2026, no early stopping): 570 steps in 503 s, mean training loss per epoch
+  0.0871, 0.00914, 0.00237. Checkpoint models/baselines/distilbert.pt (268 MB, gitignored, copy on Drive),
+  **sha256 274764c766ff7a29dfd440822ba5a64f332a6a5ba3976be16422308472af6db1** = model_hash of every DistilBERT row.
+- Scoring: valid 337 rows (5.9 s), eval 5,207 rows (75.3 s, median 0.01 s per item on the T4).
+  Sanity check on `valid`: precision 1.0, recall 1.0, F1 1.0 (no error on 337 records; the
+  in-distribution task, as for the TF-IDF models). No eval label was compared with the truth.
+- Truncation at 512 wordpieces (subject + body): 1,503 of 3,033 training e-mails (49.6%),
+  171 of 337 validation e-mails, and 330 of 5,207 evaluation items (6.3%) exceeded the limit
+  and were cut; every row carries the truncated_input flag. On the evaluation set the truncated items are all
+  legitimate: 266 core_neg originals (long Enron threads and SpamAssassin hard ham) and 64 paraphrased
+  ctrl_para_legit items; no spear-phishing original or variant and no E-PhishLLM message was cut (the Nahmias
+  spear-phishing bodies are 59 to 324 words). The TF-IDF baselines and the language models (n_ctx 4,096; one
+  truncated input in 124,968 rows) saw these e-mails in full.
+- Determinism: the run requested deterministic kernels (torch.use_deterministic_algorithms(True, warn_only=True),
+  cuDNN deterministic, seeded data order, fp32), but the author's reading of the Colab log shows that the
+  attention kernel used on the T4 has no deterministic implementation and ran in its non-deterministic form
+  (warning, not an error). A retraining can therefore produce a checkpoint that differs in the last bits. As
+  for the variant generation (QUESTIONS.md item 8), the fixed artefact is the saved checkpoint, identified by
+  its sha256 above, not the training procedure; scoring with the saved checkpoint is deterministic (the runner
+  refuses to score with a checkpoint whose hash differs from the recorded one).
+- Integrity (scripts/06_check_integrity.py, 2026-11-01): 24 of 24 detector cells and 3 of 3 baselines pass;
+  results/raw/baseline_distilbert/supervised/eval.jsonl sha256 ef6a404ddcf08332b0304b21bca7b689b349b44a71476d16927002fba45478e3. The results tree was
+  checksummed before and after (unchanged). Four Zone.Identifier transfer artefacts deleted.
+- TASK_06 definition of done, checked item by item: configs/models.yaml, configs/detection.yaml and prompts/
+  frozen with hashes in the reports (and configs/baselines.yaml for the baselines); results/raw/ complete for
+  6 models x 4 strategies + 3 baselines, every file passing the integrity check; per-cell invalid rates and
+  latencies in reports/detection_run_report.json (baselines in reports/baselines_report.json); every prompt
+  revision, model substitution and throughput estimate in this file; no evaluation item was used to choose or
+  change anything (prompts and thresholds fixed on dev / valid, C chosen on valid, pre-registration item 12
+  unchanged, no metric computed). Step 06 is complete at tag v0.6.5-step06-complete.
+- Wording for Section 4.4 (Baselines, addition): "The DistilBERT baseline was fine-tuned on a Colab T4 with the
+  settings above in 8.4 minutes and reached F1 1.0 on the validation split, like the TF-IDF models. Its
+  input is limited to 512 wordpieces: 50% of the training e-mails and 330 of the 5,207 evaluation
+  items (6.3%), all of them legitimate messages from the Enron and SpamAssassin corpora, were truncated,
+  whereas the language models received every message in full. The fine-tuned checkpoint is archived with its
+  hash and is the artefact scored in this chapter."
+- Wording for Section 4.8 (Threats to validity, addition): "Fine-tuning on the GPU was not bitwise reproducible:
+  the attention kernel available on the T4 has no deterministic implementation, so a retraining with the same
+  seed can yield slightly different weights. As with the paraphrase generation, the saved checkpoint, identified
+  by its SHA-256 hash, is treated as the fixed artefact, and all DistilBERT results derive from it
+  deterministically. The truncation of long legitimate e-mails at 512 tokens is a limitation of the DistilBERT
+  baseline only and may affect its false positive rate on the Enron and SpamAssassin negatives; it does not
+  touch the spear-phishing items."

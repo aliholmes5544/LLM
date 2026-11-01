@@ -477,9 +477,187 @@
           ]
         }
       }
+    },
+    "distilbert": {
+      "method": "finetuned_transformer",
+      "eval_tier": "colab_t4",
+      "strategy": "supervised",
+      "model": "baseline_distilbert",
+      "config_hash": "2ea481b1d2739def4506a133a0dccd1c6a01c9594b643bba78961a14d2081bd7",
+      "model_hash": "274764c766ff7a29dfd440822ba5a64f332a6a5ba3976be16422308472af6db1",
+      "model_file": "models/baselines/distilbert.pt",
+      "model_file_sha256": "274764c766ff7a29dfd440822ba5a64f332a6a5ba3976be16422308472af6db1",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "text": {
+        "fields": [
+          "subject",
+          "body"
+        ],
+        "join": "\n\n"
+      },
+      "seed": 2026,
+      "training": {
+        "epoch_mean_loss": [
+          0.0871,
+          0.00914,
+          0.00237
+        ],
+        "steps": 570,
+        "steps_per_epoch": 190,
+        "train_s": 503.0,
+        "n_train": 3033,
+        "n_train_truncated": 1503,
+        "class_counts_train": {
+          "legit": 734,
+          "phish": 2299
+        },
+        "trained_at": "2026-11-01T06:23:26Z",
+        "device": "cuda",
+        "gpu": "Tesla T4"
+      },
+      "versions": {
+        "torch": "2.11.0+cu130",
+        "transformers": "5.19.0"
+      },
+      "pretrained": {
+        "name": "distilbert-base-uncased",
+        "snapshot_sha": "12040accade4e8a0f71eabdb258fecc2e7e948be"
+      },
+      "config_sha256": {
+        "baselines.yaml": "870801cf909df58e8986540bc0fa76147ccc103e1373ae1777a3397ebf0bd32e"
+      },
+      "git_commit": "cf6a308",
+      "git_describe": "v0.6.4-baselines-ready",
+      "cells": {
+        "valid": {
+          "n": 337,
+          "invalid": 0,
+          "invalid_rate": 0.0,
+          "pred_counts": {
+            "legit": 82,
+            "phish": 255
+          },
+          "latency_median_s": 0.02,
+          "latency_mean_s": 0.02,
+          "latency_max_s": 0.03,
+          "latency_total_s": 5.9,
+          "prompt_tokens_median": 512,
+          "prompt_tokens_max": 512,
+          "output_tokens_median": 0,
+          "finish_reasons": {
+            "n/a": 337
+          },
+          "truncated_input": 171,
+          "backends": {
+            "cuda": 337
+          },
+          "partition": "valid",
+          "n_expected": 337,
+          "n_done": 337,
+          "complete": true,
+          "items_by_partition_condition": {
+            "valid": {
+              "original": 337
+            }
+          },
+          "limit": null,
+          "tier": "colab_t4",
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "sessions": [
+            {
+              "started_at": "2026-11-01T06:23:30Z",
+              "finished_at": "2026-11-01T06:23:36Z",
+              "items_run": 337,
+              "wall_s": 5.9,
+              "backend": "cuda",
+              "gpu": "Tesla T4"
+            }
+          ],
+          "valid_metrics": {
+            "n": 337,
+            "tp": 255,
+            "fp": 0,
+            "fn": 0,
+            "tn": 82,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "accuracy": 1.0
+          }
+        },
+        "eval": {
+          "n": 5207,
+          "invalid": 0,
+          "invalid_rate": 0.0,
+          "pred_counts": {
+            "phish": 2185,
+            "legit": 3022
+          },
+          "latency_median_s": 0.01,
+          "latency_mean_s": 0.01,
+          "latency_max_s": 0.16,
+          "latency_total_s": 75.3,
+          "prompt_tokens_median": 168,
+          "prompt_tokens_max": 512,
+          "output_tokens_median": 0,
+          "finish_reasons": {
+            "n/a": 5207
+          },
+          "truncated_input": 330,
+          "backends": {
+            "cuda": 5207
+          },
+          "partition": "eval",
+          "n_expected": 5207,
+          "n_done": 5207,
+          "complete": true,
+          "items_by_partition_condition": {
+            "core_pos": {
+              "original": 334,
+              "para_low": 334,
+              "para_high": 325,
+              "obf_low": 334,
+              "obf_high": 334
+            },
+            "core_neg": {
+              "original": 1002
+            },
+            "ctrl_modern_legit": {
+              "original": 334
+            },
+            "ctrl_para_legit": {
+              "para_high": 210
+            },
+            "gen_phish": {
+              "original": 1000
+            },
+            "gen_legit": {
+              "original": 1000
+            }
+          },
+          "limit": null,
+          "tier": "colab_t4",
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "sessions": [
+            {
+              "started_at": "2026-11-01T06:23:51Z",
+              "finished_at": "2026-11-01T06:25:07Z",
+              "items_run": 5207,
+              "wall_s": 75.7,
+              "backend": "cuda",
+              "gpu": "Tesla T4"
+            }
+          ]
+        }
+      }
     }
   },
   "forced_overwrites": [],
   "note": "Baselines are trained on `train` and selected on `valid` only (TASK_06 section 3); valid_metrics are the sanity check of TASK_06 section 6 item 4, not evaluation results. Scoring on eval is step 07.",
-  "updated_at": "2026-11-01T05:51:36Z"
+  "updated_at": "2026-11-01T06:25:07Z"
 }

@@ -107,3 +107,5 @@ Scoring (metrics, deltas, bootstrap, McNemar) is **step 07**, not here. Step 06 
 - Per-cell invalid rates and latencies in `reports/detection_run_report.json`.
 - Every prompt revision, every model substitution and every throughput estimate logged in `docs/CHANGES_FOR_THESIS.md`.
 - No evaluation item was used to choose or change anything.
+
+**Status 2026-11-01: met** (tag v0.6.5-step06-complete; item-by-item check in docs/CHANGES_FOR_THESIS.md).

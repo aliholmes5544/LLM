@@ -95,5 +95,5 @@ python scripts/06_run_baselines.py --baseline tfidf_svm --partition eval
 - [x] 01–04 data construction and audit (Section 3.2.1–3.2.4)
 - [x] 05 variant derivation + meaning checks on the development set (Section 3.2.3) — thresholds await the manual rating (05b)
 - [ ] 06 prompting / inference (Sections 3.4, 3.6)
-- [~] 07 baselines (Section 3.5): tfidf_lr and tfidf_svm done on the laptop; distilbert on Colab pending
+- [x] 07 baselines (Section 3.5): tfidf_lr, tfidf_svm (laptop) and distilbert (Colab T4); 3/3 pass the integrity check
 - [ ] 08 evaluation and statistics (Section 3.7)
