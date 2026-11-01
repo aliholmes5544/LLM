@@ -1022,3 +1022,22 @@ inference was run; everything below is configuration and code, frozen only after
   each family of tests, one family per research question (the 30 zero-shot robustness tests for RQ4, the 8 size
   contrasts for RQ2, the 36 strategy contrasts for RQ3), and reported alongside their uncorrected values and
   the effect size with its interval. Effectiveness (RQ1) is reported descriptively with intervals."
+
+## TASK_07 item 15 complete; dev CoT run for the cue lexicon (2026-11-01, v0.7.0-devcot)
+
+- Decisions (g), (h), (i) of QUESTIONS.md item 15 recorded; (h) is logged in item 12 as refinement (6). The cue
+  lexicon (item 12b) will be frozen on the CoT rationales of the full dev partition for all six detectors plus
+  the smoke sets, all dev only, run on Colab with the uniform GPU backend. Dev item set = the runner's dev set:
+  796 items (400 originals, 596 phishing and 200 legitimate, plus the accepted dev variants
+  para_low 100, para_high 96, obf_low 100, obf_high 100), so the rationales cover paraphrased and
+  obfuscated text as on eval. Rows go to results/raw/<model>/cot/dev.jsonl (report cells <model>/cot/dev);
+  eval files are not touched (the runner's cell is keyed by partition).
+- L4 handling of gemma2-27b for a dev run, checked in the code: 06_run_detection.py applies the eval_tier
+  check to eval runs only; the notebook chooses the models whose eval_tier equals TIER (gemma2-27b alone for
+  colab_l4) and asserts the runtime GPU; results sync to Drive after the cell.
+- Estimate from the eval CoT mean latencies: T4 run (llama31-8b, mistral-7b, gemma2-9b, qwen25-7b,
+  qwen25-14b) about 4.2 h (4.8 compute units); L4 run (gemma2-27b) about 1.0 h (1.9 compute units).
+- Colab parameters, notebooks/cloud_run.ipynb: T4 run TAG "v0.7.0-devcot", TIER "colab_t4", MODELS "",
+  STRATEGIES "cot", PARTITION "dev", RUN_SMOKE False, RUN_EVAL True; L4 run the same with TIER "colab_l4".
+  Afterwards copy results/raw/<model>/cot/dev.jsonl for the six models and reports/detection_run_report.json
+  back; step 2 then builds the lexicon from these files and the smoke sets and freezes it with a hash.

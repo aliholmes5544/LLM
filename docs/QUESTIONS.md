@@ -196,6 +196,10 @@
     with a minimum of 5 per condition when available, seed 2026. Reason: the strata were unspecified.
     (5) Power note for Section 4.8: a priori, 10% discordant pairs, 5-point paired drop, n = 334, alpha 0.05;
     the observed discordance is reported post hoc as a labelled descriptive check.
+    (6) Item 12e, sensitivity analysis without invalid outputs: for paired deltas and McNemar tests a pair is
+    dropped when either member is invalid, so original and variant keep the same n; unpaired rates drop the
+    invalid items of the condition. Reason: 12e did not say how exclusion applies to pairs (item 15h,
+    2026-11-01).
 
 ## Step 06 integrity check of the evaluation results (2026-10-31)
 
@@ -353,8 +357,15 @@
     failures per condition with a minimum of 5 per condition when available; seed 2026.
     (f) A priori: assume 10% discordant pairs and report the McNemar power for a 5-point paired drop (n = 334,
     alpha 0.05); also report the observed discordance post hoc as a descriptive check, labelled as such.
-    (g) Partial answer received (the message was cut off): run the cot strategy on the full dev partition for
-    all six models on Colab (uniform GPU backend, dev only) rather than on the laptop, with a notebook
-    parameter set for PARTITION = dev and STRATEGIES = cot. The rest of the answer (and whether dev variants
-    are included, and the tag to run from) is awaited before step 2 starts.
-    (h) Not yet answered.
+    (g) **Answered 2026-11-01 (author):** run the cot strategy on the full dev partition for all six models on
+    Colab (uniform GPU backend, dev only), not on the laptop: STRATEGIES = cot only; the dev item set is the
+    runner's normal one, dev originals AND the accepted dev variants, because the lexicon must see rationales
+    written about paraphrased and obfuscated text (796 items: {'original': 400, 'para_low': 100, 'para_high': 96, 'obf_low': 100, 'obf_high': 100}); run from tag
+    v0.7.0-devcot; the lexicon is frozen on the full-dev rationales plus the smoke sets. L4 handling for
+    gemma2-27b with PARTITION = dev confirmed from the code: the runner applies the eval_tier check to eval
+    runs only, the notebook selects the models of the chosen TIER and asserts the GPU, and the dev rows go to
+    results/raw/gemma2-27b/cot/dev.jsonl (report cell gemma2-27b/cot/dev), synced to Drive. Parameters and
+    time estimate in CHANGES_FOR_THESIS.md (2026-11-01, v0.7.0-devcot).
+    (h) **Answered 2026-11-01 (author):** drop the pair when either member is invalid (same n for original and
+    variant). Logged in item 12 as refinement (6).
+    (i) **Answered 2026-11-01 (author):** all four readings confirmed. Item 15 complete.
