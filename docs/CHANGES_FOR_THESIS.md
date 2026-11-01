@@ -802,9 +802,17 @@ inference was run; everything below is configuration and code, frozen only after
   (of which the archived v1 Mistral run 6.3 h and the v2 rerun 6.6 h), L4 9.5 h; at
   1.15 and 1.94 compute units per hour this is 44.6 + 18.4 = 63 compute units for
   inference alone (about USD 6.3 at USD 9.99 per 100 units), of which the Mistral
-  incident cost 7.2. Model downloads, the GPU smoke tests and idle time come on top. Billed total
-  (compute units consumed on the Colab account for step 06): PENDING, to be entered by the author from the
-  remaining balance.
+  incident cost 7.2. Model downloads, the GPU smoke tests and idle time come on top.
+- **Final Colab cost (author's reading of the Colab balance, 2026-11-01):** 75.7 compute units consumed in
+  total for step 06 (100 purchased, 24.27 remaining): about 62 for the first full pass over the 24 cells,
+  about 7 for the Mistral v2 rerun, and the rest (about 7) idle sessions and model downloads; rates 1.15
+  compute units per hour on the T4 and 1.94 on the L4; 100 compute units cost USD 9.99, so about USD 7.6.
+- Wording for Section 3.7 (Implementation details, cost): "All evaluation inference ran on Google Colab
+  pay-as-you-go GPUs and consumed 75.7 compute units in total (about USD 7.60 at the 2026 price of USD 9.99
+  per 100 units): about 62 units for the first pass over the 24 model-strategy cells, about 7 for the
+  repeated Mistral-7B cells (Section 4.8), and the remainder for model downloads and idle session time.
+  Colab charged 1.15 units per hour on the Tesla T4 and 1.94 on the NVIDIA L4. Inference time alone was
+  about 39 hours on the T4 and 9.5 hours on the L4."
 - Housekeeping: 36 Zone.Identifier transfer artefacts deleted; the Drive copy of the Colab download report
   (six models, Mistral re-verified 2026-10-31) is kept as reports/models_download_report_colab.json and the
   laptop report reports/models_download_report.json (four models) restored from git after the copy had
