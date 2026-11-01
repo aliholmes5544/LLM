@@ -200,6 +200,14 @@
     dropped when either member is invalid, so original and variant keep the same n; unpaired rates drop the
     invalid items of the condition. Reason: 12e did not say how exclusion applies to pairs (item 15h,
     2026-11-01).
+    (7) Item 12b, cue lexicon frozen 2026-11-01 before any eval rationale was read: configs/cue_lexicon.yaml,
+    sha256 e209c7a565add8bf7d88595b94d3f7174535ec93c6b35206225c58b8f43822fd,
+    written by hand from 4,956 dev rationales (the six full-dev CoT cells of tag v0.7.0-devcot plus the smoke sets;
+    reports/cue_lexicon_dev_report.json). Two refinements of 12b: each category holds several named sub-patterns
+    (reported separately), and every match carries a polarity (asserted, or negated when a negation marker
+    earlier in the same clause is not followed by a conjunction plus an asserting verb), because on dev most
+    cue mentions in legitimate verdicts are denials ("does not contain any suspicious links"). Reason: 12b
+    said "regex per category" and did not foresee negated mentions. Reporting choices in item 16.
 
 ## Step 06 integrity check of the evaluation results (2026-10-31)
 
@@ -369,3 +377,37 @@
     (h) **Answered 2026-11-01 (author):** drop the pair when either member is invalid (same n for original and
     variant). Logged in item 12 as refinement (6).
     (i) **Answered 2026-11-01 (author):** all four readings confirmed. Item 15 complete.
+
+## Step 07 step 2: cue lexicon frozen; reporting choices for the cue analysis (2026-11-01)
+
+16. **Cue lexicon: how the frequencies are reported in step 3 (item 12b, TASK_07 section 4b).** The lexicon is
+    frozen (configs/cue_lexicon.yaml, sha256 e209c7a565add8bf..., full hash in item 12 refinement 7) and was
+    developed on dev only: 4,956 rationales, of which 369 (7.4%) are empty (the model wrote only the
+    FINAL line; qwen25-7b 276 of 836, mistral-7b 93 of 836). Among the non-empty rationales
+    86.3% assert at least one category; 30% of the link mentions are negated. Defaults below are
+    applied in step 3 unless the author decides otherwise; none of them requires re-freezing the lexicon, since
+    sub-patterns and polarity are recorded per match.
+
+    (a) **Frequency = asserted mentions.** Default: "cue frequency" in T10 and F6 is the share of rationales that
+    assert the category (at least one match outside a negation scope); negated-only mentions are reported in a
+    separate column, not added to the frequency. Alternative: count any mention regardless of polarity (the
+    literal reading of 12b), which would make "no suspicious links" a link cue.
+    (b) **Denominator = rationales with text.** Default: per cell (model x condition) the denominator is the
+    number of rows with a non-empty rationale, and the empty-rationale rate is reported as its own column (on
+    dev it is 33% for qwen25-7b and 11% for mistral-7b, 0 for the others). Alternative: all rows of the
+    cell, which deflates the frequencies of the two models that often skip the reasoning.
+    (c) **Sub-pattern placement.** Four placements are judgment calls within the eight pre-registered categories
+    and are frozen as named sub-patterns so that each can be excluded by name in step 3 without re-freezing:
+    pressure_threat (threats, pressure, suspension) under urgency; character_anomaly (inserted spacing,
+    homoglyphs, digit-for-letter substitutions, which the models describe as misspellings) under grammar /
+    spelling; malware (malware, virus, infected) under attachment; authority_figure (a CEO, IT department or
+    other authority is named, whether or not impersonation is alleged) under impersonation / authority.
+    Default: keep all four.
+    (d) **Readings taken as given unless corrected:** the cue-change analysis of 12b uses the primary analysis
+    (invalid = incorrect) for the four-way outcome split of item 15d; a pair enters the cue-change table only
+    when both members have a non-empty rationale (the change in cue presence is undefined otherwise), and the
+    number of pairs excluded for this reason is reported; the polarity heuristic is applied as frozen and its
+    known failure modes (a "lack of X, the Y, ..." list leaks the negation onto Y; "without verifying the
+    attachment" negates an existing attachment) are stated as a limitation in Section 4.8, not corrected by hand.
+
+    **Answer (author):** pending.

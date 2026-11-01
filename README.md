@@ -68,6 +68,7 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/06_run_detection.py` | one resumable (model, strategy, partition) cell, one row per item, backend recorded | `results/raw/{model}/{strategy}/{partition}.jsonl`, `reports/detection_run_report.json` |
 | `scripts/06_run_baselines.py` | one (baseline, partition) cell: TF-IDF + LR / SVM (train on `train`, C on `valid`, laptop) or DistilBERT (Colab T4, `notebooks/cloud_baselines.ipynb`); runner schema, `config_hash` + `model_hash`, resumable, fixed thresholds | `results/raw/baseline_{key}/supervised/{valid,eval}.jsonl`, `reports/baselines_report.json` |
 | `scripts/07_build_items.py` | step 07 item table: hash-verified join of the 27 eval files with partition, condition, item class, cluster (source e-mail) and body length; no metric | `results/scores/items.parquet`, `results/scores/pairs.csv`, `reports/items_build_report.json` |
+| `scripts/07_freeze_lexicon.py` | step 07 step 2: applies the frozen CoT cue lexicon (`configs/cue_lexicon.yaml`, `scripts/scoring/cues.py`) to the dev rationales only (six `cot/dev.jsonl` cells + smoke sets), reports counts, polarity and seeded examples; `--check` reproduces the report | `reports/cue_lexicon_dev_report.json` |
 | `scripts/06_check_integrity.py` | verifies every `results/raw/*/*/eval.jsonl`: exact item set, no duplicates, frozen prompt and model hashes, backend cuda, GPU of the eval tier, labels reproducible from raw outputs, system text delivered (role prompt longer than zero_shot) | `reports/integrity_check.json` |
 | `notebooks/cloud_run.ipynb` | Colab: clone at a tag, CUDA wheel, verified downloads, data from Drive, GPU smoke test, eval cells synced to Drive | `results/raw/`, `reports/` on Drive |
 
@@ -88,6 +89,8 @@ python scripts/06_run_baselines.py --baseline tfidf_lr  --partition valid   # C 
 python scripts/06_run_baselines.py --baseline tfidf_lr  --partition eval    # same 5,207 items as the detectors
 python scripts/06_run_baselines.py --baseline tfidf_svm --partition valid
 python scripts/06_run_baselines.py --baseline tfidf_svm --partition eval
+python scripts/07_build_items.py            # step 07 item table (no metric)
+python scripts/07_freeze_lexicon.py         # step 07 step 2: cue lexicon on dev rationales only
 # distilbert: notebooks/cloud_baselines.ipynb on a Colab T4 (trains once, checkpoint hash recorded), then copy back
 ```
 

@@ -1,0 +1,129 @@
+# CoT cue lexicon (TASK_07 section 4b; QUESTIONS.md item 12b). FROZEN on dev only, 2026-11-01.
+#
+# Basis: the chain-of-thought rationales of the six detectors on the full dev partition (results/raw/<model>/
+# cot/dev.jsonl, 796 items each: 400 dev originals and 396 accepted dev variants, run on Colab from tag
+# v0.7.0-devcot) plus the dev smoke sets (results/smoke_dev, results/smoke_gpu): 4,956 rationales about
+# dev items. No eval rationale was read while writing these patterns. The file is identified by its sha256
+# (reports/cue_lexicon_dev_report.json, QUESTIONS.md item 12, CHANGES_FOR_THESIS.md); any later change
+# re-freezes it with a new hash, logged before the lexicon touches eval (TASK_07 step 3).
+#
+# Semantics. A rationale is the model output before its last "FINAL:" marker (common.cot_rationale, the same
+# split as the label rule). A category is "mentioned" when any of its patterns matches the rationale; a match
+# is "negated" when a negation marker occurs earlier in the same clause and no scope break (conjunction plus
+# an asserting verb) stands between the marker and the match; a category is "asserted" when at least one
+# match is not negated. All patterns are compiled with re.IGNORECASE. Pattern names are reported separately
+# so that a sub-pattern can be excluded in the analysis without re-freezing the file.
+version: 1
+frozen_on: "2026-11-01"
+basis:
+  dev_files: 6 x results/raw/<model>/cot/dev.jsonl (796 rows each)
+  smoke_files: results/smoke_dev/*/cot.jsonl (4 x 20), results/smoke_gpu/*/cot.jsonl (5 x 20)
+  partition: dev
+regex_flags: IGNORECASE
+
+negation:
+  # earlier in the clause than the match
+  markers: |-
+    (?:\b(?:no|not|never|without|lack|lacks|lacking|lacked|absence|absent|free of|neither|nor|rather than|instead of|devoid of)\b|n't\b)
+  # a clause starts after sentence punctuation, a line break, a contrastive conjunction, or ", and the ..."
+  clause_breaks: |-
+    [.;:!?\n]|\b(?:but|however|although|though|while|whereas|except|despite|nevertheless|nonetheless)\b|,\s+(?:and|or)\s+(?:the|a|an|its|their|there|it|this|these|those)\b
+  # a conjunction followed by an asserting verb ends the scope of a negation ("lacks X and uses Y": Y asserted)
+  scope_breaks: |-
+    \b(?:and|but|also|which|that|who)\s+(?:also\s+|then\s+)?(?:uses|contains|includes|has|asks|requests|creates|employs|features|exhibits|displays|shows|mentions|provides|demands|urges|pressures|relies|attempts|tries|claims|promises|offers|threatens|directs|instructs|encourages|invites|appears|seems|requires|presents|refers|points)\b
+
+categories:
+  urgency:
+    description: time pressure, urgency, deadlines, threats of consequences
+    patterns:
+      - name: urgent_language
+        regex: |-
+          \burgen(?:t|tly|cy)\b|\bimmediate(?:ly)?\b|\bas soon as possible\b|\basap\b|\bpromptly\b|\bright away\b|\bwithout delay\b|\btime[- ](?:sensitive|critical|pressure)\b
+      - name: deadline
+        regex: |-
+          \bdeadlines?\b|\bwithin (?:the next )?(?:\d+|one|two|three|twenty[- ]four|forty[- ]eight) ?(?:hours?|hrs|days?|business days|minutes)\b|\bby (?:the )?end of (?:the )?(?:day|today|week|business day)\b|\bexpir(?:e|es|ed|ing|ation|y)\b
+      - name: pressure_threat
+        regex: |-
+          \bpressur(?:e|es|ed|ing)\b|\bact (?:quickly|fast|now|immediately|swiftly|hastily)\b|\bquick (?:action|response|reply|decision)\b|\bhurr(?:y|ied)\b|\brush(?:ed|es|ing)?\b|\bthreat(?:s|en|ens|ened|ening)?\b|\bsuspen(?:d|ded|ding|sion)\b|\bconsequences\b|\bpenalt(?:y|ies)\b|\bfear\b|\bscare|\balarm(?:ing|ist)?\b|\bintimidat\w*
+
+  link_url:
+    description: links, URLs, web addresses, clicking
+    patterns:
+      - name: link
+        regex: |-
+          \b(?:hyper)?links?\b|\burls?\b|\bweb ?(?:sites?|pages?|address(?:es)?|portal)\b|<<\s*link\s*>>|\bredirect(?:s|ed|ing|ion)?\b|\bhttps?\b|\bwww\.
+      - name: click
+        regex: |-
+          \bclick(?:s|ed|ing)?\b
+
+  sender_mismatch:
+    description: sender address or domain, spoofing, mismatch, unknown or unverified sender
+    patterns:
+      - name: sender_address
+        regex: |-
+          \bsender'?s? (?:e-?mail |email )?address(?:es)?\b|\b(?:e-?mail|from|reply-to|return) address(?:es)?\b|\bdomains?\b|\bdisplay name\b|\breply-to\b
+      - name: spoof_mismatch
+        regex: |-
+          \bspoof\w*|\bmismatch\w*|\b(?:does not|doesn'?t|do not|don'?t|did not|didn'?t) (?:match|correspond|align)\b|\bforged\b|\blook-?alike\b|\binconsistent (?:with )?(?:the )?sender\b
+      - name: unknown_sender
+        regex: |-
+          \b(?:unknown|unfamiliar|unverified|unrecognized|unrecognised|anonymous|untrusted|suspicious|external|unsolicited|unexpected|unidentified|generic|vague) (?:sender|source|origin|party|third party|e-?mail address|email address)\b|\bsender'?s? (?:identity|legitimacy|authenticity|credibility)\b|\bidentity of the sender\b|\bverify (?:the )?sender\b|\bsender (?:is|cannot be|could not be|can'?t be|has not been|hasn'?t been) (?:not )?(?:verified|identified|confirmed|known|authenticated)\b|\bfree e-?mail (?:service|provider|account|address)\b|\b(?:gmail|yahoo|hotmail|outlook) (?:address|account|e-?mail|domain)\b|\b(?:gmail|yahoo|hotmail|outlook)\.com\b|\bno (?:sender|contact) (?:information|details)\b|\bnot (?:sent )?from (?:a |an |the )?(?:trusted|known|verified|recognized|recognised|legitimate|official|company) (?:source|sender|address|domain|account)\b
+
+  credential_payment:
+    description: requests for credentials, personal or financial information, payments and transfers
+    patterns:
+      - name: credentials
+        regex: |-
+          \bcredentials?\b|\bpasswords?\b|\bpass ?codes?\b|\blog-?in\b|\blogin\b|\bsign-?in\b|\busernames?\b|\baccount (?:details|information|number|credentials|verification|suspension|access|data)\b|\bverify (?:your |their |his |her |the )?(?:account|identity|details|information|credentials|login)\b|\b(?:account|identity) verification\b|\bre-?enter\b|\bsecurity (?:questions?|codes?)\b|\btwo-factor\b|\b2fa\b|\bauthentication (?:code|details)\b
+      - name: personal_information
+        regex: |-
+          \b(?:personal|sensitive|confidential|private|financial|banking|bank|payment|billing|credit[- ]card|card|contact|identifying) (?:information|details|data)\b|\bpersonal data\b|\bsocial security\b|\bssn\b|\bdate of birth\b|\bpassport\b|\bpii\b
+      - name: payment_request
+        regex: |-
+          \bpayments?\b|\binvoices?\b|\bwire\b|\btransfer(?:ring|red|s)? (?:of )?(?:the |a |any |such )?(?:funds|money|sum|amount|\$|usd)\b|\b(?:funds?|money|wire|bank) transfers?\b|\bbank(?:ing)? (?:details|account|information)\b|\bgift cards?\b|\bremit(?:tance)?\b|\bpay(?:ing)? (?:an? |the )?(?:invoice|fee|amount|sum|bill)\b|\bfinancial (?:transaction|request|assistance|help)\b|\bpurchase orders?\b|\bbilling\b|\bcryptocurrenc|\bbitcoin\b|\bdonations?\b
+
+  grammar_spelling:
+    description: grammar and spelling errors, including the character-level anomalies of the obfuscated condition
+    patterns:
+      - name: grammar
+        regex: |-
+          \bgrammar\b|\bgrammatical(?:ly)?\b|\bpunctuation\b|\bpoorly (?:written|worded|constructed)\b|\bawkward (?:phrasing|wording|language|sentences?|grammar|construction)s?\b|\bsyntax\b|\bsentence structure\b|\bbroken english\b|\bunprofessional (?:language|writing|tone|wording)\b|\bcapitali[sz]ation\b|\b(?:language|writing) errors?\b
+      - name: spelling
+        regex: |-
+          \bspelling\b|\bmis-?spell\w*|\bmis-?spelt\b|\btypo(?:s|graphical)?\b|\berrors? in (?:the )?(?:spelling|words|text|wording)\b
+      - name: character_anomaly
+        regex: |-
+          \b(?:unusual|odd|strange|random|special|non-?standard|suspicious|unexpected|weird|inserted|extra|irregular|unnecessary|misplaced|stray) (?:characters?|symbols?|spacing|spaces|punctuation|hyphens?|hyphenation|periods?|dots?|letters?|formatting|fonts?)\b|\bcharacter (?:substitution|replacement|swap)s?\b|\bsubstitut\w+ (?:of |for )?(?:letters|characters|numbers|digits)\b|\b(?:numbers?|digits?) (?:in place of|instead of|replacing|replaced|for|substituted for) (?:letters|characters)\b|\bletters? (?:replaced|substituted|swapped)\b|\breplaced (?:with|by) (?:numbers|digits|similar|look-?alike|cyrillic)\b|["'‘’“”]\w["'‘’“”] (?:instead of|in place of|for|replacing) ["'‘’“”]\w["'‘’“”]|\bhomoglyph|\bcyrillic\b|\bzero[- ]width\b|\bleet(?:speak)?\b|\bl33t\b|\bobfuscat\w+|\bgarbled\b|\bspaces? (?:within|inside|in the middle of|between letters)\b|\b(?:broken|split|fragmented|separated) (?:up )?words?\b|\bhyphen(?:s|ated|ation)? (?:within|inside|in|between) (?:the )?words?\b|\bunusual spelling\b|\b(?:formatting|spacing) (?:errors?|issues?|inconsistenc(?:y|ies)|anomal(?:y|ies)|irregularit(?:y|ies))\b|\bnon-?ascii\b|\bunicode\b|\blook-?alike (?:characters|letters)\b|\bvisually similar\b|\bdeliberate(?:ly)? (?:misspell|alter|obscur)\w*
+
+  impersonation_authority:
+    description: claiming or faking an identity; invoking an authority figure or department
+    patterns:
+      - name: impersonation
+        regex: |-
+          \bimpersonat\w*|\bpos(?:e|es|ed|ing) as\b|\bpretend\w*|\bmasquerad\w*|\bpurport\w*|\bclaim(?:s|ed|ing)? to (?:be|represent|come|work|have|speak)\b|\bclaim(?:s|ed|ing)? (?:that )?(?:he|she|they|it) (?:is|are|was|were|works?|represents?)\b|\bdisguis\w+|\bfake (?:sender|identity|persona|name|company|colleague|executive|ceo|invoice|notification)\b|\bfraudulent(?:ly)? (?:claim|represent|identity)\w*|\bfalse (?:identity|pretense|pretence|authority|sense of (?:authority|legitimacy|familiarity))\b|\bsocial engineering\b|\bidentity (?:theft|fraud)\b|\b(?:ceo|executive|business e-?mail) (?:fraud|compromise|scam)\b|\bbec\b
+      - name: authority_figure
+        regex: |-
+          \b(?:ceo|cfo|cto|coo|cio)\b|\bchief (?:executive|financial|technology|operating|information) officer\b|\bexecutives?\b|\bhigh-?ranking\b|\bsenior (?:management|executive|official|leadership|leader|staff|figure)\b|\b(?:upper|top) management\b|\bboss(?:es)?\b|\bsupervisors?\b|\bsuperiors?\b|\bauthorit(?:y|ies|ative)\b|\bgovernment(?:al)?\b|\bregulator(?:y|s)?\b|\blegal (?:representative|department|team|counsel|authority)\b|\battorney|\blawyer|\bbarrister|\bsolicitor|\bbank (?:official|manager|officer)\b|\b(?:it|hr|finance|accounting|security|compliance|payroll|legal) (?:department|team|support|staff|administrator|admin|personnel|desk)\b|\bhelp ?desk\b|\bsystem administrators?\b|\bsysadmin|\btech(?:nical)? support\b|\blaw enforcement\b|\bpolice\b|\btax (?:authority|office|agency)\b|\b(?:irs|hmrc|fbi)\b|\bofficial (?:communication|notice|notification|request|source|body)\b|\bposition of (?:authority|power|trust)\b
+
+  attachment:
+    description: attachments, files to open, download or install, and their payload
+    patterns:
+      - name: attachment
+        regex: |-
+          \battach\w*|\benclos(?:ed|ure)\b
+      - name: file_download
+        regex: |-
+          \.(?:exe|zip|rar|7z|pdf|docx?|docm|xlsx?|xlsm|pptx?|js|vbs|scr|iso|img|bat|cmd|msi|dmg|apk|html?)\b|\bexecutable\b|\bmacros?\b|\bdownload(?:s|ing|ed|able)?\b|\binstall(?:s|ing|ed|ation|er)?\b|\bopen(?:ing)? (?:the |an? |this |any )?(?:file|document|attachment|invoice|pdf|zip|spreadsheet|archive)s?\b|\b(?:zip|compressed|password-protected|encrypted) (?:file|archive|folder)s?\b|\bpayload\b
+      - name: malware
+        regex: |-
+          \bmalware\b|\bmalicious (?:file|software|code|payload|attachment|document|program|script|macro)s?\b|\bvirus(?:es)?\b|\bransomware\b|\btrojan|\bspyware\b|\bkeylogger|\binfect\w*|\bcompromise (?:the|your|their) (?:system|computer|device|machine|network)\b
+
+  generic_greeting:
+    description: generic or impersonal greeting; absence of personalisation
+    patterns:
+      - name: generic_greeting
+        regex: |-
+          \bgeneric(?:[- ]sounding)? (?:greeting|salutation|opening|address|introduction)s?\b|\b(?:impersonal|vague|non-?specific|unspecific|unusual|informal|improper|inappropriate|odd|template|boilerplate) (?:greeting|salutation)s?\b|\bgeneric nature of the (?:greeting|salutation)\b|\b(?:greeting|salutation) (?:is|was|appears|seems|sounds) (?:somewhat |rather |quite |very |too )?(?:generic|impersonal|vague|unusual|odd)\b|\bdear (?:customer|user|valued|sir|madam|member|client|account holder|friend|beneficiary|team|all|recipient|employee|colleague|partner|subscriber|winner)\b|\baddressed to a generic\b|\bgeneric (?:recipient|title|form of address)\b|\bmass (?:e-?mail|mailing|message)\b|\bbulk (?:e-?mail|message)\b|\bform letter\b|\bnot (?:specifically )?tailored\b
+      - name: not_personalized
+        regex: |-
+          \bnot personali[sz]ed\b|\bun-?personali[sz]ed\b|\black(?:s|ing|ed)? (?:of )?(?:a |any )?(?:proper |specific |direct |warm |personal(?:i[sz]ed)? |individual )?(?:personali[sz]ation|greeting|salutation|personal touch)\b|\b(?:absence|lack) of (?:a |any )?(?:personal(?:i[sz]ed)? |proper |specific )?(?:greeting|salutation|personali[sz]ation|personal touch)\b|\bno (?:personal(?:i[sz]ed)? |proper |specific |direct )?(?:greeting|salutation|personali[sz]ation)\b|\bwithout (?:a |any )?(?:personal(?:i[sz]ed)? |proper |specific )?(?:greeting|salutation|personali[sz]ation)\b|\b(?:does not|doesn'?t|did not|didn'?t|not|fails? to|without|never) (?:directly |personally |specifically )?address(?:ing|ed|es)? (?:the )?(?:recipient |reader |person |individual )?(?:directly |personally |specifically )?by (?:their |his |her |first |full )?name\b|\bnot addressed (?:to|by) (?:a specific|name|the recipient)\b|\b(?:omits|missing|omitted) (?:the )?(?:recipient'?s? )?(?:name|greeting|salutation)\b|\bno (?:recipient'?s? )?name\b

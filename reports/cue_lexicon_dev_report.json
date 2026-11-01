@@ -1,0 +1,1058 @@
+{
+  "lexicon_file": "configs/cue_lexicon.yaml",
+  "lexicon_sha256": "e209c7a565add8bf7d88595b94d3f7174535ec93c6b35206225c58b8f43822fd",
+  "lexicon_version": 1,
+  "frozen_on": "2026-11-01",
+  "categories_order": [
+    "urgency",
+    "link_url",
+    "sender_mismatch",
+    "credential_payment",
+    "grammar_spelling",
+    "impersonation_authority",
+    "attachment",
+    "generic_greeting"
+  ],
+  "patterns_per_category": {
+    "urgency": [
+      "urgent_language",
+      "deadline",
+      "pressure_threat"
+    ],
+    "link_url": [
+      "link",
+      "click"
+    ],
+    "sender_mismatch": [
+      "sender_address",
+      "spoof_mismatch",
+      "unknown_sender"
+    ],
+    "credential_payment": [
+      "credentials",
+      "personal_information",
+      "payment_request"
+    ],
+    "grammar_spelling": [
+      "grammar",
+      "spelling",
+      "character_anomaly"
+    ],
+    "impersonation_authority": [
+      "impersonation",
+      "authority_figure"
+    ],
+    "attachment": [
+      "attachment",
+      "file_download",
+      "malware"
+    ],
+    "generic_greeting": [
+      "generic_greeting",
+      "not_personalized"
+    ]
+  },
+  "inputs": [
+    {
+      "file": "results/raw/llama31-8b/cot/dev.jsonl",
+      "sha256": "3c61b316893c0cd048b001f2593dba12516d639fea3be597664398352af93d80",
+      "n_rows": 796
+    },
+    {
+      "file": "results/raw/mistral-7b/cot/dev.jsonl",
+      "sha256": "6f052b2cfe1dba39489ae9267913fe1e8a42a82a53e61b8b665058ea50861b32",
+      "n_rows": 796
+    },
+    {
+      "file": "results/raw/gemma2-9b/cot/dev.jsonl",
+      "sha256": "b940d6f062f4a584a5112a8af254eff10386b34bbdb0ae52fff50da8433607d2",
+      "n_rows": 796
+    },
+    {
+      "file": "results/raw/qwen25-7b/cot/dev.jsonl",
+      "sha256": "65d0599e67da5647ec1b0444af40543cd5a309ae094c416cb9224262076ca784",
+      "n_rows": 796
+    },
+    {
+      "file": "results/raw/qwen25-14b/cot/dev.jsonl",
+      "sha256": "812737b04547c2b7208d58c984b4e3d1e939fd919c887a7fad4aebdb6eddf102",
+      "n_rows": 796
+    },
+    {
+      "file": "results/raw/gemma2-27b/cot/dev.jsonl",
+      "sha256": "42fc0e58074432da894b9040bd2deb33bce8614d0b276fb9f4d0e08d8c5be761",
+      "n_rows": 796
+    },
+    {
+      "file": "results/smoke_dev/gemma2-9b/cot.jsonl",
+      "sha256": "ab86769c7704e32af4ae800427b1b736dc188bceea6f2d2fc3f2bb29282792e4",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_dev/llama31-8b/cot.jsonl",
+      "sha256": "670e378de688c50506fae1627cd71ff83ad7b5fd5f796be6f3801c3670c09fef",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_dev/mistral-7b/cot.jsonl",
+      "sha256": "6609298695d773f953d4e56d9bf70a01a7472bde8b20cba951c7ae209242234a",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_dev/qwen25-7b/cot.jsonl",
+      "sha256": "e9fb603b26f1e05c4e0cf6fb183a1be366438f4873a6c028543d6407fee03e9a",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_gpu/gemma2-9b/cot.jsonl",
+      "sha256": "2c19ec42a27c0452139a60b8f1954c3ef00edf86833ba35ed642494f8ffc0d49",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_gpu/llama31-8b/cot.jsonl",
+      "sha256": "e1ff579e1a1d745facafa34956a36c162ced5930d8f9982aeb215bfd03a8b06b",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_gpu/mistral-7b/cot.jsonl",
+      "sha256": "9e309bcccf28c1c9be19523157a2f92cc2489934464e28a10b7ad2fe57469072",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_gpu/qwen25-14b/cot.jsonl",
+      "sha256": "18e86a7449253cffb75ec08e4f7f619952f4ef4fdc424fa4b8830eb75b7129f9",
+      "n_rows": 20
+    },
+    {
+      "file": "results/smoke_gpu/qwen25-7b/cot.jsonl",
+      "sha256": "07e919ee0ec8eeea8307ac66c80df7eb10717f3d7c00595b4edb00184bd4c45a",
+      "n_rows": 20
+    }
+  ],
+  "seed": 2026,
+  "n_rationales": 4956,
+  "n_empty_rationale": 369,
+  "empty_by_model": {
+    "mistral-7b": 93,
+    "qwen25-7b": 276
+  },
+  "rows_by_model": {
+    "gemma2-27b": 796,
+    "gemma2-9b": 836,
+    "llama31-8b": 836,
+    "mistral-7b": 836,
+    "qwen25-14b": 816,
+    "qwen25-7b": 836
+  },
+  "rows_by_condition": {
+    "obf_high": 600,
+    "obf_low": 600,
+    "original": 2580,
+    "para_high": 576,
+    "para_low": 600
+  },
+  "n_invalid_rows": 16,
+  "asserted_categories_per_rationale": {
+    "0": 999,
+    "1": 881,
+    "2": 1156,
+    "3": 963,
+    "4": 473,
+    "5": 96,
+    "6": 18,
+    "7": 1
+  },
+  "categories": {
+    "urgency": {
+      "mentioned": 2117,
+      "asserted": 1703,
+      "negated": 414,
+      "matches": 3489,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 454,
+          "negated": 42,
+          "asserted": 412
+        },
+        "gemma2-9b": {
+          "mentioned": 467,
+          "asserted": 463,
+          "negated": 4
+        },
+        "llama31-8b": {
+          "mentioned": 319,
+          "negated": 50,
+          "asserted": 269
+        },
+        "mistral-7b": {
+          "mentioned": 100,
+          "asserted": 93,
+          "negated": 7
+        },
+        "qwen25-14b": {
+          "mentioned": 483,
+          "negated": 181,
+          "asserted": 302
+        },
+        "qwen25-7b": {
+          "mentioned": 294,
+          "negated": 130,
+          "asserted": 164
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 318,
+          "asserted": 312,
+          "negated": 6
+        },
+        "obf_low": {
+          "mentioned": 310,
+          "asserted": 301,
+          "negated": 9
+        },
+        "original": {
+          "mentioned": 818,
+          "negated": 305,
+          "asserted": 513
+        },
+        "para_high": {
+          "mentioned": 328,
+          "asserted": 283,
+          "negated": 45
+        },
+        "para_low": {
+          "mentioned": 343,
+          "asserted": 294,
+          "negated": 49
+        }
+      },
+      "by_pattern": {
+        "deadline": 114,
+        "deadline:negated": 10,
+        "pressure_threat": 602,
+        "pressure_threat:negated": 75,
+        "urgent_language": 2203,
+        "urgent_language:negated": 485
+      }
+    },
+    "link_url": {
+      "mentioned": 2300,
+      "asserted": 1607,
+      "negated": 693,
+      "matches": 3550,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 391,
+          "negated": 106,
+          "asserted": 285
+        },
+        "gemma2-9b": {
+          "mentioned": 313,
+          "negated": 29,
+          "asserted": 284
+        },
+        "llama31-8b": {
+          "mentioned": 349,
+          "negated": 75,
+          "asserted": 274
+        },
+        "mistral-7b": {
+          "mentioned": 327,
+          "negated": 76,
+          "asserted": 251
+        },
+        "qwen25-14b": {
+          "mentioned": 543,
+          "negated": 231,
+          "asserted": 312
+        },
+        "qwen25-7b": {
+          "mentioned": 377,
+          "negated": 176,
+          "asserted": 201
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 290,
+          "asserted": 278,
+          "negated": 12
+        },
+        "obf_low": {
+          "mentioned": 311,
+          "asserted": 284,
+          "negated": 27
+        },
+        "original": {
+          "mentioned": 997,
+          "negated": 529,
+          "asserted": 468
+        },
+        "para_high": {
+          "mentioned": 351,
+          "negated": 65,
+          "asserted": 286
+        },
+        "para_low": {
+          "mentioned": 351,
+          "asserted": 291,
+          "negated": 60
+        }
+      },
+      "by_pattern": {
+        "click": 454,
+        "click:negated": 51,
+        "link": 2001,
+        "link:negated": 1044
+      }
+    },
+    "sender_mismatch": {
+      "mentioned": 566,
+      "asserted": 368,
+      "negated": 198,
+      "matches": 685,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 39,
+          "negated": 2,
+          "asserted": 37
+        },
+        "gemma2-9b": {
+          "mentioned": 53,
+          "asserted": 48,
+          "negated": 5
+        },
+        "llama31-8b": {
+          "mentioned": 64,
+          "asserted": 50,
+          "negated": 14
+        },
+        "mistral-7b": {
+          "mentioned": 125,
+          "asserted": 96,
+          "negated": 29
+        },
+        "qwen25-14b": {
+          "mentioned": 242,
+          "negated": 127,
+          "asserted": 115
+        },
+        "qwen25-7b": {
+          "mentioned": 43,
+          "negated": 21,
+          "asserted": 22
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 61,
+          "asserted": 49,
+          "negated": 12
+        },
+        "obf_low": {
+          "mentioned": 60,
+          "asserted": 44,
+          "negated": 16
+        },
+        "original": {
+          "mentioned": 295,
+          "asserted": 206,
+          "negated": 89
+        },
+        "para_high": {
+          "mentioned": 71,
+          "asserted": 35,
+          "negated": 36
+        },
+        "para_low": {
+          "mentioned": 79,
+          "negated": 45,
+          "asserted": 34
+        }
+      },
+      "by_pattern": {
+        "sender_address": 228,
+        "sender_address:negated": 149,
+        "spoof_mismatch": 28,
+        "spoof_mismatch:negated": 6,
+        "unknown_sender": 178,
+        "unknown_sender:negated": 96
+      }
+    },
+    "credential_payment": {
+      "mentioned": 2464,
+      "asserted": 1828,
+      "negated": 636,
+      "matches": 3942,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 407,
+          "negated": 102,
+          "asserted": 305
+        },
+        "gemma2-9b": {
+          "mentioned": 341,
+          "negated": 24,
+          "asserted": 317
+        },
+        "llama31-8b": {
+          "mentioned": 357,
+          "asserted": 323,
+          "negated": 34
+        },
+        "mistral-7b": {
+          "mentioned": 405,
+          "negated": 74,
+          "asserted": 331
+        },
+        "qwen25-14b": {
+          "mentioned": 555,
+          "negated": 222,
+          "asserted": 333
+        },
+        "qwen25-7b": {
+          "mentioned": 399,
+          "negated": 180,
+          "asserted": 219
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 248,
+          "asserted": 238,
+          "negated": 10
+        },
+        "obf_low": {
+          "mentioned": 267,
+          "asserted": 246,
+          "negated": 21
+        },
+        "original": {
+          "mentioned": 1368,
+          "asserted": 848,
+          "negated": 520
+        },
+        "para_high": {
+          "mentioned": 289,
+          "asserted": 247,
+          "negated": 42
+        },
+        "para_low": {
+          "mentioned": 292,
+          "asserted": 249,
+          "negated": 43
+        }
+      },
+      "by_pattern": {
+        "credentials": 967,
+        "credentials:negated": 69,
+        "payment_request": 947,
+        "payment_request:negated": 112,
+        "personal_information": 1096,
+        "personal_information:negated": 751
+      }
+    },
+    "grammar_spelling": {
+      "mentioned": 1128,
+      "asserted": 1086,
+      "negated": 42,
+      "matches": 1847,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 221,
+          "negated": 3,
+          "asserted": 218
+        },
+        "gemma2-9b": {
+          "mentioned": 224,
+          "asserted": 223,
+          "negated": 1
+        },
+        "llama31-8b": {
+          "mentioned": 239,
+          "negated": 14,
+          "asserted": 225
+        },
+        "mistral-7b": {
+          "mentioned": 124,
+          "asserted": 119,
+          "negated": 5
+        },
+        "qwen25-14b": {
+          "mentioned": 238,
+          "negated": 9,
+          "asserted": 229
+        },
+        "qwen25-7b": {
+          "mentioned": 82,
+          "negated": 10,
+          "asserted": 72
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 474,
+          "asserted": 471,
+          "negated": 3
+        },
+        "obf_low": {
+          "mentioned": 353,
+          "asserted": 346,
+          "negated": 7
+        },
+        "original": {
+          "mentioned": 273,
+          "negated": 14,
+          "asserted": 259
+        },
+        "para_high": {
+          "mentioned": 13,
+          "negated": 10,
+          "asserted": 3
+        },
+        "para_low": {
+          "mentioned": 15,
+          "negated": 8,
+          "asserted": 7
+        }
+      },
+      "by_pattern": {
+        "character_anomaly": 499,
+        "character_anomaly:negated": 17,
+        "grammar": 600,
+        "grammar:negated": 33,
+        "spelling": 675,
+        "spelling:negated": 23
+      }
+    },
+    "impersonation_authority": {
+      "mentioned": 794,
+      "asserted": 756,
+      "negated": 38,
+      "matches": 1052,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 46,
+          "asserted": 44,
+          "negated": 2
+        },
+        "gemma2-9b": {
+          "mentioned": 135,
+          "asserted": 133,
+          "negated": 2
+        },
+        "llama31-8b": {
+          "mentioned": 208,
+          "asserted": 196,
+          "negated": 12
+        },
+        "mistral-7b": {
+          "mentioned": 148,
+          "asserted": 144,
+          "negated": 4
+        },
+        "qwen25-14b": {
+          "mentioned": 210,
+          "asserted": 196,
+          "negated": 14
+        },
+        "qwen25-7b": {
+          "mentioned": 47,
+          "asserted": 43,
+          "negated": 4
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 65,
+          "negated": 9,
+          "asserted": 56
+        },
+        "obf_low": {
+          "mentioned": 62,
+          "negated": 7,
+          "asserted": 55
+        },
+        "original": {
+          "mentioned": 444,
+          "asserted": 436,
+          "negated": 8
+        },
+        "para_high": {
+          "mentioned": 114,
+          "asserted": 106,
+          "negated": 8
+        },
+        "para_low": {
+          "mentioned": 109,
+          "asserted": 103,
+          "negated": 6
+        }
+      },
+      "by_pattern": {
+        "authority_figure": 593,
+        "authority_figure:negated": 49,
+        "impersonation": 401,
+        "impersonation:negated": 9
+      }
+    },
+    "attachment": {
+      "mentioned": 761,
+      "asserted": 639,
+      "negated": 122,
+      "matches": 1292,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 111,
+          "asserted": 107,
+          "negated": 4
+        },
+        "gemma2-9b": {
+          "mentioned": 91,
+          "asserted": 91
+        },
+        "llama31-8b": {
+          "mentioned": 153,
+          "negated": 28,
+          "asserted": 125
+        },
+        "mistral-7b": {
+          "mentioned": 142,
+          "asserted": 133,
+          "negated": 9
+        },
+        "qwen25-14b": {
+          "mentioned": 147,
+          "asserted": 109,
+          "negated": 38
+        },
+        "qwen25-7b": {
+          "mentioned": 117,
+          "negated": 43,
+          "asserted": 74
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 119,
+          "asserted": 116,
+          "negated": 3
+        },
+        "obf_low": {
+          "mentioned": 127,
+          "asserted": 114,
+          "negated": 13
+        },
+        "original": {
+          "mentioned": 273,
+          "negated": 73,
+          "asserted": 200
+        },
+        "para_high": {
+          "mentioned": 106,
+          "asserted": 90,
+          "negated": 16
+        },
+        "para_low": {
+          "mentioned": 136,
+          "asserted": 119,
+          "negated": 17
+        }
+      },
+      "by_pattern": {
+        "attachment": 522,
+        "attachment:negated": 153,
+        "file_download": 386,
+        "file_download:negated": 40,
+        "malware": 172,
+        "malware:negated": 19
+      }
+    },
+    "generic_greeting": {
+      "mentioned": 610,
+      "asserted": 582,
+      "negated": 28,
+      "matches": 643,
+      "by_model": {
+        "gemma2-27b": {
+          "mentioned": 177,
+          "asserted": 176,
+          "negated": 1
+        },
+        "gemma2-9b": {
+          "mentioned": 132,
+          "asserted": 126,
+          "negated": 6
+        },
+        "llama31-8b": {
+          "mentioned": 99,
+          "asserted": 96,
+          "negated": 3
+        },
+        "mistral-7b": {
+          "mentioned": 56,
+          "asserted": 53,
+          "negated": 3
+        },
+        "qwen25-14b": {
+          "mentioned": 92,
+          "asserted": 79,
+          "negated": 13
+        },
+        "qwen25-7b": {
+          "mentioned": 54,
+          "asserted": 52,
+          "negated": 2
+        }
+      },
+      "by_condition": {
+        "obf_high": {
+          "mentioned": 122,
+          "asserted": 119,
+          "negated": 3
+        },
+        "obf_low": {
+          "mentioned": 129,
+          "asserted": 126,
+          "negated": 3
+        },
+        "original": {
+          "mentioned": 161,
+          "asserted": 153,
+          "negated": 8
+        },
+        "para_high": {
+          "mentioned": 106,
+          "asserted": 97,
+          "negated": 9
+        },
+        "para_low": {
+          "mentioned": 92,
+          "asserted": 87,
+          "negated": 5
+        }
+      },
+      "by_pattern": {
+        "generic_greeting": 529,
+        "generic_greeting:negated": 33,
+        "not_personalized": 80,
+        "not_personalized:negated": 1
+      }
+    }
+  },
+  "examples": {
+    "urgency": {
+      "asserted": [
+        {
+          "model": "gemma2-27b",
+          "item_id": "eph:13029#obf_high",
+          "condition": "obf_high",
+          "pattern": "urgent_language",
+          "match": "urgency",
+          "context": "This email uses common phishing tactics like creating a sense of urgency (\"at your earliest convenience\") and including a shortened, suspicious link. The misspell..."
+        },
+        {
+          "model": "gemma2-9b",
+          "item_id": "eph:11395",
+          "condition": "original",
+          "pattern": "pressure_threat",
+          "match": "scare",
+          "context": "The email uses scare tactics, urging immediate action due to \"potential vulnerabilities\" and threats of data b..."
+        },
+        {
+          "model": "gemma2-9b",
+          "item_id": "eph:12338#obf_low",
+          "condition": "obf_low",
+          "pattern": "urgent_language",
+          "match": "urgency",
+          "context": "...onal language with misspellings like \"re4ching\" and \"plea\u200bse\". It also creates a sense of urgency with \"Action Required\" and pressures the recipient to click a link without providing cont..."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-7b",
+          "item_id": "eph:11076",
+          "condition": "original",
+          "pattern": "urgent_language",
+          "match": "urgent",
+          "context": "...ompany announcement. There are no suspicious links, requests for personal information, or urgent actions required."
+        }
+      ]
+    },
+    "link_url": {
+      "asserted": [
+        {
+          "model": "llama31-8b",
+          "item_id": "eph:5208#para_low",
+          "condition": "para_low",
+          "pattern": "link",
+          "match": "link",
+          "context": "...one, a vague reference to the CEO's office, and a request to verify credentials through a link. The email also lacks specific details about the company's policies and procedures, which..."
+        },
+        {
+          "model": "qwen25-7b",
+          "item_id": "eph:13029",
+          "condition": "original",
+          "pattern": "link",
+          "match": "link",
+          "context": "The email asks the recipient to review a document and provides a link. However, there are no red flags such as urgent language, requests for personal informati..."
+        },
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:13029#para_high",
+          "condition": "para_high",
+          "pattern": "link",
+          "match": "link",
+          "context": "...review related to a specific project on renewable energy strategies. It includes a direct link to access the document. However, without verifying the sender's email address and the leg..."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:14998",
+          "condition": "original",
+          "pattern": "link",
+          "match": "link",
+          "context": "... However, without verifying the sender's email address and the legitimacy of the provided link, there is a risk that this could be a phishing attempt designed to trick the recipient in..."
+        }
+      ]
+    },
+    "sender_mismatch": {
+      "asserted": [
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:5004#obf_high",
+          "condition": "obf_high",
+          "pattern": "spoof_mismatch",
+          "match": "do not match",
+          "context": "... indicative of phishing attempts. The sender's name and the company name in the signature do not match, and the bank details provided seem unusual and could be fabricated to trick the recipien..."
+        },
+        {
+          "model": "llama31-8b",
+          "item_id": "nah:traditional_phishing:5d75f5060a15268f87fe55568a0ebaf6",
+          "condition": "original",
+          "pattern": "unknown_sender",
+          "match": "suspicious email address",
+          "context": "... a verbal telephone communication to discuss the deal. Additionally, the email contains a suspicious email address and multiple promotional links from Yahoo, which may be an attempt to distract the recipi..."
+        },
+        {
+          "model": "mistral-7b",
+          "item_id": "eph:13967#para_low",
+          "condition": "para_low",
+          "pattern": "sender_address",
+          "match": "sender's email address",
+          "context": "...ars to be requesting sensitive healthcare data, which is unusual for a collaboration. The sender's email address is not provided, and the request seems urgent, which are common tactics in phishing attem..."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:12458",
+          "condition": "original",
+          "pattern": "unknown_sender",
+          "match": "sender's identity",
+          "context": "...tle are provided, but there are no specific identifiers or context that would confirm the sender's identity or the legitimacy of the request. The urgency and lack of detailed information are red fl..."
+        }
+      ]
+    },
+    "credential_payment": {
+      "asserted": [
+        {
+          "model": "mistral-7b",
+          "item_id": "eph:12798#obf_low",
+          "condition": "obf_low",
+          "pattern": "payment_request",
+          "match": "payment",
+          "context": "... overdue payment for an order. The email includes the invoice number, the amount due, and payment instructions. However, the sender's email address is not clearly visible, which is a red ..."
+        },
+        {
+          "model": "gemma2-9b",
+          "item_id": "eph:12099#para_low",
+          "condition": "para_low",
+          "pattern": "credentials",
+          "match": "account suspension",
+          "context": "This email uses scare tactics, urging immediate action and threatening account suspension. It asks for personal information through a suspicious link. These are common hallmarks o..."
+        },
+        {
+          "model": "llama31-8b",
+          "item_id": "nah:traditional_phishing:1fed8c00650972647bd5c7f4e398ed18",
+          "condition": "original",
+          "pattern": "payment_request",
+          "match": "transferring the money",
+          "context": "...y that the sender needs help transferring. The email also asks the recipient to assist in transferring the money, which is a common tactic used by scammers to gain the trust of their victims. Additional..."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-7b",
+          "item_id": "eph:4011#para_high",
+          "condition": "para_high",
+          "pattern": "personal_information",
+          "match": "personal information",
+          "context": "The email mentions reviewing a file but does not ask for personal information or direct the recipient to suspicious links. The request is for verification of existing ..."
+        }
+      ]
+    },
+    "grammar_spelling": {
+      "asserted": [
+        {
+          "model": "gemma2-9b",
+          "item_id": "eph:13790#obf_high",
+          "condition": "obf_high",
+          "pattern": "character_anomaly",
+          "match": "unusual formatting",
+          "context": "...and could apply to many different software solutions. The email contains misspellings and unusual formatting, which are common red flags for phishing attempts."
+        },
+        {
+          "model": "gemma2-9b",
+          "item_id": "eph:12240#obf_high",
+          "condition": "obf_high",
+          "pattern": "character_anomaly",
+          "match": "unusual character",
+          "context": "The email contains several spelling errors and unusual character substitutions, which are common red flags for phishing attempts. The request for immediat..."
+        },
+        {
+          "model": "gemma2-27b",
+          "item_id": "eph:14738#obf_low",
+          "condition": "obf_low",
+          "pattern": "spelling",
+          "match": "misspelled",
+          "context": "...nt Required\") and requesting action without verifying the sender's identity. The slightly misspelled words and the unusual formatting of the email address are also red flags."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-7b",
+          "item_id": "eph:13403#obf_low",
+          "condition": "obf_low",
+          "pattern": "spelling",
+          "match": "spelling",
+          "context": "...d a generic salutation also raises suspicion. However, the email does not contain obvious spelling or grammatical errors, and it does reference a specific project, which could be legitimat..."
+        }
+      ]
+    },
+    "impersonation_authority": {
+      "asserted": [
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:11395#para_low",
+          "condition": "para_low",
+          "pattern": "authority_figure",
+          "match": "IT support",
+          "context": "...common tactic in phishing attempts. However, it includes specific details such as a named IT support team member and a company name, which could indicate legitimacy. The inclusion of a deadl..."
+        },
+        {
+          "model": "mistral-7b",
+          "item_id": "nah:traditional_phishing:787f5cb548c8ca675f3900fcb6a1618b",
+          "condition": "original",
+          "pattern": "authority_figure",
+          "match": "government",
+          "context": "First analysis: The email claims to be from a high-ranking government official offering a business partnership to transfer a large sum of money into the recipi..."
+        },
+        {
+          "model": "qwen25-14b",
+          "item_id": "nah:traditional_phishing:f5c10f850e222abc9dc8d43418ddb80c",
+          "condition": "original",
+          "pattern": "impersonation",
+          "match": "claims to have",
+          "context": "This email is a typical example of a Nigerian prince or widow scam, where the sender claims to have a large sum of money that they wish to transfer but needs assistance from the recipient t..."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:16497#obf_high",
+          "condition": "obf_high",
+          "pattern": "authority_figure",
+          "match": "IT department",
+          "context": "...rors in the body text further indicates that this may not be a legitimate message from an IT department. The sender's name and email address are not provided, which is another red flag."
+        }
+      ]
+    },
+    "attachment": {
+      "asserted": [
+        {
+          "model": "llama31-8b",
+          "item_id": "nah:enron_ham:3461377_1075858633882_JavaMail_evans_thyme",
+          "condition": "original",
+          "pattern": "attachment",
+          "match": "attachment",
+          "context": "...ze the others as they come in and redistribute the report. The email also includes a file attachment, which suggests that it is a legitimate business communication. The sender's name and the..."
+        },
+        {
+          "model": "qwen25-7b",
+          "item_id": "eph:12139#obf_high",
+          "condition": "obf_high",
+          "pattern": "attachment",
+          "match": "attachment",
+          "context": "...ements, such as a misspelled word (\"d\u043ecuments\", \"contr4ct\", \"inp\u200but\", \"rel4tions\") and an attachment with a suspicious name. Additionally, the email asks the recipient to click on a link, wh..."
+        },
+        {
+          "model": "llama31-8b",
+          "item_id": "eph:12998#para_high",
+          "condition": "para_high",
+          "pattern": "attachment",
+          "match": "attachment",
+          "context": "... (CRM initiative), and uses a professional tone. However, the phrase \"Promptly access the attachment\" could be seen as slightly urgent and potentially manipulative, which is a common tactic ..."
+        }
+      ],
+      "negated": [
+        {
+          "model": "qwen25-7b",
+          "item_id": "eph:6578",
+          "condition": "original",
+          "pattern": "attachment",
+          "match": "attachments",
+          "context": "...est personal information or direct the recipient to click on suspicious links or download attachments."
+        }
+      ]
+    },
+    "generic_greeting": {
+      "asserted": [
+        {
+          "model": "qwen25-14b",
+          "item_id": "eph:13734",
+          "condition": "original",
+          "pattern": "generic_greeting",
+          "match": "generic greeting",
+          "context": "...etails through a provided link, which is a common tactic in phishing emails. The use of a generic greeting (\"Hello Sarah\") and the mention of a specific project (\"customer outreach initiatives\") w..."
+        },
+        {
+          "model": "qwen25-7b",
+          "item_id": "nah:traditional_phishing:dd499d0b6d8206b0f5e85a74fb01ef5c",
+          "condition": "original",
+          "pattern": "generic_greeting",
+          "match": "generic greeting",
+          "context": "...for personal information, and an unsolicited offer of inheritance. The sender also uses a generic greeting and provides an email address that looks suspicious."
+        },
+        {
+          "model": "gemma2-9b",
+          "item_id": "eph:16497#obf_high",
+          "condition": "obf_high",
+          "pattern": "generic_greeting",
+          "match": "generic greeting",
+          "context": "... security update requires an immediate password reset. It contains suspicious typos and a generic greeting. The link is not from a trusted source and is likely malicious."
+        }
+      ],
+      "negated": [
+        {
+          "model": "gemma2-27b",
+          "item_id": "eph:12246#para_low",
+          "condition": "para_low",
+          "pattern": "generic_greeting",
+          "match": "generic greeting",
+          "context": "...le\") and requesting verification of details. The lack of personalized information and the generic greeting also raise suspicion."
+        }
+      ]
+    }
+  },
+  "built_at": "2026-11-01T15:28:45Z",
+  "versions": {
+    "python": "3.12.3",
+    "pyyaml": "6.0.3"
+  },
+  "git_commit": "6a18ecb",
+  "git_describe": "v0.7.0-devcot-1-g6a18ecb",
+  "note": "Dev only. Counts are by model and condition; no prediction is compared with its label. The lexicon is applied to eval rationales for the first time in scripts/07_secondary.py (step 3)."
+}

@@ -1080,3 +1080,85 @@ inference was run; everything below is configuration and code, frozen only after
   DistilBERT baseline, model downloads and idle session time. Colab charged 1.15 units per hour on the Tesla
   T4 and 1.94 on the NVIDIA L4. Evaluation inference alone took about 39 hours on the T4 and 9.5 hours on the
   L4."
+
+## Step 07 step 2: CoT cue lexicon frozen on dev (2026-11-01); no score computed
+
+- configs/cue_lexicon.yaml, **sha256 e209c7a565add8bf7d88595b94d3f7174535ec93c6b35206225c58b8f43822fd**, version 1, eight
+  pre-registered categories (QUESTIONS.md item 12b) with 21 named sub-patterns in total; scripts/scoring/cues.py
+  (loader, matcher, polarity heuristic), scripts/07_freeze_lexicon.py (dev-only freeze and report, --check
+  reproduces the report), tests/test_cue_lexicon.py (17 tests, including a guard that fails if the YAML
+  changes without re-freezing); whole suite 61 tests OK. common.cot_rationale() splits the rationale from the
+  verdict with the same marker rule as extract_label.
+- Basis: 4,956 dev rationales, the six full-dev CoT cells (6 x 796, tag v0.7.0-devcot, Colab) plus the smoke
+  sets (9 x 20); every row asserted to be partition dev and strategy cot; a path containing "eval" is refused.
+  369 rationales are empty (only the FINAL line): qwen25-7b 276, mistral-7b 93.
+- Polarity: a match is negated when a negation marker (no, not, n't, never, without, lack(s), absence of, free
+  of, neither, nor, rather than, instead of) occurs earlier in the same clause and no conjunction plus
+  asserting verb ("and uses", "but contains") stands between them; clauses start at sentence punctuation,
+  contrastive conjunctions and ", and the ...". A category is asserted when at least one match is not negated.
+  Motivation from dev: legitimate verdicts list the cues they do not find ("There are no suspicious links,
+  requests for personal information, or urgent calls to action"); on dev 30% of link mentions and
+  26% of credential/payment mentions are negated.
+- Dev counts (rationales mentioning / asserting / only negating each category; sub-pattern figures are
+  asserted matches, several per rationale possible):
+
+  | category | sub-patterns | mentioned | asserted | negated |
+  |---|---|---|---|---|
+  | urgency | deadline (114), pressure_threat (602), urgent_language (2203) | 2117 | 1703 | 414 |
+  | link / URL | click (454), link (2001) | 2300 | 1607 | 693 |
+  | sender / domain mismatch | sender_address (228), spoof_mismatch (28), unknown_sender (178) | 566 | 368 | 198 |
+  | credential / payment request | credentials (967), payment_request (947), personal_information (1096) | 2464 | 1828 | 636 |
+  | grammar / spelling | character_anomaly (499), grammar (600), spelling (675) | 1128 | 1086 | 42 |
+  | impersonation / authority | authority_figure (593), impersonation (401) | 794 | 756 | 38 |
+  | attachment | attachment (522), file_download (386), malware (172) | 761 | 639 | 122 |
+  | generic greeting | generic_greeting (529), not_personalized (80) | 610 | 582 | 28 |
+
+  Asserted categories per rationale (all 4,956, empty included): {'0': 999, '1': 881, '2': 1156, '3': 963, '4': 473, '5': 96, '6': 18, '7': 1}.
+  Among the 4,587 non-empty rationales 86.3% assert at least one category.
+- Three seeded example matches per category (seed 2026; the report holds one negated example per category as
+  well), for the author's review of the regexes:
+  - urgency (urgent_language, "urgency"): This email uses common phishing tactics like creating a sense of urgency ("at your earliest convenience") and including a shortened, suspicious link. The misspell...
+  - urgency (pressure_threat, "scare"): The email uses scare tactics, urging immediate action due to "potential vulnerabilities" and threats of data b...
+  - urgency (urgent_language, "urgency"): ...onal language with misspellings like "re4ching" and "plea​se". It also creates a sense of urgency with "Action Required" and pressures the recipient to click a link without providing cont...
+  - link / URL (link, "link"): ...one, a vague reference to the CEO's office, and a request to verify credentials through a link. The email also lacks specific details about the company's policies and procedures, which...
+  - link / URL (link, "link"): The email asks the recipient to review a document and provides a link. However, there are no red flags such as urgent language, requests for personal informati...
+  - link / URL (link, "link"): ...review related to a specific project on renewable energy strategies. It includes a direct link to access the document. However, without verifying the sender's email address and the leg...
+  - sender / domain mismatch (spoof_mismatch, "do not match"): ... indicative of phishing attempts. The sender's name and the company name in the signature do not match, and the bank details provided seem unusual and could be fabricated to trick the recipien...
+  - sender / domain mismatch (unknown_sender, "suspicious email address"): ... a verbal telephone communication to discuss the deal. Additionally, the email contains a suspicious email address and multiple promotional links from Yahoo, which may be an attempt to distract the recipi...
+  - sender / domain mismatch (sender_address, "sender's email address"): ...ars to be requesting sensitive healthcare data, which is unusual for a collaboration. The sender's email address is not provided, and the request seems urgent, which are common tactics in phishing attem...
+  - credential / payment request (payment_request, "payment"): ... overdue payment for an order. The email includes the invoice number, the amount due, and payment instructions. However, the sender's email address is not clearly visible, which is a red ...
+  - credential / payment request (credentials, "account suspension"): This email uses scare tactics, urging immediate action and threatening account suspension. It asks for personal information through a suspicious link. These are common hallmarks o...
+  - credential / payment request (payment_request, "transferring the money"): ...y that the sender needs help transferring. The email also asks the recipient to assist in transferring the money, which is a common tactic used by scammers to gain the trust of their victims. Additional...
+  - grammar / spelling (character_anomaly, "unusual formatting"): ...and could apply to many different software solutions. The email contains misspellings and unusual formatting, which are common red flags for phishing attempts.
+  - grammar / spelling (character_anomaly, "unusual character"): The email contains several spelling errors and unusual character substitutions, which are common red flags for phishing attempts. The request for immediat...
+  - grammar / spelling (spelling, "misspelled"): ...nt Required") and requesting action without verifying the sender's identity. The slightly misspelled words and the unusual formatting of the email address are also red flags.
+  - impersonation / authority (authority_figure, "IT support"): ...common tactic in phishing attempts. However, it includes specific details such as a named IT support team member and a company name, which could indicate legitimacy. The inclusion of a deadl...
+  - impersonation / authority (authority_figure, "government"): First analysis: The email claims to be from a high-ranking government official offering a business partnership to transfer a large sum of money into the recipi...
+  - impersonation / authority (impersonation, "claims to have"): This email is a typical example of a Nigerian prince or widow scam, where the sender claims to have a large sum of money that they wish to transfer but needs assistance from the recipient t...
+  - attachment (attachment, "attachment"): ...ze the others as they come in and redistribute the report. The email also includes a file attachment, which suggests that it is a legitimate business communication. The sender's name and the...
+  - attachment (attachment, "attachment"): ...ements, such as a misspelled word ("dоcuments", "contr4ct", "inp​ut", "rel4tions") and an attachment with a suspicious name. Additionally, the email asks the recipient to click on a link, wh...
+  - attachment (attachment, "attachment"): ... (CRM initiative), and uses a professional tone. However, the phrase "Promptly access the attachment" could be seen as slightly urgent and potentially manipulative, which is a common tactic ...
+  - generic greeting (generic_greeting, "generic greeting"): ...etails through a provided link, which is a common tactic in phishing emails. The use of a generic greeting ("Hello Sarah") and the mention of a specific project ("customer outreach initiatives") w...
+  - generic greeting (generic_greeting, "generic greeting"): ...for personal information, and an unsolicited offer of inheritance. The sender also uses a generic greeting and provides an email address that looks suspicious.
+  - generic greeting (generic_greeting, "generic greeting"): ... security update requires an immediate password reset. It contains suspicious typos and a generic greeting. The link is not from a trusted source and is likely malicious.
+- Known limitations of the heuristic, to be stated in Section 4.8 rather than corrected: a "lack of X, the Y,
+  and the Z" list leaks the negation onto Y and Z; "without verifying the attachment" negates an attachment
+  that exists; descriptive mentions of an authority ("signed by the CEO") count as authority cues whether or
+  not impersonation is alleged (hence the separate sub-pattern authority_figure). Open reporting choices
+  (asserted vs any mention, denominator, sub-pattern placement) are in QUESTIONS.md item 16 with defaults.
+- Wording for Section 4.3 (cue analysis): "Chain-of-thought rationales were analysed with a fixed cue lexicon
+  of eight categories (urgency; link or URL; sender or domain mismatch; credential or payment request; grammar
+  or spelling, including the character-level anomalies of the obfuscated condition; impersonation or
+  authority; attachment; generic greeting), each defined by named regular expressions. The lexicon was
+  written from the rationales of the six detectors on the development partition (4,956 rationales: 796
+  development items per model and the smoke tests) and frozen, with its SHA-256 hash recorded, before any
+  evaluation rationale was read. A rationale is the model output before its final verdict line. A category
+  counts as asserted when one of its patterns matches outside the scope of a negation; the scope of a negation
+  marker (no, not, without, lacks, free of and similar) extends to the end of its clause unless a conjunction
+  followed by an asserting verb intervenes. Mentions inside such a scope are counted separately as negated,
+  because on the development rationales most cue mentions in legitimate verdicts were denials (30% of the
+  link mentions). Cue frequency is reported per model and condition as the share of non-empty rationales that
+  assert the category, and the change in cue presence between an original and its variant is split by the
+  four prediction outcomes."
+- Step 3 (the first and only computation of the scores) has not started; it waits for the author's go-ahead
+  and the answers to item 16.

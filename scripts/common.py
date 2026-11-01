@@ -78,6 +78,7 @@ def salutation_class(body: str) -> str:
 LABEL_TOKENS = {"phishing": "phish", "legitimate": "legit"}   # answer word -> record `class` value
 INVALID = "invalid"
 _FINAL_RE = re.compile(r"final\s*:")
+_FINAL_RE_CI = re.compile(_FINAL_RE.pattern, _FINAL_RE.flags | re.IGNORECASE)
 _NON_ALNUM_RE = re.compile(r"[^a-z0-9]+")
 
 
@@ -101,3 +102,12 @@ def extract_label(text: str, strategy: str) -> str:
     words = set(_NON_ALNUM_RE.sub(" ", span).split())
     found = [label for token, label in LABEL_TOKENS.items() if token in words]
     return found[0] if len(found) == 1 else INVALID
+
+
+def cot_rationale(text: str) -> str:
+    """The chain-of-thought rationale: the output before the LAST "final:" marker (the whole output when there
+    is none), stripped. The same split as extract_label uses for strategy "cot", so the rationale and the label
+    come from disjoint parts of the output (TASK_07 section 4b, cue lexicon)."""
+    span = text or ""
+    hits = list(_FINAL_RE_CI.finditer(span))
+    return (span[: hits[-1].start()] if hits else span).strip()
