@@ -1377,3 +1377,51 @@ correction. Obfuscation is the clearest case, with four models at a sensitivity 
 variants; the chain-of-thought rationales show why, as the grammar-and-spelling cue is asserted in 87.6% of them
 against 0.1% for the originals (Table T10). The control condition shows the other face of the same effect:
 paraphrased legitimate e-mails lose between 8 and 24 points of specificity in every model."
+
+## Step 07: hard-core sample, pre-registered 8 plus post hoc 30 (item 17; 2026-11-01)
+
+**What changed.** QUESTIONS.md item 17 is closed. The pre-registered hard-core sample (item 12c, refinement 4: all
+six language models wrong under zero_shot, strata = the four phishing variant conditions) stays as computed with
+its 8 eligible items (para_low 5, para_high 3, obf_low 0, obf_high 0) and is reported as such. A post hoc
+extension for the qualitative coding only, logged in item 12 as a deviation with the reason "only 8 items met
+the pre-registered criterion", adds 30 phishing items (originals and variants) misclassified by at least 4 of
+the 6 models under zero_shot, five strata (original plus the four conditions), the pre-registered items
+excluded, proportional allocation with a minimum of 5 per stratum where available, seed 2026. No computed metric
+changes; the hard-core tables (T11, hardcore_items.csv, hardcore_summary.csv) are byte-identical.
+
+**Counts before sampling (phishing originals and variants, zero_shot, missed by at least 4 of 6):**
+
+| stratum | items | missed by at least 4 of 6 | of which by all six | eligible for the post hoc draw | drawn |
+|---|---|---|---|---|---|
+| original | 334 | 119 | 7 | 119 | 16 |
+| para_low | 334 | 70 | 5 | 65 | 8 |
+| para_high | 325 | 47 | 3 | 44 | 6 |
+| obf_low | 334 | 3 | 0 | 3 | 0 |
+| obf_high | 334 | 0 | 0 | 0 | 0 |
+| total | 1,661 | 239 | 15 | 231 | 30 |
+
+The 7 originals missed by all six stay in the post hoc pool because the pre-registered strata are the variant
+conditions only; the 8 pre-registered variants are removed from it.
+
+The three obf_low items get no slot under the allocation rule (fewer than the minimum of 5 available, and a
+proportional share of 0.39 rounds to zero); the rule was applied as written, not adjusted after seeing the
+counts. The eight all-six failures among the phishing variants are the pre-registered rows (sample_id 1 to 8,
+`set` = preregistered); the 30 post hoc rows follow (sample_id 9 to 38, `set` = posthoc). Both are in
+reports/hardcore_sample.csv with the empty coding columns failure_type and note; the texts (subject, scored body,
+original body) are in data/processed/hardcore_sample_text.jsonl (data, not in git). The coding guide
+(docs/HARDCORE_CODING_GUIDE.md) now asks, for an original, "why does this spear-phishing e-mail look
+legitimate?" and, for a variant, "what changed relative to the original?", with one code list per question.
+
+**Wording for Section 4.5 (hard core, replaces "has 8 rows" above):** "Under the zero-shot prompt 102 of the
+5,207 items are misclassified by all six models, but only 8 of them are phishing variants (5 low and 3 high
+paraphrase, none obfuscated), so the pre-registered 30-item sample could not be filled; the 8 items are coded
+as the pre-registered sample. Because near-unanimous misses on variants are rare, a post hoc extension, declared
+as such, codes 30 further phishing e-mails that at least four of the six models missed (16 originals, 8 low and
+6 high paraphrases; the 3 obfuscated candidates received no slot under the pre-specified allocation rule). The
+extension is descriptive and informs no test."
+
+**Wording for Section 4.8 (threats to validity):** "The qualitative hard-core sample departs from the
+pre-registration in one respect: the criterion of all six models failing yielded 8 phishing variants rather
+than 30, so a post hoc extension with a looser criterion (at least four of six) was added after the quantitative
+results were fixed. It is labelled as post hoc throughout and no quantitative claim rests on it."
+

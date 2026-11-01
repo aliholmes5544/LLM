@@ -180,7 +180,7 @@
     reason. **Implemented 2026-11-01 (TASK_07 step 3, the first and only computation of the scores, commit
     "Step 07: scores computed (first and only computation)", tag v0.7.1-scored)** under (a) to (e) with
     refinements (1) to (7) below and the decisions of items 15 and 16; the only departure from the plan that the
-    data forced is the hard-core sample size (item 17).
+    data forced is the hard-core sample size (item 17), whose post hoc extension is the one deviation logged below.
 
     **Refinements logged 2026-11-01, before any score was computed (decisions on item 15, author):**
     (1) Families named by the thesis research questions: F-RQ4 = the 30 zero_shot McNemar tests (24 phishing
@@ -212,6 +212,16 @@
     earlier in the same clause is not followed by a conjunction plus an asserting verb), because on dev most
     cue mentions in legitimate verdicts are denials ("does not contain any suspicious links"). Reason: 12b
     said "regex per category" and did not foresee negated mentions. Reporting choices in item 16.
+
+    **Deviation logged 2026-11-01, after the scores were computed (decision on item 17, author):** item 12c,
+    refinement (4), is kept as computed: only 8 items met the pre-registered criterion (all six models wrong on a
+    phishing variant), and they are reported as the pre-registered sample. A clearly labelled post hoc extension is
+    added for the qualitative coding only: phishing items (originals and variants) misclassified by at least 4 of
+    the 6 language models under zero_shot, five strata (original plus the four variant conditions), the 8
+    pre-registered items excluded, proportional allocation with a minimum of 5 per stratum where available, seed
+    2026, 30 items (reports/hardcore_sample.csv, column `set` = preregistered | posthoc). Reason: only 8 items met
+    the pre-registered criterion. The extension changes no computed number; its counts per stratum before sampling
+    are in reports/secondary_report.json (`hardcore.sample.posthoc`) and in item 17.
 
 ## Step 06 integrity check of the evaluation results (2026-10-31)
 
@@ -440,4 +450,20 @@
     Recommendation: (ii), because the false positives are where the hard core actually is, and the coding guide
     (docs/HARDCORE_CODING_GUIDE.md) can take a second code list for them.
 
-    **Answer (author):** pending.
+    **Answer (author, 2026-11-01):** keep the pre-registered sample as computed (the 8 all-six failures among the
+    phishing variants) and report it as such. Add a clearly labelled post hoc extension, logged in item 12 as a
+    deviation with the reason "only 8 items met the pre-registered criterion": items missed by at least 4 of the
+    6 language models under zero_shot, across five strata (original plus the four variant conditions),
+    proportional allocation with a minimum of 5 per stratum where available, seed 2026, 30 items. Both sets go to
+    reports/hardcore_sample.csv (column `set` = preregistered | posthoc); the coding guide asks, for an original,
+    "why does this spear-phishing e-mail look legitimate?" and, for a variant, "what changed relative to the
+    original?". Legitimate e-mails called phishing (options ii and iii) are not sampled.
+    **Implemented 2026-11-01** (scripts/07_secondary.py, commit "Hard-core sample: pre-registered 8 + post-hoc 30
+    (item 17)"). Items missed by at least 4 of 6 among the phishing originals and variants, before sampling:
+    original 119, para_low 70, para_high 47, obf_low 3, obf_high 0 (239); after removing the 8 pre-registered
+    items (all variants): 119, 65, 44, 3, 0 (231). Allocation of the 30 (proportional, largest remainder, minimum
+    5 where at least 5 are available): original 16, para_low 8, para_high 6, obf_low 0, obf_high 0. The three obf_low items
+    receive no slot because the stratum holds fewer than the minimum of 5 and its proportional share rounds to
+    zero; the rule was applied as written. The post hoc sample is drawn from a separate random stream
+    ("hardcore_sample_posthoc", seed 2026), so the pre-registered rows are unchanged (sample_id 1 to 8); the post
+    hoc rows are sample_id 9 to 38. Status: closed; the author's manual coding of the 38 rows is pending.

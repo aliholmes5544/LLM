@@ -1,5 +1,5 @@
 {
-  "computed_at": "2026-11-01T15:50:17Z",
+  "computed_at": "2026-11-01T17:45:59Z",
   "inputs": {
     "scoring_report_outputs": {
       "metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
@@ -47,19 +47,50 @@
       "phish_para_low": 5,
       "phish_para_high": 3
     },
-    "sample_available_by_condition": {
-      "para_low": 5,
-      "para_high": 3,
-      "obf_low": 0,
-      "obf_high": 0
+    "sample": {
+      "preregistered": {
+        "criterion": "missed by all six under zero_shot, phishing variants, strata = the four conditions",
+        "available_by_condition": {
+          "para_low": 5,
+          "para_high": 3,
+          "obf_low": 0,
+          "obf_high": 0
+        },
+        "allocation": {
+          "para_low": 5,
+          "para_high": 3,
+          "obf_low": 0,
+          "obf_high": 0
+        },
+        "n": 8
+      },
+      "posthoc": {
+        "criterion": "missed by at least 4 of 6 under zero_shot, phishing originals and variants, strata = original plus the four conditions, pre-registered items excluded",
+        "population_by_condition": {
+          "original": 119,
+          "para_low": 70,
+          "para_high": 47,
+          "obf_low": 3,
+          "obf_high": 0
+        },
+        "available_by_condition": {
+          "original": 119,
+          "para_low": 65,
+          "para_high": 44,
+          "obf_low": 3,
+          "obf_high": 0
+        },
+        "allocation": {
+          "original": 16,
+          "para_low": 8,
+          "para_high": 6,
+          "obf_low": 0,
+          "obf_high": 0
+        },
+        "n": 30
+      }
     },
-    "sample_allocation": {
-      "para_low": 5,
-      "para_high": 3,
-      "obf_low": 0,
-      "obf_high": 0
-    },
-    "sample_n": 8,
+    "sample_n": 38,
     "sample_text_file": "data/processed/hardcore_sample_text.jsonl (git-ignored data)"
   },
   "frontier_rows": 27,
@@ -71,14 +102,14 @@
     "hardcore_items.csv": "102a8a165f057cb936d7d67acce9e6dbee2403e21766d7c010e341309599ddab",
     "hardcore_summary.csv": "e26b6e42ca82494e59682597df1b6156706a2ec259221eddf9854b912d6d7fb0",
     "frontier.csv": "9a19ab4fe51e94e3c7a9c6aa4c234b7b86828c2830b7098042b4a03916c337b5",
-    "reports/hardcore_sample.csv": "fc068d89e1dc7be5ccb8b912517adab302e0bb2d75a35f55fed71b8a7d2a4e39"
+    "reports/hardcore_sample.csv": "a186008674fbd6b0b156e4ba72e876a6c67db6a722987d099749d5a7a238faf4"
   },
-  "runtime_s": 12.3,
+  "runtime_s": 16.2,
   "versions": {
     "python": "3.12.3",
     "numpy": "2.5.4",
     "pandas": "3.1.0"
   },
-  "git_commit": "f450c3e",
-  "git_describe": "v0.7.0-devcot-2-gf450c3e"
+  "git_commit": "e18b66f",
+  "git_describe": "v0.7.1-scored"
 }

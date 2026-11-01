@@ -12,8 +12,10 @@ item 12 a to d with refinements 3, 4 and 7; item 16 decisions). Runs after 07_sc
                     results/scores/cues_pairs.csv           pairs used and excluded (empty rationale) per cell
   (c) hard core     results/scores/hardcore_items.csv       zero_shot, six models: items by number of models wrong
                     results/scores/hardcore_summary.csv     all-six vs none by item group, source, body length
-                    reports/hardcore_sample.csv             seeded stratified sample of 30 all-six failures for
-                                                           the author's coding (failure_type, note empty)
+                    reports/hardcore_sample.csv             the author's coding sample (failure_type, note empty):
+                                                           set = preregistered (all-six failures among the phishing
+                                                           variants, 8 available) and set = posthoc (item 17: missed by
+                                                           at least 4 of 6, five strata, 30 items, seed 2026)
                     data/processed/hardcore_sample_text.jsonl  the sampled texts (data, git-ignored)
   (d) frontier      results/scores/frontier.csv             median GPU latency vs delta-sens per model x strategy
   reports/secondary_report.json                             inputs, hashes, counts, runtime
@@ -56,6 +58,8 @@ OUTPUTS = ("ensemble_votes.csv", "cues_frequency.csv", "cues_change.csv", "cues_
            "hardcore_summary.csv", "frontier.csv")
 OUTCOMES = ["stayed_correct", "flipped_to_incorrect", "stayed_incorrect", "flipped_to_correct"]
 SAMPLE_N, SAMPLE_MIN = 30, 5
+POSTHOC_MIN_WRONG = 4                                  # item 17: missed by at least 4 of the 6 models
+POSTHOC_STRATA = ("original", *PHISH_CONDITIONS)     # item 17: five strata
 
 
 def git(*args) -> str:
@@ -194,9 +198,31 @@ def hardcore(items: pd.DataFrame, seed: int) -> tuple:
         for iid in pick:
             sample.append(iid)
     smp = hc.set_index("item_id").loc[sample].reset_index()
+    smp.insert(0, "set", "preregistered")
+    # post hoc extension (QUESTIONS.md item 17, author 2026-11-01; logged in item 12 as a deviation): phishing
+    # originals and variants missed by at least POSTHOC_MIN_WRONG of the six models, five strata (original plus
+    # the four variant conditions), the pre-registered items excluded, same allocation rule, seed 2026, 30 items
+    pool = hc[hc["item_class"].isin(("phish_original", "phish_variant")) & (hc["n_models_wrong"] >= POSTHOC_MIN_WRONG)]
+    post_pop = {c: int((pool["condition"] == c).sum()) for c in POSTHOC_STRATA}
+    pool = pool[~pool["item_id"].isin(sample)]
+    post_avail = {c: int((pool["condition"] == c).sum()) for c in POSTHOC_STRATA}
+    post_alloc = allocate(post_avail, SAMPLE_N, SAMPLE_MIN)
+    post = []
+    for c in POSTHOC_STRATA:
+        ids = sorted(pool[pool["condition"] == c]["item_id"])
+        post += derive_rng(seed, "hardcore_sample_posthoc", c).sample(ids, post_alloc[c]) if post_alloc[c] else []
+    smp_post = hc.set_index("item_id").loc[post].reset_index()
+    smp_post.insert(0, "set", "posthoc")
+    smp = pd.concat([smp, smp_post], ignore_index=True)
     smp.insert(0, "sample_id", range(1, len(smp) + 1))
     smp["failure_type"], smp["note"] = "", ""
-    return hc, summary, smp, avail, alloc
+    info = {"preregistered": {"criterion": "missed by all six under zero_shot, phishing variants, strata = the four conditions",
+                              "available_by_condition": avail, "allocation": alloc, "n": len(sample)},
+            "posthoc": {"criterion": f"missed by at least {POSTHOC_MIN_WRONG} of 6 under zero_shot, phishing originals and "
+                                     "variants, strata = original plus the four conditions, pre-registered items excluded",
+                        "population_by_condition": post_pop, "available_by_condition": post_avail,
+                        "allocation": post_alloc, "n": len(post)}}
+    return hc, summary, smp, info
 
 
 def allocate(avail: dict, total: int, minimum: int) -> dict:
@@ -225,6 +251,19 @@ def allocate(avail: dict, total: int, minimum: int) -> dict:
     return alloc
 
 
+def sample_matches(smp: pd.DataFrame, path: Path) -> bool:
+    """True when the sample on disk equals the recomputed one in every column except the author's coding columns
+    (failure_type, note), which the author fills in by hand after the run."""
+    if not path.exists():
+        return False
+    disk = pd.read_csv(path, dtype=str, keep_default_na=False)
+    if list(disk.columns) != list(smp.columns):
+        return False
+    cols = [c for c in smp.columns if c not in ("failure_type", "note")]
+    with tempfile.TemporaryDirectory() as td:
+        return write_csv(smp[cols], Path(td) / "a.csv") == write_csv(disk[cols], Path(td) / "b.csv")
+
+
 def sample_text(smp: pd.DataFrame) -> list:
     recs = load_records()
     variants = {v["variant_id"]: v for v in load_jsonl(VARIANTS)}
@@ -232,7 +271,7 @@ def sample_text(smp: pd.DataFrame) -> list:
     for _, r in smp.iterrows():
         src = recs[r["cluster"]]
         v = variants.get(r["item_id"])
-        out.append({"sample_id": int(r["sample_id"]), "item_id": r["item_id"], "condition": r["condition"],
+        out.append({"sample_id": int(r["sample_id"]), "set": r["set"], "item_id": r["item_id"], "condition": r["condition"],
                     "subject": src["subject"], "body": v["body"] if v else src["body"], "original_body": src["body"]})
     return out
 
@@ -279,7 +318,7 @@ def main() -> int:
     out = {}
     out["ensemble_votes"] = vote_summary(ens.rename(columns={}))
     out["cues_frequency"], out["cues_change"], out["cues_pairs"] = cue_tables(items, pairs, raw, lex)
-    hc, summary, smp, avail, alloc = hardcore(items, seed)
+    hc, summary, smp, hc_info = hardcore(items, seed)
     out["hardcore_items"], out["hardcore_summary"] = hc, summary
     out["frontier"] = frontier(deltas)
     runtime = time.time() - t0
@@ -293,7 +332,7 @@ def main() -> int:
         with tempfile.TemporaryDirectory() as td:
             fresh = write_all(Path(td))
         cmp = compare_outputs({k: v for k, v in fresh.items() if k != "hardcore_sample.csv"}, SCORES)
-        cmp["hardcore_sample.csv"] = "identical" if sha256_file(SAMPLE) == fresh["hardcore_sample.csv"] else "differs"
+        cmp["hardcore_sample.csv"] = "identical" if sample_matches(smp, SAMPLE) else "differs"
         ok = all(v == "identical" for v in cmp.values())
         print(f"re-run {'IDENTICAL' if ok else 'DIFFERS'}: {cmp}")
         return 0 if ok else 1
@@ -312,7 +351,7 @@ def main() -> int:
                        "pairs_used": int(cp["n_pairs_used"].sum()), "pairs_excluded_empty_rationale": int(cp["n_pairs_excluded_empty_rationale"].sum())},
               "hardcore": {"n_items": len(hc), "by_hard_group": hc["hard_group"].value_counts().to_dict(),
                            "all_six_by_group": hc[hc["hard_group"] == "all_six"]["group"].value_counts().to_dict(),
-                           "sample_available_by_condition": avail, "sample_allocation": alloc, "sample_n": len(smp),
+                           "sample": hc_info, "sample_n": len(smp),
                            "sample_text_file": SAMPLE_TEXT.relative_to(ROOT).as_posix() + " (git-ignored data)"},
               "frontier_rows": len(out["frontier"]), "outputs": hashes, "runtime_s": round(runtime, 1),
               "versions": {"python": sys.version.split()[0], "numpy": np.__version__, "pandas": pd.__version__},

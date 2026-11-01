@@ -2,7 +2,8 @@
 Unit tests for step 07 scoring (scripts/scoring/stats.py, ensemble.py, score.py; TASK_07 section 7): metric
 functions on toy data with hand-computed answers, exact McNemar and Holm against known values, bootstrap
 determinism per table name, the ensemble voting rules, the a priori power figure, and (when the scored
-tables exist) that a re-run of scripts/07_score.py reproduces every CSV byte for byte.
+tables exist) that a re-run of scripts/07_score.py reproduces every CSV byte for byte; the hard-core sample
+allocation rule and (when present) the structure of reports/hardcore_sample.csv (item 17).
 Run from the repo root with `python -m unittest discover tests`.
 """
 import math
@@ -17,6 +18,8 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
 from scoring.ensemble import ensemble_rows  # noqa: E402
+import importlib  # noqa: E402
+secondary = importlib.import_module("07_secondary")  # noqa: E402
 from scoring.score import prepare, cell_metrics, cell_deltas, family_of  # noqa: E402
 from scoring.stats import (bootstrap_p, holm, mcnemar_exact, mcnemar_power, point_and_ci, stat_bal_acc,  # noqa: E402
                            stat_contrast, stat_delta, stat_f1, stat_rate, table_rng)
@@ -167,6 +170,36 @@ class TestScoring(unittest.TestCase):
         r = subprocess.run([sys.executable, "scripts/07_score.py", "--check"], cwd=ROOT, capture_output=True, text=True)
         self.assertEqual(r.returncode, 0, r.stdout[-500:] + r.stderr[-500:])
         self.assertIn("IDENTICAL", r.stdout)
+
+
+class TestHardcoreSample(unittest.TestCase):
+    def test_allocate_rule(self):
+        # fewer available than requested: take all
+        self.assertEqual(secondary.allocate({"a": 5, "b": 3, "c": 0, "d": 0}, 30, 5), {"a": 5, "b": 3, "c": 0, "d": 0})
+        # the post hoc population of item 17: proportional with largest remainder, minimum 5 where available
+        alloc = secondary.allocate({"original": 119, "para_low": 65, "para_high": 44, "obf_low": 3, "obf_high": 0}, 30, 5)
+        self.assertEqual(alloc, {"original": 16, "para_low": 8, "para_high": 6, "obf_low": 0, "obf_high": 0})
+        self.assertEqual(sum(alloc.values()), 30)
+        # a stratum with at least 5 available is lifted to 5
+        alloc = secondary.allocate({"a": 100, "b": 5}, 30, 5)
+        self.assertEqual(alloc, {"a": 25, "b": 5})
+
+    def test_sample_file_structure(self):
+        path = ROOT / "reports" / "hardcore_sample.csv"
+        if not path.exists():
+            self.skipTest("sample not computed")
+        s = pd.read_csv(path, dtype={"failure_type": str, "note": str}, keep_default_na=False)
+        self.assertEqual(list(s.columns[:3]), ["sample_id", "set", "item_id"])
+        self.assertEqual(list(s["sample_id"]), list(range(1, len(s) + 1)))
+        self.assertFalse(s["item_id"].duplicated().any())
+        pre, post = s[s["set"] == "preregistered"], s[s["set"] == "posthoc"]
+        self.assertEqual(len(pre) + len(post), len(s))
+        self.assertTrue((pre["n_models_wrong"] == 6).all())
+        self.assertTrue(pre["item_class"].eq("phish_variant").all())
+        self.assertEqual(len(post), 30)
+        self.assertTrue((post["n_models_wrong"] >= 4).all())
+        self.assertTrue(post["item_class"].isin(["phish_original", "phish_variant"]).all())
+        self.assertTrue((s["label_true"] == "phish").all())
 
 
 if __name__ == "__main__":
