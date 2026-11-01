@@ -1,0 +1,9 @@
+# Baseline branch on Colab (notebooks/cloud_baselines.ipynb): what scripts/06_run_baselines.py imports for the
+# DistilBERT baseline. torch is NOT pinned here: the Colab runtime's CUDA build is used and its version is
+# recorded in reports/baselines_report.json (the laptop pins the CPU build in requirements.txt).
+#   pip install -r requirements-baselines.txt
+pyyaml==6.0.3
+numpy==2.5.4
+scikit-learn==1.9.1
+transformers==5.19.0
+huggingface_hub==1.33.0

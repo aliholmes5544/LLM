@@ -1,0 +1,76 @@
+# Baselines (TASK_06 section 3, decision 3; Chapter 3 Section 3.5 / Chapter 4 Section 4.4). Supervised
+# classifiers trained on the `train` partition (traditional phishing + Enron ham, the Nahmias protocol) and
+# evaluated on exactly the same 5,207 items as the six LLM detectors (scripts/detect/items.py: eval_items).
+# Every setting is fixed here before the evaluation run; the only data-driven choice is the regularisation
+# strength C of the two TF-IDF models, chosen on `valid` (never on an evaluation partition). The random seed is
+# inherited from configs/data.yaml. Each baseline's config_hash (recorded in every results row) is the sha256
+# of its own block plus `text` and the seed, so an edit to one baseline never invalidates another's rows.
+
+text:
+  fields: [subject, body]       # text only, as for the detectors: never sender, headers, URLs, attachments
+  join: "\n\n"                  # subject + join + body
+
+partitions:
+  train: train                  # 3,033 records: 2,299 traditional phishing + 734 Enron ham (step 04)
+  valid: valid                  # 337 records: 255 + 82; model selection and the sanity check only
+  eval: eval                    # the detector item set (configs/detection.yaml `items`), built by detect.items
+
+positive_class: phish           # label_pred = phish when the score reaches the threshold below
+strategy_key: supervised        # results/raw/baseline_{key}/supervised/{partition}.jsonl (runner schema)
+model_prefix: baseline_         # `model` field of every row: baseline_tfidf_lr, baseline_tfidf_svm, baseline_distilbert
+model_dir: models/baselines     # fitted models and the DistilBERT checkpoint (gitignored; hashes in the report)
+
+baselines:
+  tfidf_lr:
+    method: tfidf_logreg
+    eval_tier: laptop           # CPU; seconds per cell
+    features:
+      analyzer: word
+      ngram_range: [1, 2]
+      min_df: 2
+      lowercase: true
+      sublinear_tf: true
+      max_features: null
+    classifier:
+      type: LogisticRegression
+      solver: lbfgs
+      max_iter: 1000
+      class_weight: null        # no re-weighting: the training prior (76% phishing) is part of the protocol
+    C_grid: [0.1, 0.3, 1.0, 3.0, 10.0]
+    selection: {metric: f1_phish, partition: valid, tie: smallest_C}
+    threshold: {score: p_phish, rule: ">= 0.5"}
+  tfidf_svm:
+    method: tfidf_linsvm
+    eval_tier: laptop
+    features:
+      analyzer: word
+      ngram_range: [1, 2]
+      min_df: 2
+      lowercase: true
+      sublinear_tf: true
+      max_features: null
+    classifier:
+      type: LinearSVC
+      loss: squared_hinge
+      max_iter: 10000
+      class_weight: null
+    C_grid: [0.1, 0.3, 1.0, 3.0, 10.0]
+    selection: {metric: f1_phish, partition: valid, tie: smallest_C}
+    threshold: {score: decision_function, rule: "> 0"}
+  distilbert:
+    method: finetuned_transformer
+    eval_tier: colab_t4         # trained and evaluated on the Colab T4 (notebooks/cloud_baselines.ipynb)
+    pretrained: distilbert-base-uncased
+    revision: null              # Hugging Face snapshot used; the commit hash is recorded in the report
+    max_length: 512             # longer inputs are truncated (flag truncated_input per item, also in training)
+    epochs: 3
+    learning_rate: 2.0e-5
+    batch_size: 16
+    weight_decay: 0.01
+    warmup_ratio: 0.0
+    optimizer: AdamW
+    schedule: linear
+    precision: fp32             # no mixed precision: fewer sources of nondeterminism
+    deterministic: true         # torch.use_deterministic_algorithms(True), CUBLAS_WORKSPACE_CONFIG=:4096:8
+    selection: none             # no early stopping, no epoch selection: the model after the last epoch is used
+    threshold: {score: p_phish, rule: ">= 0.5"}

@@ -18,8 +18,12 @@ For every results/raw/{model}/{strategy}/eval.jsonl it verifies, without modifyi
     zero_shot one and the user text is identical, so for every item n_prompt_tokens(role) must exceed
     n_prompt_tokens(zero_shot); equality means the chat formatter dropped the system message (found for
     Mistral-7B on 2026-10-31, QUESTIONS.md item 13). The check is attached to every cell of the model.
+  - baselines (configs/baselines.yaml; results/raw/baseline_{key}/supervised/eval.jsonl): the same item-set,
+    duplicate, metadata and field checks; config_hash equal to the hash of the baseline's frozen config block;
+    model_hash equal to the one in reports/baselines_report.json; backend of the baseline's eval_tier; every
+    label_pred reproducible from the stored score with the fixed threshold rule; invalid false everywhere.
 No accuracy or any other score is computed. Writes reports/integrity_check.json, prints one line per cell and
-exits 1 if any cell fails or any (model, strategy) cell is missing.
+exits 1 if any cell fails or any (model, strategy) cell or baseline is missing.
 
 Usage: python scripts/06_check_integrity.py [--raw-dir results/raw] [--models m1,m2] [--strategies s1,s2]
 """
@@ -32,9 +36,14 @@ from collections import Counter
 from common import ROOT, load_config, write_json, open_utf8, extract_label
 from detect.items import load_records, load_partitions, eval_items, count_items
 from detect.prompts import load_prompt, load_fewshot, sha256_file
+from baselines.core import STRATEGY as BASELINE_STRATEGY, config_hash as baseline_config_hash, label_from_score
 
 REPORT = ROOT / "reports" / "integrity_check.json"
 RUN_REPORT = ROOT / "reports" / "detection_run_report.json"
+BASELINE_REPORT = ROOT / "reports" / "baselines_report.json"
+BASELINE_ROW_FIELDS = ("item_id", "partition", "condition", "label_true", "model", "strategy", "raw_output",
+                       "label_pred", "invalid", "score", "config_hash", "model_hash", "n_prompt_tokens",
+                       "n_output_tokens", "finish_reason", "latency_s", "truncated_input", "backend")
 # GPU model names that nvidia-smi reports on the Colab tiers of configs/models.yaml (the hardware is Colab's).
 TIER_GPU = {"colab_t4": "Tesla T4", "colab_l4": "NVIDIA L4"}
 ROW_FIELDS = ("item_id", "partition", "condition", "label_true", "model", "strategy", "raw_output", "label_pred",
@@ -164,11 +173,63 @@ def check_cell(path, model: str, strategy: str, items: dict, prompt_hash: str, m
             "failed_checks": sorted(k for k, v in c.items() if not v)}
 
 
+def check_baseline(path, key: str, entry: dict, bcfg: dict, items: dict, chash: str, brep, seed: int) -> dict:
+    """Integrity of one baseline's eval file (see module doc). model_hash comes from reports/baselines_report.json."""
+    rows, malformed = read_rows(path)
+    ids = [r.get("item_id") for r in rows]
+    have, expected = set(ids), set(items)
+    model_name = bcfg["model_prefix"] + key
+    rec = (brep or {}).get("baselines", {}).get(key)
+    model_sha = rec.get("model_hash") if rec else None
+    backend_expected = load_config("models.yaml")["tiers"][entry["eval_tier"]]["backend"]
+    rule, positive = entry["threshold"]["rule"], bcfg["positive_class"]
+    bad = Counter()
+    for r in rows:
+        if any(k not in r for k in BASELINE_ROW_FIELDS):
+            bad["fields"] += 1
+            continue
+        it = items.get(r["item_id"])
+        if it is not None and (r["partition"], r["condition"], r["label_true"]) != \
+                (it["partition"], it["condition"], it["label_true"]):
+            bad["item_metadata"] += 1
+        if r["model"] != model_name or r["strategy"] != BASELINE_STRATEGY:
+            bad["model_or_strategy_field"] += 1
+        if r["config_hash"] != chash:
+            bad["config_hash"] += 1
+        if model_sha is None or r["model_hash"] != model_sha:
+            bad["model_hash"] += 1
+        if r["backend"] != backend_expected:
+            bad["backend"] += 1
+        if label_from_score(r["score"], rule, positive) != r["label_pred"]:
+            bad["label_pred_not_reproducible"] += 1
+        if r["invalid"] is not False:
+            bad["invalid_flag"] += 1
+    c = {"parses": malformed == 0, "no_duplicates": len(have) == len(ids), "exact_item_set": have == expected,
+         "report_entry_present": rec is not None,
+         "report_consistent": bool(rec) and rec.get("config_hash") == chash
+         and rec.get("cells", {}).get("eval", {}).get("complete") is True
+         and rec.get("cells", {}).get("eval", {}).get("n") == len(rows)}
+    for k in ("fields", "item_metadata", "model_or_strategy_field", "config_hash", "model_hash", "backend",
+              "label_pred_not_reproducible", "invalid_flag"):
+        c[f"rows_{k}_ok"] = bad[k] == 0
+    return {"file": str(path.relative_to(ROOT)), "file_sha256": sha256_file(path), "baseline": key,
+            "model": model_name, "eval_tier": entry["eval_tier"], "backend_expected": backend_expected,
+            "pass": all(c.values()), "checks": c, "malformed_lines": malformed, "n_rows": len(rows),
+            "n_expected": len(expected), "missing": len(expected - have), "extra": len(have - expected),
+            "rows_bad": dict(bad), "config_hash": chash, "model_hash": model_sha,
+            "truncated_input": sum(1 for r in rows if r.get("truncated_input")),
+            "pred_counts": dict(Counter(r.get("label_pred") for r in rows)),
+            "items_by_partition_condition": count_items(
+                [{"partition": r["partition"], "condition": r["condition"]} for r in rows if "partition" in r]),
+            "failed_checks": sorted(k for k, v in c.items() if not v)}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw-dir", default=None, help="default: output.raw_dir of configs/detection.yaml")
     ap.add_argument("--models", default="", help="comma list; default all in configs/models.yaml")
     ap.add_argument("--strategies", default="", help="comma list; default all in configs/detection.yaml")
+    ap.add_argument("--baselines", default="", help="comma list; default all in configs/baselines.yaml; 'none' skips")
     a = ap.parse_args()
 
     dcfg, mcfg = load_config("detection.yaml"), load_config("models.yaml")
@@ -202,19 +263,41 @@ def main() -> int:
                   f"invalid {r['invalid']} ({r['invalid_rate'] * 100:.2f}%)  truncated {r['truncated_input']}  "
                   f"gpu {gpu}" + (f"  FAILED: {', '.join(r['failed_checks'])}" if not r["pass"] else ""))
 
+    # ---- baselines (configs/baselines.yaml) ----
+    bcfg, seed = load_config("baselines.yaml"), load_config()["seed"]
+    bkeys = [] if a.baselines == "none" else (a.baselines.split(",") if a.baselines else list(bcfg["baselines"]))
+    brep = json.loads(open_utf8(BASELINE_REPORT).read()) if BASELINE_REPORT.exists() else None
+    baselines, missing_baselines = {}, []
+    for k in bkeys:
+        entry = bcfg["baselines"][k]
+        path = raw_dir / (bcfg["model_prefix"] + k) / BASELINE_STRATEGY / "eval.jsonl"
+        if not path.exists():
+            missing_baselines.append(k)
+            print(f"MISSING baseline {k:15s} {path.relative_to(ROOT)}")
+            continue
+        r = check_baseline(path, k, entry, bcfg, items, baseline_config_hash(k, bcfg, seed), brep, seed)
+        baselines[k] = r
+        print(f"{'OK  ' if r['pass'] else 'FAIL'} baseline {k:15s} rows {r['n_rows']}/{r['n_expected']}  "
+              f"truncated {r['truncated_input']}  backend {r['backend_expected']}  preds {r['pred_counts']}"
+              + (f"  FAILED: {', '.join(r['failed_checks'])}" if not r["pass"] else ""))
+
     n_pass = sum(1 for r in cells.values() if r["pass"])
-    ok = n_pass == len(cells) and not missing
+    n_pass_b = sum(1 for r in baselines.values() if r["pass"])
+    ok = n_pass == len(cells) and not missing and n_pass_b == len(baselines) and not missing_baselines
     report = {"checked_at": now(), "raw_dir": str(raw_dir.relative_to(ROOT)), "n_expected_items": len(items),
               "expected_items_by_partition_condition": count_items(list(items.values())),
               "frozen_prompt_hashes": hashes, "frozen_model_sha256": {m: mcfg["models"][m]["sha256"] for m in models},
               "tier_gpu": TIER_GPU, "n_cells": len(cells), "n_pass": n_pass, "missing_cells": missing,
               "all_pass": ok, "system_text_delivered": delivered,
+              "baselines": {"n_checked": len(baselines), "n_pass": n_pass_b, "missing": missing_baselines,
+                            "cells": baselines},
               "totals": {"rows": sum(r["n_rows"] for r in cells.values()),
                          "invalid": sum(r["invalid"] for r in cells.values()),
                          "truncated_input": sum(r["truncated_input"] for r in cells.values())},
               "cells": cells}
     write_json(REPORT, report)
     print(f"{'ALL PASS' if ok else 'FAILED'}: {n_pass}/{len(cells)} cells pass, {len(missing)} missing; "
+          f"baselines {n_pass_b}/{len(baselines)} pass, {len(missing_baselines)} missing; "
           f"{report['totals']['rows']} rows, {report['totals']['invalid']} invalid, "
           f"{report['totals']['truncated_input']} truncated -> {REPORT.relative_to(ROOT)}")
     return 0 if ok else 1

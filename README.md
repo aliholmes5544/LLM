@@ -66,6 +66,7 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/06_smoke_dev.py` | every model x strategy on 20 dev items; gate: invalid rate <= 10 % per cell | `results/smoke_dev/`, `reports/smoke_dev_report.json` |
 | `scripts/06_compare_smoke.py` | agreement between two smoke runs (CPU laptop vs GPU Colab) | `reports/smoke_backend_agreement.json` |
 | `scripts/06_run_detection.py` | one resumable (model, strategy, partition) cell, one row per item, backend recorded | `results/raw/{model}/{strategy}/{partition}.jsonl`, `reports/detection_run_report.json` |
+| `scripts/06_run_baselines.py` | one (baseline, partition) cell: TF-IDF + LR / SVM (train on `train`, C on `valid`, laptop) or DistilBERT (Colab T4, `notebooks/cloud_baselines.ipynb`); runner schema, `config_hash` + `model_hash`, resumable, fixed thresholds | `results/raw/baseline_{key}/supervised/{valid,eval}.jsonl`, `reports/baselines_report.json` |
 | `scripts/06_check_integrity.py` | verifies every `results/raw/*/*/eval.jsonl`: exact item set, no duplicates, frozen prompt and model hashes, backend cuda, GPU of the eval tier, labels reproducible from raw outputs, system text delivered (role prompt longer than zero_shot) | `reports/integrity_check.json` |
 | `notebooks/cloud_run.ipynb` | Colab: clone at a tag, CUDA wheel, verified downloads, data from Drive, GPU smoke test, eval cells synced to Drive | `results/raw/`, `reports/` on Drive |
 
@@ -82,6 +83,11 @@ python -m unittest tests.test_system_text                    # system text reach
 # evaluation: notebooks/cloud_run.ipynb on Colab (all 24 cells complete at v0.6.3-detection-complete; the four Mistral
 # cells were rerun at TAG = v0.6.2-detection-ready with MODELS = "mistral-7b"), then copy results/raw and reports back
 python scripts/06_check_integrity.py                        # every cell: item set, hashes, backend, GPU, parser, system text
+python scripts/06_run_baselines.py --baseline tfidf_lr  --partition valid   # C selection + sanity F1 on valid (laptop)
+python scripts/06_run_baselines.py --baseline tfidf_lr  --partition eval    # same 5,207 items as the detectors
+python scripts/06_run_baselines.py --baseline tfidf_svm --partition valid
+python scripts/06_run_baselines.py --baseline tfidf_svm --partition eval
+# distilbert: notebooks/cloud_baselines.ipynb on a Colab T4 (trains once, checkpoint hash recorded), then copy back
 ```
 
 ## Status
@@ -89,5 +95,5 @@ python scripts/06_check_integrity.py                        # every cell: item s
 - [x] 01–04 data construction and audit (Section 3.2.1–3.2.4)
 - [x] 05 variant derivation + meaning checks on the development set (Section 3.2.3) — thresholds await the manual rating (05b)
 - [ ] 06 prompting / inference (Sections 3.4, 3.6)
-- [ ] 07 baselines (Section 3.5)
+- [~] 07 baselines (Section 3.5): tfidf_lr and tfidf_svm done on the laptop; distilbert on Colab pending
 - [ ] 08 evaluation and statistics (Section 3.7)

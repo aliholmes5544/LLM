@@ -5,7 +5,32 @@ in tests/test_resume.py. Found necessary on the first Colab resume (2026-10-29):
 every cell, so a complete cell must be skipped with exit code 0, not refused.
 """
 
+import json
+
+from common import read_text, open_utf8
+
 SKIP, RUN, FORCE = "skip", "run", "force"
+
+
+def read_rows(path) -> list:
+    """Rows of a results file (shared by 06_run_detection.py and 06_run_baselines.py). A truncated LAST line
+    (a copy taken while a row was being written, or a session killed mid-write) is dropped and the file
+    rewritten without it, so the item is simply rerun; a malformed line inside the file is refused."""
+    if not path.exists():
+        return []
+    lines = [l for l in read_text(path).split("\n") if l.strip()]
+    rows = []
+    for n, line in enumerate(lines):
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            if n == len(lines) - 1:
+                print(f"{path.name}: dropping a truncated last line ({len(line)} chars); the item will be rerun")
+                with open_utf8(path, "w") as f:
+                    f.write("".join(l + "\n" for l in lines[:-1]))
+                break
+            raise SystemExit(f"{path}: malformed row {n + 1} inside the file; refusing to continue")
+    return rows
 
 
 def hashes_match(rows: list, prompt_hash: str, model_sha256) -> bool:

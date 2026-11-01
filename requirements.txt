@@ -20,3 +20,6 @@ llama-cpp-python==0.3.36
 
 # Step 05a (rating workbooks, Section 3.2.3)
 openpyxl==3.1.5
+
+# Step 06 baselines (TF-IDF + LR / SVM on the laptop; DistilBERT uses torch + transformers above, on Colab)
+scikit-learn==1.9.1

@@ -36,7 +36,7 @@ from common import ROOT, load_config, read_text, write_json, open_utf8, extract_
 from detect.backend import Detector, gpu_name, resolve_backend
 from detect.items import load_records, load_partitions, eval_items, dev_items, count_items
 from detect.prompts import load_prompt, load_fewshot, render, messages, sha256_file
-from detect.resume import decide, SKIP, FORCE
+from detect.resume import decide, read_rows, SKIP, FORCE
 from detect.stats import cell_stats
 
 REPORT = ROOT / "reports" / "detection_run_report.json"
@@ -57,26 +57,6 @@ def git(*args) -> str:
 def frozen_is_committed() -> bool:
     r = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", *FROZEN], cwd=ROOT, capture_output=True)
     return r.returncode == 0
-
-
-def read_rows(path) -> list:
-    """Rows of a results file. A truncated LAST line (a copy taken while a row was being written, or a
-    session killed mid-write) is dropped and the file rewritten without it, so the item is simply rerun."""
-    if not path.exists():
-        return []
-    lines = [l for l in read_text(path).split("\n") if l.strip()]
-    rows = []
-    for n, line in enumerate(lines):
-        try:
-            rows.append(json.loads(line))
-        except json.JSONDecodeError:
-            if n == len(lines) - 1:
-                print(f"{path.name}: dropping a truncated last line ({len(line)} chars); the item will be rerun")
-                with open_utf8(path, "w") as f:
-                    f.write("".join(l + "\n" for l in lines[:-1]))
-                break
-            raise SystemExit(f"{path}: malformed row {n + 1} inside the file; refusing to continue")
-    return rows
 
 
 def main() -> int:
