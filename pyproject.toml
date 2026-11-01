@@ -1,0 +1,34 @@
+# SpearShift: project metadata and the package name. The numbered scripts run from the repository root
+# (python scripts/NN_name.py, or make evaluate MODEL=<key>); nothing is installed as an importable package.
+# Runtime dependencies are pinned in requirements.txt (laptop: data, variants, baselines, scoring),
+# requirements-detect.txt (Colab detection) and requirements-baselines.txt (Colab DistilBERT), so this file
+# declares none.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spearshift"
+version = "1.0.0"
+description = "SpearShift: an evaluation framework for open-weight LLM detectors under AI-rewritten spear-phishing"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Bakhit Ali Mashan"}]
+keywords = ["spear-phishing", "phishing detection", "large language models", "open-weight models", "robustness",
+            "paraphrase", "obfuscation", "evaluation framework", "reproducibility"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Security",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/aliholmes5544/LLM"
+
+[tool.setuptools]
+packages = []

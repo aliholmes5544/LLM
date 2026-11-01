@@ -1425,3 +1425,25 @@ pre-registration in one respect: the criterion of all six models failing yielded
 than 30, so a post hoc extension with a looser criterion (at least four of six) was added after the quantitative
 results were fixed. It is labelled as post hoc throughout and no quantitative claim rests on it."
 
+## SpearShift: framework name, extension path and citation metadata (2026-11-01)
+
+**What changed.** The framework (Contribution 4) is named **SpearShift** (package name `spearshift`;
+`pyproject.toml`, `CITATION.cff`, `LICENSE`). Script paths are unchanged. A Makefile target
+`make evaluate MODEL=<key> [TIER=...]` adds a detector described by one YAML block in `configs/models.yaml`:
+download and sha256 check, dev smoke gate, the four strategies on the evaluation items (GPU tier enforced),
+integrity check into `reports/integrity_check_<key>.json`, and scoring through `scripts/07_score_model.py` into
+`results/scores/additional/<key>/` with the same bootstrap streams, exact McNemar test and Holm correction. The
+six pre-registered models, the ensemble, the families and the committed CSVs stay byte-identical
+(`tests/test_score_model.py`: scoring one of the six alone reproduces its frozen rows; the frozen files keep the
+hashes of `reports/scoring_report.json`). Licences as recorded in CITATION.cff: MIT for the code; CC BY-NC-SA 4.0
+for the derived variant dataset and the paraphrase cache (the licence of the Nahmias et al., 2024 data); the
+E-PhishLLM source has no licence and is never redistributed.
+
+**Wording for Section 3.7 (implementation) and Section 5.3 (contributions):** "The framework, SpearShift, is
+released as code with its configuration, reports and result tables (MIT licence; the derived variants under
+CC BY-NC-SA 4.0). A further detector is evaluated with one configuration block and one command
+(`make evaluate MODEL=<key>`), which runs the download and hash check, the development-set smoke gate, the four
+prompting strategies on the evaluation items, the integrity check and the scoring; the pre-registered scores of
+the six models are frozen and reproduced byte for byte, and an added model is reported beside them with its own
+test families."
+

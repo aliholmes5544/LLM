@@ -1,10 +1,15 @@
-# LLM vs. LLM — Evaluation Framework
+# SpearShift: evaluation framework for open-weight LLM detectors under AI-rewritten spear-phishing
 
-Reproducible pipeline for *Evaluating the Effectiveness of Open-Source Language Models
-in Detecting AI-Generated Spear-Phishing Emails* (Master's thesis).
+SpearShift (package name `spearshift`) is the reproducible evaluation framework of the Master's thesis
+*LLM vs. LLM: Evaluating the Effectiveness of Open-Source Language Models in Detecting AI-Generated
+Spear-Phishing Emails* (Bakhit Ali Mashan, 2026). It builds a benchmark from published corpora, derives
+paraphrased and obfuscated variants under meaning checks, runs open-weight detectors under four prompting
+strategies against supervised baselines, and scores them with pre-registered statistics. Cite it with
+`CITATION.cff`; the code is MIT (`LICENSE`), the derived data CC BY-NC-SA 4.0 (`docs/DATASHEET.md`).
 
-This repository contains code only. Datasets are downloaded by script at pinned commits
-and are **not redistributed** (see `data/raw/provenance.json` after step 1 for licenses).
+This repository contains code, configuration, reports and result tables. Datasets are downloaded by script
+at pinned commits and are **not redistributed** (see `data/raw/provenance.json` after step 1 for licenses).
+`make evaluate MODEL=<key>` adds a detector model with one YAML block (section "Adding a new model").
 
 ## Setup
 
@@ -70,6 +75,7 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/07_build_items.py` | step 07 item table: hash-verified join of the 27 eval files with partition, condition, item class, cluster (source e-mail) and body length; no metric | `results/scores/items.parquet`, `results/scores/pairs.csv`, `reports/items_build_report.json` |
 | `scripts/07_score.py` | step 07 step 3: primary metrics with cluster-bootstrap CIs, paired deltas with exact McNemar and Holm per family, F-RQ2/F-RQ3 contrasts, majority ensemble; `--check` re-runs and compares byte for byte | `results/scores/{metrics_long,deltas_long,contrasts,ensemble_predictions}.csv`, `reports/scoring_report.json` |
 | `scripts/07_secondary.py` | step 07 secondary analyses: ensemble votes, CoT cue frequency and cue change by outcome (frozen lexicon), hard core and its seeded coding sample (8 pre-registered + 30 post hoc, item 17), cost-robustness frontier; `--check` | `results/scores/{ensemble_votes,cues_*,hardcore_*,frontier}.csv`, `reports/hardcore_sample.csv`, `reports/secondary_report.json` |
+| `scripts/07_score_model.py` | SpearShift extension path (`make evaluate`): scores one additional model with the functions of `07_score.py` into separate files, leaving the pre-registered scores byte-identical (`tests/test_score_model.py`); `--check` | `results/scores/additional/<key>/{items.parquet,metrics_long,deltas_long}.csv`, `reports/scoring_additional_<key>.json` |
 | `scripts/07_tables_figures.py` | LaTeX tables T1 to T11 and A1 (booktabs, no caption) and figures F1 to F7 (300 dpi) from the CSVs | `results/tables/tab_*.tex`, `figures/ch04_*_eng.png`, `reports/tables_figures_report.json` |
 | `scripts/07_freeze_lexicon.py` | step 07 step 2: applies the frozen CoT cue lexicon (`configs/cue_lexicon.yaml`, `scripts/scoring/cues.py`) to the dev rationales only (six `cot/dev.jsonl` cells + smoke sets), reports counts, polarity and seeded examples; `--check` reproduces the report | `reports/cue_lexicon_dev_report.json` |
 | `scripts/06_check_integrity.py` | verifies every `results/raw/*/*/eval.jsonl`: exact item set, no duplicates, frozen prompt and model hashes, backend cuda, GPU of the eval tier, labels reproducible from raw outputs, system text delivered (role prompt longer than zero_shot) | `reports/integrity_check.json` |
@@ -100,10 +106,51 @@ python scripts/07_tables_figures.py         # tables and figures for Chapter 4
 # distilbert: notebooks/cloud_baselines.ipynb on a Colab T4 (trains once, checkpoint hash recorded), then copy back
 ```
 
+## Adding a new model (SpearShift extension path)
+
+One YAML block in `configs/models.yaml` describes a detector; everything else is derived from it. Copy an
+existing block and set, at least:
+
+```yaml
+  my-model-9b:                                   # key: used in paths, tables and make
+    name: My-Model-9B-Instruct                   # model card name
+    params_b: 9
+    original_repo: org/My-Model-9B-Instruct      # gated repositories need HF_TOKEN in .env
+    gguf_repo: someone/My-Model-9B-Instruct-GGUF
+    gguf_file: My-Model-9B-Instruct-Q4_K_M.gguf  # Q4_K_M, like the six pre-registered models
+    gguf_bytes: 0                                # size listed by the repository (sanity check only)
+    sha256: null                                 # the downloader fills it on first download, then verifies it
+    license: "apache-2.0"                        # verbatim from the model card
+    license_class: open-source                   # or open-weight
+    chat_template: embedded
+    system_role: true                            # false if the template has no system turn (text is prepended)
+    eval_tier: colab_t4                          # colab_t4 up to about 14B, colab_l4 for larger models
+    smoke_tiers: [laptop, colab_t4]
+```
+
+The model's family must not be the paraphrase model's family (`excluded_from_detectors` in
+`configs/variants.yaml`; the downloader refuses it). Then run, on the GPU tier named in the block:
+
+```bash
+make evaluate MODEL=my-model-9b                 # TIER defaults to eval_tier; TIER=laptop runs the smoke test only
+```
+
+The target sequences the numbered scripts and stops at the first failure: `06_download_models.py`
+(download, sha256), `06_smoke_dev.py` on dev with the invalid-rate gate (`reports/smoke_dev_<key>.json`),
+`06_run_detection.py` for the four strategies on the evaluation items (refused off the model's GPU tier, and
+refused when prompts or configs are not committed), `06_check_integrity.py --models <key>` into
+`reports/integrity_check_<key>.json`, and `07_score_model.py`, which writes the model's metrics and paired
+deltas with the same bootstrap streams, McNemar test and Holm correction as the pre-registered scores into
+`results/scores/additional/<key>/`. The six pre-registered models, the ensemble, the families F-RQ4, F-RQ2,
+F-RQ3 and the committed CSVs are frozen: the target ends with `07_score.py --check`, and
+`tests/test_score_model.py` verifies that scoring a model alone reproduces its frozen rows. An added model is
+reported next to the frozen tables as a post-registration addition with its own families `A-<key>` and
+`A-<key>-<strategy>`; it enters neither the ensemble nor the tables and figures of Chapter 4.
+
 ## Status
 
 - [x] 01–04 data construction and audit (Section 3.2.1–3.2.4)
 - [x] 05 variant derivation + meaning checks on the development set (Section 3.2.3) — thresholds await the manual rating (05b)
-- [ ] 06 prompting / inference (Sections 3.4, 3.6)
+- [x] 06 prompting / inference (Sections 3.4, 3.6): 24 cells on Colab GPUs, all passing the integrity check
 - [x] 07 baselines (Section 3.5): tfidf_lr, tfidf_svm (laptop) and distilbert (Colab T4); 3/3 pass the integrity check
 - [x] 08 evaluation and statistics (Section 4.3, 4.5): scores computed once (v0.7.1-scored); tables and figures in results/tables and figures/

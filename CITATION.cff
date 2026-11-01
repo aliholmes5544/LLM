@@ -1,0 +1,37 @@
+# Citation metadata for SpearShift (Citation File Format 1.2.0; GitHub and Zenodo read this file).
+# The DOI below is a placeholder until the Zenodo deposit of the v1.0.0-thesis archive mints one.
+cff-version: 1.2.0
+message: "If you use SpearShift, please cite it as below."
+type: software
+title: "SpearShift: an evaluation framework for open-weight LLM detectors under AI-rewritten spear-phishing"
+authors:
+  - family-names: Mashan
+    given-names: Bakhit Ali
+version: v1.0.0-thesis
+date-released: 2026-11-01
+repository-code: "https://github.com/aliholmes5544/LLM"
+doi: 10.5281/zenodo.XXXXXXX   # placeholder: replace with the DOI minted by Zenodo for the v1.0.0-thesis deposit
+license:
+  - MIT
+  - CC-BY-NC-SA-4.0
+keywords:
+  - spear-phishing
+  - phishing detection
+  - large language models
+  - open-weight models
+  - robustness
+  - paraphrase
+  - obfuscation
+  - evaluation framework
+  - reproducibility
+abstract: >-
+  SpearShift is the reproducible evaluation framework of the Master's thesis "LLM vs. LLM: Evaluating the
+  Effectiveness of Open-Source Language Models in Detecting AI-Generated Spear-Phishing Emails". It builds a
+  benchmark from published corpora (LLM-generated spear-phishing e-mails of Nahmias et al., 2024; Enron and
+  SpamAssassin legitimate mail; the English part of E-PhishLLM, Pajola et al., 2025), derives paraphrased and
+  obfuscated variants under meaning checks, runs six open-weight detectors (GGUF Q4_K_M, llama.cpp) under four
+  prompting strategies against three supervised baselines, and scores them with cluster-bootstrap confidence
+  intervals, paired exact McNemar tests and Holm correction within pre-registered families. Licences: the code
+  is MIT; the derived variant dataset and the generation cache are CC BY-NC-SA 4.0, the licence of the Nahmias
+  et al. (2024) data they derive from; the E-PhishLLM source carries no licence and is downloaded by script,
+  never redistributed.

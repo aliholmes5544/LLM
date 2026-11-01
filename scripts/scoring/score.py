@@ -46,12 +46,17 @@ def group_of(item_class: str, condition: str) -> str:
     return f"phish_{condition}" if item_class == "phish_variant" else item_class
 
 
-def prepare(items: pd.DataFrame) -> pd.DataFrame:
-    """Add the ensemble rows, the item group and the primary correctness flag (invalid = incorrect)."""
-    items = pd.concat([items, ensemble_rows(items, MODELS)], ignore_index=True)
+def annotate(items: pd.DataFrame) -> pd.DataFrame:
+    """Add the item group and the primary correctness flag (invalid = incorrect); shared with 07_score_model.py."""
+    items = items.copy()
     items["group"] = [group_of(a, b) for a, b in zip(items["item_class"], items["condition"])]
     items["correct"] = (items["label_pred"] == items["label_true"]) & ~items["invalid"]
     return items
+
+
+def prepare(items: pd.DataFrame) -> pd.DataFrame:
+    """Add the ensemble rows, the item group and the primary correctness flag (invalid = incorrect)."""
+    return annotate(pd.concat([items, ensemble_rows(items, MODELS)], ignore_index=True))
 
 
 def cell_order(items: pd.DataFrame) -> list:

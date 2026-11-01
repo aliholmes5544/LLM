@@ -25,7 +25,7 @@ For every results/raw/{model}/{strategy}/eval.jsonl it verifies, without modifyi
 No accuracy or any other score is computed. Writes reports/integrity_check.json, prints one line per cell and
 exits 1 if any cell fails or any (model, strategy) cell or baseline is missing.
 
-Usage: python scripts/06_check_integrity.py [--raw-dir results/raw] [--models m1,m2] [--strategies s1,s2]
+Usage: python scripts/06_check_integrity.py [--raw-dir results/raw] [--models m1,m2] [--strategies s1,s2] [--report PATH]
 """
 import argparse
 import datetime as dt
@@ -224,13 +224,21 @@ def check_baseline(path, key: str, entry: dict, bcfg: dict, items: dict, chash: 
             "failed_checks": sorted(k for k, v in c.items() if not v)}
 
 
+def rel(path) -> str:
+    """Path relative to the repo when inside it, else as given (a --report outside the repo)."""
+    return str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--raw-dir", default=None, help="default: output.raw_dir of configs/detection.yaml")
     ap.add_argument("--models", default="", help="comma list; default all in configs/models.yaml")
     ap.add_argument("--strategies", default="", help="comma list; default all in configs/detection.yaml")
     ap.add_argument("--baselines", default="", help="comma list; default all in configs/baselines.yaml; 'none' skips")
+    ap.add_argument("--report", default=None, help="output path; default reports/integrity_check.json (make evaluate "
+                                                   "writes reports/integrity_check_<model>.json so the committed report stays)")
     a = ap.parse_args()
+    report_path = ROOT / a.report if a.report else REPORT
 
     dcfg, mcfg = load_config("detection.yaml"), load_config("models.yaml")
     raw_dir = ROOT / (a.raw_dir or dcfg["output"]["raw_dir"])
@@ -295,11 +303,11 @@ def main() -> int:
                          "invalid": sum(r["invalid"] for r in cells.values()),
                          "truncated_input": sum(r["truncated_input"] for r in cells.values())},
               "cells": cells}
-    write_json(REPORT, report)
+    write_json(report_path, report)
     print(f"{'ALL PASS' if ok else 'FAILED'}: {n_pass}/{len(cells)} cells pass, {len(missing)} missing; "
           f"baselines {n_pass_b}/{len(baselines)} pass, {len(missing_baselines)} missing; "
           f"{report['totals']['rows']} rows, {report['totals']['invalid']} invalid, "
-          f"{report['totals']['truncated_input']} truncated -> {REPORT.relative_to(ROOT)}")
+          f"{report['totals']['truncated_input']} truncated -> {rel(report_path)}")
     return 0 if ok else 1
 
 
