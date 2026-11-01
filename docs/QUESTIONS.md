@@ -178,6 +178,25 @@
     Status: declared, not implemented. The git commit that records this item precedes every evaluation
     metric in the repository; any later change to (a) to (e) is logged here with its date and reason.
 
+    **Refinements logged 2026-11-01, before any score was computed (decisions on item 15, author):**
+    (1) Families named by the thesis research questions: F-RQ4 = the 30 zero_shot McNemar tests (24 phishing
+    original-vs-variant, 6 control), the headline family; F-RQ2 = 8 size contrasts (Qwen 7B vs 14B, Gemma 9B
+    vs 27B, delta-sens per phishing condition, zero_shot); F-RQ3 = 36 strategy-vs-zero_shot contrasts (3
+    strategies x 6 models x para_high and obf_high). RQ1 (capability, generalisation) is descriptive with CIs
+    and has no test family. Secondary families, Holm within each: the McNemar tests of each other strategy
+    (one family per strategy), of the three baselines (one family) and of the ensemble (one family).
+    (2) A contrast tested by the cluster bootstrap gets a two-sided percentile p = 2 x min(P(contrast <= 0),
+    P(contrast >= 0)), floored at 1/B; the CI is the primary report. Reason: item 12e names Holm for every
+    family but defines no p-value for a bootstrap contrast.
+    (3) Item 12b: the cue-change split is four-way (stayed correct / flipped to incorrect / stayed incorrect /
+    flipped to correct); it contains the two-way split declared above. Reason: the two added groups are needed
+    to read a flip against its base rate.
+    (4) Item 12c: "all six" = the six language models under zero_shot (baselines excluded); invalid counts as
+    misclassified; the 30-item sample is stratified by the four phishing conditions, proportional allocation
+    with a minimum of 5 per condition when available, seed 2026. Reason: the strata were unspecified.
+    (5) Power note for Section 4.8: a priori, 10% discordant pairs, 5-point paired drop, n = 334, alpha 0.05;
+    the observed discordance is reported post hoc as a labelled descriptive check.
+
 ## Step 06 integrity check of the evaluation results (2026-10-31)
 
 13. **Mistral-7B received no system message in any strategy (found by 06_check_integrity.py, 2026-10-31).**
@@ -314,3 +333,28 @@
     the bootstrap RNG of a table is derive_rng(2026, "bootstrap", <table name>) in the project's seeding scheme,
     so every table is reproducible independently of execution order; the hard-core "body length" is the word
     count of the scored text (body_words in items.parquet).
+
+    **Answered 2026-11-01 (author), (a) to (f); (g) and (h) pending.**
+    (a) Thesis numbering everywhere in outputs, tables and wording: RQ1 effectiveness (capability on core
+    originals and the generalisation set; descriptive with CIs, no test family); RQ2 model comparison (family
+    F-RQ2 = the two size pairs Qwen 7B/14B and Gemma 9B/27B, contrasts on delta-sens per phishing condition
+    under zero_shot = 8 contrasts; every other model comparison descriptive); RQ3 prompting (family F-RQ3 =
+    3 strategies x 6 models x 2 conditions = 36 contrasts); RQ4 robustness (family F-RQ4 = the 30 zero_shot
+    McNemar tests: 24 phishing + 6 control). TASK_07 relabelled accordingly.
+    (b) The McNemar tests under few_shot, cot and role, for the three baselines and for the ensemble are
+    computed and reported with Holm applied within each as its own secondary family (one family per strategy,
+    one for the baselines, one for the ensemble). They are secondary; F-RQ4 is the headline.
+    (c) Two-sided percentile-bootstrap p for every contrast: p = 2 x min(P(contrast <= 0), P(contrast >= 0)),
+    floored at 1/B; stated in the Section 4.3 wording. CIs remain the primary report.
+    (d) Confirmed: the four-way split (stayed correct / flipped to incorrect / stayed incorrect / flipped to
+    correct) refines the two-way split of item 12b and contains it; logged in item 12 on 2026-11-01.
+    (e) Confirmed: "all six" = the six language models under zero_shot, baselines excluded; invalid counts as
+    misclassified. Strata = the four phishing conditions; allocation proportional to the number of all-six
+    failures per condition with a minimum of 5 per condition when available; seed 2026.
+    (f) A priori: assume 10% discordant pairs and report the McNemar power for a 5-point paired drop (n = 334,
+    alpha 0.05); also report the observed discordance post hoc as a descriptive check, labelled as such.
+    (g) Partial answer received (the message was cut off): run the cot strategy on the full dev partition for
+    all six models on Colab (uniform GPU backend, dev only) rather than on the laptop, with a notebook
+    parameter set for PARTITION = dev and STRATEGIES = cot. The rest of the answer (and whether dev variants
+    are included, and the tag to run from) is awaited before step 2 starts.
+    (h) Not yet answered.

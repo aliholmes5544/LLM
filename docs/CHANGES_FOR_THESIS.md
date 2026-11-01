@@ -1003,3 +1003,22 @@ inference was run; everything below is configuration and code, frozen only after
   no correctness column (asserted by a test); the pre-registration of QUESTIONS.md item 12 stands.
 - Nine points where TASK_07 is ambiguous or extends item 12 are written to QUESTIONS.md item 15 for the author;
   (g), the basis of the CoT cue lexicon, must be answered before step 2, the others before step 3.
+
+## Step 07: decisions on QUESTIONS.md item 15 (a) to (f) logged; RQ labels fixed (2026-11-01, before any score)
+
+- The author answered item 15 (a) to (f) on 2026-11-01; the decisions are recorded under item 15, the ones that
+  refine the pre-registration are logged under item 12 with the date, and docs/TASK_07_scoring.md now uses the
+  thesis numbering: RQ1 effectiveness (descriptive, no test family), RQ2 model comparison (F-RQ2 = 8 size
+  contrasts), RQ3 prompting (F-RQ3 = 36 strategy contrasts), RQ4 robustness (F-RQ4 = 30 zero_shot McNemar
+  tests, the headline family); secondary Holm families for the other strategies, the baselines and the
+  ensemble; bootstrap-contrast p two-sided percentile floored at 1/B with the CI primary; four-way cue-change
+  split; hard-core strata and sample rule; a priori power assumption (10% discordance). Still no metric
+  computed. (g) (basis of the cue lexicon) and (h) (sensitivity analysis on paired deltas) are awaited.
+- Wording for Section 4.3 (statistics; to be completed in step 3): "Confidence intervals are 95% percentile
+  intervals from a cluster bootstrap with the original e-mail as the resampling unit (B = 2000). Paired
+  original-versus-variant comparisons use the exact McNemar test; contrasts between models or between prompting
+  strategies are differences of robustness deltas, with a two-sided bootstrap p-value equal to twice the
+  smaller tail proportion of the bootstrap distribution, floored at 1/B. p-values are Holm-corrected within
+  each family of tests, one family per research question (the 30 zero-shot robustness tests for RQ4, the 8 size
+  contrasts for RQ2, the 36 strategy contrasts for RQ3), and reported alongside their uncorrected values and
+  the effect size with its interval. Effectiveness (RQ1) is reported descriptively with intervals."

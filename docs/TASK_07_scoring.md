@@ -17,7 +17,7 @@ All rules in `CLAUDE.md` apply. Step 07 **reads** results and **never** touches 
 | `results/smoke_dev/`, `results/smoke_gpu/` (dev only) | building the CoT cue lexicon (item 12b) before it touches eval |
 | `docs/QUESTIONS.md` item 12 | the plan |
 
-Research questions (take the exact wording from `README.md` / `docs/METHODOLOGY_3.2.md`): RQ1 robustness of open-weight detectors to AI-generated paraphrase/obfuscation variants; RQ2 effect of model size; RQ3 effect of prompting strategy (reference condition: `zero_shot`).
+Research questions (thesis numbering, PROJECT_STATE section 2 and Table 3.1; relabelled 2026-11-01, QUESTIONS.md item 15a): **RQ1** effectiveness (capability on core originals and the generalisation set; descriptive with CIs, no test family); **RQ2** comparison across open models and baselines (test family = the two size pairs only); **RQ3** zero-shot vs prompt-engineered (reference condition: `zero_shot`); **RQ4** robustness of open-weight detectors to AI-generated paraphrase/obfuscation variants (the headline family).
 
 ## 1. Item classes and pairing
 
@@ -35,7 +35,7 @@ Research questions (take the exact wording from `README.md` / `docs/METHODOLOGY_
 | `spec(c)` | specificity (recall on legitimate) under c ∈ {original_core_neg, original_ctrl_modern, para_high_ctrl} |
 | `acc`, `bal_acc`, `f1_phish` | on **core originals only** (core_pos + core_neg + ctrl_modern_legit) — the "baseline capability" row |
 | `invalid_rate` | share of invalid outputs per cell (and per condition) |
-| **`Δsens(c)`** | `sens(original, paired) − sens(c)` — **the primary outcome** (RQ1) |
+| **`Δsens(c)`** | `sens(original, paired) − sens(c)` — **the primary outcome** (RQ4) |
 | **`Δspec(para_high_ctrl)`** | `spec(original, paired) − spec(para_high_ctrl)` — the control delta: a detector that "fails" on paraphrased legitimate mail is not detecting phishing but paraphrase |
 | `gen_sens`, `gen_spec` | on `gen_phish`, `gen_legit` |
 
@@ -45,15 +45,15 @@ Invalid predictions are scored as **incorrect** in the primary analysis. A **sen
 
 - **Cluster bootstrap** CIs (95 %, percentile): resample clusters (source e-mails) with replacement, `B = 2000`, `seed = 2026`, for every metric and every delta. One RNG stream per table, seeded deterministically from the table name, so tables are independent of execution order.
 - **McNemar** (exact binomial on discordant pairs) for every paired original-vs-variant comparison (per cell × condition).
-- **Holm** correction within each family, uncorrected p also shown. Families: **F-RQ1** = all paired original-vs-variant tests under `zero_shot` (6 models × 4 phishing conditions + 6 control tests); **F-RQ2** = size contrasts (qwen 7B vs 14B, gemma 9B vs 27B) on Δsens per condition under `zero_shot`, tested by cluster-bootstrap difference of deltas; **F-RQ3** = strategy-vs-`zero_shot` contrasts per model on Δsens(para_high) and Δsens(obf_high) (3 strategies × 6 models × 2 conditions), same bootstrap contrast.
+- **Holm** correction within each family, uncorrected p also shown. Primary families (QUESTIONS.md item 15a, 2026-11-01): **F-RQ4** = all paired original-vs-variant McNemar tests under `zero_shot` (6 models × 4 phishing conditions + 6 control tests = 30), the headline family; **F-RQ2** = size contrasts (qwen 7B vs 14B, gemma 9B vs 27B) on Δsens per phishing condition under `zero_shot` (8), tested by cluster-bootstrap difference of deltas; **F-RQ3** = strategy-vs-`zero_shot` contrasts per model on Δsens(para_high) and Δsens(obf_high) (3 strategies × 6 models × 2 conditions = 36), same bootstrap contrast. RQ1 has no test family. Secondary families (item 15b), Holm within each: the McNemar tests of each other strategy (one family per strategy), of the three baselines (one family) and of the ensemble (one family). **p of a bootstrap contrast** (item 15c): two-sided percentile p = 2 × min(P(contrast ≤ 0), P(contrast ≥ 0)), floored at 1/B; the CI is the primary report.
 - Effect sizes: differences of proportions with CIs; no p-value is reported without its effect size.
-- Power note (descriptive, for §4.8): with 334 paired phishing originals, the McNemar test has ≥ 80 % power to detect a ≥ 5-point paired drop at α = 0.05 under typical discordance; state the computed figure.
+- Power note (descriptive, for §4.8; item 15f): a priori, assume 10 % discordant pairs and report the McNemar power for a 5-point paired drop with 334 paired phishing originals at α = 0.05 (state the computed figure); also report the observed discordance of the `zero_shot` cells post hoc as a descriptive check, labelled as such.
 
 ## 4. Secondary analyses (item 12 a–d; pre-registered, computed after §2–3, nothing re-tuned)
 
 - **(a) Ensemble:** per strategy, majority vote of the six detectors; invalid = abstention; 3–3 or < 4 valid votes = invalid. Scored exactly as a seventh detector in every table.
 - **(b) CoT cue analysis:** lexicon (regex per category: urgency, link/URL, sender/domain mismatch, credential/payment request, grammar/spelling, impersonation/authority, attachment, generic greeting) **built and frozen on dev CoT outputs** (`results/smoke_*`), hash recorded, then applied to eval `cot` raw outputs. Report: cue frequency per model × condition; for each original–variant pair, cue presence change, split by prediction outcome (stayed correct / flipped to incorrect / stayed incorrect / flipped to correct). One figure, one table.
-- **(c) Hard core:** under `zero_shot`, items misclassified by all six vs by none; describe by condition, body length, source, partition. Seeded stratified sample of **30** all-six failures → `reports/hardcore_sample.csv` with columns for the author's manual coding (`failure_type`, `note`), plus a one-page coding guide. Descriptive only.
+- **(c) Hard core:** under `zero_shot`, items misclassified by all six language models (baselines excluded; invalid counts as misclassified) vs by none; describe by condition, body length, source, partition. Seeded (2026) stratified sample of **30** all-six failures, strata = the four phishing conditions, allocation proportional to the failures per condition with a minimum of 5 per condition when available (item 15e), → `reports/hardcore_sample.csv` with columns for the author's manual coding (`failure_type`, `note`), plus a one-page coding guide. Descriptive only.
 - **(d) Cost–robustness frontier:** x = median latency per inference (GPU, from the run reports), y = Δsens(para_high) (and obf_high as a second panel), one point per model × strategy; baselines as reference marks.
 
 ## 5. Outputs
@@ -62,7 +62,7 @@ Invalid predictions are scored as **incorrect** in the primary analysis. A **sen
 |---|---|
 | `results/scores/metrics_long.csv` | one row per (detector, strategy, partition_set, condition, metric, n, value, ci_lo, ci_hi, analysis ∈ {primary, no_invalid}) |
 | `results/scores/deltas_long.csv` | one row per (detector, strategy, condition, n_pairs, delta, ci_lo, ci_hi, mcnemar_p, holm_p, family) |
-| `results/scores/contrasts.csv` | RQ2 and RQ3 contrasts with CIs and Holm p |
+| `results/scores/contrasts.csv` | RQ2 and RQ3 contrasts with CIs, bootstrap p and Holm p |
 | `results/scores/ensemble_*.csv`, `cues_*.csv`, `hardcore_*.csv`, `frontier.csv` | secondary analyses |
 | `results/tables/tab_*.tex` | booktabs tables ready for `\input` (labels `tab:...` chosen by the author later; no `\section` or `\caption` inside the file, caption text proposed in the report) |
 | `figures/ch04_*_eng.png` | 300 dpi, consistent style, colour-blind-safe palette, no title inside the image; one PNG per figure listed in §6 |
