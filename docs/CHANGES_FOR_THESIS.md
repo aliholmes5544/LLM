@@ -917,3 +917,21 @@ inference was run; everything below is configuration and code, frozen only after
   1.000, which confirms that the pipeline is sound but, since validation and training share one
   distribution, says nothing about the spear-phishing evaluation. Baseline predictions are stored in the same
   one-row-per-item format as the language-model outputs and pass the same integrity check."
+
+## Proprietary reference dropped (2026-11-01, QUESTIONS.md item 14; tag v0.6.4-baselines-ready)
+
+- Decision (author, 2026-11-01): the optional proprietary zero-shot reference of TASK_06 section 3 is not run.
+  Reasons: a proprietary model is outside the scope set in Section 1.6 (open models run locally, no hosted
+  API); the licence status of the E-PhishLLM e-mails does not clearly permit their transfer to a third-party
+  API; and a proprietary comparison belongs to future work. `proprietary_ref` is removed from the TASK_06
+  definition of done and from CLAUDE.md; scripts/06_run_proprietary.py is not written. The repository is
+  tagged v0.6.4-baselines-ready at this state (detector cells complete, TF-IDF baselines complete, DistilBERT
+  prepared for Colab).
+- Wording for Section 3.5 / 4.4 (Baselines): "No proprietary model is included as a point of comparison: the
+  study evaluates open models run locally (Section 1.6), and the licence terms of one of the evaluation corpora
+  do not clearly permit sending its messages to an external service."
+- Wording for Section 5.5 (Future work): "A comparison with a proprietary model under the same zero-shot prompt
+  would place the open models' results against the strongest commercially available detector; it was not
+  attempted here because the data licences do not clearly permit transfer to a third-party service, and it
+  would require either a corpus released under terms that allow it or a provider agreement on retention and
+  training use."

@@ -237,3 +237,8 @@
     variants, core_neg, controls) and skip gen_phish and gen_legit; (c) skip the reference (the scope allows
     it: "points of comparison", skipped cleanly without a key). Recommendation: (a) if the provider's terms are
     acceptable to the author, else (b). Until answered, scripts/06_run_proprietary.py is not written.
+    **Answered 2026-11-01 (author):** the proprietary reference run is dropped. Reasons: (1) a proprietary model
+    is outside the scope of Section 1.6 (open models run locally); (2) the licence status of the E-PhishLLM
+    e-mails does not clearly permit their transfer to a third-party API; (3) a proprietary comparison is noted
+    as future work in Chapter 5. scripts/06_run_proprietary.py is not written; `proprietary_ref` is removed from
+    the TASK_06 definition of done and from CLAUDE.md. Item closed; tag v0.6.4-baselines-ready.
