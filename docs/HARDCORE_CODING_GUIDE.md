@@ -18,8 +18,15 @@ The texts are in `data/processed/hardcore_sample_text.jsonl` (subject, the score
 data, not in git). The analysis is descriptive: it produces a taxonomy of what the detectors miss, not a metric,
 and the post hoc set informs no test.
 
+**Where to code.** `reports/hardcore_coding.xlsx` (built by `python scripts/07_coding_sheet.py`) has one row per
+sampled item with the subject, the original body, the variant body (empty for an original), the number and
+names of the models that missed it, and the two shaded coding columns; `failure_type` is a drop-down whose list
+depends on the row's type. When done, `python scripts/07_import_coding.py` validates the codes, writes the two
+columns into `reports/hardcore_sample.csv` (nothing else changes) and writes the code summary to
+`reports/hardcore_coding_summary.csv`.
+
 **How to code.** Read the subject and the scored body of each sampled item (for a variant, read the original body
-as well), then fill two columns of `reports/hardcore_sample.csv`:
+as well), then fill the two coding columns:
 
 - `failure_type`: exactly one code from the list that matches the row's `condition` (below). Use `other` only
   with a note.

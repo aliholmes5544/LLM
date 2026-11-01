@@ -77,6 +77,9 @@ frozen in `configs/detection.yaml`, prompts in `prompts/`. Developed and smoke-t
 | `scripts/07_build_items.py` | step 07 item table: hash-verified join of the 27 eval files with partition, condition, item class, cluster (source e-mail) and body length; no metric | `results/scores/items.parquet`, `results/scores/pairs.csv`, `reports/items_build_report.json` |
 | `scripts/07_score.py` | step 07 step 3: primary metrics with cluster-bootstrap CIs, paired deltas with exact McNemar and Holm per family, F-RQ2/F-RQ3 contrasts, majority ensemble; `--check` re-runs and compares byte for byte | `results/scores/{metrics_long,deltas_long,contrasts,ensemble_predictions}.csv`, `reports/scoring_report.json` |
 | `scripts/07_secondary.py` | step 07 secondary analyses: ensemble votes, CoT cue frequency and cue change by outcome (frozen lexicon), hard core and its seeded coding sample (8 pre-registered + 30 post hoc, item 17), cost-robustness frontier; `--check` | `results/scores/{ensemble_votes,cues_*,hardcore_*,frontier}.csv`, `reports/hardcore_sample.csv`, `reports/secondary_report.json` |
+| `scripts/07_coding_sheet.py` | the author's coding workbook for the hard-core sample: one row per sampled item with subject, original body, variant body, the models that missed it, a drop-down `failure_type` (code list by row type) and a free-text `note` | `reports/hardcore_coding.xlsx` |
+| `scripts/07_import_coding.py` | reads the filled workbook back: validates the codes, writes only the two coding columns into `reports/hardcore_sample.csv`, writes the code summary; `--dry-run` | `reports/hardcore_sample.csv` (two columns), `reports/hardcore_coding_summary.csv` |
+| `scripts/demo_detect.py` | demo outside the pipeline: classifies one e-mail with one study model and strategy on the laptop (section "Try it") | stdout only |
 | `scripts/07_score_model.py` | SpearShift extension path (`make evaluate`): scores one additional model with the functions of `07_score.py` into separate files, leaving the pre-registered scores byte-identical (`tests/test_score_model.py`); `--check` | `results/scores/additional/<key>/{items.parquet,metrics_long,deltas_long}.csv`, `reports/scoring_additional_<key>.json` |
 | `scripts/07_tables_figures.py` | LaTeX tables T1 to T11 and A1 (booktabs, no caption) and figures F1 to F7 (300 dpi) from the CSVs | `results/tables/tab_*.tex`, `figures/ch04_*_eng.png`, `reports/tables_figures_report.json` |
 | `scripts/07_freeze_lexicon.py` | step 07 step 2: applies the frozen CoT cue lexicon (`configs/cue_lexicon.yaml`, `scripts/scoring/cues.py`) to the dev rationales only (six `cot/dev.jsonl` cells + smoke sets), reports counts, polarity and seeded examples; `--check` reproduces the report | `reports/cue_lexicon_dev_report.json` |
@@ -107,6 +110,25 @@ python scripts/07_secondary.py              # ensemble votes, cues, hard core, f
 python scripts/07_tables_figures.py         # tables and figures for Chapter 4
 # distilbert: notebooks/cloud_baselines.ipynb on a Colab T4 (trains once, checkpoint hash recorded), then copy back
 ```
+
+## Try it
+
+`scripts/demo_detect.py` classifies a single e-mail with one of the study's detectors, using the same prompt
+files, decoding settings, context rule, system-text delivery and label extraction as the evaluation, but
+outside the pipeline: nothing is written, and the answer is not an evaluation result. It needs the model's GGUF
+in `models/` (`python scripts/06_download_models.py --models gemma2-9b`, 5.8 GB) and runs on the CPU
+(gemma2-9b: about 20 s to load, 10 to 30 s per e-mail on 16 threads).
+
+```bash
+python scripts/demo_detect.py --subject "Agenda for Thursday" \
+    --body "Hi all, attached is the agenda for Thursday's review. Please add your items by Wednesday noon. Thanks, Dana"
+python scripts/demo_detect.py --file mail.txt --model qwen25-7b --strategy cot --show-prompt
+```
+
+`--file` takes a UTF-8 text file whose first line may be `Subject: ...`; `--strategy` is `zero_shot` (default),
+`few_shot` (needs `data/processed/records.jsonl` for the four frozen examples), `cot` or `role`. The output shows
+the verified model hash, the prompt hash, the raw model output and the extracted label (`PHISH`, `LEGIT` or
+`INVALID`). Detectors see subject and body only; do not paste headers or addresses.
 
 ## Adding a new model (SpearShift extension path)
 
