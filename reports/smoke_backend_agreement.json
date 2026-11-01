@@ -1,7 +1,7 @@
 {
   "a": "results/smoke_dev",
   "b": "results/smoke_gpu",
-  "compared_at": "2026-10-28T21:20:15Z",
+  "compared_at": "2026-11-01T05:31:29Z",
   "cells": {
     "gemma2-9b/cot": {
       "n": 20,
@@ -111,23 +111,14 @@
       "n": 20,
       "n_only_a": 0,
       "n_only_b": 0,
-      "label_agreement_pct": 95.0,
-      "raw_identical_pct": 45.0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 30.0,
       "same_prompt_and_model_hash": true,
-      "backend_a": "unrecorded",
+      "backend_a": "cpu",
       "backend_b": "cuda",
-      "latency_median_a_s": 11.42,
-      "latency_median_b_s": 2.6,
-      "disagreements": [
-        {
-          "item_id": "eph:7515",
-          "label_true": "legit",
-          "a": "invalid",
-          "b": "legit",
-          "a_raw": " FINAL: LEGITIMATE. The email appears to be a request for design modifications to ensure safety regulations are met, which is a common communication in a professional setting. The sender is identified",
-          "b_raw": " FINAL: LEGITIMATE\n\nLEGITIMATE"
-        }
-      ]
+      "latency_median_a_s": 12.75,
+      "latency_median_b_s": 2.81,
+      "disagreements": []
     },
     "mistral-7b/few_shot": {
       "n": 20,
@@ -136,55 +127,37 @@
       "label_agreement_pct": 100.0,
       "raw_identical_pct": 100.0,
       "same_prompt_and_model_hash": true,
-      "backend_a": "unrecorded",
+      "backend_a": "cpu",
       "backend_b": "cuda",
-      "latency_median_a_s": 5.22,
-      "latency_median_b_s": 0.49,
+      "latency_median_a_s": 5.39,
+      "latency_median_b_s": 0.46,
       "disagreements": []
     },
     "mistral-7b/role": {
       "n": 20,
       "n_only_a": 0,
       "n_only_b": 0,
-      "label_agreement_pct": 95.0,
-      "raw_identical_pct": 95.0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
       "same_prompt_and_model_hash": true,
-      "backend_a": "unrecorded",
+      "backend_a": "cpu",
       "backend_b": "cuda",
-      "latency_median_a_s": 4.34,
-      "latency_median_b_s": 0.45,
-      "disagreements": [
-        {
-          "item_id": "eph:11599",
-          "label_true": "phish",
-          "a": "invalid",
-          "b": "legit",
-          "a_raw": " Insufficient information to determine with certainty. However, it's important to",
-          "b_raw": " LEGITIMATE"
-        }
-      ]
+      "latency_median_a_s": 3.65,
+      "latency_median_b_s": 0.46,
+      "disagreements": []
     },
     "mistral-7b/zero_shot": {
       "n": 20,
       "n_only_a": 0,
       "n_only_b": 0,
-      "label_agreement_pct": 95.0,
-      "raw_identical_pct": 95.0,
+      "label_agreement_pct": 100.0,
+      "raw_identical_pct": 100.0,
       "same_prompt_and_model_hash": true,
-      "backend_a": "unrecorded",
+      "backend_a": "cpu",
       "backend_b": "cuda",
-      "latency_median_a_s": 4.01,
-      "latency_median_b_s": 0.42,
-      "disagreements": [
-        {
-          "item_id": "eph:11599",
-          "label_true": "phish",
-          "a": "invalid",
-          "b": "legit",
-          "a_raw": " Insufficient information to determine with certainty. However, it's important to",
-          "b_raw": " LEGITIMATE"
-        }
-      ]
+      "latency_median_a_s": 3.9,
+      "latency_median_b_s": 0.4,
+      "disagreements": []
     },
     "qwen25-7b/cot": {
       "n": 20,
@@ -248,6 +221,6 @@
       "disagreements": []
     }
   },
-  "overall_label_agreement_pct": 98.8,
+  "overall_label_agreement_pct": 99.7,
   "n_items_compared": 320
 }

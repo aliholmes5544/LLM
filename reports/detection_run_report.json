@@ -428,23 +428,23 @@
     },
     "mistral-7b/zero_shot/eval": {
       "n": 5207,
-      "invalid": 117,
-      "invalid_rate": 0.0225,
+      "invalid": 10,
+      "invalid_rate": 0.0019,
       "pred_counts": {
-        "phish": 3134,
-        "legit": 1956,
-        "invalid": 117
+        "legit": 2579,
+        "phish": 2618,
+        "invalid": 10
       },
-      "latency_median_s": 0.38,
-      "latency_mean_s": 0.45,
-      "latency_max_s": 4.61,
-      "latency_total_s": 2355.7,
-      "prompt_tokens_median": 235,
-      "prompt_tokens_max": 3333,
+      "latency_median_s": 0.4,
+      "latency_mean_s": 0.47,
+      "latency_max_s": 4.75,
+      "latency_total_s": 2468.9,
+      "prompt_tokens_median": 268,
+      "prompt_tokens_max": 3366,
       "output_tokens_median": 3,
       "finish_reasons": {
-        "stop": 5048,
-        "length": 159
+        "stop": 5194,
+        "length": 13
       },
       "truncated_input": 0,
       "backends": {
@@ -492,8 +492,10 @@
       "gpu": "Tesla T4",
       "llama_cpp_python": "0.3.36",
       "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
-      "model_load_s": 16.3,
-      "system_role": true,
+      "model_load_s": 1.5,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
       "license": "apache-2.0",
       "prompt_file": "prompts/zero_shot.txt",
       "prompt_sha256": "50cd0f47bb6686ca6d7540a9417554d984baa959157386d23beffe00264196aa",
@@ -516,10 +518,10 @@
       "seed": 2026,
       "config_sha256": {
         "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
-        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
       },
-      "git_commit": "9b2b455",
-      "git_describe": "v0.6.1-detection-ready",
+      "git_commit": "071e3a0",
+      "git_describe": "v0.6.2-detection-ready",
       "sessions": [
         {
           "started_at": "2026-10-29T07:14:47Z",
@@ -528,28 +530,36 @@
           "wall_s": 2365.2,
           "backend": "cuda",
           "gpu": "Tesla T4"
+        },
+        {
+          "started_at": "2026-10-31T18:07:19Z",
+          "finished_at": "2026-10-31T18:48:37Z",
+          "items_run": 5207,
+          "wall_s": 2478.1,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
         }
       ]
     },
     "mistral-7b/few_shot/eval": {
       "n": 5207,
-      "invalid": 15,
-      "invalid_rate": 0.0029,
+      "invalid": 5,
+      "invalid_rate": 0.001,
       "pred_counts": {
-        "phish": 3080,
-        "legit": 2112,
-        "invalid": 15
+        "phish": 3048,
+        "legit": 2154,
+        "invalid": 5
       },
-      "latency_median_s": 0.44,
-      "latency_mean_s": 0.51,
-      "latency_max_s": 4.46,
-      "latency_total_s": 2643.8,
-      "prompt_tokens_median": 1141,
-      "prompt_tokens_max": 3920,
+      "latency_median_s": 0.45,
+      "latency_mean_s": 0.53,
+      "latency_max_s": 4.58,
+      "latency_total_s": 2750.7,
+      "prompt_tokens_median": 1174,
+      "prompt_tokens_max": 3953,
       "output_tokens_median": 3,
       "finish_reasons": {
-        "stop": 5061,
-        "length": 146
+        "stop": 5129,
+        "length": 78
       },
       "truncated_input": 1,
       "backends": {
@@ -597,8 +607,10 @@
       "gpu": "Tesla T4",
       "llama_cpp_python": "0.3.36",
       "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
-      "model_load_s": 1.6,
-      "system_role": true,
+      "model_load_s": 1.4,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
       "license": "apache-2.0",
       "prompt_file": "prompts/few_shot.txt",
       "prompt_sha256": "bc6fb8a2153940b6b2800e0d6e841bfad6282452a0dbf37dfaaf33fe41ca6de5",
@@ -630,10 +642,10 @@
       "seed": 2026,
       "config_sha256": {
         "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
-        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
       },
-      "git_commit": "9b2b455",
-      "git_describe": "v0.6.1-detection-ready",
+      "git_commit": "071e3a0",
+      "git_describe": "v0.6.2-detection-ready",
       "sessions": [
         {
           "started_at": "2026-10-29T07:54:27Z",
@@ -642,28 +654,36 @@
           "wall_s": 2668.6,
           "backend": "cuda",
           "gpu": "Tesla T4"
+        },
+        {
+          "started_at": "2026-10-31T18:48:52Z",
+          "finished_at": "2026-10-31T19:35:07Z",
+          "items_run": 5207,
+          "wall_s": 2775.0,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
         }
       ]
     },
     "mistral-7b/cot/eval": {
       "n": 5207,
-      "invalid": 288,
-      "invalid_rate": 0.0553,
+      "invalid": 68,
+      "invalid_rate": 0.0131,
       "pred_counts": {
-        "phish": 3558,
-        "invalid": 288,
-        "legit": 1361
+        "invalid": 68,
+        "phish": 2737,
+        "legit": 2402
       },
-      "latency_median_s": 2.76,
-      "latency_mean_s": 2.92,
-      "latency_max_s": 10.86,
-      "latency_total_s": 15220.0,
-      "prompt_tokens_median": 279,
-      "prompt_tokens_max": 3377,
+      "latency_median_s": 3.07,
+      "latency_mean_s": 3.11,
+      "latency_max_s": 12.14,
+      "latency_total_s": 16185.1,
+      "prompt_tokens_median": 312,
+      "prompt_tokens_max": 3410,
       "output_tokens_median": 70,
       "finish_reasons": {
-        "stop": 5198,
-        "length": 9
+        "stop": 5205,
+        "length": 2
       },
       "truncated_input": 0,
       "backends": {
@@ -711,8 +731,10 @@
       "gpu": "Tesla T4",
       "llama_cpp_python": "0.3.36",
       "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
-      "model_load_s": 1.6,
-      "system_role": true,
+      "model_load_s": 1.5,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
       "license": "apache-2.0",
       "prompt_file": "prompts/cot.txt",
       "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
@@ -735,10 +757,10 @@
       "seed": 2026,
       "config_sha256": {
         "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
-        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
       },
-      "git_commit": "9b2b455",
-      "git_describe": "v0.6.1-detection-ready",
+      "git_commit": "071e3a0",
+      "git_describe": "v0.6.2-detection-ready",
       "sessions": [
         {
           "started_at": "2026-10-29T08:39:11Z",
@@ -747,28 +769,35 @@
           "wall_s": 15230.7,
           "backend": "cuda",
           "gpu": "Tesla T4"
+        },
+        {
+          "started_at": "2026-10-31T19:35:21Z",
+          "finished_at": "2026-11-01T00:05:17Z",
+          "items_run": 5207,
+          "wall_s": 16195.2,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
         }
       ]
     },
     "mistral-7b/role/eval": {
       "n": 5207,
-      "invalid": 117,
-      "invalid_rate": 0.0225,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
-        "phish": 3134,
-        "legit": 1956,
-        "invalid": 117
+        "legit": 2183,
+        "phish": 3024
       },
-      "latency_median_s": 0.38,
-      "latency_mean_s": 0.45,
-      "latency_max_s": 4.62,
-      "latency_total_s": 2354.1,
-      "prompt_tokens_median": 235,
-      "prompt_tokens_max": 3333,
+      "latency_median_s": 0.41,
+      "latency_mean_s": 0.47,
+      "latency_max_s": 4.75,
+      "latency_total_s": 2447.3,
+      "prompt_tokens_median": 300,
+      "prompt_tokens_max": 3398,
       "output_tokens_median": 3,
       "finish_reasons": {
-        "stop": 5048,
-        "length": 159
+        "stop": 5193,
+        "length": 14
       },
       "truncated_input": 0,
       "backends": {
@@ -816,8 +845,10 @@
       "gpu": "Tesla T4",
       "llama_cpp_python": "0.3.36",
       "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
-      "model_load_s": 1.6,
-      "system_role": true,
+      "model_load_s": 1.5,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
       "license": "apache-2.0",
       "prompt_file": "prompts/role.txt",
       "prompt_sha256": "ffa098cca99c756a77f4b85c9017ff0703d9342838b12f7be61e6b03ccdf3892",
@@ -840,16 +871,24 @@
       "seed": 2026,
       "config_sha256": {
         "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
-        "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
       },
-      "git_commit": "9b2b455",
-      "git_describe": "v0.6.1-detection-ready",
+      "git_commit": "071e3a0",
+      "git_describe": "v0.6.2-detection-ready",
       "sessions": [
         {
           "started_at": "2026-10-29T12:53:17Z",
           "finished_at": "2026-10-29T13:32:42Z",
           "items_run": 5207,
           "wall_s": 2364.9,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        },
+        {
+          "started_at": "2026-11-01T00:05:31Z",
+          "finished_at": "2026-11-01T00:46:28Z",
+          "items_run": 5207,
+          "wall_s": 2457.2,
           "backend": "cuda",
           "gpu": "Tesla T4"
         }
@@ -2552,6 +2591,6 @@
     }
   },
   "forced_overwrites": [],
-  "system_role_note": "Models with system_role false (Gemma 2) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
-  "updated_at": "2026-10-31T05:42:29Z"
+  "system_role_note": "Models with system_role false (Gemma 2; Mistral-7B since 2026-10-31, QUESTIONS.md item 13) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
+  "updated_at": "2026-11-01T00:46:28Z"
 }

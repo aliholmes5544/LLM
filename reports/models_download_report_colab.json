@@ -24,7 +24,7 @@
     "license_class": "open-source",
     "quantization": "Q4_K_M",
     "eval_tier": "colab_t4",
-    "checked_at": "2026-10-30T09:23:55Z",
+    "checked_at": "2026-10-31T18:05:18Z",
     "huggingface_hub": "1.33.0"
   },
   "gemma2-9b": {

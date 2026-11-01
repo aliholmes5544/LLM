@@ -217,3 +217,7 @@
     (0 invalid of 80, gate PASS in every cell), notebook fixes. The four Mistral evaluation cells and the
     Mistral GPU smoke test are rerun on Colab (TAG v0.6.2-detection-ready, MODELS mistral-7b). Details and
     thesis wording in CHANGES_FOR_THESIS.md (2026-10-31, v0.6.2).
+    **Rerun complete 2026-11-01 (v0.6.3-detection-complete):** the four v2 Mistral cells pass
+    06_check_integrity.py (24 of 24 cells, system_text_delivered true for every model, role prompt 32 tokens
+    longer than zero_shot on every item); invalid 10 / 5 / 68 / 0 (zero_shot / few_shot / cot / role) against 117 / 15 / 288 / 117 in v1;
+    GPU smoke 0 invalid of 80; CPU/GPU label agreement 80 of 80 for Mistral and 319 of 320 overall. Item closed.

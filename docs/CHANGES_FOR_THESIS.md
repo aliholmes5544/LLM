@@ -559,10 +559,11 @@ inference was run; everything below is configuration and code, frozen only after
 ## Step 06: all 24 detection cells run on Colab GPUs; GPU/CPU smoke agreement; integrity check (2026-10-28 to 2026-10-31)
 
 - Every evaluation cell (6 models x 4 strategies, 5,207 items each, 124,968 rows) was run once on its
-  eval_tier with notebooks/cloud_run.ipynb at tags v0.6-detection-ready (two llama31-8b cells) and
-  v0.6.1-detection-ready (all others): Tesla T4 for llama31-8b, mistral-7b, gemma2-9b, qwen25-7b and qwen25-14b,
+  eval_tier with notebooks/cloud_run.ipynb at tags v0.6-detection-ready (two llama31-8b cells),
+  v0.6.1-detection-ready (all others) and v0.6.2-detection-ready (the four Mistral-7B cells, rerun with the
+  system text prepended, 2026-10-31 to 2026-11-01; entries below): Tesla T4 for llama31-8b, mistral-7b, gemma2-9b, qwen25-7b and qwen25-14b,
   NVIDIA L4 for gemma2-27b; llama-cpp-python 0.3.36 CUDA build, backend cuda in every row. Runs took place
-  2026-10-28 21:20 UTC to 2026-10-31 05:42 UTC. Two cells were resumed after a Colab session ended
+  2026-10-28 21:20 UTC to 2026-10-31 05:42 UTC (Mistral rerun 2026-10-31 18:07 UTC to 2026-11-01 00:46 UTC). Two cells were resumed after a Colab session ended
   (llama31-8b/cot, qwen25-14b/cot); the run report records only the last session of each, so inference-time
   totals below are sums of the per-item latencies. No cell was forced or overwritten. results/raw/ (79 MB)
   is committed to git as the thesis artefact; the Colab logs (logs/) are not.
@@ -570,8 +571,10 @@ inference was run; everything below is configuration and code, frozen only after
   exactly the expected 5,207 items (same item builder as the runner), no duplicates, prompt and model hashes
   equal to the frozen values in every row, backend cuda in every row, the GPU of the run report equal to the
   model's eval_tier, label_pred reproducible from raw_output with the frozen parser in every row, and the
-  sha256 of each results file recorded as a fixed-artefact hash. Result: 20 of 24 cells pass. The four
-  Mistral-7B cells fail one check, system_text_delivered, described next.
+  sha256 of each results file recorded as a fixed-artefact hash. Result on 2026-10-31: 20 of 24 cells pass;
+  the four Mistral-7B cells failed one check, system_text_delivered, described next. After the Mistral rerun
+  (2026-11-01) all 24 cells pass, including system_text_delivered for every model: the role prompt is exactly
+  32 tokens longer than the zero_shot prompt on all 5,207 items of each of the six models.
 - **Finding (2026-10-31): Mistral-7B never received the system message.** The role and zero_shot prompts share
   the user text and differ only in the system text (the role text is longer). For the five other models every
   item's role prompt is exactly 32 tokens longer than its zero_shot prompt; for Mistral-7B the two prompts have
@@ -594,31 +597,32 @@ inference was run; everything below is configuration and code, frozen only after
   "Today Date: 26 Jul 2024" into the system turn (the date is a template constant, not the run date), so the
   Llama prompts carry these two lines before the system text. Deterministic and identical for every item; it
   is why the Llama prompts are about 20 tokens longer than the Qwen prompts for the same text.
-- GPU/CPU smoke agreement (reports/smoke_backend_agreement.json; the same 20 dev items per cell, 4 laptop
-  models x 4 strategies = 320 inferences on the laptop CPU on 2026-10-28 and on the T4 the same day): labels
-  agree on 316 of 320 (98.8%), every cell at or above 95%. Three of the four disagreements are Mistral-7B
-  outputs that were invalid on CPU and valid on GPU (eph:11599 under zero_shot and role: "Insufficient
-  information to determine with certainty" on CPU, LEGITIMATE on GPU; eph:7515 under cot: the FINAL line was
-  followed by a run-on sentence on CPU). One is a genuine label flip, qwen25-7b/cot on eph:5768 (phish on CPU,
-  legit on GPU; the rationale text differs from the first sentence on). Raw outputs are byte-identical in
-  10 of 16 cells (all single-word cells except mistral-7b zero_shot and role at 95%); the four CoT cells
-  are byte-identical in 25 to 45% of items only, because long greedy generations diverge once a single token
-  differs, while reaching the same label in all but one item.
+- GPU/CPU smoke agreement (reports/smoke_backend_agreement.json, recomputed 2026-11-01 with the v2 Mistral
+  smoke rows; the same 20 dev items per cell, 4 laptop models x 4 strategies = 320 inferences on the laptop
+  CPU and on the Colab T4; gemma2-9b, llama31-8b and qwen25-7b on 2026-10-28, mistral-7b v2 on 2026-10-31):
+  labels agree on 319 of 320 (99.7%); 15 of 16 cells at 100%, including the four v2 Mistral cells, and
+  qwen25-7b/cot at 95%. The single disagreement is a genuine label flip, qwen25-7b/cot on eph:5768 (phish on
+  CPU, legit on GPU; the rationale text differs from the first sentence on). Raw outputs are byte-identical
+  in all 12 single-word cells; the four CoT cells are byte-identical in 25 to 40% of items only (qwen25-7b 25,
+  mistral-7b 30, gemma2-9b 40, llama31-8b 40), because long greedy generations diverge once a single token
+  differs, while reaching the same label in all but one item. The earlier figure of 98.8% (316 of 320) was
+  computed with the archived v1 Mistral rows; it is recorded in the Mistral entry below and belongs to that
+  incident only.
 - Wording for Section 4.2.1 (Environment): "All evaluation inference ran on Google Colab GPUs with the same
   GGUF files, decoding settings and llama-cpp-python build (0.3.36, CUDA) for every model: a Tesla T4 (15 GB)
   for the five models of up to 14B parameters and an NVIDIA L4 (24 GB) for gemma-2-27b. The laptop CPU was
   used only for development and for a 20-item smoke test on the development partition. Before the evaluation
-  the smoke test was repeated on the T4; the extracted labels agreed with the CPU run on 316 of 320 inferences
-  (98.8%, every cell at or above 95%). Three of the four disagreements were Mistral-7B outputs that were
-  invalid on the CPU and valid on the GPU; one was a label flip in the chain-of-thought condition of
-  Qwen2.5-7B. The raw outputs were byte-identical in 10 of 16 cells; chain-of-thought rationales differed in
-  wording in most items while yielding the same label."
+  the smoke test was repeated on the T4; the extracted labels agreed with the CPU run on 319 of 320 inferences
+  (99.7%); the single disagreement was a label flip in the chain-of-thought condition of Qwen2.5-7B. The raw
+  outputs were byte-identical in all twelve single-word cells; chain-of-thought rationales differed in
+  wording in most items while yielding the same label." (Revised 2026-11-01 after the Mistral rerun.)
 - Wording for Section 4.8 (Threats to validity): "Greedy decoding is deterministic for a given software build
   and hardware, but not across hardware: the CPU and GPU runs of the same 320 development inferences differed
-  in four labels (1.2%) and in the wording of most chain-of-thought rationales. The evaluation therefore uses
+  in one label (0.3%) and in the wording of most chain-of-thought rationales. The evaluation therefore uses
   one hardware configuration per model, uniform across the six models, and archives the raw outputs so that
-  every score can be recomputed from them. The 1.2% cross-backend disagreement is a floor on the measurement
-  noise against which small differences between models or strategies should be read. The decision to run all
+  every score can be recomputed from them. The 0.3% cross-backend disagreement on 320 development inferences
+  is a floor on the measurement noise against which small differences between models or strategies should
+  be read. The decision to run all
   evaluation inference on GPUs was taken before any evaluation item was processed (docs/QUESTIONS.md item 11)."
 - Measured latency per inference on the GPU (median seconds per cell, from reports/detection_run_report.json;
   last column: total inference time of the model's four cells in hours):
@@ -626,15 +630,16 @@ inference was run; everything below is configuration and code, frozen only after
 | model | GPU | zero_shot | few_shot | cot | role | hours |
 |---|---|---|---|---|---|---|
 | llama31-8b | Tesla T4 | 0.32 | 0.35 | 3.50 | 0.33 | 6.9 |
-| mistral-7b | Tesla T4 | 0.38 | 0.44 | 2.76 | 0.38 | 6.3 |
+| mistral-7b | Tesla T4 | 0.40 | 0.45 | 3.07 | 0.41 | 6.6 |
 | gemma2-9b | Tesla T4 | 0.47 | 0.52 | 2.84 | 0.48 | 6.7 |
 | qwen25-7b | Tesla T4 | 0.29 | 0.32 | 2.09 | 0.30 | 4.5 |
 | qwen25-14b | Tesla T4 | 0.58 | 0.66 | 7.07 | 0.63 | 13.8 |
 | gemma2-27b | NVIDIA L4 | 0.63 | 0.66 | 4.33 | 0.63 | 9.5 |
 
   Single-word strategies take 0.3 to 0.7 s per item on the GPU (against 2.9 to 4.9 s on the laptop CPU in the
-  smoke test); CoT takes 2.1 to 7.1 s. Total inference time 38.2 h on the T4 and 9.5 h on the L4
-  (47.7 h), against the 2026-10-28 estimate of about 47 h and 17 h; the single-word cells were
+  smoke test); CoT takes 2.1 to 7.1 s. Total inference time 38.6 h on the T4 and 9.5 h on the L4
+  (48.1 h; Mistral row and totals revised 2026-11-01 to the v2 cells, the v1 row is in the Mistral
+  entry below), against the 2026-10-28 estimate of about 47 h and 17 h; the single-word cells were
   faster than estimated and the CoT cells slower.
 - Invalid outputs per cell (count and rate of the 5,207 items; scored as incorrect in the primary analysis,
   excluded in the pre-registered sensitivity analysis, QUESTIONS.md item 12e):
@@ -642,24 +647,26 @@ inference was run; everything below is configuration and code, frozen only after
 | model | zero_shot | few_shot | cot | role |
 |---|---|---|---|---|
 | llama31-8b | 1 (0.02%) | 0 (0.00%) | 2 (0.04%) | 0 (0.00%) |
-| mistral-7b | 117 (2.25%) | 15 (0.29%) | 288 (5.53%) | 117 (2.25%) |
+| mistral-7b | 10 (0.19%) | 5 (0.10%) | 68 (1.31%) | 0 (0.00%) |
 | gemma2-9b | 4 (0.08%) | 0 (0.00%) | 21 (0.40%) | 3 (0.06%) |
 | qwen25-7b | 0 (0.00%) | 0 (0.00%) | 5 (0.10%) | 0 (0.00%) |
 | qwen25-14b | 2 (0.04%) | 7 (0.13%) | 60 (1.15%) | 0 (0.00%) |
 | gemma2-27b | 0 (0.00%) | 0 (0.00%) | 0 (0.00%) | 0 (0.00%) |
 
-  Total 642 of 124,968 rows (0.51%). The maximum is mistral-7b/cot at 5.53%, below the 10% smoke
-  gate; gemma2-27b produced no invalid output in any strategy. The Mistral counts were produced without the
-  system message (finding above) and will change if the cells are rerun.
+  Total 188 of 124,968 rows (0.15%). The maximum is mistral-7b/cot at 1.31%, then
+  qwen25-14b/cot at 1.15%, both far below the 10% smoke gate; gemma2-27b produced no invalid output in any
+  strategy. The Mistral row shows the v2 cells (system text prepended, 2026-11-01); the v1 counts are in the
+  Mistral entry below.
 - Truncated inputs: 1 of 124,968 rows (mistral-7b/few_shot; the few-shot prompt is the longest and the Mistral
   tokenizer the least compact, so one body was cut at a sentence boundary to fit n_ctx 4,096). No other cell
-  truncated any input. The runner's truncated_input flag identifies the row.
-- Cost: Colab charged 1.15 compute units per hour on the T4 and 1.94 on the L4 during these runs (author's
-  reading of the Colab usage page), about 60 compute units in total for the 24 cells including model downloads,
-  the GPU smoke test and idle time (100 compute units cost USD 9.99, so about USD 6). Inference time alone at
-  those rates gives 44 + 18 = 62 compute units, consistent with the billed figure. The 2026-10-28 estimate
-  (84 to 125 compute units) was conservative. Rerunning the four Mistral cells would take about 6.3 h of T4
-  inference, about 7 compute units.
+  truncated any input. The runner's truncated_input flag identifies the row
+  (nah:enron_ham:19167790_1075855710738_JavaMail_evans_thyme, core_neg; the same item was the one truncated
+  row of the archived v1 Mistral run).
+- Cost (revised 2026-11-01, final figures in the entry of 2026-11-01 below): Colab charged 1.15 compute units
+  per hour on the T4 and 1.94 on the L4 during these runs (author's reading of the Colab usage page). Before
+  the Mistral rerun the author read about 60 compute units for the 24 cells including model downloads, the GPU
+  smoke test and idle time (100 compute units cost USD 9.99). The 2026-10-28 estimate (84 to 125 compute
+  units) was conservative.
 
 ## Mistral-7B: system text delivered by prepend; v1 cells archived; notebook fixes (2026-10-31, v0.6.2-detection-ready)
 
@@ -704,10 +711,10 @@ inference was run; everything below is configuration and code, frozen only after
   smoke rows (smoke_dev/, 2026-10-27) and GPU smoke rows (smoke_gpu/, 2026-10-28), and copies of
   detection_run_report.json, integrity_check.json, smoke_dev_report.json and smoke_backend_agreement.json as
   they stood with the v1 cells; README.md in that folder explains them. They were removed from results/raw/,
-  results/smoke_dev/ and results/smoke_gpu/ (git mv, history preserved). reports/integrity_check.json now
-  reports 20 of 20 present cells passing and the four Mistral cells missing until the rerun; the live
-  detection_run_report.json still lists the v1 Mistral cells until the runner replaces them, and
-  smoke_backend_agreement.json still contains the v1 Mistral comparison until the notebook recomputes it.
+  results/smoke_dev/ and results/smoke_gpu/ (git mv, history preserved). reports/integrity_check.json then
+  reported 20 of 20 present cells passing and the four Mistral cells missing; the live detection_run_report.json
+  and smoke_backend_agreement.json kept the v1 Mistral entries until the rerun replaced them on 2026-11-01
+  (entry below).
 - **Mistral CPU smoke test rerun (laptop, 2026-10-31, system text prepended; same 20 dev items):**
 
 | cell | invalid v1 | invalid v2 | prompt tokens v1 | prompt tokens v2 | median s v1 | median s v2 | predictions v2 |
@@ -723,6 +730,15 @@ inference was run; everything below is configuration and code, frozen only after
   dev only; not an evaluation result). The Mistral GPU smoke test and the four evaluation cells are rerun on
   Colab with TAG v0.6.2-detection-ready and MODELS = "mistral-7b"; about 6.3 h of T4 inference (7 compute
   units) by the v1 timings.
+- **v1 figures (archived run; cite only as part of this incident, never as results).** GPU/CPU smoke agreement
+  computed with the v1 Mistral rows: 316 of 320 (98.8%), every cell at or above 95%. Three of its four
+  disagreements were Mistral-7B outputs invalid on the CPU and valid on the GPU (eph:11599 under zero_shot and
+  role: "Insufficient information to determine with certainty" on CPU, LEGITIMATE on GPU; eph:7515 under cot:
+  the FINAL line followed by a run-on sentence on CPU); the fourth was the qwen25-7b/cot flip on eph:5768 that
+  remains in the final comparison. v1 evaluation cells (Colab T4, 2026-10-29): invalid 117 (2.25%) zero_shot,
+  15 (0.29%) few_shot, 288 (5.53%) cot, 117 (2.25%) role; median latency 0.38 / 0.44 / 2.76 / 0.38 s; prompt
+  token medians 235 / 1,141 / 279 / 235; 6.3 h of T4 inference (about 7 compute units); one truncated input
+  (few_shot). Their sha256 values are in results/archive/mistral-7b_v1_no_system_text/integrity_check_v1.json.
 - **Wording for Section 3.7 (Implementation details):** "Each detector receives the prompt through the chat
   template embedded in its GGUF file, applied by llama-cpp-python. Two templates do not carry a system message
   to the model: Gemma 2 rejects the system role, and the Mistral-7B template is handled by a built-in formatter
@@ -741,3 +757,62 @@ inference was run; everything below is configuration and code, frozen only after
   token level, not inferred from the API; it also means that for three of the six models the system text
   reaches the model inside the user turn, a difference in position, not in wording, that is stated with the
   results."
+
+## Step 06 complete: Mistral-7B v2 cells; 24 of 24 cells pass the integrity check (2026-11-01, v0.6.3-detection-complete)
+
+- The four Mistral-7B evaluation cells and the Mistral GPU smoke test were rerun on a Colab Tesla T4 with
+  notebooks/cloud_run.ipynb at TAG v0.6.2-detection-ready (commit 071e3a0), TIER colab_t4, MODELS "mistral-7b",
+  2026-10-31 18:07 UTC to 2026-11-01 00:46 UTC (6.6 h of session time, no disconnect, no forced
+  overwrite). Every row and the run report record system_role false, chat_format "mistral-instruct" and
+  builtin_formatter true: the model went through llama-cpp-python's built-in formatter as before, but the
+  system text now travels inside the user turn, and the backend guard admitted the run because system_role is
+  false. GPU smoke test (20 dev items x 4 strategies): 0 invalid of 80, gate PASS; labels identical to the
+  laptop CPU v2 run on all 80 items.
+- scripts/06_check_integrity.py on 2026-11-01: 24 of 24 cells pass, system_text_delivered true for all six
+  models (token difference role minus zero_shot exactly 32 on all 5,207 items of every model);
+  124,968 rows, 188 invalid (0.15%), 1 truncated input. The
+  results tree was checksummed before and after the check (unchanged). sha256 of the four v2 Mistral files
+  (reports/integrity_check.json): zero_shot ae398b4ea3bf1a1a17162d2c6907ecc6b9bbd1f3d71ca2dc9bd0f22bf41fb659, few_shot cc3319ae78c0b13be79ec0cf7bcfa43dcb9a028139f12ffa2157263de3431380,
+  cot 12af2b005f6987d20618f54ed068eeecfc52dd3bbd6541bab6fbe5e41ab278d4, role 705704b8c260b57ec583f43f4dc5d3ba44ddc7c4565b1dcc2c39626e75a3b758.
+- reports/detection_run_report.json: each Mistral cell lists two sessions. The first (2026-10-29) is the
+  archived v1 run, kept because the Drive copy of the report retained the cell entries and the runner appends
+  sessions; the per-cell metrics (n, invalid, latency, tokens, finish reasons, hashes, git_commit 071e3a0)
+  are those of the v2 run. The archived report with the v1 metrics is
+  results/archive/mistral-7b_v1_no_system_text/detection_run_report_v1.json.
+- Mistral-7B v1 (no system text, archived) against v2 (system text prepended; the cells used in Chapter 4):
+
+| cell | invalid v1 | invalid v2 | median s v1 | median s v2 | prompt tokens v1 | prompt tokens v2 |
+|---|---|---|---|---|---|---|
+| zero_shot | 117 (2.25%) | 10 (0.19%) | 0.38 | 0.40 | 235 | 268 |
+| few_shot | 15 (0.29%) | 5 (0.10%) | 0.44 | 0.45 | 1,141 | 1,174 |
+| cot | 288 (5.53%) | 68 (1.31%) | 2.76 | 3.07 | 279 | 312 |
+| role | 117 (2.25%) | 0 (0.00%) | 0.38 | 0.41 | 235 | 300 |
+
+  The system text adds about 33 tokens to zero_shot, few_shot and cot and 65 to role (the role system text is
+  longer), as for the other models. Invalid outputs fell in every strategy; the v2 Mistral rates
+  (0.19 / 0.10 / 1.31 / 0.00%) are of the same order as those of the other models, and mistral-7b/cot at 1.31%
+  is now the highest cell of the study, followed by qwen25-14b/cot at 1.15%. No label was compared with the
+  ground truth; the pre-registration of QUESTIONS.md item 12 stands.
+- GPU/CPU smoke agreement recomputed with scripts/06_compare_smoke.py: 319 of 320 (99.7%), the four v2 Mistral
+  cells at 100% (raw outputs byte-identical in zero_shot, few_shot and role, 30% in cot), the only remaining
+  disagreement the qwen25-7b/cot flip on eph:5768. The agreement bullet and the Section 4.2.1 and 4.8 wording
+  of the entry of 2026-10-28 to 2026-10-31 above were revised in place to these figures; 98.8% (316 of 320)
+  appears only in the Mistral incident entry.
+- Final GPU time and cost. Session wall-clock from the run report: T4 38.8 h over all sessions
+  (of which the archived v1 Mistral run 6.3 h and the v2 rerun 6.6 h), L4 9.5 h; at
+  1.15 and 1.94 compute units per hour this is 44.6 + 18.4 = 63 compute units for
+  inference alone (about USD 6.3 at USD 9.99 per 100 units), of which the Mistral
+  incident cost 7.2. Model downloads, the GPU smoke tests and idle time come on top. Billed total
+  (compute units consumed on the Colab account for step 06): PENDING, to be entered by the author from the
+  remaining balance.
+- Housekeeping: 36 Zone.Identifier transfer artefacts deleted; the Drive copy of the Colab download report
+  (six models, Mistral re-verified 2026-10-31) is kept as reports/models_download_report_colab.json and the
+  laptop report reports/models_download_report.json (four models) restored from git after the copy had
+  overwritten it.
+- TASK_06 section 6 status: items 1, 2, 3, 5, 6 and 8 done; item 4 (baselines tfidf_lr, tfidf_svm, distilbert)
+  and item 7 (proprietary zero-shot reference) remain. Step 07 scoring does not start before the baselines
+  exist, so that every detector and baseline is scored by the same code in one pass.
+- Wording for Section 4.2.1 (addition): "The four Mistral-7B cells were run twice; the first run is archived and
+  excluded (Section 4.8), and all results reported for Mistral-7B come from the second run, in which the system
+  text reached the model. Including the repeated run, evaluation inference took about 39 hours on the T4
+  and 10 hours on the L4, about 63 Colab compute units."

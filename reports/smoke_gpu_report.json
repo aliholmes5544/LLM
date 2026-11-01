@@ -98,23 +98,21 @@
     },
     "mistral-7b/zero_shot": {
       "n": 20,
-      "invalid": 1,
-      "invalid_rate": 0.05,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
         "phish": 9,
-        "invalid": 1,
-        "legit": 10
+        "legit": 11
       },
-      "latency_median_s": 0.4,
-      "latency_mean_s": 0.5,
-      "latency_max_s": 0.96,
-      "latency_total_s": 10.1,
-      "prompt_tokens_median": 245,
-      "prompt_tokens_max": 812,
+      "latency_median_s": 0.39,
+      "latency_mean_s": 0.47,
+      "latency_max_s": 0.9,
+      "latency_total_s": 9.5,
+      "prompt_tokens_median": 278,
+      "prompt_tokens_max": 845,
       "output_tokens_median": 5,
       "finish_reasons": {
-        "stop": 19,
-        "length": 1
+        "stop": 20
       },
       "truncated_input": 0,
       "backends": {
@@ -130,12 +128,12 @@
         "phish": 10,
         "legit": 10
       },
-      "latency_median_s": 0.47,
-      "latency_mean_s": 0.61,
-      "latency_max_s": 1.27,
-      "latency_total_s": 12.2,
-      "prompt_tokens_median": 1151,
-      "prompt_tokens_max": 1718,
+      "latency_median_s": 0.44,
+      "latency_mean_s": 0.57,
+      "latency_max_s": 1.22,
+      "latency_total_s": 11.5,
+      "prompt_tokens_median": 1184,
+      "prompt_tokens_max": 1751,
       "output_tokens_median": 4,
       "finish_reasons": {
         "stop": 20
@@ -148,20 +146,19 @@
     },
     "mistral-7b/cot": {
       "n": 20,
-      "invalid": 1,
-      "invalid_rate": 0.05,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
-        "phish": 11,
-        "legit": 8,
-        "invalid": 1
+        "phish": 9,
+        "legit": 11
       },
-      "latency_median_s": 2.54,
-      "latency_mean_s": 2.4,
-      "latency_max_s": 5.6,
-      "latency_total_s": 48.0,
-      "prompt_tokens_median": 289,
-      "prompt_tokens_max": 856,
-      "output_tokens_median": 65,
+      "latency_median_s": 2.81,
+      "latency_mean_s": 2.91,
+      "latency_max_s": 5.7,
+      "latency_total_s": 58.2,
+      "prompt_tokens_median": 322,
+      "prompt_tokens_max": 889,
+      "output_tokens_median": 76,
       "finish_reasons": {
         "stop": 20
       },
@@ -173,23 +170,21 @@
     },
     "mistral-7b/role": {
       "n": 20,
-      "invalid": 1,
-      "invalid_rate": 0.05,
+      "invalid": 0,
+      "invalid_rate": 0.0,
       "pred_counts": {
-        "phish": 9,
-        "invalid": 1,
+        "phish": 10,
         "legit": 10
       },
-      "latency_median_s": 0.43,
+      "latency_median_s": 0.44,
       "latency_mean_s": 0.54,
-      "latency_max_s": 1.01,
-      "latency_total_s": 10.7,
-      "prompt_tokens_median": 245,
-      "prompt_tokens_max": 812,
-      "output_tokens_median": 5,
+      "latency_max_s": 1.03,
+      "latency_total_s": 10.8,
+      "prompt_tokens_median": 310,
+      "prompt_tokens_max": 877,
+      "output_tokens_median": 4,
       "finish_reasons": {
-        "stop": 19,
-        "length": 1
+        "stop": 20
       },
       "truncated_input": 0,
       "backends": {
@@ -644,11 +639,11 @@
   },
   "config_sha256": {
     "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
-    "models.yaml": "68456482172582d9e593e44c5825d94805c48544dffec5e0e577eb2f26c6ae58"
+    "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
   },
   "llama_cpp_python": "0.3.36",
-  "git_commit": "f2f7997",
-  "system_role_note": "Models with system_role false (Gemma 2) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
+  "git_commit": "071e3a0",
+  "system_role_note": "Models with system_role false (Gemma 2; Mistral-7B since 2026-10-31, QUESTIONS.md item 13) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
   "models": {
     "llama31-8b": {
       "sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
@@ -658,8 +653,10 @@
     },
     "mistral-7b": {
       "sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
-      "load_s": 18.7,
-      "system_role": true,
+      "load_s": 1.5,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
       "license": "apache-2.0"
     },
     "gemma2-9b": {
@@ -681,6 +678,6 @@
       "license": "apache-2.0"
     }
   },
-  "updated_at": "2026-10-28T21:20:13Z",
+  "updated_at": "2026-10-31T18:07:03Z",
   "gate_all_pass": true
 }
