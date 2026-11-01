@@ -6,6 +6,8 @@ Spear-Phishing Emails* (Bakhit Ali Mashan, 2026). It builds a benchmark from pub
 paraphrased and obfuscated variants under meaning checks, runs open-weight detectors under four prompting
 strategies against supervised baselines, and scores them with pre-registered statistics. Cite it with
 `CITATION.cff`; the code is MIT (`LICENSE`), the derived data CC BY-NC-SA 4.0 (`docs/DATASHEET.md`).
+`docs/REPRODUCE.md` maps every table and figure of Chapter 4 to its script, CSV and commit, lists the
+pinned environment and the fixed-artefact hashes, and discloses the AI assistance.
 
 This repository contains code, configuration, reports and result tables. Datasets are downloaded by script
 at pinned commits and are **not redistributed** (see `data/raw/provenance.json` after step 1 for licenses).
