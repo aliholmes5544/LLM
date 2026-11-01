@@ -1,0 +1,485 @@
+{
+  "baselines": {
+    "tfidf_lr": {
+      "method": "tfidf_logreg",
+      "eval_tier": "laptop",
+      "strategy": "supervised",
+      "model": "baseline_tfidf_lr",
+      "config_hash": "12dc03e1f9a3e3b5811a1e6d75c1510bb7ff3aa261f5930a0c0a96be01fdac8d",
+      "model_hash": "20259f940b27671195f2274702181548e29767f466bd3ea0b4657a5ca17f0831",
+      "model_file": "models/baselines/tfidf_lr.joblib",
+      "model_file_sha256": "bd8b3a92af8e4c543bcef36a24ecdee192e8b7493d90d6ce3714cc06ab0bda8e",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "text": {
+        "fields": [
+          "subject",
+          "body"
+        ],
+        "join": "\n\n"
+      },
+      "seed": 2026,
+      "training": {
+        "n_train": 3033,
+        "n_valid": 337,
+        "class_counts_train": {
+          "legit": 734,
+          "phish": 2299
+        },
+        "class_counts_valid": {
+          "legit": 82,
+          "phish": 255
+        },
+        "vocab_size": 88605,
+        "fit_s": 8.84,
+        "C_grid": [
+          0.1,
+          0.3,
+          1.0,
+          3.0,
+          10.0
+        ],
+        "selection_table_valid": {
+          "0.1": {
+            "n": 337,
+            "tp": 255,
+            "fp": 41,
+            "fn": 0,
+            "tn": 41,
+            "precision": 0.8615,
+            "recall": 1.0,
+            "f1": 0.9256,
+            "accuracy": 0.8783
+          },
+          "0.3": {
+            "n": 337,
+            "tp": 255,
+            "fp": 6,
+            "fn": 0,
+            "tn": 76,
+            "precision": 0.977,
+            "recall": 1.0,
+            "f1": 0.9884,
+            "accuracy": 0.9822
+          },
+          "1.0": {
+            "n": 337,
+            "tp": 255,
+            "fp": 1,
+            "fn": 0,
+            "tn": 81,
+            "precision": 0.9961,
+            "recall": 1.0,
+            "f1": 0.998,
+            "accuracy": 0.997
+          },
+          "3.0": {
+            "n": 337,
+            "tp": 255,
+            "fp": 1,
+            "fn": 0,
+            "tn": 81,
+            "precision": 0.9961,
+            "recall": 1.0,
+            "f1": 0.998,
+            "accuracy": 0.997
+          },
+          "10.0": {
+            "n": 337,
+            "tp": 255,
+            "fp": 1,
+            "fn": 0,
+            "tn": 81,
+            "precision": 0.9961,
+            "recall": 1.0,
+            "f1": 0.998,
+            "accuracy": 0.997
+          }
+        },
+        "chosen_C": 1.0,
+        "selection_rule": {
+          "metric": "f1_phish",
+          "partition": "valid",
+          "tie": "smallest_C"
+        },
+        "model_hash_reproduced": true
+      },
+      "versions": {
+        "scikit-learn": "1.9.1"
+      },
+      "config_sha256": {
+        "baselines.yaml": "870801cf909df58e8986540bc0fa76147ccc103e1373ae1777a3397ebf0bd32e"
+      },
+      "git_commit": "3c6b4fb",
+      "git_describe": "v0.6.3-detection-complete-2-g3c6b4fb",
+      "cells": {
+        "valid": {
+          "n": 337,
+          "invalid": 0,
+          "invalid_rate": 0.0,
+          "pred_counts": {
+            "legit": 81,
+            "phish": 256
+          },
+          "latency_median_s": 0.0,
+          "latency_mean_s": 0.0,
+          "latency_max_s": 0.0,
+          "latency_total_s": 0.2,
+          "prompt_tokens_median": 461,
+          "prompt_tokens_max": 795,
+          "output_tokens_median": 0,
+          "finish_reasons": {
+            "n/a": 337
+          },
+          "truncated_input": 0,
+          "backends": {
+            "cpu": 337
+          },
+          "partition": "valid",
+          "n_expected": 337,
+          "n_done": 337,
+          "complete": true,
+          "items_by_partition_condition": {
+            "valid": {
+              "original": 337
+            }
+          },
+          "limit": null,
+          "tier": "laptop",
+          "backend": "cpu",
+          "gpu": null,
+          "sessions": [
+            {
+              "started_at": "2026-11-01T05:50:20Z",
+              "finished_at": "2026-11-01T05:50:21Z",
+              "items_run": 337,
+              "wall_s": 0.2,
+              "backend": "cpu",
+              "gpu": null
+            }
+          ],
+          "valid_metrics": {
+            "n": 337,
+            "tp": 255,
+            "fp": 1,
+            "fn": 0,
+            "tn": 81,
+            "precision": 0.9961,
+            "recall": 1.0,
+            "f1": 0.998,
+            "accuracy": 0.997
+          }
+        },
+        "eval": {
+          "n": 5207,
+          "invalid": 0,
+          "invalid_rate": 0.0,
+          "pred_counts": {
+            "phish": 3026,
+            "legit": 2181
+          },
+          "latency_median_s": 0.0,
+          "latency_mean_s": 0.0,
+          "latency_max_s": 0.0,
+          "latency_total_s": 2.0,
+          "prompt_tokens_median": 130,
+          "prompt_tokens_max": 594,
+          "output_tokens_median": 0,
+          "finish_reasons": {
+            "n/a": 5207
+          },
+          "truncated_input": 0,
+          "backends": {
+            "cpu": 5207
+          },
+          "partition": "eval",
+          "n_expected": 5207,
+          "n_done": 5207,
+          "complete": true,
+          "items_by_partition_condition": {
+            "core_pos": {
+              "original": 334,
+              "para_low": 334,
+              "para_high": 325,
+              "obf_low": 334,
+              "obf_high": 334
+            },
+            "core_neg": {
+              "original": 1002
+            },
+            "ctrl_modern_legit": {
+              "original": 334
+            },
+            "ctrl_para_legit": {
+              "para_high": 210
+            },
+            "gen_phish": {
+              "original": 1000
+            },
+            "gen_legit": {
+              "original": 1000
+            }
+          },
+          "limit": null,
+          "tier": "laptop",
+          "backend": "cpu",
+          "gpu": null,
+          "sessions": [
+            {
+              "started_at": "2026-11-01T05:51:29Z",
+              "finished_at": "2026-11-01T05:51:31Z",
+              "items_run": 5207,
+              "wall_s": 2.2,
+              "backend": "cpu",
+              "gpu": null
+            }
+          ]
+        }
+      }
+    },
+    "tfidf_svm": {
+      "method": "tfidf_linsvm",
+      "eval_tier": "laptop",
+      "strategy": "supervised",
+      "model": "baseline_tfidf_svm",
+      "config_hash": "550c2fe5a3576183fe6f374b1d3988d493ecba3b5441828ce41ff0761f064e79",
+      "model_hash": "80cf13cbd09419a329bcd019641c7d745629b5b0ce380f0abeb6164cec88e132",
+      "model_file": "models/baselines/tfidf_svm.joblib",
+      "model_file_sha256": "dd038c8ff04deca55ca32b6b12f08d2dc98fe794fb9b3c959381f7f99dbf32f6",
+      "threshold": {
+        "score": "decision_function",
+        "rule": "> 0"
+      },
+      "text": {
+        "fields": [
+          "subject",
+          "body"
+        ],
+        "join": "\n\n"
+      },
+      "seed": 2026,
+      "training": {
+        "n_train": 3033,
+        "n_valid": 337,
+        "class_counts_train": {
+          "legit": 734,
+          "phish": 2299
+        },
+        "class_counts_valid": {
+          "legit": 82,
+          "phish": 255
+        },
+        "vocab_size": 88605,
+        "fit_s": 1.26,
+        "C_grid": [
+          0.1,
+          0.3,
+          1.0,
+          3.0,
+          10.0
+        ],
+        "selection_table_valid": {
+          "0.1": {
+            "n": 337,
+            "tp": 255,
+            "fp": 1,
+            "fn": 0,
+            "tn": 81,
+            "precision": 0.9961,
+            "recall": 1.0,
+            "f1": 0.998,
+            "accuracy": 0.997
+          },
+          "0.3": {
+            "n": 337,
+            "tp": 255,
+            "fp": 0,
+            "fn": 0,
+            "tn": 82,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "accuracy": 1.0
+          },
+          "1.0": {
+            "n": 337,
+            "tp": 255,
+            "fp": 0,
+            "fn": 0,
+            "tn": 82,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "accuracy": 1.0
+          },
+          "3.0": {
+            "n": 337,
+            "tp": 255,
+            "fp": 0,
+            "fn": 0,
+            "tn": 82,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "accuracy": 1.0
+          },
+          "10.0": {
+            "n": 337,
+            "tp": 255,
+            "fp": 0,
+            "fn": 0,
+            "tn": 82,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "accuracy": 1.0
+          }
+        },
+        "chosen_C": 0.3,
+        "selection_rule": {
+          "metric": "f1_phish",
+          "partition": "valid",
+          "tie": "smallest_C"
+        },
+        "model_hash_reproduced": true
+      },
+      "versions": {
+        "scikit-learn": "1.9.1"
+      },
+      "config_sha256": {
+        "baselines.yaml": "870801cf909df58e8986540bc0fa76147ccc103e1373ae1777a3397ebf0bd32e"
+      },
+      "git_commit": "3c6b4fb",
+      "git_describe": "v0.6.3-detection-complete-2-g3c6b4fb",
+      "cells": {
+        "valid": {
+          "n": 337,
+          "invalid": 0,
+          "invalid_rate": 0.0,
+          "pred_counts": {
+            "legit": 82,
+            "phish": 255
+          },
+          "latency_median_s": 0.0,
+          "latency_mean_s": 0.0,
+          "latency_max_s": 0.0,
+          "latency_total_s": 0.2,
+          "prompt_tokens_median": 461,
+          "prompt_tokens_max": 795,
+          "output_tokens_median": 0,
+          "finish_reasons": {
+            "n/a": 337
+          },
+          "truncated_input": 0,
+          "backends": {
+            "cpu": 337
+          },
+          "partition": "valid",
+          "n_expected": 337,
+          "n_done": 337,
+          "complete": true,
+          "items_by_partition_condition": {
+            "valid": {
+              "original": 337
+            }
+          },
+          "limit": null,
+          "tier": "laptop",
+          "backend": "cpu",
+          "gpu": null,
+          "sessions": [
+            {
+              "started_at": "2026-11-01T05:50:23Z",
+              "finished_at": "2026-11-01T05:50:24Z",
+              "items_run": 337,
+              "wall_s": 0.2,
+              "backend": "cpu",
+              "gpu": null
+            }
+          ],
+          "valid_metrics": {
+            "n": 337,
+            "tp": 255,
+            "fp": 0,
+            "fn": 0,
+            "tn": 82,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "accuracy": 1.0
+          }
+        },
+        "eval": {
+          "n": 5207,
+          "invalid": 0,
+          "invalid_rate": 0.0,
+          "pred_counts": {
+            "phish": 1723,
+            "legit": 3484
+          },
+          "latency_median_s": 0.0,
+          "latency_mean_s": 0.0,
+          "latency_max_s": 0.0,
+          "latency_total_s": 2.0,
+          "prompt_tokens_median": 130,
+          "prompt_tokens_max": 594,
+          "output_tokens_median": 0,
+          "finish_reasons": {
+            "n/a": 5207
+          },
+          "truncated_input": 0,
+          "backends": {
+            "cpu": 5207
+          },
+          "partition": "eval",
+          "n_expected": 5207,
+          "n_done": 5207,
+          "complete": true,
+          "items_by_partition_condition": {
+            "core_pos": {
+              "original": 334,
+              "para_low": 334,
+              "para_high": 325,
+              "obf_low": 334,
+              "obf_high": 334
+            },
+            "core_neg": {
+              "original": 1002
+            },
+            "ctrl_modern_legit": {
+              "original": 334
+            },
+            "ctrl_para_legit": {
+              "para_high": 210
+            },
+            "gen_phish": {
+              "original": 1000
+            },
+            "gen_legit": {
+              "original": 1000
+            }
+          },
+          "limit": null,
+          "tier": "laptop",
+          "backend": "cpu",
+          "gpu": null,
+          "sessions": [
+            {
+              "started_at": "2026-11-01T05:51:34Z",
+              "finished_at": "2026-11-01T05:51:36Z",
+              "items_run": 5207,
+              "wall_s": 2.1,
+              "backend": "cpu",
+              "gpu": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  "forced_overwrites": [],
+  "note": "Baselines are trained on `train` and selected on `valid` only (TASK_06 section 3); valid_metrics are the sanity check of TASK_06 section 6 item 4, not evaluation results. Scoring on eval is step 07.",
+  "updated_at": "2026-11-01T05:51:36Z"
+}

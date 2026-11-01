@@ -824,3 +824,96 @@ inference was run; everything below is configuration and code, frozen only after
   excluded (Section 4.8), and all results reported for Mistral-7B come from the second run, in which the system
   text reached the model. Including the repeated run, evaluation inference took about 39 hours on the T4
   and 10 hours on the L4, about 63 Colab compute units."
+
+## Step 06 baselines: TF-IDF + logistic regression and TF-IDF + linear SVM (2026-11-01); DistilBERT prepared for Colab
+
+- Interface approved on 2026-11-01 (TASK_06 section 3, decision 3; the script keeps the TASK_06 name
+  scripts/06_run_baselines.py and the CLAUDE.md step-07 row points at it). configs/baselines.yaml fixes every
+  setting before the evaluation run: text = subject + blank line + body (the two fields the detectors see);
+  training partition `train` (3,033 records: 2,299 traditional phishing + 734 Enron ham, the Nahmias protocol,
+  no E-PhishLLM record); `valid` (337: 255 + 82) for the choice of C and the sanity check only; evaluation on
+  exactly the 5,207 detector items built by detect.items.eval_items. Features: word 1 to 2-grams, min_df 2,
+  lowercase, sublinear tf, no vocabulary cap; classifiers LogisticRegression (lbfgs, max_iter 1000) and
+  LinearSVC (squared hinge, max_iter 10,000), no class re-weighting (the 76% phishing training prior is part of
+  the protocol); C grid {0.1, 0.3, 1, 3, 10}, chosen by F1 of the phishing class on `valid`, ties to the
+  smallest C; decision rules fixed in the config: p(phish) >= 0.5 for the logistic regression and DistilBERT,
+  decision value > 0 for the SVM. Seed 2026 from configs/data.yaml. Nothing is chosen on an evaluation
+  partition; the config was committed (frozen) before the first eval run and the runner refuses an eval run
+  while configs/baselines.yaml is uncommitted or modified (checked: it refused before the freeze commit).
+- Output in the detector runner's schema, results/raw/baseline_{key}/supervised/{valid,eval}.jsonl, one row per
+  item: item_id, partition, condition, label_true, model (baseline_tfidf_lr, ...), strategy (supervised),
+  raw_output ("p_phish=0.125011" or "decision_function=-0.83"), label_pred, invalid (always false; a baseline
+  always answers), score, config_hash (sha256 of the baseline's own config block + text settings + seed; the
+  counterpart of prompt_hash), model_hash (sha256 of the sorted vocabulary, coefficients and intercept of the
+  fitted model), n_prompt_tokens (non-zero TF-IDF features of the item), n_output_tokens 0, finish_reason n/a,
+  latency_s, truncated_input (always false for TF-IDF), backend cpu. Resumable, skip-when-complete and
+  refuse-to-overwrite exactly as the detector runner (the two runners now share detect.resume.read_rows;
+  tests/test_resume.py and the new tests/test_baselines.py, 38 tests in all, pass). The fitted models are saved
+  to models/baselines/ (gitignored; file sha256 in the report).
+- Model selection on `valid` (precision, recall, F1 of the phishing class; false positives and misses out of 82
+  legitimate and 255 phishing records). These are selection and sanity figures, not evaluation results:
+
+  TF-IDF + logistic regression (chosen C = 1.0; ties among 1, 3 and 10 resolved to the smallest):
+
+| C | precision | recall | F1 | FP | FN |
+|---|---|---|---|---|---|
+| 0.1 | 0.8615 | 1.0000 | 0.9256 | 41 | 0 |
+| 0.3 | 0.9770 | 1.0000 | 0.9884 | 6 | 0 |
+| 1.0 | 0.9961 | 1.0000 | 0.9980 | 1 | 0 |
+| 3.0 | 0.9961 | 1.0000 | 0.9980 | 1 | 0 |
+| 10.0 | 0.9961 | 1.0000 | 0.9980 | 1 | 0 |
+
+  TF-IDF + linear SVM (chosen C = 0.3; ties among 0.3 to 10 resolved to the smallest):
+
+| C | precision | recall | F1 | FP | FN |
+|---|---|---|---|---|---|
+| 0.1 | 0.9961 | 1.0000 | 0.9980 | 1 | 0 |
+| 0.3 | 1.0000 | 1.0000 | 1.0000 | 0 | 0 |
+| 1.0 | 1.0000 | 1.0000 | 1.0000 | 0 | 0 |
+| 3.0 | 1.0000 | 1.0000 | 1.0000 | 0 | 0 |
+| 10.0 | 1.0000 | 1.0000 | 1.0000 | 0 | 0 |
+
+  Sanity check on `valid` with the chosen C: tfidf_lr F1 0.998 (precision 0.9961, recall
+  1.0, 1 false positive of 82); tfidf_svm F1 1.000 (0 errors of 337). The task on
+  `valid` is the easy in-distribution one (traditional phishing against Enron ham), so near-perfect F1 is the
+  expected sanity result and says nothing about the spear-phishing evaluation; vocabulary 88,605
+  features; fitting the whole grid takes 8.84 s (LR) and 1.26 s (SVM) on the laptop CPU.
+- Determinism: a refit on the same machine reproduces the model_hash bit for bit (model_hash_reproduced true in
+  reports/baselines_report.json for both models; the second valid run was skipped as already complete with
+  matching hashes). model_hash tfidf_lr 20259f940b276711..., tfidf_svm 80cf13cbd09419a3....
+- Evaluation cells written on the laptop (eval_tier laptop; the GPU rule of CLAUDE.md concerns LLM inference):
+  baseline_tfidf_lr/supervised/eval.jsonl and baseline_tfidf_svm/supervised/eval.jsonl, 5,207 rows each, the
+  same partition and condition counts as every detector cell, about 1 ms per item (2.2 s and
+  2.1 s for the whole set), no truncation. Predicted-label counts are in the report
+  (pred_counts); no label was compared with the ground truth on eval (scoring is step 07; QUESTIONS.md item 12
+  stands). Rerunning an eval cell skips it; --force without --reason is refused (both checked).
+- scripts/06_check_integrity.py now has a baselines section: for every baseline of configs/baselines.yaml it
+  checks the exact item set, duplicates, item metadata, model and strategy fields, config_hash against the
+  frozen config block, model_hash against reports/baselines_report.json, backend of the eval tier, label_pred
+  reproducible from the stored score with the fixed rule, invalid false everywhere, and the report entry's
+  consistency; results go to the "baselines" key of reports/integrity_check.json. Result 2026-11-01: tfidf_lr
+  and tfidf_svm pass; distilbert is reported missing, so the overall exit code stays 1 until the Colab run is
+  copied back (24/24 detector cells pass as before).
+- DistilBERT (configs/baselines.yaml: distilbert-base-uncased, 3 epochs, lr 2e-5, batch 16, max 512 tokens,
+  AdamW, linear schedule without warm-up, weight decay 0.01, fp32, deterministic kernels, seed 2026, no early
+  stopping and no epoch selection; truncated inputs flagged per item in training and scoring) is implemented
+  in scripts/baselines/distilbert.py as a plain PyTorch loop and run by notebooks/cloud_baselines.ipynb on a
+  Colab T4: the notebook clones the repository at REF, installs requirements-baselines.txt (torch is the Colab
+  CUDA build, version recorded), pulls the processed data from Drive, restores the checkpoint and partial
+  results from Drive, trains once (checkpoint models/baselines/distilbert.pt, sha256 = model_hash of every
+  row, copied to Drive, not to git), scores valid then eval with the same script and schema, and syncs
+  results/raw/baseline_distilbert/ and reports/baselines_report.json after each cell. The Hugging Face
+  snapshot commit of the pretrained weights is recorded in the report. Not run yet.
+- Wording for Section 3.5 / 4.4 (Baselines): "Three supervised baselines are trained on the traditional
+  phishing and Enron ham records of the training partition (3,033 messages) following the protocol of Nahmias
+  et al. (2024), and evaluated on exactly the items the language models receive. Two use TF-IDF features over
+  word unigrams and bigrams (minimum document frequency 2, sublinear term frequency) with a logistic regression
+  and a linear support vector machine respectively; the regularisation strength is the only tuned parameter,
+  chosen on a held-out validation split of the same training distribution (337 messages) by the F1 of the
+  phishing class over the grid 0.1, 0.3, 1, 3, 10, giving C = 1.0 and C = 0.3. The third baseline
+  fine-tunes DistilBERT (base, uncased) for three epochs with learning rate 2e-5 and batch size 16 on inputs
+  truncated to 512 tokens, with a fixed seed and no early stopping. Decision thresholds are fixed in advance
+  (probability 0.5, decision value 0). On the validation split the two TF-IDF models reach F1 0.998 and
+  1.000, which confirms that the pipeline is sound but, since validation and training share one
+  distribution, says nothing about the spear-phishing evaluation. Baseline predictions are stored in the same
+  one-row-per-item format as the language-model outputs and pass the same integrity check."

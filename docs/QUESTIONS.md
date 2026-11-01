@@ -221,3 +221,19 @@
     06_check_integrity.py (24 of 24 cells, system_text_delivered true for every model, role prompt 32 tokens
     longer than zero_shot on every item); invalid 10 / 5 / 68 / 0 (zero_shot / few_shot / cot / role) against 117 / 15 / 288 / 117 in v1;
     GPU smoke 0 invalid of 80; CPU/GPU label agreement 80 of 80 for Mistral and 319 of 320 overall. Item closed.
+
+
+## Step 06 baselines and proprietary reference (2026-11-01)
+
+14. **Proprietary zero-shot reference (TASK_06 section 3, item 7 of section 6): may the evaluation e-mails be
+    sent to a third-party API?** The reference run would send the subject and body of all 5,207 evaluation items
+    (334 Nahmias spear-phishing e-mails and their variants, Enron and SpamAssassin ham, and 2,000 E-PhishLLM
+    messages) to a commercial API. The Nahmias data are CC BY-NC-SA 4.0 (use for research is fine; the
+    provider's terms on retention and training on submitted content are the question), and E-PhishLLM has no
+    licence file (we do not redistribute it; an API call is transmission to a processor, not publication, but
+    the authors' intent is unknown). Options: (a) run the reference with a provider whose API terms exclude
+    training on customer content and state a retention limit, and record provider, model id, version, date,
+    terms version and cost in the report; (b) run it on the Nahmias-derived partitions only (core_pos,
+    variants, core_neg, controls) and skip gen_phish and gen_legit; (c) skip the reference (the scope allows
+    it: "points of comparison", skipped cleanly without a key). Recommendation: (a) if the provider's terms are
+    acceptable to the author, else (b). Until answered, scripts/06_run_proprietary.py is not written.
