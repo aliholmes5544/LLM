@@ -497,7 +497,8 @@ inference was run; everything below is configuration and code, frozen only after
   55 + 28 = 84 units (USD 8 at USD 0.10 per unit); with the
   higher community figures (T4 1.76, L4 assumed 2.57) about 125 units (USD
   12). Google publishes no units-per-hour table; the live rate shown in the Colab resource
-  panel is authoritative. Pay-as-you-go: 100 units = USD 9.99. Sessions are limited in length and can
+  panel is authoritative. 100 units = USD 9.99 (the author used a Colab Pro subscription, not pay-as-you-go;
+  final consumption in the entry of 2026-11-01, step 07). Sessions are limited in length and can
   disconnect, hence the per-item resumability of the runner and the Drive synchronisation every 10 minutes.
 - Hashes of the two Colab-only files were pinned from the Hugging Face LFS metadata (2026-10-28) and are verified
   by scripts/06_download_models.py before any inference: Qwen2.5-14B-Instruct-Q4_K_M.gguf 8,988,110,976 bytes,
@@ -803,16 +804,12 @@ inference was run; everything below is configuration and code, frozen only after
   1.15 and 1.94 compute units per hour this is 44.6 + 18.4 = 63 compute units for
   inference alone (about USD 6.3 at USD 9.99 per 100 units), of which the Mistral
   incident cost 7.2. Model downloads, the GPU smoke tests and idle time come on top.
-- **Final Colab cost (author's reading of the Colab balance, 2026-11-01):** 75.7 compute units consumed in
-  total for step 06 (100 purchased, 24.27 remaining): about 62 for the first full pass over the 24 cells,
-  about 7 for the Mistral v2 rerun, and the rest (about 7) idle sessions and model downloads; rates 1.15
-  compute units per hour on the T4 and 1.94 on the L4; 100 compute units cost USD 9.99, so about USD 7.6.
-- Wording for Section 3.7 (Implementation details, cost): "All evaluation inference ran on Google Colab
-  pay-as-you-go GPUs and consumed 75.7 compute units in total (about USD 7.60 at the 2026 price of USD 9.99
-  per 100 units): about 62 units for the first pass over the 24 model-strategy cells, about 7 for the
-  repeated Mistral-7B cells (Section 4.8), and the remainder for model downloads and idle session time.
-  Colab charged 1.15 units per hour on the Tesla T4 and 1.94 on the NVIDIA L4. Inference time alone was
-  about 39 hours on the T4 and 9.5 hours on the L4."
+- **Colab cost after step 06 (author's reading of the Colab balance, 2026-11-01; superseded by the final
+  figure in the entry "Step 07: dev CoT run complete" below):** 75.7 compute units consumed for step 06
+  (100 units of a Colab Pro subscription, 24.27 remaining): about 62 for the first full pass over the 24
+  cells, about 7 for the Mistral v2 rerun, and the rest (about 7) idle sessions and model downloads; rates
+  1.15 compute units per hour on the T4 and 1.94 on the L4. The DistilBERT baseline and the six dev CoT cells
+  of step 07 came on top; the final Section 3.7 wording is in that later entry.
 - Housekeeping: 36 Zone.Identifier transfer artefacts deleted; the Drive copy of the Colab download report
   (six models, Mistral re-verified 2026-10-31) is kept as reports/models_download_report_colab.json and the
   laptop report reports/models_download_report.json (four models) restored from git after the copy had
@@ -1041,3 +1038,45 @@ inference was run; everything below is configuration and code, frozen only after
   STRATEGIES "cot", PARTITION "dev", RUN_SMOKE False, RUN_EVAL True; L4 run the same with TIER "colab_l4".
   Afterwards copy results/raw/<model>/cot/dev.jsonl for the six models and reports/detection_run_report.json
   back; step 2 then builds the lexicon from these files and the smoke sets and freezes it with a hash.
+
+## Step 07: dev CoT run complete (6 x 796 rationales for the cue lexicon); final Colab consumption (2026-11-01)
+
+- The cot strategy was run on the full dev partition for all six detectors on Colab from tag v0.7.0-devcot
+  (QUESTIONS.md item 15g): 796 dev items per model (400 originals, 396 accepted dev variants), one session
+  each, all complete, GPU backend (cuda), llama-cpp-python 0.3.36, prompt hash of prompts/cot.txt unchanged.
+  Files results/raw/<model>/cot/dev.jsonl (6 x 796 rows) and the six cells <model>/cot/dev in
+  reports/detection_run_report.json are committed; the 24 eval files and the 3 baseline files are
+  byte-identical to the committed versions (checked by sha256 against HEAD), and the 24 existing report cells
+  are unchanged. These rows are dev data: they serve only to write the cue lexicon (TASK_07 step 2) and are
+  never scored.
+
+  | model | GPU | invalid (rate) | latency median / mean s | wall h | output tokens median | empty rationale |
+  |---|---|---|---|---|---|---|
+  | llama31-8b | Tesla T4 | 1 (0.13%) | 4.48 / 4.67 | 1.03 | 92 | 0 |
+  | mistral-7b | Tesla T4 | 8 (1.01%) | 3.24 / 3.27 | 0.72 | 69 | 91 |
+  | gemma2-9b | Tesla T4 | 1 (0.13%) | 3.52 / 3.61 | 0.80 | 54 | 0 |
+  | qwen25-7b | Tesla T4 | 0 (0.00%) | 2.24 / 2.07 | 0.46 | 46 | 262 |
+  | qwen25-14b | Tesla T4 | 4 (0.50%) | 8.49 / 8.64 | 1.91 | 92 | 0 |
+  | gemma2-27b | NVIDIA L4 | 1 (0.13%) | 4.41 / 4.47 | 0.99 | 55 | 0 |
+
+  Invalid outputs 15 of 4,776 (0.3%). "Empty rationale" = the output is only the "FINAL:" line, so
+  the rationale contributes no cue (mostly qwen25-7b, which often answers without reasoning on dev).
+  Wall-clock: T4 4.92 h for the five smaller models (about 5.7 compute units at 1.15 per hour),
+  L4 0.99 h for gemma2-27b (about 1.9 compute units at 1.94 per hour); the pre-run estimate was
+  4.2 h and 1.0 h.
+- Housekeeping: 41 Zone.Identifier transfer artefacts deleted (no results file modified). The Drive copy also
+  brought an untracked duplicate results/raw/mistral-7b_v1_no_system_text/ (four eval files, byte-identical to
+  results/archive/mistral-7b_v1_no_system_text/raw/); it is not committed and can be deleted.
+- **Final Colab consumption (author's reading of the balance, 2026-11-01): 86.9 compute units in total,
+  13.12 remaining of the 100 units of a Colab Pro subscription, about USD 8.70.** This covers the 24
+  detector cells (first pass about 62 units), the Mistral-7B rerun (about 7), the DistilBERT baseline, the six
+  dev CoT cells (about 8), and model downloads and idle session time. Rates 1.15 compute
+  units per hour on the Tesla T4 and 1.94 on the NVIDIA L4.
+- Wording for Section 3.7 (Implementation details, cost), replacing the earlier draft: "All GPU work ran on
+  Google Colab under a Colab Pro subscription and consumed 86.9 compute units in total (about USD 8.70 at the
+  2026 price of USD 9.99 per 100 units): about 62 units for the first pass over the 24 model-strategy cells,
+  about 7 for the repeated Mistral-7B cells (Section 4.8), about 8 for the chain-of-thought run on the
+  development partition that served to build the cue lexicon (Section 4.3), and the remainder for the
+  DistilBERT baseline, model downloads and idle session time. Colab charged 1.15 units per hour on the Tesla
+  T4 and 1.94 on the NVIDIA L4. Evaluation inference alone took about 39 hours on the T4 and 9.5 hours on the
+  L4."

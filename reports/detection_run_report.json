@@ -2588,9 +2588,555 @@
           "gpu": "NVIDIA L4"
         }
       ]
+    },
+    "llama31-8b/cot/dev": {
+      "n": 796,
+      "invalid": 1,
+      "invalid_rate": 0.0013,
+      "pred_counts": {
+        "legit": 425,
+        "phish": 370,
+        "invalid": 1
+      },
+      "latency_median_s": 4.48,
+      "latency_mean_s": 4.67,
+      "latency_max_s": 9.96,
+      "latency_total_s": 3717.9,
+      "prompt_tokens_median": 249,
+      "prompt_tokens_max": 1259,
+      "output_tokens_median": 92,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "llama31-8b",
+      "strategy": "cot",
+      "partition": "dev",
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "7b064f5842bf9532c91456deda288a1b672397a54fa729aa665952863033557c",
+      "model_load_s": 2.2,
+      "system_role": true,
+      "chat_format": "chat_template.default",
+      "builtin_formatter": false,
+      "license": "llama3.1 (LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Version Release Date: July 23, 2024)",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "c527be2",
+      "git_describe": "v0.7.0-devcot",
+      "sessions": [
+        {
+          "started_at": "2026-11-01T07:04:30Z",
+          "finished_at": "2026-11-01T08:06:28Z",
+          "items_run": 796,
+          "wall_s": 3718.6,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "mistral-7b/cot/dev": {
+      "n": 796,
+      "invalid": 8,
+      "invalid_rate": 0.0101,
+      "pred_counts": {
+        "legit": 231,
+        "phish": 557,
+        "invalid": 8
+      },
+      "latency_median_s": 3.24,
+      "latency_mean_s": 3.27,
+      "latency_max_s": 11.09,
+      "latency_total_s": 2604.3,
+      "prompt_tokens_median": 265,
+      "prompt_tokens_max": 1564,
+      "output_tokens_median": 69,
+      "finish_reasons": {
+        "stop": 795,
+        "length": 1
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "mistral-7b",
+      "strategy": "cot",
+      "partition": "dev",
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "1270d22c0fbb3d092fb725d4d96c457b7b687a5f5a715abe1e818da303e562b6",
+      "model_load_s": 1.6,
+      "system_role": false,
+      "chat_format": "mistral-instruct",
+      "builtin_formatter": true,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "c527be2",
+      "git_describe": "v0.7.0-devcot",
+      "sessions": [
+        {
+          "started_at": "2026-11-01T08:06:46Z",
+          "finished_at": "2026-11-01T08:50:12Z",
+          "items_run": 796,
+          "wall_s": 2605.8,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-9b/cot/dev": {
+      "n": 796,
+      "invalid": 1,
+      "invalid_rate": 0.0013,
+      "pred_counts": {
+        "legit": 209,
+        "phish": 586,
+        "invalid": 1
+      },
+      "latency_median_s": 3.52,
+      "latency_mean_s": 3.61,
+      "latency_max_s": 6.49,
+      "latency_total_s": 2870.9,
+      "prompt_tokens_median": 229,
+      "prompt_tokens_max": 1465,
+      "output_tokens_median": 54,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "gemma2-9b",
+      "strategy": "cot",
+      "partition": "dev",
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "model_load_s": 2.6,
+      "system_role": false,
+      "chat_format": "chat_template.default",
+      "builtin_formatter": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "c527be2",
+      "git_describe": "v0.7.0-devcot",
+      "sessions": [
+        {
+          "started_at": "2026-11-01T08:50:34Z",
+          "finished_at": "2026-11-01T09:38:27Z",
+          "items_run": 796,
+          "wall_s": 2872.6,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-7b/cot/dev": {
+      "n": 796,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "legit": 384,
+        "phish": 412
+      },
+      "latency_median_s": 2.24,
+      "latency_mean_s": 2.07,
+      "latency_max_s": 5.79,
+      "latency_total_s": 1650.4,
+      "prompt_tokens_median": 228,
+      "prompt_tokens_max": 1448,
+      "output_tokens_median": 46,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "qwen25-7b",
+      "strategy": "cot",
+      "partition": "dev",
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "model_load_s": 1.8,
+      "system_role": true,
+      "chat_format": "chat_template.default",
+      "builtin_formatter": false,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "c527be2",
+      "git_describe": "v0.7.0-devcot",
+      "sessions": [
+        {
+          "started_at": "2026-11-01T09:38:45Z",
+          "finished_at": "2026-11-01T10:06:17Z",
+          "items_run": 796,
+          "wall_s": 1651.7,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "qwen25-14b/cot/dev": {
+      "n": 796,
+      "invalid": 4,
+      "invalid_rate": 0.005,
+      "pred_counts": {
+        "legit": 264,
+        "phish": 528,
+        "invalid": 4
+      },
+      "latency_median_s": 8.49,
+      "latency_mean_s": 8.64,
+      "latency_max_s": 14.75,
+      "latency_total_s": 6877.3,
+      "prompt_tokens_median": 228,
+      "prompt_tokens_max": 1448,
+      "output_tokens_median": 92,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "qwen25-14b",
+      "strategy": "cot",
+      "partition": "dev",
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "e47ad95dad6ff848b431053b375adb5d39321290ea2c638682577dafca87c008",
+      "model_load_s": 3.0,
+      "system_role": true,
+      "chat_format": "chat_template.default",
+      "builtin_formatter": false,
+      "license": "apache-2.0",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "c527be2",
+      "git_describe": "v0.7.0-devcot",
+      "sessions": [
+        {
+          "started_at": "2026-11-01T10:06:51Z",
+          "finished_at": "2026-11-01T12:01:30Z",
+          "items_run": 796,
+          "wall_s": 6878.6,
+          "backend": "cuda",
+          "gpu": "Tesla T4"
+        }
+      ]
+    },
+    "gemma2-27b/cot/dev": {
+      "n": 796,
+      "invalid": 1,
+      "invalid_rate": 0.0013,
+      "pred_counts": {
+        "legit": 205,
+        "phish": 590,
+        "invalid": 1
+      },
+      "latency_median_s": 4.41,
+      "latency_mean_s": 4.47,
+      "latency_max_s": 13.73,
+      "latency_total_s": 3559.2,
+      "prompt_tokens_median": 229,
+      "prompt_tokens_max": 1465,
+      "output_tokens_median": 55,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "gemma2-27b",
+      "strategy": "cot",
+      "partition": "dev",
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "model_load_s": 5.4,
+      "system_role": false,
+      "chat_format": "chat_template.default",
+      "builtin_formatter": false,
+      "license": "gemma (Gemma Terms of Use)",
+      "prompt_file": "prompts/cot.txt",
+      "prompt_sha256": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "prompt_hash": "a06937f10aaa939c6906a176f7f8c66a176b0f987d4e4d2181ddc27e82f0a374",
+      "few_shot_examples": null,
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": {
+          "zero_shot": 16,
+          "few_shot": 16,
+          "role": 16,
+          "cot": 256
+        },
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "config_sha256": {
+        "detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "c527be2",
+      "git_describe": "v0.7.0-devcot",
+      "sessions": [
+        {
+          "started_at": "2026-11-01T12:49:01Z",
+          "finished_at": "2026-11-01T13:48:22Z",
+          "items_run": 796,
+          "wall_s": 3560.9,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4"
+        }
+      ]
     }
   },
   "forced_overwrites": [],
   "system_role_note": "Models with system_role false (Gemma 2; Mistral-7B since 2026-10-31, QUESTIONS.md item 13) receive the system text prepended to the user message, separated by a blank line (QUESTIONS.md item 9, confirmed 2026-10-27).",
-  "updated_at": "2026-11-01T00:46:28Z"
+  "updated_at": "2026-11-01T13:48:22Z"
 }
