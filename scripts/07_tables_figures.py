@@ -337,6 +337,8 @@ def fig_f5(F):
     fig, axes = plt.subplots(1, 2, figsize=(8, 3.6), sharey=True)
     markers = {"zero_shot": "o", "few_shot": "s", "cot": "D", "role": "^"}
     offsets = {"baseline_tfidf_lr": (5, 5), "baseline_tfidf_svm": (5, -9), "baseline_distilbert": (5, 2)}
+    # obf. high: the LR and SVM markers almost coincide (delta +0.03 and 0.00), so LR goes above, SVM below
+    offsets_obf = {**offsets, "baseline_tfidf_lr": (5, 9), "baseline_tfidf_svm": (5, -15)}
     for ax, cond in zip(axes, ["para_high", "obf_high"]):
         for _, r in F.iterrows():
             y, lo, hi = r[f"delta_sens_{cond}"], r[f"ci_lo_{cond}"], r[f"ci_hi_{cond}"]
@@ -345,7 +347,8 @@ def fig_f5(F):
             else:
                 x = max(r["latency_median_s"], 1e-3)
                 ax.plot(x, y, marker="x", color=GREY, ms=6)
-                ax.annotate(NAME[r["detector"]], (x, y), fontsize=6.5, color=GREY, xytext=offsets[r["detector"]], textcoords="offset points")
+                off = (offsets_obf if cond == "obf_high" else offsets)[r["detector"]]
+                ax.annotate(NAME[r["detector"]], (x, y), fontsize=6.5, color=GREY, xytext=off, textcoords="offset points")
         ax.set_xscale("log"); ax.axhline(0, color="#333333", lw=0.8)
         ax.set_title(COND[cond], fontsize=9, fontweight="normal")
     axes[0].set_ylabel("$\\Delta$ sensitivity (original $-$ variant)")
@@ -372,7 +375,9 @@ def fig_f6(cues_c):
         ax.set_xticks(range(8)); ax.set_xticklabels([CAT[c] for c in CATEGORIES], rotation=35, ha="right")
         ax.set_title(COND[cond], fontsize=9, fontweight="normal")
         ax.legend(fontsize=7, loc="upper left")
-    axes[0].set_ylabel("net change in cue assertion\n(share gained $-$ share lost, original to variant)")
+    top = float(chg[chg["condition"].isin(["para_high", "obf_high"])]["net"].max())
+    axes[0].set_ylim(top=top * 1.10)                      # 10% headroom so the tallest bar is not clipped
+    axes[0].set_ylabel("net change in cue assertion\n(share gained $-$ share lost)")
     return save_fig(fig, "f6_cue_change")
 
 

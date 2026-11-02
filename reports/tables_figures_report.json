@@ -18,8 +18,8 @@
     "ch04_f2_delta_heatmap_eng.png": "d035f0f6ddd9ab5674a47d01b1f21fdbfb695e741197243e52fc6d25a91400c3",
     "ch04_f3_size_effect_eng.png": "47a019a9dc66fd57990420edcdb1d9a01e4dc681ec2bbe57921f31780801e360",
     "ch04_f4_strategy_effect_eng.png": "3267ca20fd9603161f155d36e07c2485187dd8c1ea7a835aacde43f49e8417c0",
-    "ch04_f5_frontier_eng.png": "63f0e689679e7e835dcdf798273ef0b2ec4dd4b15ae3071a29f2efc6bd5264d1",
-    "ch04_f6_cue_change_eng.png": "d19e384887822e0eef23206e46621869cb74d13ef2c3565389a06fcb293c8856",
+    "ch04_f5_frontier_eng.png": "e208cd43ae68517c47cd59f6411685d8b2430756fb82f2292417a7eb083b3914",
+    "ch04_f6_cue_change_eng.png": "8f3a4db2876099edb0588c8aced3e6244afe7730cd4c886eaf05ea6f5a891c7d",
     "ch04_f7_generalisation_eng.png": "e78164fba4ad9b4b03aa026b7fdf6e43667dedd6f7e463d31f9487f5ec0ac2e4"
   },
   "inputs": {
@@ -41,5 +41,5 @@
     "#e87ba4",
     "#008300"
   ],
-  "git_commit": "f450c3e"
+  "git_commit": "04c4348"
 }
