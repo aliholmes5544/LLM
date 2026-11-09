@@ -223,6 +223,12 @@
     the pre-registered criterion. The extension changes no computed number; its counts per stratum before sampling
     are in reports/secondary_report.json (`hardcore.sample.posthoc`) and in item 17.
 
+    **Deviation logged 2026-11-09, after the scores were computed (supervisor request; item 18):** a two-stage
+    indicator detector (docs/TASK_08_twostage.md) is added as an exploratory, post hoc, additional evaluated
+    condition for three of the six models. Reason: requested by the supervisor after the step-07 scores were
+    computed. Nothing in (a) to (e), the families or the Holm corrections changes; the two-stage detector gets its
+    own families A-twostage-{model} and separate output files; RQ1 to RQ4 are unchanged.
+
 ## Step 06 integrity check of the evaluation results (2026-10-31)
 
 13. **Mistral-7B received no system message in any strategy (found by 06_check_integrity.py, 2026-10-31).**
@@ -467,3 +473,92 @@
     zero; the rule was applied as written. The post hoc sample is drawn from a separate random stream
     ("hardcore_sample_posthoc", seed 2026), so the pre-registered rows are unchanged (sample_id 1 to 8); the post
     hoc rows are sample_id 9 to 38. Status: closed; the author's manual coding of the 38 rows is pending.
+
+## TASK_08 two-stage indicator detector: deviation and open points before step 2 (2026-11-09)
+
+18. **Exploratory, post hoc addition at the supervisor's request (docs/TASK_08_twostage.md, specification
+    2026-11-09).** Deviation from the pre-registered plan of item 12, logged with its date and reason: after the
+    step-07 scores were computed (2026-11-01, tag v0.7.1-scored), the supervisor asked for a two-stage pipeline
+    (indicator extraction by the same language model, then one logistic regression per model) to be evaluated as
+    an **additional condition inside the existing framework**, for `qwen25-7b`, `gemma2-9b` and `gemma2-27b`. It is
+    not a proposed system, nothing is tuned for accuracy, and RQ1 to RQ4 are unchanged; the primary outcome is the
+    difference of robustness deltas between the two-stage pipeline and the same model's direct zero_shot verdict.
+    The frozen artefacts (results/raw, results/scores/*.csv, the study's configs and prompts) were verified
+    byte-identical before and after step 1 (sha256 list of 64 files; recorded in the commit message of step 1).
+
+    **Step 1 implemented 2026-11-09** (no extraction run): configs/twostage.yaml, prompts/extract_indicators.txt,
+    scripts/06_run_twostage.py (modes extract, fit, predict), scripts/twostage/{parse,stage2}.py,
+    tests/test_twostage.py. Readings taken where the specification left a choice; each is reversible before step 2
+    and none touches a frozen file. **Please confirm or correct (a) to (k) before step 2 (smoke).**
+
+    (a) **Parse failure: invalid row versus explicit feature level.** Section 4 says a parse failure makes the row
+    `invalid`, scored as incorrect exactly as in step 06; section 5 says the one-hot features encode parse failure
+    explicitly. Reading implemented: at prediction a parse failure is `invalid` (section 4 governs scoring); at
+    fitting on dev a parse-failed row stays in the fitting set with the explicit `invalid` level lit for every
+    indicator (section 5), so the fitted model has seen that pattern but never emits a label for it. Alternative:
+    drop parse failures from fitting too.
+
+    (b) **Cross-validation metric for C.** Section 5 says "C chosen on dev by cross-validation" without a metric.
+    Provisional in configs/twostage.yaml: 5-fold stratified, shuffled with seed 2026, metric balanced_accuracy,
+    ties to the smallest C, grid 0.01 to 10 (7 values). Alternatives: f1_phish (the baselines' selection metric,
+    configs/baselines.yaml) or neg_log_loss. The metric must be fixed before the fit (step 3).
+
+    (c) **Scoring path.** Section 7 says "scored by the existing 07_score.py into results/scores/additional/
+    twostage_{model}/". 07_score.py is the frozen pre-registered computation and cannot take an extra detector
+    without changing its outputs; the additional-model path scripts/07_score_model.py (SpearShift, 2026-11-01) does
+    exactly this but expects the four prompting strategies of a language model. Plan for step 5: extend
+    07_score_model.py with a `--strategies lr` option (one strategy, kind "twostage"), families A-twostage-{model}
+    as section 7 names them; the difference-of-deltas comparison (two-stage minus direct zero_shot, same clusters,
+    same seed, bootstrap p of item 12 refinement 2) as a small new script or an option of the same script. The
+    spec also says F-RQ1 to F-RQ4 keep their counts; there is no F-RQ1 family (RQ1 is descriptive, item 15a), read
+    as F-RQ2 to F-RQ4 plus the S-* families.
+
+    (d) **Tables T1 to T11 "gain rows" (section 8) versus the frozen-tables statement.** README and CLAUDE.md say an
+    added model enters neither the ensemble nor the tables and figures of Chapter 4, and the .tex files are
+    regenerated by 07_tables_figures.py from the frozen CSVs. Options: (i) regenerate T1 to T11 with extra rows for
+    the three two-stage detectors read from results/scores/additional/, the existing rows verified unchanged as
+    section 8 asks (changes the committed .tex files and the README statement); (ii) keep T1 to T11 as they are and
+    put every two-stage number into T12 and F8 only. The spec says (i); confirm, because (i) changes committed
+    outputs of the pre-registered computation (not the CSVs).
+
+    (e) **Parse rule details.** "Missing or out-of-vocabulary key" is read as: a missing key, an unknown (extra)
+    key, a value outside the indicator's list, or a non-boolean for `is_question` / `is_complaint` each make the row
+    invalid; `"yes"` / `"no"` strings for the booleans are invalid. The first balanced {...} is taken even inside
+    prose or a code fence (the prompt forbids both, but the rule is about the output). Confirm.
+
+    (f) **Volunteered verdict.** The spec asks for a check of how often the model volunteers a verdict. Rule
+    implemented: any of the words phishing, legitimate, phish, scam, malicious, fraudulent, spam as a whole word
+    anywhere in the raw output (the prompt uses none of them), reported per cell as `volunteered_verdicts`; the
+    value never enters the label. Confirm the word list.
+
+    (g) **`sender_domain_mismatch` on text only.** Detectors see subject and body only (CLAUDE.md), so no sender
+    header exists. The prompt defines it as an inconsistency inside the text (claimed identity versus names,
+    addresses, domains or signature in the body). Confirm the definition, or drop the indicator (it would then be
+    seven threat indicators, departing from the eight frozen cue categories).
+
+    (h) **Runner phases and the intermediate file.** Section 6 names one output file per partition in the runner
+    schema. Because stage 2 does not exist until the dev extraction is complete, the runner writes the stage-1 rows
+    to results/raw/twostage_{model}/extract/{partition}.jsonl (resumable, the file that costs compute) and the
+    final rows to results/raw/twostage_{model}/lr/{partition}.jsonl in `predict` mode (deterministic, seconds).
+    `label_pred` of the final rows is the stage-2 label, `raw_output` the extraction JSON string, `score` p_phish,
+    plus parse_ok and ind_<key> columns. Confirm the two-file layout.
+
+    (i) **Integrity check at step 4.** scripts/06_check_integrity.py knows the six models and the three baselines
+    only; the two-stage files carry config_hash and stage2_sha256 like the baselines. Plan: add a `--twostage`
+    check (exact item set, hashes against configs/twostage.yaml and the report, GPU of the eval tier, label
+    reproducible from the stored indicators and the fitted model) into reports/integrity_check_twostage.json,
+    leaving the committed integrity_check.json untouched. Confirm.
+
+    (j) **Compute units.** The runner records wall time, tier and GPU per session; Colab's compute-unit rate is not
+    readable from inside the runtime, so the measured rate of section 9 step 2 will be the author's reading of the
+    Colab usage page before and after the smoke, entered into reports/twostage_report.json by hand (as for the
+    86.9 units of the main study). Confirm.
+
+    (k) **Budget projection basis.** Section 2 gives about 24 units (9.6 T4, 14.5 L4). The step-2 smoke (20 dev items
+    per model) will give seconds per item; the projection multiplies by 796 + 5,207 items per model. If the
+    projection exceeds 28 units, the stop rule of section 11 applies before any full run; the fallback order of
+    section 11 (qwen25-7b and gemma2-27b first) is implemented as the order of the commands, not in code.
+
+    **Answer (author):** pending. Step 2 (smoke on dev, 20 items x 3 models) does not start before (a), (b), (e),
+    (f) and (g) are confirmed; (c), (d), (i) are needed before step 5; (j) and (k) before the first Colab run.
+
