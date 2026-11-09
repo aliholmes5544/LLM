@@ -1,15 +1,17 @@
 # Two-stage indicator detector (docs/TASK_08_twostage.md; supervisor-requested, exploratory, post hoc;
-# QUESTIONS.md item 18). An ADDITIONAL evaluated condition inside the existing framework, not a proposed
-# system: stage 1 asks the same language model that gives the direct zero_shot verdict to fill a fixed set of
-# indicators as JSON (no verdict asked); stage 2 is one logistic regression per model on the one-hot
-# indicators, fitted on the dev extractions only. The frozen artefacts of steps 05 to 07 are read-only.
-# Scripts: scripts/06_run_twostage.py (extract | fit | predict), scripts/twostage/. Seed from configs/data.yaml.
-# The config_hash recorded in every row is the sha256 of `indicators`, `decoding`, `parse`, `stage2` and the seed.
+# QUESTIONS.md item 18, decisions of 2026-11-09). An ADDITIONAL evaluated condition inside the existing
+# framework, not a proposed system: stage 1 asks the same language model that gives the direct zero_shot
+# verdict to fill a fixed set of indicators as JSON (no verdict asked); stage 2 is one logistic regression per
+# model on the one-hot indicators, fitted on the dev extractions only. The frozen artefacts of steps 05 to 07
+# are read-only. Scripts: scripts/06_run_twostage.py (extract | fit | predict), scripts/twostage/. Seed from
+# configs/data.yaml. The config_hash in every row is the sha256 of `indicators`, `definitions`, `decoding`,
+# `parse`, `stage2` and the seed.
 
 models: [qwen25-7b, gemma2-9b, gemma2-27b]   # three, no more (TASK_08 section 2); tier = eval_tier in models.yaml
 model_prefix: twostage_                      # `model` field of every row: twostage_qwen25-7b, ...
 strategy_key: lr                             # final rows: results/raw/twostage_{model}/lr/{partition}.jsonl
 extract_key: extract                         # stage-1 rows: results/raw/twostage_{model}/extract/{partition}.jsonl
+smoke_dir: results/smoke_twostage            # `extract --smoke`: the 20-item dev smoke sample of configs/detection.yaml
 prompt: prompts/extract_indicators.txt       # frozen with its sha256 (prompt_hash in every row)
 input_fields: [subject, body]                # text only, as for every detector (CLAUDE.md)
 
@@ -25,7 +27,7 @@ indicators:                                  # TASK_08 section 3; key order = JS
   threat:                                    # the eight frozen cue categories (configs/cue_lexicon.yaml), ternary
     urgency: ["yes", "no", "unclear"]
     link_or_url: ["yes", "no", "unclear"]
-    sender_domain_mismatch: ["yes", "no", "unclear"]
+    sender_claim_inconsistency: ["yes", "no", "unclear"]   # renamed from sender_domain_mismatch (item 18g)
     credential_or_payment_request: ["yes", "no", "unclear"]
     grammar_anomaly: ["yes", "no", "unclear"]
     impersonation_authority: ["yes", "no", "unclear"]
@@ -33,27 +35,40 @@ indicators:                                  # TASK_08 section 3; key order = JS
     generic_greeting: ["yes", "no", "unclear"]
   attributes:                                # the supervisor's generic text attributes
     sentiment: [negative, neutral, positive]
-    is_question: bool                        # JSON true / false only
+    is_question: bool                        # JSON true / false (synonyms normalised, see parse.normalise)
     is_complaint: bool
     language_pattern: [human_like, machine_like, unclear]
     register: [informal, neutral, formal]
 
-parse:                                       # TASK_08 section 4
-  rule: first_balanced_object                # strict json.loads on the first balanced {...} of the raw output
-  invalid_when: [no_object, not_a_dict, missing_key, unknown_key, value_out_of_vocabulary, non_boolean]
-  invalid_value: invalid                     # the explicit one-hot level for a parse failure (section 5)
-  verdict_words: [phishing, legitimate, phish, scam, malicious, fraudulent, spam]   # volunteered-verdict check:
-                                             # any of these words in the raw output (the prompt never uses them)
+definitions:                                 # the wording of prompts/extract_indicators.txt, frozen here too
+  sender_claim_inconsistency: "the body makes claims about the sender or the organisation that are internally inconsistent (the detector never sees a real sender address; item 18g)"
 
-stage2:                                      # TASK_08 section 5
+parse:                                       # TASK_08 section 4; item 18 (a), (e), (f)
+  rule: first_balanced_object                # strict json.loads on the first balanced {...} of the raw output
+  normalise:                                 # applied BEFORE the vocabulary check (item 18e): case-insensitive,
+    case_insensitive: true                   #   whitespace-trimmed; then these synonyms
+    ternary: {"yes": ["yes"], "no": ["no"], "unclear": ["unclear"]}             # values of the eight threat indicators
+    boolean: {"true": ["true", "yes", "1"], "false": ["false", "no", "0"]}       # JSON true/false, these strings, or numbers 1/0
+  invalid_when: [no_object, not_a_dict, missing_key, value_out_of_vocabulary]   # a parse failure = the architecture failed
+  extra_keys: ignored_and_counted            # an unknown key never invalidates the row; counted per row and per cell
+  parse_failure_is_feature: false            # item 18a: NEVER a feature level; invalid at prediction, excluded from the fit
+  verdict_words: [phishing, legitimate, phish, scam, malicious, fraudulent, spam]   # diagnostic counter only (item 18f):
+                                             # whole-word match anywhere in the raw output; never changes a row
+
+stage2:                                      # TASK_08 section 5; item 18 (a), (b)
   classifier: {type: LogisticRegression, solver: lbfgs, max_iter: 1000, class_weight: null}
-  features: one_hot                          # every indicator value, plus `invalid` per indicator; no text, no interactions
+  features: one_hot                          # every vocabulary value of every indicator ("unclear" is a level); no text, no interactions
   fit_partition: dev                         # 796 dev items (originals + accepted dev variants); train/valid unused
+  fit_excludes: parse_failures               # rows whose extraction did not parse; the number excluded is reported
   C_grid: [0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0]
-  cv: {folds: 5, stratified: true, shuffle: true, metric: balanced_accuracy, tie: smallest_C}   # metric provisional (item 18b)
+  cv: {folds: 5, scheme: StratifiedGroupKFold, group: cluster, shuffle: true, metric: balanced_accuracy, tie: smallest_C}
+                                             # group = the source e-mail (item_id before '#'), so an original and its
+                                             # variants never straddle a fold (item 18b)
   threshold: {score: p_phish, rule: ">= 0.5"}
   model_dir: models/twostage                 # fitted models (gitignored); sha256 in reports/twostage_report.json
 
-budget:                                      # TASK_08 section 2; measured rate recorded at the smoke step
+budget:                                      # TASK_08 section 2; item 18 (j), (k)
   compute_units_planned: 24
   compute_units_stop: 28
+  rates_units_per_hour: {colab_t4: 1.15, colab_l4: 1.94}   # published Colab rates; wall-clock x rate = the estimate;
+                                             # the "Available compute units" reading before/after a session is the ground truth

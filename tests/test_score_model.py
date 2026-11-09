@@ -62,6 +62,25 @@ class TestFrozenScores(unittest.TestCase):
     def test_families_of_the_additional_model_are_its_own(self):
         self.assertEqual(score_model.family_for("x", "zero_shot"), "A-x")
         self.assertEqual(score_model.family_for("x", "cot"), "A-x-cot")
+        self.assertEqual(score_model.family_for("twostage_qwen25-7b", "lr", "twostage"), "A-twostage-qwen25-7b")
+
+    def test_explicit_default_strategies_reproduce_the_frozen_rows(self):
+        """The one-strategy option (item 18c) must leave the four-strategy path unchanged."""
+        items = pd.read_parquet(SCORES / "items.parquet")
+        pairs = pd.read_csv(SCORES / "pairs.csv")
+        seed = load_config("data.yaml")["seed"]
+        res = score_model.score_model(items, pairs, MODEL, seed, 2000, log=lambda s: None,
+                                      strategies=["zero_shot", "few_shot", "cot", "role"], kind="llm")
+        frozen = pd.read_csv(SCORES / "deltas_long.csv")
+        fd = frozen[frozen["detector"] == MODEL].drop(columns=["holm_p", "family"])
+        pd.testing.assert_frame_equal(roundtrip(res["deltas_long"].drop(columns=["holm_p", "family"])), roundtrip(fd), check_dtype=False)
+
+    def test_one_strategy_specs_for_the_twostage_kind(self):
+        integ = {"cells": {"twostage_m/lr": {"model": "twostage_m", "strategy": "lr", "file": "f", "file_sha256": "0", "n_rows": 1, "pass": True}}}
+        specs = score_model.model_specs(integ, "twostage_m", ["lr"], "twostage")
+        self.assertEqual([(s["strategy"], s["kind"]) for s in specs], [("lr", "twostage")])
+        with self.assertRaises(SystemExit):
+            score_model.model_specs(integ, "twostage_m")          # the four strategies are not there
 
     def test_model_specs_require_four_passing_cells(self):
         integ = {"cells": {"m/zero_shot": {"model": "m", "strategy": "zero_shot", "file": "f", "file_sha256": "0", "n_rows": 1, "pass": True}}}

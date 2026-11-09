@@ -7,7 +7,7 @@ Read the e-mail below (subject and body only) and fill in every attribute. Answe
 Content attributes, each "yes", "no" or "unclear":
 - "urgency": the text presses the reader to act quickly or warns of consequences for delay.
 - "link_or_url": the text contains or refers to a hyperlink, a web address or "the link".
-- "sender_domain_mismatch": the text claims to come from a person or organisation, but names, addresses, domains or the signature inside the text are inconsistent with that claim.
+- "sender_claim_inconsistency": the body makes claims about the sender or the organisation that are internally inconsistent (for example the signature, the named role or the organisation do not agree with each other).
 - "credential_or_payment_request": the text asks for a password, a login, account details, a payment, a transfer, a gift card or similar.
 - "grammar_anomaly": the text has spelling errors, unusual characters, odd spacing or ungrammatical sentences.
 - "impersonation_authority": the text invokes a superior, an official body, IT or security staff, a bank or a well-known company to justify its request.

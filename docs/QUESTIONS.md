@@ -559,6 +559,56 @@
     projection exceeds 28 units, the stop rule of section 11 applies before any full run; the fallback order of
     section 11 (qwen25-7b and gemma2-27b first) is implemented as the order of the commands, not in code.
 
-    **Answer (author):** pending. Step 2 (smoke on dev, 20 items x 3 models) does not start before (a), (b), (e),
-    (f) and (g) are confirmed; (c), (d), (i) are needed before step 5; (j) and (k) before the first Colab run.
+    **Answered 2026-11-09 (author); each decision implemented the same day and, where it corrects the spec,
+    docs/TASK_08_twostage.md amended in the same commit (sections 3, 4, 5, 7, 8 and 9 step 2):**
+    (a) Sections 4 and 5 conflicted. A parse failure is NEVER a feature level: at prediction it short-circuits to
+    invalid (scored incorrect, as in step 06); at fitting the row is excluded from the dev fit entirely and the
+    number excluded is reported. "unclear" is a legitimate level and stays. Section 5 amended.
+    (b) 5-fold, balanced accuracy, ties to the smallest C, with one change: folds grouped by source e-mail
+    (StratifiedGroupKFold, group = the item id before "#"), because dev holds originals together with their own
+    variants and ungrouped folds would make the selection optimistic. Implemented in scripts/twostage/stage2.py.
+    (c) 07_score.py is not touched. scripts/07_score_model.py gained --strategies and --kind twostage (families
+    A-twostage-{model}); tests/test_score_model.py checks that an existing model scored through it still
+    reproduces its frozen rows exactly, with the default strategies passed explicitly.
+    (d) The objection stands and the spec was wrong: the two-stage detector does NOT gain rows in T1 to T11; it is
+    reported only in tab_t12_twostage.tex (own capability block in the T1 format) and figure F8; every committed
+    .tex stays byte-identical. Section 8 amended.
+    (e) Relax, then be strict: normalise case and the obvious synonyms first (yes/no/unclear case-insensitive;
+    true/false/yes/no/1/0 for the booleans), then mark the row invalid only if a value is still out of vocabulary.
+    A missing key is invalid. An extra key is ignored, never fatal, counted and reported. The normalisation table
+    is frozen in configs/twostage.yaml (parse.normalise). Rationale: invalid means the architecture failed, not
+    that the model wrote "Yes". Section 4 amended.
+    (f) Word list accepted; diagnostic counter only, checked over the whole raw output, inside and outside the
+    JSON; it never changes a row.
+    (g) Key renamed to sender_claim_inconsistency, defined in the config as "the body makes claims about the sender
+    or the organisation that are internally inconsistent", since the detector never sees a real sender address.
+    Section 3 amended; prompt updated.
+    (i) Yes: 06_check_integrity.py --twostage (scripts/twostage/integrity.py) writes
+    reports/integrity_check_twostage.json with the same assertions plus parse_ok counts and the stage-2 hash.
+    (j)(k) Both recorded per session: wall-clock x the published rate (1.15 units/h on T4, 1.94 on L4) and the Colab
+    "Available compute units" reading before and after (ground truth; --units-before/--units-after of the runner,
+    UNITS_BEFORE/UNITS_AFTER of notebooks/cloud_twostage.ipynb); both numbers and the gap are reported.
+    F-RQ1: the reading is correct, RQ1 is descriptive (item 15a); section 7 amended to F-RQ2 to F-RQ4.
+    The config_hash of every row changed with these decisions (configs/twostage.yaml re-frozen; hashes in the
+    step-2 commit message). Item 18 closed; step 2 (smoke) follows below.
 
+    **Step 2, part 1 (2026-11-09): CPU smoke on the laptop, 20 dev items (10 phishing, 10 legitimate, the seeded
+    sample of configs/detection.yaml) for the two models whose GGUF is on the laptop; results/smoke_twostage/, cells
+    smoke/<model>/laptop in reports/twostage_report.json. Format gate (parse failures <= 10%):**
+    qwen25-7b: parse failures 0/20 (0%) ; volunteered verdicts 0 (0%); rows with extra keys 0; output tokens mean 117.6; CPU median latency 17.604 s (not the tier's latency).
+    gemma2-9b: parse failures 0/19 (0%) ; volunteered verdicts 0 (0%); rows with extra keys 0; output tokens mean 112.1; CPU median latency 23.785 s (not the tier's latency).
+    Gate PASSED on the rows run; no prompt revision. Partial cell(s): gemma2-9b 19/20: the laptop session was stopped by the system for low memory (7 GB WSL, 5.8 GB GGUF) after the rows listed; the runner resumes at the missing item when restarted.
+    A runner defect found by this smoke and fixed in the same commit: the extraction cell statistics used the detection
+    runner's cell_stats(), which expects label_pred; extraction rows have none, so the report update crashed after the
+    first cell (rows were intact). Replaced by extract_stats(); --stats-only rewrites a cell's statistics from its file.
+    gemma2-27b has no laptop GGUF (16.6 GB, L4 tier): its smoke, and the GPU latency and compute-unit measurement of all
+    three, run on Colab with notebooks/cloud_twostage.ipynb (MODE = smoke; TIER colab_t4 for qwen25-7b and gemma2-9b, colab_l4
+    for gemma2-27b; UNITS_BEFORE/AFTER entered by the author). **Preliminary budget projection** (reports/twostage_report.json
+    budget_projection; basis: the main study's GPU CoT latency of the same model and tier, low = as CoT, high = scaled by
+    the smoke's output length; x 6,003 items x 1.15 or 1.94 units/h):
+    qwen25-7b (colab_t4): 2.05 to 4.64 s/item, 3.9 to 8.9 units;
+    gemma2-9b (colab_t4): 2.94 to 6.22 s/item, 5.6 to 11.9 units;
+    gemma2-27b (colab_l4): 4.4 to None s/item, 14.2 to None units;
+    total 23.8 to 35.0 units against 24 planned and the stop rule at 28.
+    The GPU smoke replaces this with measured seconds per item before any full run (section 9 step 2 gate on the budget).
+    Status: step 2 part 1 done; part 2 (Colab GPU smoke of all three) awaits the author's session.

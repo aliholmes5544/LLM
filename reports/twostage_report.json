@@ -1,0 +1,211 @@
+{
+  "cells": {
+    "smoke/qwen25-7b/laptop": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 17.604,
+      "latency_mean_s": 18.596,
+      "latency_max_s": 27.23,
+      "latency_total_s": 371.9,
+      "prompt_tokens_median": 592,
+      "output_tokens_mean": 117.6,
+      "output_tokens_max": 118,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cpu": 20
+      },
+      "model": "qwen25-7b",
+      "detector": "twostage_qwen25-7b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": true,
+      "n_expected": 20,
+      "n_done": 20,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 20
+        }
+      },
+      "limit": null,
+      "tier": "laptop",
+      "runtime": {
+        "tier": "laptop",
+        "n_threads": 16,
+        "n_batch": 512,
+        "n_gpu_layers": 0
+      },
+      "system_role": true,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "config_sha256": {
+        "configs/twostage.yaml": "61a65b228e0ec131810e66125328f605918336c257f283b83a3212925a1a5ae9",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "2fe688d",
+      "git_describe": "v1.0.0-thesis-4-g2fe688d",
+      "sessions": [],
+      "backend": "cpu",
+      "gpu": null,
+      "stats_only_at": "2026-11-09T15:44:16Z"
+    },
+    "smoke/gemma2-9b/laptop": {
+      "n": 19,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 23.785,
+      "latency_mean_s": 26.062,
+      "latency_max_s": 33.542,
+      "latency_total_s": 495.2,
+      "prompt_tokens_median": 623,
+      "output_tokens_mean": 112.1,
+      "output_tokens_max": 113,
+      "finish_reasons": {
+        "stop": 19
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cpu": 19
+      },
+      "model": "gemma2-9b",
+      "detector": "twostage_gemma2-9b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": true,
+      "n_expected": 20,
+      "n_done": 19,
+      "complete": false,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 20
+        }
+      },
+      "limit": null,
+      "tier": "laptop",
+      "runtime": {
+        "tier": "laptop",
+        "n_threads": 16,
+        "n_batch": 512,
+        "n_gpu_layers": 0
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "config_sha256": {
+        "configs/twostage.yaml": "61a65b228e0ec131810e66125328f605918336c257f283b83a3212925a1a5ae9",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "2fe688d",
+      "git_describe": "v1.0.0-thesis-4-g2fe688d",
+      "sessions": [],
+      "backend": "cpu",
+      "gpu": null,
+      "stats_only_at": "2026-11-09T15:44:18Z"
+    }
+  },
+  "stage2": {},
+  "forced_overwrites": [],
+  "compute_units": {},
+  "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
+  "updated_at": "2026-11-09T15:44:18Z",
+  "budget_projection": {
+    "basis": "GPU seconds per item taken from the main study's CoT cells of the same model and tier (reports/detection_run_report.json); low = CoT mean latency, high = CoT mean latency scaled by (smoke output tokens / CoT output tokens); x (796 dev + 5,207 eval) items x the published rate (1.15 units/h T4, 1.94 L4). Preliminary: the GPU smoke (notebooks/cloud_twostage.ipynb) replaces it with measured seconds per item and the compute-unit reading.",
+    "rows": [
+      {
+        "model": "qwen25-7b",
+        "tier": "colab_t4",
+        "gpu_cot_mean_s": 2.05,
+        "cot_output_tokens_median": 52,
+        "smoke_output_tokens_mean_cpu": 117.6,
+        "smoke_parse_failure_rate_cpu": 0.0,
+        "smoke_volunteered_rate_cpu": 0.0,
+        "smoke_latency_median_s_cpu": 17.604,
+        "items_dev_plus_eval": 6003,
+        "seconds_per_item_low": 2.05,
+        "seconds_per_item_high": 4.64,
+        "units_low": 3.9,
+        "units_high": 8.9
+      },
+      {
+        "model": "gemma2-9b",
+        "tier": "colab_t4",
+        "gpu_cot_mean_s": 2.94,
+        "cot_output_tokens_median": 53,
+        "smoke_output_tokens_mean_cpu": 112.1,
+        "smoke_parse_failure_rate_cpu": 0.0,
+        "smoke_volunteered_rate_cpu": 0.0,
+        "smoke_latency_median_s_cpu": 23.785,
+        "items_dev_plus_eval": 6003,
+        "seconds_per_item_low": 2.94,
+        "seconds_per_item_high": 6.22,
+        "units_low": 5.6,
+        "units_high": 11.9
+      },
+      {
+        "model": "gemma2-27b",
+        "tier": "colab_l4",
+        "gpu_cot_mean_s": 4.4,
+        "cot_output_tokens_median": 54,
+        "smoke_output_tokens_mean_cpu": null,
+        "smoke_parse_failure_rate_cpu": null,
+        "smoke_volunteered_rate_cpu": null,
+        "smoke_latency_median_s_cpu": null,
+        "items_dev_plus_eval": 6003,
+        "seconds_per_item_low": 4.4,
+        "seconds_per_item_high": null,
+        "units_low": 14.2,
+        "units_high": null
+      }
+    ],
+    "units_total_low": 23.8,
+    "units_total_high": 35.0,
+    "planned": 24,
+    "stop": 28
+  }
+}

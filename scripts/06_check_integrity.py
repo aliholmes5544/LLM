@@ -237,8 +237,22 @@ def main() -> int:
     ap.add_argument("--baselines", default="", help="comma list; default all in configs/baselines.yaml; 'none' skips")
     ap.add_argument("--report", default=None, help="output path; default reports/integrity_check.json (make evaluate "
                                                    "writes reports/integrity_check_<model>.json so the committed report stays)")
+    ap.add_argument("--twostage", action="store_true", help="check the TASK_08 two-stage eval files only, into "
+                                                            "reports/integrity_check_twostage.json (item 18i)")
     a = ap.parse_args()
     report_path = ROOT / a.report if a.report else REPORT
+    if a.twostage:
+        from twostage.integrity import check_twostage
+        dcfg, mcfg = load_config("detection.yaml"), load_config("models.yaml")
+        raw_dir = ROOT / (a.raw_dir or dcfg["output"]["raw_dir"])
+        recs, part = load_records(), load_partitions()
+        items = {i["item_id"]: i for i in eval_items(recs, part, dcfg)}
+        rep = {"checked_at": now(), **check_twostage(raw_dir, items, mcfg, load_config()["seed"], dcfg)}
+        out = ROOT / (a.report or "reports/integrity_check_twostage.json")
+        write_json(out, rep)
+        print(f"{'ALL PASS' if rep['all_pass'] else 'FAILED'}: {rep['n_pass']}/{rep['n_cells']} two-stage cells pass, "
+              f"{len(rep['missing_cells'])} missing -> {rel(out)}")
+        return 0 if rep["all_pass"] else 1
 
     dcfg, mcfg = load_config("detection.yaml"), load_config("models.yaml")
     raw_dir = ROOT / (a.raw_dir or dcfg["output"]["raw_dir"])

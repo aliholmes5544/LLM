@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 06_run_twostage.py — the two-stage indicator detector (docs/TASK_08_twostage.md; supervisor-requested,
-exploratory, post hoc; QUESTIONS.md item 18). An additional evaluated condition inside the existing framework:
-nothing here reads or writes the frozen artefacts of steps 05 to 07.
+exploratory, post hoc; QUESTIONS.md item 18 with the decisions of 2026-11-09). An additional evaluated condition
+inside the existing framework: nothing here reads or writes the frozen artefacts of steps 05 to 07.
 
 Three modes, one command each (TASK_08 section 9):
 
@@ -11,12 +11,17 @@ Three modes, one command each (TASK_08 section 9):
             seed 2026, max_tokens from configs/twostage.yaml. One row per item, appended as it is produced, to
             results/raw/twostage_{model}/extract/{partition}.jsonl: item_id, partition, condition, label_true,
             model, strategy ("extract"), raw_output, indicators (dict or null), parse_ok, parse_error,
-            volunteered_verdict, prompt_hash, config_hash, model_hash, n_prompt_tokens, n_output_tokens,
-            finish_reason, latency_s, truncated_input, backend. Resumable, skip / refuse / --force --reason
-            rules of scripts/detect/resume.py; eval needs the model's eval_tier and committed frozen files.
+            extra_keys, volunteered_verdict, prompt_hash, config_hash, model_hash, n_prompt_tokens,
+            n_output_tokens, finish_reason, latency_s, truncated_input, backend. Resumable, skip / refuse /
+            --force --reason rules of scripts/detect/resume.py; eval needs the model's eval_tier and committed
+            frozen files. --smoke runs the 20-item dev smoke sample of configs/detection.yaml (10 + 10, seeded)
+            into results/smoke_twostage/{model}/{tier}.jsonl instead (TASK_08 section 9 step 2).
+            --units-before / --units-after record the Colab "Available compute units" reading of the session;
+            the wall-clock estimate (hours x configs/twostage.yaml budget.rates_units_per_hour) is recorded too.
   fit       stage 2: one logistic regression on the one-hot indicators of the COMPLETE dev extraction (TASK_08
-            section 5: dev only; C by stratified cross-validation on dev; threshold 0.5), saved under
-            models/twostage/ (gitignored) with its sha256, coefficients and selection table in the report.
+            section 5, item 18a/b: dev only; parse failures excluded and counted; C by StratifiedGroupKFold on dev
+            with the source e-mail as group; threshold 0.5), saved under models/twostage/ (gitignored) with its
+            sha256, coefficients and selection table in the report.
   predict   writes the detector rows results/raw/twostage_{model}/lr/{partition}.jsonl in the runner schema
             of every other detector (TASK_08 section 6) from the extraction rows and the fitted stage 2:
             raw_output = the extraction JSON string, label_pred from stage 2 ("invalid" when the extraction did
@@ -26,7 +31,7 @@ Three modes, one command each (TASK_08 section 9):
 Every mode merges its statistics, hashes and versions into reports/twostage_report.json.
 
 Usage: python scripts/06_run_twostage.py extract --model KEY --partition {dev,eval} [--tier T] [--backend auto|cpu|cuda]
-                                                 [--limit N (dev only)] [--force --reason "..."] [--progress-every 25]
+             [--smoke] [--stats-only] [--limit N (dev only)] [--force --reason "..."] [--progress-every 25] [--units-before X --units-after Y]
        python scripts/06_run_twostage.py fit     --model KEY
        python scripts/06_run_twostage.py predict --model KEY --partition {dev,eval} [--force --reason "..."]
 """
@@ -36,12 +41,14 @@ import json
 import subprocess
 import sys
 import time
+from collections import Counter
 
 from common import ROOT, load_config, read_text, write_json, open_utf8
-from detect.items import load_records, load_partitions, eval_items, dev_items, count_items
+from detect.items import load_records, load_partitions, eval_items, dev_items, smoke_items, count_items
 from detect.prompts import load_prompt, render, messages, sha256_file
 from detect.resume import decide, read_rows, SKIP, FORCE
 from detect.stats import cell_stats
+import statistics
 from twostage.parse import parse_indicators, schema_of, volunteered_verdict
 from twostage.stage2 import config_hash, fit_stage2, load_model, predict_row, save_model, sha256_file as sha256_path
 
@@ -67,9 +74,8 @@ def frozen_is_committed() -> bool:
 
 def load_report() -> dict:
     rep = json.loads(read_text(REPORT)) if REPORT.exists() else {}
-    rep.setdefault("cells", {})
-    rep.setdefault("stage2", {})
-    rep.setdefault("forced_overwrites", [])
+    for k, v in (("cells", {}), ("stage2", {}), ("forced_overwrites", []), ("compute_units", {})):
+        rep.setdefault(k, v)
     rep.setdefault("note", "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md "
                            "item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.")
     return rep
@@ -82,15 +88,18 @@ def extraction_prompt(tcfg: dict, dcfg: dict) -> dict:
     return load_prompt(pcfg, EXTRACT_STRATEGY)
 
 
-def partition_items(partition: str, dcfg: dict) -> list:
+def partition_items(partition: str, dcfg: dict, smoke: bool = False, seed: int = None) -> list:
     recs, part = load_records(), load_partitions()
+    if smoke:
+        return smoke_items(recs, part, dcfg, seed)
     return eval_items(recs, part, dcfg) if partition == "eval" else dev_items(recs, part, dcfg)
 
 
-def paths(tcfg: dict, dcfg: dict, model: str, partition: str) -> dict:
+def paths(tcfg: dict, dcfg: dict, model: str, partition: str, tier: str = None, smoke: bool = False) -> dict:
     name = tcfg["model_prefix"] + model
     raw = ROOT / dcfg["output"]["raw_dir"] / name
-    return {"name": name, "extract": raw / tcfg["extract_key"] / f"{partition}.jsonl",
+    return {"name": name,
+            "extract": (ROOT / tcfg["smoke_dir"] / model / f"{tier}.jsonl") if smoke else raw / tcfg["extract_key"] / f"{partition}.jsonl",
             "final": raw / tcfg["strategy_key"] / f"{partition}.jsonl",
             "model": ROOT / tcfg["stage2"]["model_dir"] / f"{model}_lr.joblib"}
 
@@ -113,6 +122,57 @@ def archive_or_skip(out, rows: list, expected: list, phash: str, mhash, a, repor
     return rows, action
 
 
+def extract_stats(rows: list) -> dict:
+    """Per-cell statistics of extraction rows (no label_pred here: invalid = parse failure)."""
+    lat = [r["latency_s"] for r in rows]
+    n_pf = int(sum(not r["parse_ok"] for r in rows))
+    n = len(rows)
+    return {"n": n, "invalid": n_pf, "invalid_rate": round(n_pf / n, 4) if n else None,
+            "parse_failures": n_pf, "parse_failure_rate": round(n_pf / n, 4) if n else None,
+            "parse_errors": dict(sorted(Counter(r["parse_error"] for r in rows if r["parse_error"]).items())),
+            "rows_with_extra_keys": int(sum(bool(r.get("extra_keys")) for r in rows)),
+            "extra_keys_seen": dict(sorted(Counter(k for r in rows for k in r.get("extra_keys", [])).items())),
+            "volunteered_verdicts": int(sum(r["volunteered_verdict"] for r in rows)),
+            "volunteered_verdict_rate": round(sum(r["volunteered_verdict"] for r in rows) / n, 4) if n else None,
+            "latency_median_s": round(statistics.median(lat), 3) if lat else None,
+            "latency_mean_s": round(statistics.fmean(lat), 3) if lat else None,
+            "latency_max_s": round(max(lat), 3) if lat else None, "latency_total_s": round(sum(lat), 1),
+            "prompt_tokens_median": int(statistics.median(r["n_prompt_tokens"] for r in rows)) if rows else None,
+            "output_tokens_mean": round(statistics.fmean(r["n_output_tokens"] for r in rows), 1) if rows else None,
+            "output_tokens_max": max((r["n_output_tokens"] for r in rows), default=None),
+            "finish_reasons": dict(Counter(r["finish_reason"] for r in rows)),
+            "truncated_input": int(sum(r["truncated_input"] for r in rows)),
+            "backends": dict(Counter(r["backend"] for r in rows))}
+
+
+def write_extract_cell(report: dict, cell_key: str, rows: list, items: list, expected: list, a, tcfg: dict, dcfg: dict,
+                       prompt: dict, phash: str, chash: str, seed: int, tier: dict, entry: dict, extra: dict) -> dict:
+    st = extract_stats(rows)
+    st.update({"model": a.model, "detector": tcfg["model_prefix"] + a.model, "strategy": EXTRACT_STRATEGY, "partition": a.partition,
+               "smoke": a.smoke, "n_expected": len(expected), "n_done": len(rows), "complete": set(expected) <= {r["item_id"] for r in rows},
+               "items_by_partition_condition": count_items(items), "limit": a.limit or None, "tier": a.tier, "runtime": tier,
+               "system_role": entry["system_role"], "prompt_file": prompt["file"], "prompt_hash": phash, "config_hash": chash,
+               "decoding": tcfg["decoding"], "n_ctx": dcfg["context"]["n_ctx"], "seed": seed,
+               "model_sha256": rows[0]["model_hash"] if rows else entry.get("sha256"),
+               "config_sha256": {x: sha256_file(ROOT / x) for x in FROZEN},
+               "git_commit": git("rev-parse", "--short", "HEAD"), "git_describe": git("describe", "--tags", "--always"),
+               "sessions": report["cells"].get(cell_key, {}).get("sessions", []), **extra})
+    report["cells"][cell_key] = st
+    report["updated_at"] = now()
+    write_json(REPORT, report)
+    return st
+
+
+def units_record(a, tier_name: str, wall_s: float, tcfg: dict) -> dict:
+    """Compute units of one session: wall-clock x published rate, and the author's before/after reading (item 18j/k)."""
+    rate = tcfg["budget"]["rates_units_per_hour"].get(tier_name)
+    est = round(wall_s / 3600 * rate, 3) if rate else None
+    read = (round(a.units_before - a.units_after, 3) if a.units_before is not None and a.units_after is not None else None)
+    return {"tier": tier_name, "wall_s": wall_s, "rate_units_per_hour": rate, "estimate_wall_x_rate": est,
+            "units_before": a.units_before, "units_after": a.units_after, "measured_from_reading": read,
+            "gap_measured_minus_estimate": (round(read - est, 3) if read is not None and est is not None else None)}
+
+
 # ---------------------------------------------------------------- extract
 
 def run_extract(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
@@ -121,6 +181,8 @@ def run_extract(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
     entry = mcfg["models"][a.model]
     if a.tier not in mcfg["tiers"]:
         raise SystemExit(f"unknown tier {a.tier}; keys: {list(mcfg['tiers'])}")
+    if a.smoke and a.partition == "eval":
+        raise SystemExit("--smoke runs the dev smoke sample only")
     if a.partition == "eval":
         if a.limit:
             raise SystemExit("--limit is allowed on dev only (evaluation items are run once, completely)")
@@ -129,22 +191,36 @@ def run_extract(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
         if not frozen_is_committed():
             raise SystemExit(f"{', '.join(FROZEN)} must be committed unchanged; eval runs use frozen artefacts only")
     tier = load_config(mcfg["tiers"][a.tier]["runtime"])
-    backend = resolve_backend(a.backend, tier, a.tier, mcfg["tiers"])
+    backend = "n/a" if a.stats_only else resolve_backend(a.backend, tier, a.tier, mcfg["tiers"])
     gpu = gpu_name()
-    items = partition_items(a.partition, dcfg)
+    items = partition_items(a.partition, dcfg, a.smoke, seed)
     if a.limit:
         items = items[:a.limit]
     expected = [i["item_id"] for i in items]
     prompt = extraction_prompt(tcfg, dcfg)
     phash, chash = prompt["sha256"], config_hash(tcfg, seed)
-    schema, max_tokens = schema_of(tcfg), tcfg["decoding"]["max_tokens"]
-    p = paths(tcfg, dcfg, a.model, a.partition)
-    out, cell_key = p["extract"], f"{p['name']}/{EXTRACT_STRATEGY}/{a.partition}"
+    schema, ncfg, max_tokens = schema_of(tcfg), tcfg["parse"]["normalise"], tcfg["decoding"]["max_tokens"]
+    p = paths(tcfg, dcfg, a.model, a.partition, a.tier, a.smoke)
+    out = p["extract"]
+    cell_key = f"smoke/{a.model}/{a.tier}" if a.smoke else f"{p['name']}/{EXTRACT_STRATEGY}/{a.partition}"
     out.parent.mkdir(parents=True, exist_ok=True)
     report = load_report()
+    if a.stats_only:                                          # (re)write the cell's statistics from its file; no model
+        rows = read_rows(out)
+        st = write_extract_cell(report, cell_key, rows, items, expected, a, tcfg, dcfg, prompt, phash, chash, seed, tier, entry,
+                                {"backend": rows[0]["backend"] if rows else None, "gpu": gpu or None, "stats_only_at": now()})
+        print(f"[{cell_key}] stats rewritten from {out.relative_to(ROOT)}: {'COMPLETE' if st['complete'] else 'PARTIAL'} "
+              f"{st['n_done']}/{st['n_expected']}; parse failures {st['parse_failures']}; volunteered {st['volunteered_verdicts']}; "
+              f"median {st['latency_median_s']} s; output tokens mean {st['output_tokens_mean']}")
+        return 0
     rows, action = archive_or_skip(out, read_rows(out), expected, phash, entry.get("sha256"), a, report, cell_key)
     if action == SKIP:
-        print(f"{cell_key}: already complete ({len(rows)} rows), skipping")
+        if cell_key not in report["cells"]:
+            write_extract_cell(report, cell_key, rows, items, expected, a, tcfg, dcfg, prompt, phash, chash, seed, tier, entry,
+                               {"backend": rows[0]["backend"] if rows else backend, "gpu": gpu or None, "stats_only_at": now()})
+            print(f"{cell_key}: already complete ({len(rows)} rows); statistics written to the report")
+        else:
+            print(f"{cell_key}: already complete ({len(rows)} rows), skipping")
         return 0
     have = {r["item_id"] for r in rows}
     todo = [i for i in items if i["item_id"] not in have]
@@ -163,14 +239,14 @@ def run_extract(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
             body, trunc = det.fit_body(lambda b: render(prompt, it["subject"], b), it["body"], max_tokens)
             system, user = render(prompt, it["subject"], body)
             o = det.complete(messages(system, user, entry["system_role"]), max_tokens)
-            ind, err = parse_indicators(o["raw_output"], schema)
+            ind, err, extra = parse_indicators(o["raw_output"], schema, ncfg)
             vol = volunteered_verdict(o["raw_output"], tcfg["parse"]["verdict_words"])
             n_fail += ind is None
             n_vol += vol
             row = {"item_id": it["item_id"], "partition": it["partition"], "condition": it["condition"], "label_true": it["label_true"],
                    "model": p["name"], "strategy": EXTRACT_STRATEGY, "raw_output": o["raw_output"], "indicators": ind,
-                   "parse_ok": ind is not None, "parse_error": err, "volunteered_verdict": vol, "invalid": ind is None,
-                   "prompt_hash": phash, "config_hash": chash, "model_hash": det.model_hash,
+                   "parse_ok": ind is not None, "parse_error": err, "extra_keys": extra, "volunteered_verdict": vol,
+                   "invalid": ind is None, "prompt_hash": phash, "config_hash": chash, "model_hash": det.model_hash,
                    "n_prompt_tokens": o["n_prompt_tokens"], "n_output_tokens": o["n_output_tokens"], "finish_reason": o["finish_reason"],
                    "latency_s": o["latency_s"], "truncated_input": trunc, "backend": backend}
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -182,27 +258,18 @@ def run_extract(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
     det.close()
     wall = round(time.perf_counter() - t0, 1)
     rows = read_rows(out)
-    st = cell_stats(rows)                                     # invalid = parse failure here
-    st.update({"model": a.model, "detector": p["name"], "strategy": EXTRACT_STRATEGY, "partition": a.partition,
-               "n_expected": len(expected), "n_done": len(rows), "complete": set(expected) <= {r["item_id"] for r in rows},
-               "parse_failures": int(sum(not r["parse_ok"] for r in rows)),
-               "parse_failure_rate": round(sum(not r["parse_ok"] for r in rows) / len(rows), 4) if rows else None,
-               "parse_errors": dict(sorted(__import__("collections").Counter(r["parse_error"] for r in rows if r["parse_error"]).items())),
-               "volunteered_verdicts": int(sum(r["volunteered_verdict"] for r in rows)),
-               "items_by_partition_condition": count_items(items), "limit": a.limit or None, "tier": a.tier, "runtime": tier,
-               "backend": backend, "gpu": gpu or None, "llama_cpp_python": llama_cpp.__version__, "model_sha256": det.model_hash,
-               "model_load_s": det.load_s, "system_role": entry["system_role"], "prompt_file": prompt["file"], "prompt_hash": phash,
-               "config_hash": chash, "decoding": tcfg["decoding"], "n_ctx": dcfg["context"]["n_ctx"], "seed": seed,
-               "config_sha256": {x: sha256_file(ROOT / x) for x in FROZEN},
-               "git_commit": git("rev-parse", "--short", "HEAD"), "git_describe": git("describe", "--tags", "--always"),
-               "sessions": report["cells"].get(cell_key, {}).get("sessions", []) + [
-                   {"started_at": started, "finished_at": now(), "items_run": len(todo), "wall_s": wall, "backend": backend, "gpu": gpu or None}]})
-    report["cells"][cell_key] = st
-    report["updated_at"] = now()
-    write_json(REPORT, report)
+    session = {"started_at": started, "finished_at": now(), "items_run": len(todo), "wall_s": wall, "backend": backend,
+               "gpu": gpu or None, "units": units_record(a, a.tier, wall, tcfg)}
+    report["cells"].setdefault(cell_key, {}).setdefault("sessions", []).append(session)
+    st = write_extract_cell(report, cell_key, rows, items, expected, a, tcfg, dcfg, prompt, phash, chash, seed, tier, entry,
+                            {"backend": backend, "gpu": gpu or None, "llama_cpp_python": llama_cpp.__version__,
+                             "model_load_s": det.load_s})
+    n_pf = st["parse_failures"]
     print(f"[{cell_key}] {'COMPLETE' if st['complete'] else 'PARTIAL'} {st['n_done']}/{st['n_expected']}; parse failures "
-          f"{st['parse_failures']} ({st['parse_failure_rate']:.1%}); volunteered verdicts {st['volunteered_verdicts']}; "
-          f"median {st['latency_median_s']} s; this session {len(todo)} items in {wall} s")
+          f"{n_pf} ({st['parse_failure_rate']:.1%}); volunteered verdicts {st['volunteered_verdicts']}; extra keys in "
+          f"{st['rows_with_extra_keys']} rows; median {st['latency_median_s']} s, mean {st['latency_mean_s']} s; "
+          f"output tokens mean {st['output_tokens_mean']}; this session {len(todo)} items in {wall} s"
+          + (f"; units estimate {session['units']['estimate_wall_x_rate']}" if session["units"]["estimate_wall_x_rate"] is not None else ""))
     print(f"-> {out.relative_to(ROOT)}, {REPORT.relative_to(ROOT)}")
     return 0
 
@@ -233,22 +300,22 @@ def run_fit(a, tcfg: dict, dcfg: dict, seed: int) -> int:
     t0 = time.perf_counter()
     res = fit_stage2(rows, tcfg, seed)
     payload = {"model": res["model"], "feature_names": res["feature_names"], "C": res["C"], "prompt_hash": phash,
-               "config_hash": chash, "fit_partition": fit_part, "n_rows": res["n_rows"], "fitted_at": now()}
+               "config_hash": chash, "fit_partition": fit_part, "n_fitted": res["n_fitted"], "fitted_at": now()}
     sha = save_model(p["model"], payload)
     report = load_report()
     report["stage2"][a.model] = {"model_file": str(p["model"].relative_to(ROOT)), "model_sha256": sha, "fit_partition": fit_part,
-                                 "n_rows": res["n_rows"], "n_positive": res["n_positive"], "n_parse_failures": res["n_parse_failures"],
-                                 "C": res["C"], "cv": tcfg["stage2"]["cv"], "cv_table": res["cv_table"],
-                                 "intercept": round(res["intercept"], 6), "coefficients": res["coefficients"],
-                                 "top3_abs": [c["feature"] for c in res["coefficients"][:3]],
-                                 "prompt_hash": phash, "config_hash": chash, "fit_s": round(time.perf_counter() - t0, 1),
-                                 "versions": {"scikit-learn": sklearn.__version__}, "fitted_at": now(),
-                                 "git_commit": git("rev-parse", "--short", "HEAD")}
+                                 "n_rows": res["n_rows"], "n_fitted": res["n_fitted"], "n_excluded_parse_failures": res["n_excluded_parse_failures"],
+                                 "n_positive": res["n_positive"], "n_groups": res["n_groups"], "C": res["C"], "cv": tcfg["stage2"]["cv"],
+                                 "cv_table": res["cv_table"], "intercept": round(res["intercept"], 6), "coefficients": res["coefficients"],
+                                 "top3_abs": [c["feature"] for c in res["coefficients"][:3]], "prompt_hash": phash, "config_hash": chash,
+                                 "fit_s": round(time.perf_counter() - t0, 1), "versions": {"scikit-learn": sklearn.__version__},
+                                 "fitted_at": now(), "git_commit": git("rev-parse", "--short", "HEAD")}
     report["updated_at"] = now()
     write_json(REPORT, report)
-    print(f"[{p['name']}] stage 2 fitted on {res['n_rows']} dev rows ({res['n_positive']} phish, {res['n_parse_failures']} parse "
-          f"failures); C = {res['C']} by {tcfg['stage2']['cv']['metric']} cv; largest |coef|: "
-          f"{', '.join(f'{c['feature']} {c['coef']:+.3f}' for c in res['coefficients'][:3])}; sha256 {sha[:12]}")
+    print(f"[{p['name']}] stage 2 fitted on {res['n_fitted']} of {res['n_rows']} dev rows ({res['n_excluded_parse_failures']} parse "
+          f"failures excluded; {res['n_positive']} phish; {res['n_groups']} source e-mails as cv groups); C = {res['C']} by "
+          f"{tcfg['stage2']['cv']['metric']}; largest |coef|: {', '.join(f'{c['feature']} {c['coef']:+.3f}' for c in res['coefficients'][:3])}; "
+          f"sha256 {sha[:12]}")
     print(f"-> {p['model'].relative_to(ROOT)}, {REPORT.relative_to(ROOT)}")
     return 0
 
@@ -317,16 +384,22 @@ def main() -> int:
     ap.add_argument("--partition", default=None, choices=(None, "dev", "eval"))
     ap.add_argument("--tier", default="laptop")
     ap.add_argument("--backend", default="auto", choices=("auto", "cpu", "cuda"))
+    ap.add_argument("--smoke", action="store_true", help="extract: the 20-item dev smoke sample into results/smoke_twostage/")
+    ap.add_argument("--stats-only", action="store_true", help="extract: rewrite the cell's report statistics from its file, no model load")
     ap.add_argument("--limit", type=int, default=0, help="extract on dev only: run the first N items")
     ap.add_argument("--force", action="store_true", help="archive a finished file and redo it (needs --reason)")
     ap.add_argument("--reason", default="")
     ap.add_argument("--progress-every", type=int, default=25)
+    ap.add_argument("--units-before", type=float, default=None, help="Colab 'Available compute units' before the session")
+    ap.add_argument("--units-after", type=float, default=None, help="... and after it (item 18j/k)")
     a = ap.parse_args()
     tcfg, dcfg, mcfg, seed = load_config("twostage.yaml"), load_config("detection.yaml"), load_config("models.yaml"), load_config()["seed"]
     if a.model not in tcfg["models"]:
         raise SystemExit(f"{a.model} is not in configs/twostage.yaml models {tcfg['models']} (TASK_08 section 2: three, no more)")
     if a.model not in mcfg["models"]:
         raise SystemExit(f"unknown model {a.model}; keys: {list(mcfg['models'])}")
+    if a.smoke and a.mode == "extract" and not a.partition:
+        a.partition = "dev"
     if a.mode in ("extract", "predict") and not a.partition:
         raise SystemExit(f"{a.mode} needs --partition dev|eval")
     if a.mode == "extract":

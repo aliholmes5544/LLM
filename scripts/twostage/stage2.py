@@ -1,8 +1,10 @@
 """
 stage2.py — the stage-2 logistic regression of the two-stage detector (TASK_08 section 5; configs/twostage.yaml
-`stage2`). One model per language model, fitted on the dev extractions only: features are the one-hot
-indicators (parse failures encoded explicitly), C is chosen on dev by stratified cross-validation, the threshold
-is fixed at 0.5. Nothing here reads an evaluation partition.
+`stage2`; QUESTIONS.md item 18 decisions (a), (b)). One model per language model, fitted on the dev
+extractions only: features are the one-hot indicators, rows whose extraction did not parse are excluded from the
+fit (and counted), C is chosen on dev by stratified GROUP cross-validation with the source e-mail as the group
+(an original and its variants never straddle a fold), the threshold is fixed at 0.5. Nothing here reads an
+evaluation partition.
 """
 import hashlib
 import json
@@ -11,26 +13,33 @@ import joblib
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import balanced_accuracy_score, f1_score, log_loss
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedGroupKFold
 
 from twostage.parse import feature_names, featurize, schema_of
 
 POSITIVE = "phish"
+HASHED = ("indicators", "definitions", "decoding", "parse", "stage2")
 
 
 def config_hash(tcfg: dict, seed: int) -> str:
     """sha256 of the parts of configs/twostage.yaml that define the detector, plus the seed."""
-    payload = {k: tcfg[k] for k in ("indicators", "decoding", "parse", "stage2")}
+    payload = {k: tcfg.get(k) for k in HASHED}
     payload["seed"] = seed
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()
 
 
+def cluster_of(item_id: str) -> str:
+    """The source e-mail of an item: the variant id is `<source id>#<condition>` (scripts/05_derive_variants.py)."""
+    return item_id.split("#", 1)[0]
+
+
 def design(rows: list, tcfg: dict) -> tuple:
-    """(X, y, names) from extraction rows: X one-hot in feature order, y = 1 for phish."""
-    schema, inv = schema_of(tcfg), tcfg["parse"]["invalid_value"]
-    X = np.array([featurize(r.get("indicators"), schema, inv) for r in rows], dtype=np.float64)
+    """(X, y, groups, names) from the PARSED extraction rows: X one-hot, y = 1 for phish, groups = source e-mail."""
+    schema = schema_of(tcfg)
+    X = np.array([featurize(r["indicators"], schema) for r in rows], dtype=np.float64)
     y = np.array([1 if r["label_true"] == POSITIVE else 0 for r in rows], dtype=np.int64)
-    return X, y, feature_names(schema, inv)
+    groups = np.array([cluster_of(r["item_id"]) for r in rows])
+    return X, y, groups, feature_names(schema)
 
 
 def _metric(name: str, y, p):
@@ -49,14 +58,16 @@ def _lr(C: float, s2: dict, seed: int) -> LogisticRegression:
     return LogisticRegression(C=C, solver=c["solver"], max_iter=c["max_iter"], class_weight=c["class_weight"], random_state=seed)
 
 
-def select_C(X, y, tcfg: dict, seed: int) -> tuple:
-    """(chosen C, table of mean cv metric per C); ties go to the smallest C."""
+def select_C(X, y, groups, tcfg: dict, seed: int) -> tuple:
+    """(chosen C, table of mean cv metric per C); grouped stratified folds; ties go to the smallest C."""
     s2 = tcfg["stage2"]
-    cv = StratifiedKFold(n_splits=s2["cv"]["folds"], shuffle=s2["cv"]["shuffle"], random_state=seed)
+    if s2["cv"]["scheme"] != "StratifiedGroupKFold":
+        raise SystemExit(f"cv scheme {s2['cv']['scheme']} not implemented (item 18b fixes StratifiedGroupKFold)")
+    cv = StratifiedGroupKFold(n_splits=s2["cv"]["folds"], shuffle=s2["cv"]["shuffle"], random_state=seed)
     table = []
     for C in s2["C_grid"]:
         scores = []
-        for tr, te in cv.split(X, y):
+        for tr, te in cv.split(X, y, groups):
             m = _lr(C, s2, seed).fit(X[tr], y[tr])
             scores.append(_metric(s2["cv"]["metric"], y[te], m.predict_proba(X[te])[:, 1]))
         table.append({"C": C, "cv_mean": float(np.mean(scores)), "cv_sd": float(np.std(scores))})
@@ -65,24 +76,27 @@ def select_C(X, y, tcfg: dict, seed: int) -> tuple:
 
 
 def fit_stage2(rows: list, tcfg: dict, seed: int) -> dict:
-    """Fit on the dev extraction rows; returns the model, the selection table and the coefficients."""
-    X, y, names = design(rows, tcfg)
+    """Fit on the dev extraction rows (parse failures excluded and counted); model, selection table, coefficients."""
+    kept = [r for r in rows if r.get("indicators") is not None]
+    n_excluded = len(rows) - len(kept)
+    X, y, groups, names = design(kept, tcfg)
     if len(set(y.tolist())) < 2:
         raise SystemExit("stage 2 needs both classes in the fitting rows")
-    C, table = select_C(X, y, tcfg, seed)
+    C, table = select_C(X, y, groups, tcfg, seed)
     model = _lr(C, tcfg["stage2"], seed).fit(X, y)
     coefs = sorted(zip(names, model.coef_[0].tolist()), key=lambda t: -abs(t[1]))
     return {"model": model, "C": C, "cv_table": table, "feature_names": names,
             "coefficients": [{"feature": n, "coef": round(c, 6)} for n, c in coefs],
-            "intercept": float(model.intercept_[0]), "n_rows": int(len(rows)), "n_positive": int(y.sum()),
-            "n_parse_failures": int(sum(1 for r in rows if r.get("indicators") is None))}
+            "intercept": float(model.intercept_[0]), "n_rows": int(len(rows)), "n_fitted": int(len(kept)),
+            "n_excluded_parse_failures": int(n_excluded), "n_positive": int(y.sum()),
+            "n_groups": int(len(set(groups.tolist())))}
 
 
 def predict_row(model, row: dict, tcfg: dict) -> tuple:
-    """(label, p_phish) for one extraction row; a parse failure gives ("invalid", None) (TASK_08 section 4)."""
+    """(label, p_phish) for one extraction row; a parse failure short-circuits to ("invalid", None) (item 18a)."""
     if row.get("indicators") is None:
         return "invalid", None
-    x = np.array([featurize(row["indicators"], schema_of(tcfg), tcfg["parse"]["invalid_value"])], dtype=np.float64)
+    x = np.array([featurize(row["indicators"], schema_of(tcfg))], dtype=np.float64)
     p = float(model.predict_proba(x)[0, 1])
     return (POSITIVE if p >= 0.5 else "legit"), p
 
