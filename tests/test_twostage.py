@@ -21,6 +21,7 @@ from common import load_config  # noqa: E402
 from twostage.parse import (feature_names, featurize, first_balanced_object, parse_indicators,  # noqa: E402
                             schema_of, volunteered_verdict)
 from twostage.stage2 import cluster_of, config_hash, fit_stage2, predict_row  # noqa: E402
+from twostage.budget import PLANS, plan_counts, projection, units_entry  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 TCFG = load_config("twostage.yaml")
@@ -174,6 +175,57 @@ class TestExtractStats(unittest.TestCase):
         self.assertEqual(runner.extract_stats([])["n"], 0)
 
 
+class TestBudget(unittest.TestCase):
+    """Plans A and B, the prior and the measured basis, the compute-unit record (TASK_08 section 9 step 2)."""
+    TCFG = {"models": ["qwen25-7b", "gemma2-27b"], "budget": {"compute_units_planned": 24, "compute_units_stop": 28,
+                                                            "rates_units_per_hour": {"colab_t4": 1.15, "colab_l4": 1.94}}}
+    MCFG = {"models": {"qwen25-7b": {"eval_tier": "colab_t4"}, "gemma2-27b": {"eval_tier": "colab_l4"}}}
+    DET = {"qwen25-7b/cot/eval": {"latency_mean_s": 2.0, "output_tokens_median": 50},
+           "gemma2-27b/cot/eval": {"latency_mean_s": 4.0, "output_tokens_median": 50}}
+
+    def counts(self):
+        dev = [{"partition": "dev"}] * 3
+        ev = [{"partition": "core_pos"}] * 3 + [{"partition": "gen_phish"}, {"partition": "gen_legit"}]
+        return plan_counts(dev, ev)
+
+    def test_plan_counts_exclude_the_generalisation_partitions_in_b_only(self):
+        c = self.counts()
+        self.assertEqual(list(c), list(PLANS))
+        self.assertEqual((c["A"]["items_per_model"], c["B"]["items_per_model"]), (8, 6))
+        self.assertEqual(c["B"]["eval_by_partition"], {"core_pos": 3}); self.assertEqual(c["A"]["eval_by_partition"]["gen_phish"], 1)
+
+    def test_prior_basis_scales_by_the_token_ratio_and_borrows_it_for_a_model_without_cpu_smoke(self):
+        rep = {"cells": {"smoke/qwen25-7b/laptop": {"n_done": 20, "output_tokens_mean": 100.0}}, "compute_units": {}}
+        counts = self.counts()
+        counts["A"]["items_per_model"], counts["B"]["items_per_model"] = 3600, 1800
+        p = projection(rep, self.TCFG, self.MCFG, self.DET, counts)
+        q, g = p["rows"]
+        self.assertEqual((q["basis"], g["basis"], p["all_measured"]), ("prior", "prior", False))
+        self.assertEqual(q["seconds_per_item"], {"low": 2.0, "high": 4.0})                     # ratio 100 / 50
+        self.assertEqual((g["output_token_ratio"], g["ratio_source"]), (2.0, "other models' mean ratio"))
+        self.assertEqual(q["units"]["A"], {"low": 2.3, "high": 4.6})                           # 2 s x 3600 / 3600 h x 1.15
+        self.assertEqual(g["units"]["B"], {"low": round(4 * 1800 / 3600 * 1.94, 1), "high": round(8 * 1800 / 3600 * 1.94, 1)})
+        self.assertEqual(p["totals"]["A"]["high"], round(4.6 + 8 * 1.94, 1))
+        self.assertEqual(p["verdict"]["A"], "within the planned budget")
+
+    def test_measured_basis_uses_the_gpu_smoke_and_the_span_rate(self):
+        rep = {"cells": {"smoke/qwen25-7b/colab_t4": {"n_done": 20, "latency_mean_s": 3.0, "latency_median_s": 2.9, "model_load_s": 60.0,
+                                                      "sessions": [{"started_at": "t", "finished_at": "t", "items_run": 20, "wall_s": 60.0,
+                                                                    "units": {"units_before": 100.0, "estimate_wall_x_rate": 0.019}}]}},
+               "compute_units": {}}
+        counts = self.counts()
+        counts["A"]["items_per_model"], counts["B"]["items_per_model"] = 1200, 600
+        e = units_entry(rep, "colab_t4", ["smoke/qwen25-7b/colab_t4"], 100.0, 99.4, 1800.0, self.TCFG["budget"]["rates_units_per_hour"])
+        self.assertEqual((e["measured_units"], e["extraction_wall_s"], e["estimate_wall_x_rate"]), (0.6, 60.0, 0.019))
+        self.assertEqual(e["rate_measured_per_span_hour"], 1.2); self.assertEqual(e["rate_measured_per_extraction_hour"], 36.0)
+        rep["compute_units"]["now"] = e
+        p = projection(rep, self.TCFG, self.MCFG, self.DET, counts)
+        q = p["rows"][0]
+        self.assertEqual((q["basis"], q["rate_units_per_hour"]["used"], q["seconds_per_item"]["high"]), ("measured", 1.2, 3.0))
+        self.assertEqual(q["units"]["A"], {"low": round((3.0 * 1200 + 60) / 3600 * 1.2, 1), "high": round((3.0 * 1200 + 60) / 3600 * 1.2, 1)})
+        self.assertEqual(p["rows"][1]["basis"], "prior"); self.assertFalse(p["all_measured"])
+
+
 class TestRunnerGuards(unittest.TestCase):
     def run_cli(self, *args):
         r = subprocess.run([sys.executable, "scripts/06_run_twostage.py", *args], cwd=ROOT, capture_output=True, text=True)
@@ -198,6 +250,12 @@ class TestRunnerGuards(unittest.TestCase):
     def test_partition_required(self):
         code, out = self.run_cli("predict", "--model", "qwen25-7b")
         self.assertNotEqual(code, 0); self.assertIn("--partition", out)
+
+    def test_model_required_except_units_and_budget(self):
+        code, out = self.run_cli("extract", "--partition", "dev")
+        self.assertNotEqual(code, 0); self.assertIn("--model", out)
+        code, out = self.run_cli("units", "--tier", "colab_t4", "--smoke")
+        self.assertNotEqual(code, 0); self.assertIn("--units-before", out)
 
 
 if __name__ == "__main__":

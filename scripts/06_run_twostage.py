@@ -4,7 +4,7 @@
 exploratory, post hoc; QUESTIONS.md item 18 with the decisions of 2026-11-09). An additional evaluated condition
 inside the existing framework: nothing here reads or writes the frozen artefacts of steps 05 to 07.
 
-Three modes, one command each (TASK_08 section 9):
+Five modes, one command each (TASK_08 section 9):
 
   extract   stage 1: the language model (configs/models.yaml entry; same GGUF, verified sha256) fills the
             indicator JSON for every item of a partition under prompts/extract_indicators.txt, greedy decoding,
@@ -27,6 +27,12 @@ Three modes, one command each (TASK_08 section 9):
             raw_output = the extraction JSON string, label_pred from stage 2 ("invalid" when the extraction did
             not parse, scored as incorrect exactly as in step 06), score = p_phish, plus parse_ok and the
             indicator columns ind_<key>. Same overwrite guards as the eval files of step 06.
+  units     records one Colab "Available compute units" reading (before, after; item 18j/k) against the cells of a
+            session: the covered extraction sessions, their wall-clock estimate, the gap and the rate measured over
+            the session's span (report `compute_units`). No model, no data.
+  budget    writes the report's `budget_projection` for plans A (dev + full eval, 6,003 items per model) and B (dev +
+            core eval, gen_phish and gen_legit excluded, 4,003) from the GPU smoke cells and the measured rate when
+            present, else from the main study's CoT latencies (scripts/twostage/budget.py). No model.
 
 Every mode merges its statistics, hashes and versions into reports/twostage_report.json.
 
@@ -34,6 +40,8 @@ Usage: python scripts/06_run_twostage.py extract --model KEY --partition {dev,ev
              [--smoke] [--stats-only] [--limit N (dev only)] [--force --reason "..."] [--progress-every 25] [--units-before X --units-after Y]
        python scripts/06_run_twostage.py fit     --model KEY
        python scripts/06_run_twostage.py predict --model KEY --partition {dev,eval} [--force --reason "..."]
+       python scripts/06_run_twostage.py units   --tier T --units-before X --units-after Y [--models k1,k2] [--smoke | --partition P] [--span-s S]
+       python scripts/06_run_twostage.py budget
 """
 import argparse
 import datetime as dt
@@ -51,6 +59,7 @@ from detect.stats import cell_stats
 import statistics
 from twostage.parse import parse_indicators, schema_of, volunteered_verdict
 from twostage.stage2 import config_hash, fit_stage2, load_model, predict_row, save_model, sha256_file as sha256_path
+from twostage.budget import format_table, plan_counts, projection, units_entry
 
 REPORT = ROOT / "reports" / "twostage_report.json"
 FROZEN = ("configs/twostage.yaml", "prompts/extract_indicators.txt", "configs/detection.yaml", "configs/models.yaml")
@@ -274,6 +283,54 @@ def run_extract(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
     return 0
 
 
+# ---------------------------------------------------------------- units, budget
+
+def run_units(a, tcfg: dict, dcfg: dict, mcfg: dict) -> int:
+    """Record one compute-unit reading of a Colab session (item 18j/k) in the report."""
+    if a.units_before is None or a.units_after is None:
+        raise SystemExit("units needs --units-before and --units-after (the Colab 'Available compute units' readings)")
+    if a.tier not in mcfg["tiers"]:
+        raise SystemExit(f"unknown tier {a.tier}; keys: {list(mcfg['tiers'])}")
+    models = [k.strip() for k in (a.models or "").split(",") if k.strip()] or [m for m in tcfg["models"] if mcfg["models"][m]["eval_tier"] == a.tier]
+    bad = [m for m in models if m not in tcfg["models"]]
+    if bad:
+        raise SystemExit(f"{bad} not in configs/twostage.yaml models {tcfg['models']}")
+    if not a.smoke and not a.partition:
+        raise SystemExit("units needs --smoke or --partition dev|eval to name the covered cells")
+    cells = [f"smoke/{m}/{a.tier}" if a.smoke else f"{tcfg['model_prefix']}{m}/{EXTRACT_STRATEGY}/{a.partition}" for m in models]
+    report = load_report()
+    missing = [c for c in cells if c not in report["cells"]]
+    if missing:
+        raise SystemExit(f"no such cell(s) in {REPORT.relative_to(ROOT)}: {missing}")
+    entry = units_entry(report, a.tier, cells, a.units_before, a.units_after, a.span_s, tcfg["budget"]["rates_units_per_hour"])
+    entry["recorded_at"] = now()
+    report["compute_units"][entry["recorded_at"]] = entry
+    report["updated_at"] = now()
+    write_json(REPORT, report)
+    print(f"[units {a.tier}] {a.units_before} -> {a.units_after}: measured {entry['measured_units']} units over {len(entry['sessions'])} "
+          f"session(s), extraction wall {entry['extraction_wall_s']} s, estimate {entry['estimate_wall_x_rate']}, gap "
+          f"{entry['gap_measured_minus_estimate']}; span {a.span_s} s -> {entry['rate_measured_per_span_hour']} units/h "
+          f"(published {entry['rate_published_units_per_hour']})")
+    print(f"-> {REPORT.relative_to(ROOT)} compute_units[{entry['recorded_at']}]")
+    return 0
+
+
+def run_budget(a, tcfg: dict, dcfg: dict, mcfg: dict) -> int:
+    """Write and print the budget projection for plans A and B (TASK_08 section 9 step 2)."""
+    det = json.loads(read_text(ROOT / "reports" / "detection_run_report.json"))["cells"]
+    recs, part = load_records(), load_partitions()
+    counts = plan_counts(dev_items(recs, part, dcfg), eval_items(recs, part, dcfg))
+    report = load_report()
+    proj = projection(report, tcfg, mcfg, det, counts)
+    proj["computed_at"] = now()
+    report["budget_projection"] = proj
+    report["updated_at"] = now()
+    write_json(REPORT, report)
+    print(format_table(proj))
+    print(f"-> {REPORT.relative_to(ROOT)} budget_projection ({'all models measured on their tier' if proj['all_measured'] else 'prior basis for at least one model: run the GPU smoke'})")
+    return 0
+
+
 # ---------------------------------------------------------------- fit
 
 def complete_rows(path, partition: str, dcfg: dict, phash: str, chash: str) -> list:
@@ -379,8 +436,10 @@ def run_predict(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=("extract", "fit", "predict"))
-    ap.add_argument("--model", required=True)
+    ap.add_argument("mode", choices=("extract", "fit", "predict", "units", "budget"))
+    ap.add_argument("--model", default=None, help="extract, fit, predict: one of the three models")
+    ap.add_argument("--models", default=None, help="units: comma list of the models covered (default: the models of --tier)")
+    ap.add_argument("--span-s", type=float, default=None, help="units: seconds from the start of the extraction cell to the after reading")
     ap.add_argument("--partition", default=None, choices=(None, "dev", "eval"))
     ap.add_argument("--tier", default="laptop")
     ap.add_argument("--backend", default="auto", choices=("auto", "cpu", "cuda"))
@@ -394,6 +453,12 @@ def main() -> int:
     ap.add_argument("--units-after", type=float, default=None, help="... and after it (item 18j/k)")
     a = ap.parse_args()
     tcfg, dcfg, mcfg, seed = load_config("twostage.yaml"), load_config("detection.yaml"), load_config("models.yaml"), load_config()["seed"]
+    if a.mode == "units":
+        return run_units(a, tcfg, dcfg, mcfg)
+    if a.mode == "budget":
+        return run_budget(a, tcfg, dcfg, mcfg)
+    if a.model is None:
+        raise SystemExit(f"{a.mode} needs --model KEY")
     if a.model not in tcfg["models"]:
         raise SystemExit(f"{a.model} is not in configs/twostage.yaml models {tcfg['models']} (TASK_08 section 2: three, no more)")
     if a.model not in mcfg["models"]:

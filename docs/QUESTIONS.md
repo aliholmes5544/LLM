@@ -596,19 +596,29 @@
     sample of configs/detection.yaml) for the two models whose GGUF is on the laptop; results/smoke_twostage/, cells
     smoke/<model>/laptop in reports/twostage_report.json. Format gate (parse failures <= 10%):**
     qwen25-7b: parse failures 0/20 (0%) ; volunteered verdicts 0 (0%); rows with extra keys 0; output tokens mean 117.6; CPU median latency 17.604 s (not the tier's latency).
-    gemma2-9b: parse failures 0/19 (0%) ; volunteered verdicts 0 (0%); rows with extra keys 0; output tokens mean 112.1; CPU median latency 23.785 s (not the tier's latency).
-    Gate PASSED on the rows run; no prompt revision. Partial cell(s): gemma2-9b 19/20: the laptop session was stopped by the system for low memory (7 GB WSL, 5.8 GB GGUF) after the rows listed; the runner resumes at the missing item when restarted.
+    gemma2-9b: parse failures 0/20 (0%) ; volunteered verdicts 0 (0%); rows with extra keys 0; output tokens mean 112.1; CPU median latency 25.209 s (not the tier's latency).
+    Gate PASSED on every row; no prompt revision. The gemma2-9b cell was 19/20 after the first session (stopped by the system for low
+    memory, 7 GB WSL, 5.8 GB GGUF) and completed on 2026-11-09 by a resumed session that ran the one missing item.
     A runner defect found by this smoke and fixed in the same commit: the extraction cell statistics used the detection
     runner's cell_stats(), which expects label_pred; extraction rows have none, so the report update crashed after the
     first cell (rows were intact). Replaced by extract_stats(); --stats-only rewrites a cell's statistics from its file.
     gemma2-27b has no laptop GGUF (16.6 GB, L4 tier): its smoke, and the GPU latency and compute-unit measurement of all
     three, run on Colab with notebooks/cloud_twostage.ipynb (MODE = smoke; TIER colab_t4 for qwen25-7b and gemma2-9b, colab_l4
-    for gemma2-27b; UNITS_BEFORE/AFTER entered by the author). **Preliminary budget projection** (reports/twostage_report.json
-    budget_projection; basis: the main study's GPU CoT latency of the same model and tier, low = as CoT, high = scaled by
-    the smoke's output length; x 6,003 items x 1.15 or 1.94 units/h):
-    qwen25-7b (colab_t4): 2.05 to 4.64 s/item, 3.9 to 8.9 units;
-    gemma2-9b (colab_t4): 2.94 to 6.22 s/item, 5.6 to 11.9 units;
-    gemma2-27b (colab_l4): 4.4 to None s/item, 14.2 to None units;
-    total 23.8 to 35.0 units against 24 planned and the stop rule at 28.
-    The GPU smoke replaces this with measured seconds per item before any full run (section 9 step 2 gate on the budget).
-    Status: step 2 part 1 done; part 2 (Colab GPU smoke of all three) awaits the author's session.
+    for gemma2-27b; UNITS_BEFORE in cell 1, UNITS_AFTER in cell 9, entered by the author).
+    **Step 2, part 2 preparation (2026-11-09, author's request):** the budget is projected for two plans, A = dev + the full eval
+    partition (6,003 items per model, the plan of TASK_08 section 2) and B = dev + the core eval only, gen_phish and
+    gen_legit excluded (4,003 items per model), so that the fallback is decided on numbers before step 3. Implemented as
+    `06_run_twostage.py budget` (scripts/twostage/budget.py; report `budget_projection`; measured basis = the GPU smoke cell of the
+    model on its tier and the span-measured unit rate when recorded, else the prior below) and `06_run_twostage.py units`
+    (records the Colab reading before/after against the sessions it covers, the wall-clock estimate, the gap and the rate per
+    span hour; report `compute_units`); notebook cell 9 runs both after the extraction cell. **Prior projection** (basis: the
+    main study's GPU CoT mean latency of the same model and tier, low = as CoT, high = scaled by the CPU smoke's output-token
+    ratio; published rates 1.15 units/h T4, 1.94 L4):
+    qwen25-7b (colab_t4): 2.05 to 4.636 s/item; plan A 3.9 to 8.9 units, plan B 2.6 to 5.9 units;
+    gemma2-9b (colab_t4): 2.94 to 6.218 s/item; plan A 5.6 to 11.9 units, plan B 3.8 to 8.0 units;
+    gemma2-27b (colab_l4): 4.4 to 9.629 s/item; plan A 14.2 to 31.1 units, plan B 9.5 to 20.8 units (output-token ratio borrowed from the other models' mean, no CPU smoke);
+    plan A total 23.8 to 52.0 units, plan B total 15.9 to 34.7 units, against 24 planned and the stop rule at 28: at the high end both plans exceed the stop rule; at the low end A fits the plan
+    exactly and B fits with margin. The GPU smoke (one Colab session per tier, MODE = smoke) replaces the prior with measured
+    seconds per item and a measured unit rate before any full run.
+    Status: step 2 part 1 done (both laptop cells 20/20); part 2 (Colab GPU smoke of all three, cells smoke/<model>/colab_t4 and
+    smoke/gemma2-27b/colab_l4, with the units reading) awaits the author's session; no full run started.

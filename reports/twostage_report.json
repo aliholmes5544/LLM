@@ -75,7 +75,7 @@
       "stats_only_at": "2026-11-09T15:44:16Z"
     },
     "smoke/gemma2-9b/laptop": {
-      "n": 19,
+      "n": 20,
       "invalid": 0,
       "invalid_rate": 0.0,
       "parse_failures": 0,
@@ -85,19 +85,19 @@
       "extra_keys_seen": {},
       "volunteered_verdicts": 0,
       "volunteered_verdict_rate": 0.0,
-      "latency_median_s": 23.785,
-      "latency_mean_s": 26.062,
-      "latency_max_s": 33.542,
-      "latency_total_s": 495.2,
-      "prompt_tokens_median": 623,
+      "latency_median_s": 25.209,
+      "latency_mean_s": 27.065,
+      "latency_max_s": 46.114,
+      "latency_total_s": 541.3,
+      "prompt_tokens_median": 627,
       "output_tokens_mean": 112.1,
       "output_tokens_max": 113,
       "finish_reasons": {
-        "stop": 19
+        "stop": 20
       },
       "truncated_input": 0,
       "backends": {
-        "cpu": 19
+        "cpu": 20
       },
       "model": "gemma2-9b",
       "detector": "twostage_gemma2-9b",
@@ -105,8 +105,8 @@
       "partition": "dev",
       "smoke": true,
       "n_expected": 20,
-      "n_done": 19,
-      "complete": false,
+      "n_done": 20,
+      "complete": true,
       "items_by_partition_condition": {
         "dev": {
           "original": 20
@@ -141,71 +141,214 @@
         "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
         "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
       },
-      "git_commit": "2fe688d",
-      "git_describe": "v1.0.0-thesis-4-g2fe688d",
-      "sessions": [],
+      "git_commit": "1bcd177",
+      "git_describe": "v1.0.0-thesis-5-g1bcd177",
+      "sessions": [
+        {
+          "started_at": "2026-11-09T19:34:51Z",
+          "finished_at": "2026-11-09T19:35:43Z",
+          "items_run": 1,
+          "wall_s": 52.3,
+          "backend": "cpu",
+          "gpu": null,
+          "units": {
+            "tier": "laptop",
+            "wall_s": 52.3,
+            "rate_units_per_hour": null,
+            "estimate_wall_x_rate": null,
+            "units_before": null,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
       "backend": "cpu",
       "gpu": null,
-      "stats_only_at": "2026-11-09T15:44:18Z"
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 57.9
     }
   },
   "stage2": {},
   "forced_overwrites": [],
   "compute_units": {},
   "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
-  "updated_at": "2026-11-09T15:44:18Z",
+  "updated_at": "2026-11-09T19:44:14Z",
   "budget_projection": {
-    "basis": "GPU seconds per item taken from the main study's CoT cells of the same model and tier (reports/detection_run_report.json); low = CoT mean latency, high = CoT mean latency scaled by (smoke output tokens / CoT output tokens); x (796 dev + 5,207 eval) items x the published rate (1.15 units/h T4, 1.94 L4). Preliminary: the GPU smoke (notebooks/cloud_twostage.ipynb) replaces it with measured seconds per item and the compute-unit reading.",
+    "basis": "measured = GPU smoke cell of the model on its eval tier (mean latency per item + one model load) x the span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from configs/detection.yaml items.",
+    "plans": {
+      "A": {
+        "name": "dev + full eval",
+        "exclude_partitions": [],
+        "dev": 796,
+        "eval": 5207,
+        "items_per_model": 6003,
+        "eval_by_partition": {
+          "core_neg": 1002,
+          "core_pos": 1661,
+          "ctrl_modern_legit": 334,
+          "ctrl_para_legit": 210,
+          "gen_legit": 1000,
+          "gen_phish": 1000
+        }
+      },
+      "B": {
+        "name": "dev + core eval (gen_phish, gen_legit excluded)",
+        "exclude_partitions": [
+          "gen_phish",
+          "gen_legit"
+        ],
+        "dev": 796,
+        "eval": 3207,
+        "items_per_model": 4003,
+        "eval_by_partition": {
+          "core_neg": 1002,
+          "core_pos": 1661,
+          "ctrl_modern_legit": 334,
+          "ctrl_para_legit": 210
+        }
+      }
+    },
     "rows": [
       {
         "model": "qwen25-7b",
         "tier": "colab_t4",
-        "gpu_cot_mean_s": 2.05,
-        "cot_output_tokens_median": 52,
-        "smoke_output_tokens_mean_cpu": 117.6,
-        "smoke_parse_failure_rate_cpu": 0.0,
-        "smoke_volunteered_rate_cpu": 0.0,
-        "smoke_latency_median_s_cpu": 17.604,
-        "items_dev_plus_eval": 6003,
-        "seconds_per_item_low": 2.05,
-        "seconds_per_item_high": 4.64,
-        "units_low": 3.9,
-        "units_high": 8.9
+        "basis": "prior",
+        "gpu_smoke": null,
+        "cpu_smoke": {
+          "n_done": 20,
+          "n_expected": 20,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 17.604,
+          "latency_mean_s": 18.596,
+          "output_tokens_mean": 117.6,
+          "gpu": null,
+          "model_load_s": null,
+          "git_commit": "2fe688d"
+        },
+        "cot_eval": {
+          "latency_mean_s": 2.05,
+          "output_tokens_median": 52
+        },
+        "output_token_ratio": 2.262,
+        "ratio_source": "own CPU smoke",
+        "seconds_per_item": {
+          "low": 2.05,
+          "high": 4.636
+        },
+        "model_load_s": 0.0,
+        "rate_units_per_hour": {
+          "published": 1.15,
+          "measured_span": null,
+          "used": 1.15
+        },
+        "units": {
+          "A": {
+            "low": 3.9,
+            "high": 8.9
+          },
+          "B": {
+            "low": 2.6,
+            "high": 5.9
+          }
+        }
       },
       {
         "model": "gemma2-9b",
         "tier": "colab_t4",
-        "gpu_cot_mean_s": 2.94,
-        "cot_output_tokens_median": 53,
-        "smoke_output_tokens_mean_cpu": 112.1,
-        "smoke_parse_failure_rate_cpu": 0.0,
-        "smoke_volunteered_rate_cpu": 0.0,
-        "smoke_latency_median_s_cpu": 23.785,
-        "items_dev_plus_eval": 6003,
-        "seconds_per_item_low": 2.94,
-        "seconds_per_item_high": 6.22,
-        "units_low": 5.6,
-        "units_high": 11.9
+        "basis": "prior",
+        "gpu_smoke": null,
+        "cpu_smoke": {
+          "n_done": 20,
+          "n_expected": 20,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 25.209,
+          "latency_mean_s": 27.065,
+          "output_tokens_mean": 112.1,
+          "gpu": null,
+          "model_load_s": 57.9,
+          "git_commit": "1bcd177"
+        },
+        "cot_eval": {
+          "latency_mean_s": 2.94,
+          "output_tokens_median": 53
+        },
+        "output_token_ratio": 2.115,
+        "ratio_source": "own CPU smoke",
+        "seconds_per_item": {
+          "low": 2.94,
+          "high": 6.218
+        },
+        "model_load_s": 0.0,
+        "rate_units_per_hour": {
+          "published": 1.15,
+          "measured_span": null,
+          "used": 1.15
+        },
+        "units": {
+          "A": {
+            "low": 5.6,
+            "high": 11.9
+          },
+          "B": {
+            "low": 3.8,
+            "high": 8.0
+          }
+        }
       },
       {
         "model": "gemma2-27b",
         "tier": "colab_l4",
-        "gpu_cot_mean_s": 4.4,
-        "cot_output_tokens_median": 54,
-        "smoke_output_tokens_mean_cpu": null,
-        "smoke_parse_failure_rate_cpu": null,
-        "smoke_volunteered_rate_cpu": null,
-        "smoke_latency_median_s_cpu": null,
-        "items_dev_plus_eval": 6003,
-        "seconds_per_item_low": 4.4,
-        "seconds_per_item_high": null,
-        "units_low": 14.2,
-        "units_high": null
+        "basis": "prior",
+        "gpu_smoke": null,
+        "cpu_smoke": null,
+        "cot_eval": {
+          "latency_mean_s": 4.4,
+          "output_tokens_median": 54
+        },
+        "output_token_ratio": 2.188,
+        "ratio_source": "other models' mean ratio",
+        "seconds_per_item": {
+          "low": 4.4,
+          "high": 9.629
+        },
+        "model_load_s": 0.0,
+        "rate_units_per_hour": {
+          "published": 1.94,
+          "measured_span": null,
+          "used": 1.94
+        },
+        "units": {
+          "A": {
+            "low": 14.2,
+            "high": 31.1
+          },
+          "B": {
+            "low": 9.5,
+            "high": 20.8
+          }
+        }
       }
     ],
-    "units_total_low": 23.8,
-    "units_total_high": 35.0,
+    "totals": {
+      "A": {
+        "low": 23.8,
+        "high": 52.0
+      },
+      "B": {
+        "low": 15.9,
+        "high": 34.7
+      }
+    },
     "planned": 24,
-    "stop": 28
+    "stop": 28,
+    "verdict": {
+      "A": "exceeds the stop rule",
+      "B": "exceeds the stop rule"
+    },
+    "all_measured": false,
+    "computed_at": "2026-11-09T19:44:14Z"
   }
 }
