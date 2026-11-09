@@ -29,7 +29,7 @@ Accuracy on originals is reported **descriptively only**. The thesis does not cl
 | Extraction strategy | zero-shot only |
 | Stage 2 | one logistic regression per model; no second LLM call |
 | Partitions | `dev` (fit stage 2) and `eval` (report), including `gen_*` |
-| Budget | ≈ 24 compute units (≈ 9.6 on T4, ≈ 14.5 on L4); stop and report if it passes 28 |
+| Budget | ≈ 24 compute units (≈ 9.6 on T4, ≈ 14.5 on L4) was the original estimate. *Amended 2026-11-09 (author):* 100 compute units were purchased on 2026-11-09 (available 113.12); the stop rule rises from 28 to 60 compute units, covering the high end of the plan A projection (52 units, QUESTIONS.md item 18). Plan A, dev plus the full eval partition, 6,003 items per model, all three models, is confirmed. |
 
 Three models span the range the question needs: does the architecture **compensate** for a weak model, and does it **cost** a strong one? `gemma2-27b` is the decisive case, because a model already at 0.979 sensitivity has nothing to gain and only accuracy to lose — the supervisor's architecture is most at risk there.
 
@@ -104,4 +104,4 @@ Resumable, refuses to overwrite a finished eval file without `--force --reason`,
 
 ## 11. Stop conditions
 
-Stop and report rather than improvising if: parse failures exceed 10 % on dev after one prompt revision; the budget passes 28 compute units; or the eval extraction cannot complete before the compute credit runs out. A partial result reported honestly is better than a rushed one. If only two of the three models can be completed, keep `qwen25-7b` and `gemma2-27b`, the two ends of the range.
+Stop and report rather than improvising if: parse failures exceed 10 % on dev after one prompt revision; the budget passes 60 compute units (*amended 2026-11-09 (author):* raised from 28 after the purchase of 100 units; the plan A high-end projection is 52); or the eval extraction cannot complete before the compute credit runs out. A partial result reported honestly is better than a rushed one. *Amended 2026-11-09 (author):* the fallback of keeping only `qwen25-7b` and `gemma2-27b` no longer applies; all three models run under plan A.

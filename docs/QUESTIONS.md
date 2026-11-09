@@ -620,5 +620,12 @@
     plan A total 23.8 to 52.0 units, plan B total 15.9 to 34.7 units, against 24 planned and the stop rule at 28: at the high end both plans exceed the stop rule; at the low end A fits the plan
     exactly and B fits with margin. The GPU smoke (one Colab session per tier, MODE = smoke) replaces the prior with measured
     seconds per item and a measured unit rate before any full run.
+    **Budget raised, plan A confirmed (2026-11-09, author):** 100 compute units were purchased on 2026-11-09; the Colab reading is
+    now 113.12 available. TASK_08 section 2 and section 11 amended: the stop rule rises from 28 to 60 compute units, which covers
+    the high end of the plan A projection (52.0); the section 11 fallback of dropping a model (keeping qwen25-7b and gemma2-27b)
+    no longer applies. Plan A (dev plus the full eval partition, 6,003 items per model, all three models) is confirmed; plan B
+    stays in the report as a comparison only. configs/twostage.yaml budget.compute_units_stop 28 -> 60 (the budget block is outside
+    config_hash, so no row hash changes); the planned figure of 24 stays as the original estimate. The parse-failure gate and the
+    GPU smoke before the full run are unchanged.
     Status: step 2 part 1 done (both laptop cells 20/20); part 2 (Colab GPU smoke of all three, cells smoke/<model>/colab_t4 and
     smoke/gemma2-27b/colab_l4, with the units reading) awaits the author's session; no full run started.

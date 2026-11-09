@@ -69,6 +69,6 @@ stage2:                                      # TASK_08 section 5; item 18 (a), (
 
 budget:                                      # TASK_08 section 2; item 18 (j), (k)
   compute_units_planned: 24
-  compute_units_stop: 28
+  compute_units_stop: 60                     # raised from 28 on 2026-11-09 (100 units purchased; plan A high end 52; item 18)
   rates_units_per_hour: {colab_t4: 1.15, colab_l4: 1.94}   # published Colab rates; wall-clock x rate = the estimate;
                                              # the "Available compute units" reading before/after a session is the ground truth

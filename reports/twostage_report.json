@@ -173,7 +173,7 @@
   "forced_overwrites": [],
   "compute_units": {},
   "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
-  "updated_at": "2026-11-09T19:44:14Z",
+  "updated_at": "2026-11-09T20:11:12Z",
   "budget_projection": {
     "basis": "measured = GPU smoke cell of the model on its eval tier (mean latency per item + one model load) x the span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from configs/detection.yaml items.",
     "plans": {
@@ -343,12 +343,12 @@
       }
     },
     "planned": 24,
-    "stop": 28,
+    "stop": 60,
     "verdict": {
-      "A": "exceeds the stop rule",
-      "B": "exceeds the stop rule"
+      "A": "between the planned budget and the stop rule",
+      "B": "between the planned budget and the stop rule"
     },
     "all_measured": false,
-    "computed_at": "2026-11-09T19:44:14Z"
+    "computed_at": "2026-11-09T20:11:12Z"
   }
 }
