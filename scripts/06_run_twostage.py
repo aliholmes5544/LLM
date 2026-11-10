@@ -363,7 +363,10 @@ def run_fit(a, tcfg: dict, dcfg: dict, seed: int) -> int:
     report["stage2"][a.model] = {"model_file": str(p["model"].relative_to(ROOT)), "model_sha256": sha, "fit_partition": fit_part,
                                  "n_rows": res["n_rows"], "n_fitted": res["n_fitted"], "n_excluded_parse_failures": res["n_excluded_parse_failures"],
                                  "n_positive": res["n_positive"], "n_groups": res["n_groups"], "C": res["C"], "cv": tcfg["stage2"]["cv"],
-                                 "cv_table": res["cv_table"], "intercept": round(res["intercept"], 6), "coefficients": res["coefficients"],
+                                 "cv_table": res["cv_table"], "balanced_accuracy_cv": res["balanced_accuracy_cv"],
+                                 "balanced_accuracy_cv_sd": res["balanced_accuracy_cv_sd"],
+                                 "balanced_accuracy_resubstitution": res["balanced_accuracy_resubstitution"],
+                                 "intercept": round(res["intercept"], 6), "coefficients": res["coefficients"],
                                  "top3_abs": [c["feature"] for c in res["coefficients"][:3]], "prompt_hash": phash, "config_hash": chash,
                                  "fit_s": round(time.perf_counter() - t0, 1), "versions": {"scikit-learn": sklearn.__version__},
                                  "fitted_at": now(), "git_commit": git("rev-parse", "--short", "HEAD")}
@@ -371,7 +374,8 @@ def run_fit(a, tcfg: dict, dcfg: dict, seed: int) -> int:
     write_json(REPORT, report)
     print(f"[{p['name']}] stage 2 fitted on {res['n_fitted']} of {res['n_rows']} dev rows ({res['n_excluded_parse_failures']} parse "
           f"failures excluded; {res['n_positive']} phish; {res['n_groups']} source e-mails as cv groups); C = {res['C']} by "
-          f"{tcfg['stage2']['cv']['metric']}; largest |coef|: {', '.join(f'{c['feature']} {c['coef']:+.3f}' for c in res['coefficients'][:3])}; "
+          f"{tcfg['stage2']['cv']['metric']} (grouped cv {res['balanced_accuracy_cv']:.4f}, resubstitution "
+          f"{res['balanced_accuracy_resubstitution']:.4f}); largest |coef|: {', '.join(f'{c['feature']} {c['coef']:+.3f}' for c in res['coefficients'][:3])}; "
           f"sha256 {sha[:12]}")
     print(f"-> {p['model'].relative_to(ROOT)}, {REPORT.relative_to(ROOT)}")
     return 0

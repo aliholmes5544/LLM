@@ -85,7 +85,11 @@ def fit_stage2(rows: list, tcfg: dict, seed: int) -> dict:
     C, table = select_C(X, y, groups, tcfg, seed)
     model = _lr(C, tcfg["stage2"], seed).fit(X, y)
     coefs = sorted(zip(names, model.coef_[0].tolist()), key=lambda t: -abs(t[1]))
+    cv_at_C = next(t for t in table if t["C"] == C)
+    resub = float(balanced_accuracy_score(y, (model.predict_proba(X)[:, 1] >= 0.5).astype(int)))
     return {"model": model, "C": C, "cv_table": table, "feature_names": names,
+            "balanced_accuracy_cv": round(cv_at_C["cv_mean"], 6), "balanced_accuracy_cv_sd": round(cv_at_C["cv_sd"], 6),
+            "balanced_accuracy_resubstitution": round(resub, 6),
             "coefficients": [{"feature": n, "coef": round(c, 6)} for n, c in coefs],
             "intercept": float(model.intercept_[0]), "n_rows": int(len(rows)), "n_fitted": int(len(kept)),
             "n_excluded_parse_failures": int(n_excluded), "n_positive": int(y.sum()),

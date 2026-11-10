@@ -1468,3 +1468,21 @@ reports/twostage_report.json), for §3.6 (extraction and parsing) and §4.8 (thr
   28 to 60 (2026-11-09, 100 units purchased) and to 80 (2026-11-10, item 18 option 1). Compute units actually consumed are
   recorded per session in reports/twostage_report.json (compute_units) and are the figure to cite.
 
+
+### 2026-11-10 (later): dev extraction and stage 2 fit facts (TASK_08 step 3)
+
+Source: reports/twostage_report.json (cells twostage_<model>/extract/dev, compute_units, budget_projection, stage2).
+
+- Format compliance on the full development set: 0 parse failures and 0 volunteered verdicts in 2,388 extractions (796 per model);
+  every output ended at the model's own stop token (none hit max_tokens 256); no input was truncated.
+- Cost per item on the tier, mean over 796 dev items: 4.79 s (qwen25-7b, T4), 6.01 s (gemma2-9b, T4), 9.95 s (gemma2-27b, L4);
+  mean output tokens 117.3, 112.1, 131.3. The 20-item smoke under-estimated the two T4 models by 23 % and 7 %.
+- Measured Colab billing: T4 4.73 units over 2.90 h = 1.632 units/h (published 1.15); L4 3.87 units over 2.25 h = 1.721 units/h (published 1.94).
+  The dev extraction cost 8.98 units including the set-up cells (0.38). These replace the smoke's coarse rates in the write-up.
+- Budget checkpoint before the eval extraction: plan A 58.0 units in total, 50.3 for the eval partition alone (11.3 + 14.2 + 24.8), against the stop rule of 80 and 103.58 available.
+- Stage 2 (one logistic regression per model, fitted on the 796 dev extractions, no exclusion): C = 3.0 for all three; balanced
+  accuracy by 5-fold grouped cross-validation on dev 0.889 (qwen25-7b), 0.890 (gemma2-9b), 0.866 (gemma2-27b), resubstitution
+  0.892, 0.891, 0.884. Largest effects (yes minus no): credential_or_payment_request and grammar_anomaly (qwen25-7b), urgency and
+  credential_or_payment_request (gemma2-9b), credential_or_payment_request and language_pattern (gemma2-27b). In all three,
+  language_pattern = machine_like points towards legitimate on dev. These are development-set figures and not results; the eval
+  rows (T12, F8) are the results.

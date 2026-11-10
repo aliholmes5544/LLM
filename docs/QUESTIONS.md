@@ -667,5 +667,45 @@
     measured_dev) and reports the eval-only remainder, so notebook cell 9 after the dev session is the checkpoint. For the
     thesis (docs/CHANGES_FOR_THESIS.md): the GPU-versus-laptop indicator agreement (256/260 qwen25-7b, 258/260 gemma2-9b) and
     the gemma2-27b code fence handled by the first-balanced-object rule.
-    Status: step 2 complete; step 3 (full dev extraction, 796 x 3, T4 session then L4 session, MODE = dev) released; no eval run
-    before the checkpoint.
+    **Step 3, part 1 (2026-11-10): full dev extraction, 796 x 3, done (notebooks/cloud_twostage.ipynb at 4c8ecc0, MODE = dev; T4 session
+    for qwen25-7b and gemma2-9b, L4 session for gemma2-27b; results/raw/twostage_<model>/extract/dev.jsonl, 796 rows each, one
+    session per cell, no resume needed):**
+    qwen25-7b (Tesla T4): 796/796 rows; parse failures 0 (0%); volunteered verdicts 0; rows with extra keys 0; finish reasons {'stop': 796}; latency median 4.72 s, mean 4.79 s; output tokens mean 117.3; model load 1.8 s; extraction wall 3815.2 s.
+    gemma2-9b (Tesla T4): 796/796 rows; parse failures 0 (0%); volunteered verdicts 0; rows with extra keys 0; finish reasons {'stop': 796}; latency median 5.89 s, mean 6.012 s; output tokens mean 112.1; model load 2.4 s; extraction wall 4788.3 s.
+    gemma2-27b (NVIDIA L4): 796/796 rows; parse failures 0 (0%); volunteered verdicts 0; rows with extra keys 0; finish reasons {'stop': 796}; latency median 9.823 s, mean 9.952 s; output tokens mean 131.3; model load 5.3 s; extraction wall 7925.1 s.
+    Every row carries config_hash defa94b131fd60ac and the frozen prompt hash; no truncated input. Against the 20-item GPU smoke the mean
+    latency moved from 3.71 to 4.79 s (qwen25-7b), 5.60 to 6.01 s (gemma2-9b) and 10.06 to 9.95 s (gemma2-27b): the smoke sample
+    was not representative of the dev items' length for the two T4 models, which is why the checkpoint uses the dev cell.
+    **Compute units (checkpoint readings, notebook cell 9):**
+    T4 session: 112.35 -> 107.62 = 4.73 units over a span of 10432.2 s (2.90 h) -> 1.632 units/h (published 1.15); extraction wall 8603.5 s, estimate wall x published rate 2.749, gap +1.981.
+    L4 session: 107.45 -> 103.58 = 3.87 units over 8095.3 s (2.25 h) -> 1.721 units/h (published 1.94); extraction wall 7925.1 s, estimate 4.271, gap -0.401.
+    The author's session boundaries were 112.56 -> 107.62 (T4) and 107.62 -> 103.58 (L4); cell 1 recorded 112.35 and 107.45 just before
+    the extraction cell, so the set-up cells (clone, wheels, GGUF download) cost 0.21 and 0.17 units outside the spans. Total for the
+    dev extraction 8.98 units (8.60 inside the measured spans); 103.58 available. The T4 is billed above its published rate (1.63
+    against 1.15 units/h, the 2.9 h span confirms the smoke's reading), the L4 below (1.72 against 1.94); the smoke's 2.461 for the L4
+    was the short-span artefact anticipated in the caveat above.
+    **Checkpoint (item 18 option 1; `06_run_twostage.py budget`, basis measured_dev = dev cell mean latency + one load, x the dev span
+    rate of the tier):**
+    qwen25-7b (colab_t4): 4.79 s/item at 1.632 units/h: plan A 13.0 units (eval only 11.3), plan B 8.7 (eval only 7.0);
+    gemma2-9b (colab_t4): 6.012 s/item at 1.632 units/h: plan A 16.4 units (eval only 14.2), plan B 10.9 (eval only 8.7);
+    gemma2-27b (colab_l4): 9.952 s/item at 1.721 units/h: plan A 28.6 units (eval only 24.8), plan B 19.0 (eval only 15.3);
+    plan A total 58.0 units, of which 50.3 remain for the eval partition; plan B 38.7 (31.0 remaining); planned 24, stop 80: plan A between the planned budget and the stop rule.
+    **The revised plan A projection (58.0) does NOT pass the stop rule of 80**; the remaining eval cost (50.3) is
+    half of the 103.58 units available. The eval run is not started by this record; it waits for the author's go.
+    **Step 3, part 2 (2026-11-10): stage 2 fitted per model on the dev extractions (`06_run_twostage.py fit`; models/twostage/<model>_lr.joblib,
+    gitignored, sha256 in the report; one-hot of the 13 indicators, LogisticRegression lbfgs, C from the grid by 5-fold StratifiedGroupKFold
+    balanced accuracy with the source e-mail as the group, threshold 0.5; two consecutive fits gave identical coefficients):**
+    qwen25-7b: 796 of 796 rows used, 0 excluded (no parse failure); 596 phish / 200 legit; 400 source e-mails as groups; C = 3.0; dev balanced accuracy 0.889 grouped cv (sd 0.017 over folds), 0.892 resubstitution; intercept +6.38; five largest |coef|: credential_or_payment_request=yes +2.055, credential_or_payment_request=no -2.050, grammar_anomaly=yes +2.033, grammar_anomaly=no -2.029, link_or_url=yes +1.193; sha256 ab29422a46c3.
+    gemma2-9b: 796 of 796 rows used, 0 excluded (no parse failure); 596 phish / 200 legit; 400 source e-mails as groups; C = 3.0; dev balanced accuracy 0.890 grouped cv (sd 0.028 over folds), 0.891 resubstitution; intercept +3.47; five largest |coef|: urgency=yes +1.644, urgency=no -1.636, credential_or_payment_request=yes +1.623, credential_or_payment_request=no -1.615, impersonation_authority=yes +1.366; sha256 894eb6593398.
+    gemma2-27b: 796 of 796 rows used, 0 excluded (no parse failure); 596 phish / 200 legit; 400 source e-mails as groups; C = 3.0; dev balanced accuracy 0.866 grouped cv (sd 0.023 over folds), 0.884 resubstitution; intercept +2.48; five largest |coef|: credential_or_payment_request=no -2.103, credential_or_payment_request=yes +1.956, language_pattern=machine_like -1.845, language_pattern=human_like +1.688, urgency=yes +1.538; sha256 ca0ee18c5afd.
+    Reading the coefficients: the one-hot of a yes/no/unclear indicator gives a mirrored pair (yes +, no -) when "unclear" is never
+    emitted (its coefficient stays at 0.0), so the indicator's effect is the yes-minus-no difference, about 4.1 for
+    credential_or_payment_request and grammar_anomaly in qwen25-7b, 3.3 for urgency in gemma2-9b, 4.1 for credential_or_payment_request
+    in gemma2-27b. credential_or_payment_request, urgency, impersonation_authority, grammar_anomaly and link_or_url point towards
+    phish in all three models. language_pattern = machine_like points towards LEGIT in all three (strongest in gemma2-27b, -1.845
+    against human_like +1.688): on dev, the LLM-written spear-phishing reads as human-like to the extractor while part of the
+    Enron and hard-ham originals read as machine-like; a dev observation, to be checked on eval, not a claim. The positive intercepts
+    reflect the 596:200 class ratio of dev (originals plus the accepted phish variants). C = 3.0 won in all three grids; the
+    grid's cv curve is flat from 0.1 upwards (within one sd), so the choice is not sensitive.
+    Status: step 3 complete (dev extraction 3 x 796/796, checkpoint 58.0 < 80, stage 2 fitted); the eval extraction (step 4, plan A,
+    MODE = eval, T4 session then L4 session) awaits the author's go; no eval run started.

@@ -449,9 +449,973 @@
       "gpu": "NVIDIA L4",
       "llama_cpp_python": "0.3.36",
       "model_load_s": 5.3
+    },
+    "twostage_qwen25-7b/extract/dev": {
+      "n": 796,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 4.72,
+      "latency_mean_s": 4.79,
+      "latency_max_s": 6.146,
+      "latency_total_s": 3812.8,
+      "prompt_tokens_median": 550,
+      "output_tokens_mean": 117.3,
+      "output_tokens_max": 118,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "qwen25-7b",
+      "detector": "twostage_qwen25-7b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": false,
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": true,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "config_sha256": {
+        "configs/twostage.yaml": "22df503010a1d09d1ff1d275dd94abcaba2e5b56e0cda952ff25091bfb1de3fb",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "4c8ecc0",
+      "git_describe": "4c8ecc0",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T13:39:53Z",
+          "finished_at": "2026-11-10T14:43:28Z",
+          "items_run": 796,
+          "wall_s": 3815.2,
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "units": {
+            "tier": "colab_t4",
+            "wall_s": 3815.2,
+            "rate_units_per_hour": 1.15,
+            "estimate_wall_x_rate": 1.219,
+            "units_before": 112.35,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 1.8
+    },
+    "twostage_gemma2-9b/extract/dev": {
+      "n": 796,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 5.89,
+      "latency_mean_s": 6.012,
+      "latency_max_s": 8.236,
+      "latency_total_s": 4785.2,
+      "prompt_tokens_median": 582,
+      "output_tokens_mean": 112.1,
+      "output_tokens_max": 114,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "gemma2-9b",
+      "detector": "twostage_gemma2-9b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": false,
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "config_sha256": {
+        "configs/twostage.yaml": "22df503010a1d09d1ff1d275dd94abcaba2e5b56e0cda952ff25091bfb1de3fb",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "4c8ecc0",
+      "git_describe": "4c8ecc0",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T14:43:49Z",
+          "finished_at": "2026-11-10T16:03:38Z",
+          "items_run": 796,
+          "wall_s": 4788.3,
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "units": {
+            "tier": "colab_t4",
+            "wall_s": 4788.3,
+            "rate_units_per_hour": 1.15,
+            "estimate_wall_x_rate": 1.53,
+            "units_before": 112.35,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 2.4
+    },
+    "twostage_gemma2-27b/extract/dev": {
+      "n": 796,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 9.823,
+      "latency_mean_s": 9.952,
+      "latency_max_s": 11.987,
+      "latency_total_s": 7922.1,
+      "prompt_tokens_median": 582,
+      "output_tokens_mean": 131.3,
+      "output_tokens_max": 133,
+      "finish_reasons": {
+        "stop": 796
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 796
+      },
+      "model": "gemma2-27b",
+      "detector": "twostage_gemma2-27b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": false,
+      "n_expected": 796,
+      "n_done": 796,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 400,
+          "para_low": 100,
+          "para_high": 96,
+          "obf_low": 100,
+          "obf_high": 100
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "config_sha256": {
+        "configs/twostage.yaml": "22df503010a1d09d1ff1d275dd94abcaba2e5b56e0cda952ff25091bfb1de3fb",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "4c8ecc0",
+      "git_describe": "4c8ecc0",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T16:44:53Z",
+          "finished_at": "2026-11-10T18:56:58Z",
+          "items_run": 796,
+          "wall_s": 7925.1,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4",
+          "units": {
+            "tier": "colab_l4",
+            "wall_s": 7925.1,
+            "rate_units_per_hour": 1.94,
+            "estimate_wall_x_rate": 4.271,
+            "units_before": 107.45,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 5.3
     }
   },
-  "stage2": {},
+  "stage2": {
+    "qwen25-7b": {
+      "model_file": "models/twostage/qwen25-7b_lr.joblib",
+      "model_sha256": "ab29422a46c3e007d9b364f2f7d746fb2bf444614405b2e90116f450ff2bca34",
+      "fit_partition": "dev",
+      "n_rows": 796,
+      "n_fitted": 796,
+      "n_excluded_parse_failures": 0,
+      "n_positive": 596,
+      "n_groups": 400,
+      "C": 3.0,
+      "cv": {
+        "folds": 5,
+        "scheme": "StratifiedGroupKFold",
+        "group": "cluster",
+        "shuffle": true,
+        "metric": "balanced_accuracy",
+        "tie": "smallest_C"
+      },
+      "cv_table": [
+        {
+          "C": 0.01,
+          "cv_mean": 0.6499719887955182,
+          "cv_sd": 0.11781300279730551
+        },
+        {
+          "C": 0.03,
+          "cv_mean": 0.8657633053221288,
+          "cv_sd": 0.02131133599204251
+        },
+        {
+          "C": 0.1,
+          "cv_mean": 0.8807633053221288,
+          "cv_sd": 0.019472366105990426
+        },
+        {
+          "C": 0.3,
+          "cv_mean": 0.8807633053221288,
+          "cv_sd": 0.019472366105990426
+        },
+        {
+          "C": 1.0,
+          "cv_mean": 0.8816036414565825,
+          "cv_sd": 0.018539465969786374
+        },
+        {
+          "C": 3.0,
+          "cv_mean": 0.8890826330532213,
+          "cv_sd": 0.01675798839978526
+        },
+        {
+          "C": 10.0,
+          "cv_mean": 0.8857002801120448,
+          "cv_sd": 0.016783533254976366
+        }
+      ],
+      "balanced_accuracy_cv": 0.889083,
+      "balanced_accuracy_cv_sd": 0.016758,
+      "balanced_accuracy_resubstitution": 0.892332,
+      "intercept": 6.380504,
+      "coefficients": [
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 2.05499
+        },
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -2.050337
+        },
+        {
+          "feature": "grammar_anomaly=yes",
+          "coef": 2.033179
+        },
+        {
+          "feature": "grammar_anomaly=no",
+          "coef": -2.028526
+        },
+        {
+          "feature": "link_or_url=yes",
+          "coef": 1.192606
+        },
+        {
+          "feature": "link_or_url=no",
+          "coef": -1.190947
+        },
+        {
+          "feature": "impersonation_authority=yes",
+          "coef": 1.1241
+        },
+        {
+          "feature": "impersonation_authority=no",
+          "coef": -1.119447
+        },
+        {
+          "feature": "urgency=yes",
+          "coef": 1.09984
+        },
+        {
+          "feature": "urgency=no",
+          "coef": -1.095187
+        },
+        {
+          "feature": "register=formal",
+          "coef": 1.026362
+        },
+        {
+          "feature": "register=informal",
+          "coef": -0.847325
+        },
+        {
+          "feature": "attachment=yes",
+          "coef": 0.788711
+        },
+        {
+          "feature": "attachment=no",
+          "coef": -0.784058
+        },
+        {
+          "feature": "sender_claim_inconsistency=yes",
+          "coef": 0.665374
+        },
+        {
+          "feature": "sender_claim_inconsistency=no",
+          "coef": -0.660721
+        },
+        {
+          "feature": "language_pattern=human_like",
+          "coef": 0.660496
+        },
+        {
+          "feature": "language_pattern=machine_like",
+          "coef": -0.655844
+        },
+        {
+          "feature": "sentiment=positive",
+          "coef": 0.277678
+        },
+        {
+          "feature": "sentiment=negative",
+          "coef": -0.255341
+        },
+        {
+          "feature": "is_complaint=true",
+          "coef": 0.240137
+        },
+        {
+          "feature": "is_complaint=false",
+          "coef": -0.235485
+        },
+        {
+          "feature": "is_question=false",
+          "coef": 0.216116
+        },
+        {
+          "feature": "is_question=true",
+          "coef": -0.211463
+        },
+        {
+          "feature": "register=neutral",
+          "coef": -0.174384
+        },
+        {
+          "feature": "generic_greeting=yes",
+          "coef": 0.12101
+        },
+        {
+          "feature": "generic_greeting=no",
+          "coef": -0.116357
+        },
+        {
+          "feature": "sentiment=neutral",
+          "coef": -0.017685
+        },
+        {
+          "feature": "link_or_url=unclear",
+          "coef": 0.002994
+        },
+        {
+          "feature": "urgency=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "sender_claim_inconsistency=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "credential_or_payment_request=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "grammar_anomaly=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "impersonation_authority=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "attachment=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "generic_greeting=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "language_pattern=unclear",
+          "coef": 0.0
+        }
+      ],
+      "top3_abs": [
+        "credential_or_payment_request=yes",
+        "credential_or_payment_request=no",
+        "grammar_anomaly=yes"
+      ],
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "fit_s": 0.6,
+      "versions": {
+        "scikit-learn": "1.9.1"
+      },
+      "fitted_at": "2026-11-10T19:09:15Z",
+      "git_commit": "4c8ecc0"
+    },
+    "gemma2-9b": {
+      "model_file": "models/twostage/gemma2-9b_lr.joblib",
+      "model_sha256": "894eb6593398d1e4004d5ad039d07134e7e693349c17d9ad47b93a9a4664f926",
+      "fit_partition": "dev",
+      "n_rows": 796,
+      "n_fitted": 796,
+      "n_excluded_parse_failures": 0,
+      "n_positive": 596,
+      "n_groups": 400,
+      "C": 3.0,
+      "cv": {
+        "folds": 5,
+        "scheme": "StratifiedGroupKFold",
+        "group": "cluster",
+        "shuffle": true,
+        "metric": "balanced_accuracy",
+        "tie": "smallest_C"
+      },
+      "cv_table": [
+        {
+          "C": 0.01,
+          "cv_mean": 0.7349929971988794,
+          "cv_sd": 0.04620886603021492
+        },
+        {
+          "C": 0.03,
+          "cv_mean": 0.8607212885154061,
+          "cv_sd": 0.019107222098864056
+        },
+        {
+          "C": 0.1,
+          "cv_mean": 0.8848879551820727,
+          "cv_sd": 0.03291129233600641
+        },
+        {
+          "C": 0.3,
+          "cv_mean": 0.8873879551820728,
+          "cv_sd": 0.03252173069114931
+        },
+        {
+          "C": 1.0,
+          "cv_mean": 0.8873739495798318,
+          "cv_sd": 0.031082172391521005
+        },
+        {
+          "C": 3.0,
+          "cv_mean": 0.8898739495798319,
+          "cv_sd": 0.027976741755102428
+        },
+        {
+          "C": 10.0,
+          "cv_mean": 0.8898739495798319,
+          "cv_sd": 0.027976741755102428
+        }
+      ],
+      "balanced_accuracy_cv": 0.889874,
+      "balanced_accuracy_cv_sd": 0.027977,
+      "balanced_accuracy_resubstitution": 0.890654,
+      "intercept": 3.465148,
+      "coefficients": [
+        {
+          "feature": "urgency=yes",
+          "coef": 1.644092
+        },
+        {
+          "feature": "urgency=no",
+          "coef": -1.635839
+        },
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 1.623162
+        },
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -1.61491
+        },
+        {
+          "feature": "impersonation_authority=yes",
+          "coef": 1.366204
+        },
+        {
+          "feature": "impersonation_authority=no",
+          "coef": -1.357951
+        },
+        {
+          "feature": "grammar_anomaly=yes",
+          "coef": 1.30658
+        },
+        {
+          "feature": "grammar_anomaly=no",
+          "coef": -1.298327
+        },
+        {
+          "feature": "link_or_url=yes",
+          "coef": 1.20228
+        },
+        {
+          "feature": "link_or_url=no",
+          "coef": -1.194028
+        },
+        {
+          "feature": "attachment=yes",
+          "coef": 1.065711
+        },
+        {
+          "feature": "is_complaint=false",
+          "coef": 0.892054
+        },
+        {
+          "feature": "is_complaint=true",
+          "coef": -0.883802
+        },
+        {
+          "feature": "register=formal",
+          "coef": 0.842351
+        },
+        {
+          "feature": "sender_claim_inconsistency=unclear",
+          "coef": 0.758983
+        },
+        {
+          "feature": "attachment=no",
+          "coef": -0.679635
+        },
+        {
+          "feature": "language_pattern=human_like",
+          "coef": 0.575855
+        },
+        {
+          "feature": "language_pattern=machine_like",
+          "coef": -0.567603
+        },
+        {
+          "feature": "register=informal",
+          "coef": -0.471033
+        },
+        {
+          "feature": "sender_claim_inconsistency=no",
+          "coef": -0.465804
+        },
+        {
+          "feature": "generic_greeting=no",
+          "coef": 0.452739
+        },
+        {
+          "feature": "generic_greeting=yes",
+          "coef": -0.444487
+        },
+        {
+          "feature": "attachment=unclear",
+          "coef": -0.377823
+        },
+        {
+          "feature": "register=neutral",
+          "coef": -0.363066
+        },
+        {
+          "feature": "sender_claim_inconsistency=yes",
+          "coef": -0.284926
+        },
+        {
+          "feature": "sentiment=positive",
+          "coef": 0.202578
+        },
+        {
+          "feature": "is_question=true",
+          "coef": 0.146474
+        },
+        {
+          "feature": "is_question=false",
+          "coef": -0.138221
+        },
+        {
+          "feature": "sentiment=neutral",
+          "coef": -0.116149
+        },
+        {
+          "feature": "sentiment=negative",
+          "coef": -0.078177
+        },
+        {
+          "feature": "urgency=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "link_or_url=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "credential_or_payment_request=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "grammar_anomaly=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "impersonation_authority=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "generic_greeting=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "language_pattern=unclear",
+          "coef": 0.0
+        }
+      ],
+      "top3_abs": [
+        "urgency=yes",
+        "urgency=no",
+        "credential_or_payment_request=yes"
+      ],
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "fit_s": 0.5,
+      "versions": {
+        "scikit-learn": "1.9.1"
+      },
+      "fitted_at": "2026-11-10T19:09:17Z",
+      "git_commit": "4c8ecc0"
+    },
+    "gemma2-27b": {
+      "model_file": "models/twostage/gemma2-27b_lr.joblib",
+      "model_sha256": "ca0ee18c5afd839b39ce80d2698fbf0c0d81210b81382bc1daa3e8f21256d140",
+      "fit_partition": "dev",
+      "n_rows": 796,
+      "n_fitted": 796,
+      "n_excluded_parse_failures": 0,
+      "n_positive": 596,
+      "n_groups": 400,
+      "C": 3.0,
+      "cv": {
+        "folds": 5,
+        "scheme": "StratifiedGroupKFold",
+        "group": "cluster",
+        "shuffle": true,
+        "metric": "balanced_accuracy",
+        "tie": "smallest_C"
+      },
+      "cv_table": [
+        {
+          "C": 0.01,
+          "cv_mean": 0.7366526610644258,
+          "cv_sd": 0.049097963586334795
+        },
+        {
+          "C": 0.03,
+          "cv_mean": 0.8174299719887955,
+          "cv_sd": 0.027684743260075577
+        },
+        {
+          "C": 0.1,
+          "cv_mean": 0.8324159663865547,
+          "cv_sd": 0.030881824153707636
+        },
+        {
+          "C": 0.3,
+          "cv_mean": 0.8557492997198878,
+          "cv_sd": 0.030510155731216102
+        },
+        {
+          "C": 1.0,
+          "cv_mean": 0.8615896358543417,
+          "cv_sd": 0.02378402201592178
+        },
+        {
+          "C": 3.0,
+          "cv_mean": 0.8657563025210084,
+          "cv_sd": 0.022592386573319672
+        },
+        {
+          "C": 10.0,
+          "cv_mean": 0.8632563025210086,
+          "cv_sd": 0.023059476587513415
+        }
+      ],
+      "balanced_accuracy_cv": 0.865756,
+      "balanced_accuracy_cv_sd": 0.022592,
+      "balanced_accuracy_resubstitution": 0.884044,
+      "intercept": 2.476407,
+      "coefficients": [
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -2.103127
+        },
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 1.955681
+        },
+        {
+          "feature": "language_pattern=machine_like",
+          "coef": -1.84539
+        },
+        {
+          "feature": "language_pattern=human_like",
+          "coef": 1.688211
+        },
+        {
+          "feature": "urgency=yes",
+          "coef": 1.537691
+        },
+        {
+          "feature": "urgency=no",
+          "coef": -1.492218
+        },
+        {
+          "feature": "impersonation_authority=yes",
+          "coef": 1.464015
+        },
+        {
+          "feature": "impersonation_authority=no",
+          "coef": -1.418542
+        },
+        {
+          "feature": "grammar_anomaly=yes",
+          "coef": 1.28934
+        },
+        {
+          "feature": "grammar_anomaly=no",
+          "coef": -1.243867
+        },
+        {
+          "feature": "link_or_url=yes",
+          "coef": 1.077848
+        },
+        {
+          "feature": "link_or_url=no",
+          "coef": -1.04362
+        },
+        {
+          "feature": "is_complaint=false",
+          "coef": 0.87681
+        },
+        {
+          "feature": "register=formal",
+          "coef": 0.835938
+        },
+        {
+          "feature": "is_complaint=true",
+          "coef": -0.831337
+        },
+        {
+          "feature": "attachment=yes",
+          "coef": 0.792375
+        },
+        {
+          "feature": "sentiment=neutral",
+          "coef": -0.693841
+        },
+        {
+          "feature": "attachment=no",
+          "coef": -0.599062
+        },
+        {
+          "feature": "generic_greeting=no",
+          "coef": 0.574046
+        },
+        {
+          "feature": "sender_claim_inconsistency=yes",
+          "coef": 0.555956
+        },
+        {
+          "feature": "sentiment=positive",
+          "coef": 0.536273
+        },
+        {
+          "feature": "generic_greeting=yes",
+          "coef": -0.528573
+        },
+        {
+          "feature": "register=informal",
+          "coef": -0.425837
+        },
+        {
+          "feature": "register=neutral",
+          "coef": -0.364628
+        },
+        {
+          "feature": "sender_claim_inconsistency=no",
+          "coef": -0.278624
+        },
+        {
+          "feature": "sender_claim_inconsistency=unclear",
+          "coef": -0.23186
+        },
+        {
+          "feature": "sentiment=negative",
+          "coef": 0.203041
+        },
+        {
+          "feature": "language_pattern=unclear",
+          "coef": 0.202651
+        },
+        {
+          "feature": "credential_or_payment_request=unclear",
+          "coef": 0.192919
+        },
+        {
+          "feature": "attachment=unclear",
+          "coef": -0.14784
+        },
+        {
+          "feature": "is_question=true",
+          "coef": 0.038531
+        },
+        {
+          "feature": "link_or_url=unclear",
+          "coef": 0.011246
+        },
+        {
+          "feature": "is_question=false",
+          "coef": 0.006942
+        },
+        {
+          "feature": "urgency=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "grammar_anomaly=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "impersonation_authority=unclear",
+          "coef": 0.0
+        },
+        {
+          "feature": "generic_greeting=unclear",
+          "coef": 0.0
+        }
+      ],
+      "top3_abs": [
+        "credential_or_payment_request=no",
+        "credential_or_payment_request=yes",
+        "language_pattern=machine_like"
+      ],
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "fit_s": 0.5,
+      "versions": {
+        "scikit-learn": "1.9.1"
+      },
+      "fitted_at": "2026-11-10T19:09:18Z",
+      "git_commit": "4c8ecc0"
+    }
+  },
   "forced_overwrites": [],
   "compute_units": {
     "2026-11-10T12:48:00Z": {
@@ -555,10 +1519,75 @@
       "rate_measured_per_extraction_hour": 6.614,
       "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
       "recorded_at": "2026-11-10T13:06:11Z"
+    },
+    "2026-11-10T16:33:29Z": {
+      "tier": "colab_t4",
+      "cells": [
+        "twostage_qwen25-7b/extract/dev",
+        "twostage_gemma2-9b/extract/dev"
+      ],
+      "units_before": 112.35,
+      "units_after": 107.62,
+      "measured_units": 4.73,
+      "sessions": [
+        {
+          "cell": "twostage_qwen25-7b/extract/dev",
+          "started_at": "2026-11-10T13:39:53Z",
+          "finished_at": "2026-11-10T14:43:28Z",
+          "items_run": 796,
+          "wall_s": 3815.2,
+          "estimate_wall_x_rate": 1.219
+        },
+        {
+          "cell": "twostage_gemma2-9b/extract/dev",
+          "started_at": "2026-11-10T14:43:49Z",
+          "finished_at": "2026-11-10T16:03:38Z",
+          "items_run": 796,
+          "wall_s": 4788.3,
+          "estimate_wall_x_rate": 1.53
+        }
+      ],
+      "extraction_wall_s": 8603.5,
+      "estimate_wall_x_rate": 2.749,
+      "gap_measured_minus_estimate": 1.981,
+      "span_s": 10432.2,
+      "rate_published_units_per_hour": 1.15,
+      "rate_measured_per_span_hour": 1.632,
+      "rate_measured_per_extraction_hour": 1.979,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-10T16:33:29Z"
+    },
+    "2026-11-10T18:58:54Z": {
+      "tier": "colab_l4",
+      "cells": [
+        "twostage_gemma2-27b/extract/dev"
+      ],
+      "units_before": 107.45,
+      "units_after": 103.58,
+      "measured_units": 3.87,
+      "sessions": [
+        {
+          "cell": "twostage_gemma2-27b/extract/dev",
+          "started_at": "2026-11-10T16:44:53Z",
+          "finished_at": "2026-11-10T18:56:58Z",
+          "items_run": 796,
+          "wall_s": 7925.1,
+          "estimate_wall_x_rate": 4.271
+        }
+      ],
+      "extraction_wall_s": 7925.1,
+      "estimate_wall_x_rate": 4.271,
+      "gap_measured_minus_estimate": -0.401,
+      "span_s": 8095.3,
+      "rate_published_units_per_hour": 1.94,
+      "rate_measured_per_span_hour": 1.721,
+      "rate_measured_per_extraction_hour": 1.758,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-10T18:58:54Z"
     }
   },
   "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
-  "updated_at": "2026-11-10T13:30:37Z",
+  "updated_at": "2026-11-10T19:09:18Z",
   "budget_projection": {
     "basis": "measured = GPU smoke cell of the model on its eval tier (mean latency per item + one model load) x the span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from configs/detection.yaml items.",
     "plans": {
@@ -598,8 +1627,19 @@
       {
         "model": "qwen25-7b",
         "tier": "colab_t4",
-        "basis": "measured",
-        "dev_cell": null,
+        "basis": "measured_dev",
+        "dev_cell": {
+          "n_done": 796,
+          "n_expected": 796,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 4.72,
+          "latency_mean_s": 4.79,
+          "output_tokens_mean": 117.3,
+          "gpu": "Tesla T4",
+          "model_load_s": 1.8,
+          "git_commit": "4c8ecc0"
+        },
         "gpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -625,8 +1665,8 @@
           "git_commit": "2fe688d"
         },
         "eval_only_units": {
-          "A": 7.4,
-          "B": 4.6
+          "A": 11.3,
+          "B": 7.0
         },
         "cot_eval": {
           "latency_mean_s": 2.05,
@@ -635,31 +1675,42 @@
         "output_token_ratio": 2.262,
         "ratio_source": null,
         "seconds_per_item": {
-          "low": 3.709,
-          "high": 3.709
+          "low": 4.79,
+          "high": 4.79
         },
-        "model_load_s": 20.3,
+        "model_load_s": 1.8,
         "rate_units_per_hour": {
           "published": 1.15,
-          "measured_span": 1.375,
-          "used": 1.375
+          "measured_span": 1.632,
+          "used": 1.632
         },
         "units": {
           "A": {
-            "low": 8.5,
-            "high": 8.5
+            "low": 13.0,
+            "high": 13.0
           },
           "B": {
-            "low": 5.7,
-            "high": 5.7
+            "low": 8.7,
+            "high": 8.7
           }
         }
       },
       {
         "model": "gemma2-9b",
         "tier": "colab_t4",
-        "basis": "measured",
-        "dev_cell": null,
+        "basis": "measured_dev",
+        "dev_cell": {
+          "n_done": 796,
+          "n_expected": 796,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 5.89,
+          "latency_mean_s": 6.012,
+          "output_tokens_mean": 112.1,
+          "gpu": "Tesla T4",
+          "model_load_s": 2.4,
+          "git_commit": "4c8ecc0"
+        },
         "gpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -685,8 +1736,8 @@
           "git_commit": "1bcd177"
         },
         "eval_only_units": {
-          "A": 11.1,
-          "B": 6.9
+          "A": 14.2,
+          "B": 8.7
         },
         "cot_eval": {
           "latency_mean_s": 2.94,
@@ -695,31 +1746,42 @@
         "output_token_ratio": 2.115,
         "ratio_source": null,
         "seconds_per_item": {
-          "low": 5.6,
-          "high": 5.6
+          "low": 6.012,
+          "high": 6.012
         },
-        "model_load_s": 25.5,
+        "model_load_s": 2.4,
         "rate_units_per_hour": {
           "published": 1.15,
-          "measured_span": 1.375,
-          "used": 1.375
+          "measured_span": 1.632,
+          "used": 1.632
         },
         "units": {
           "A": {
-            "low": 12.8,
-            "high": 12.8
+            "low": 16.4,
+            "high": 16.4
           },
           "B": {
-            "low": 8.6,
-            "high": 8.6
+            "low": 10.9,
+            "high": 10.9
           }
         }
       },
       {
         "model": "gemma2-27b",
         "tier": "colab_l4",
-        "basis": "measured",
-        "dev_cell": null,
+        "basis": "measured_dev",
+        "dev_cell": {
+          "n_done": 796,
+          "n_expected": 796,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 9.823,
+          "latency_mean_s": 9.952,
+          "output_tokens_mean": 131.3,
+          "gpu": "NVIDIA L4",
+          "model_load_s": 5.3,
+          "git_commit": "4c8ecc0"
+        },
         "gpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -734,8 +1796,8 @@
         },
         "cpu_smoke": null,
         "eval_only_units": {
-          "A": 35.8,
-          "B": 22.1
+          "A": 24.8,
+          "B": 15.3
         },
         "cot_eval": {
           "latency_mean_s": 4.4,
@@ -744,40 +1806,40 @@
         "output_token_ratio": null,
         "ratio_source": null,
         "seconds_per_item": {
-          "low": 10.058,
-          "high": 10.058
+          "low": 9.952,
+          "high": 9.952
         },
         "model_load_s": 5.3,
         "rate_units_per_hour": {
           "published": 1.94,
-          "measured_span": 2.461,
-          "used": 2.461
+          "measured_span": 1.721,
+          "used": 1.721
         },
         "units": {
           "A": {
-            "low": 41.3,
-            "high": 41.3
+            "low": 28.6,
+            "high": 28.6
           },
           "B": {
-            "low": 27.5,
-            "high": 27.5
+            "low": 19.0,
+            "high": 19.0
           }
         }
       }
     ],
     "totals": {
       "A": {
-        "low": 62.6,
-        "high": 62.6
+        "low": 58.0,
+        "high": 58.0
       },
       "B": {
-        "low": 41.8,
-        "high": 41.8
+        "low": 38.7,
+        "high": 38.7
       }
     },
     "eval_only_totals": {
-      "A": 54.3,
-      "B": 33.6
+      "A": 50.3,
+      "B": 31.0
     },
     "planned": 24,
     "stop": 80,
@@ -787,6 +1849,6 @@
     },
     "all_measured": true,
     "basis_note": "measured_dev = the dev extraction cell (796 items) with the latest span rate of the tier; eval_only_totals = the remaining cost of the eval partition under each plan once dev is extracted.",
-    "computed_at": "2026-11-10T13:30:37Z"
+    "computed_at": "2026-11-10T19:07:18Z"
   }
 }
