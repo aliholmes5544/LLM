@@ -167,13 +167,398 @@
       "gpu": null,
       "llama_cpp_python": "0.3.36",
       "model_load_s": 57.9
+    },
+    "smoke/qwen25-7b/colab_t4": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 3.763,
+      "latency_mean_s": 3.709,
+      "latency_max_s": 4.068,
+      "latency_total_s": 74.2,
+      "prompt_tokens_median": 592,
+      "output_tokens_mean": 117.5,
+      "output_tokens_max": 118,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 20
+      },
+      "model": "qwen25-7b",
+      "detector": "twostage_qwen25-7b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": true,
+      "n_expected": 20,
+      "n_done": 20,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 20
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": true,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "config_sha256": {
+        "configs/twostage.yaml": "ea0e48e33c2cd1c69d5e3d136f97bb3b4efeb9c61246084094437a94e2bfd59f",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "2c89fbb",
+      "git_describe": "2c89fbb",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T12:43:18Z",
+          "finished_at": "2026-11-10T12:44:32Z",
+          "items_run": 20,
+          "wall_s": 74.4,
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "units": {
+            "tier": "colab_t4",
+            "wall_s": 74.4,
+            "rate_units_per_hour": 1.15,
+            "estimate_wall_x_rate": 0.024,
+            "units_before": 113.12,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 20.3
+    },
+    "smoke/gemma2-9b/colab_t4": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 5.808,
+      "latency_mean_s": 5.6,
+      "latency_max_s": 6.236,
+      "latency_total_s": 112.0,
+      "prompt_tokens_median": 627,
+      "output_tokens_mean": 112.1,
+      "output_tokens_max": 113,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 20
+      },
+      "model": "gemma2-9b",
+      "detector": "twostage_gemma2-9b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": true,
+      "n_expected": 20,
+      "n_done": 20,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 20
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "config_sha256": {
+        "configs/twostage.yaml": "ea0e48e33c2cd1c69d5e3d136f97bb3b4efeb9c61246084094437a94e2bfd59f",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "2c89fbb",
+      "git_describe": "2c89fbb",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T12:45:27Z",
+          "finished_at": "2026-11-10T12:47:19Z",
+          "items_run": 20,
+          "wall_s": 112.2,
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "units": {
+            "tier": "colab_t4",
+            "wall_s": 112.2,
+            "rate_units_per_hour": 1.15,
+            "estimate_wall_x_rate": 0.036,
+            "units_before": 113.12,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 25.5
+    },
+    "smoke/gemma2-27b/colab_l4": {
+      "n": 20,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 9.879,
+      "latency_mean_s": 10.058,
+      "latency_max_s": 10.782,
+      "latency_total_s": 201.2,
+      "prompt_tokens_median": 627,
+      "output_tokens_mean": 131.3,
+      "output_tokens_max": 133,
+      "finish_reasons": {
+        "stop": 20
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 20
+      },
+      "model": "gemma2-27b",
+      "detector": "twostage_gemma2-27b",
+      "strategy": "extract",
+      "partition": "dev",
+      "smoke": true,
+      "n_expected": 20,
+      "n_done": 20,
+      "complete": true,
+      "items_by_partition_condition": {
+        "dev": {
+          "original": 20
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "config_sha256": {
+        "configs/twostage.yaml": "ea0e48e33c2cd1c69d5e3d136f97bb3b4efeb9c61246084094437a94e2bfd59f",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "2c89fbb",
+      "git_describe": "2c89fbb",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T12:58:04Z",
+          "finished_at": "2026-11-10T13:01:25Z",
+          "items_run": 20,
+          "wall_s": 201.4,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4",
+          "units": {
+            "tier": "colab_l4",
+            "wall_s": 201.4,
+            "rate_units_per_hour": 1.94,
+            "estimate_wall_x_rate": 0.109,
+            "units_before": 112.93,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 5.3
     }
   },
   "stage2": {},
   "forced_overwrites": [],
-  "compute_units": {},
+  "compute_units": {
+    "2026-11-10T12:48:00Z": {
+      "tier": "colab_t4",
+      "cells": [
+        "smoke/qwen25-7b/colab_t4",
+        "smoke/gemma2-9b/colab_t4"
+      ],
+      "units_before": 113.12,
+      "units_after": 112.93,
+      "measured_units": 0.19,
+      "sessions": [
+        {
+          "cell": "smoke/qwen25-7b/colab_t4",
+          "started_at": "2026-11-10T12:43:18Z",
+          "finished_at": "2026-11-10T12:44:32Z",
+          "items_run": 20,
+          "wall_s": 74.4,
+          "estimate_wall_x_rate": 0.024
+        },
+        {
+          "cell": "smoke/gemma2-9b/colab_t4",
+          "started_at": "2026-11-10T12:45:27Z",
+          "finished_at": "2026-11-10T12:47:19Z",
+          "items_run": 20,
+          "wall_s": 112.2,
+          "estimate_wall_x_rate": 0.036
+        }
+      ],
+      "extraction_wall_s": 186.6,
+      "estimate_wall_x_rate": 0.06,
+      "gap_measured_minus_estimate": 0.13,
+      "span_s": 323.9,
+      "rate_published_units_per_hour": 1.15,
+      "rate_measured_per_span_hour": 2.112,
+      "rate_measured_per_extraction_hour": 3.666,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-10T12:48:00Z"
+    },
+    "2026-11-10T12:50:53Z": {
+      "tier": "colab_t4",
+      "cells": [
+        "smoke/qwen25-7b/colab_t4",
+        "smoke/gemma2-9b/colab_t4"
+      ],
+      "units_before": 113.12,
+      "units_after": 112.93,
+      "measured_units": 0.19,
+      "sessions": [
+        {
+          "cell": "smoke/qwen25-7b/colab_t4",
+          "started_at": "2026-11-10T12:43:18Z",
+          "finished_at": "2026-11-10T12:44:32Z",
+          "items_run": 20,
+          "wall_s": 74.4,
+          "estimate_wall_x_rate": 0.024
+        },
+        {
+          "cell": "smoke/gemma2-9b/colab_t4",
+          "started_at": "2026-11-10T12:45:27Z",
+          "finished_at": "2026-11-10T12:47:19Z",
+          "items_run": 20,
+          "wall_s": 112.2,
+          "estimate_wall_x_rate": 0.036
+        }
+      ],
+      "extraction_wall_s": 186.6,
+      "estimate_wall_x_rate": 0.06,
+      "gap_measured_minus_estimate": 0.13,
+      "span_s": 497.6,
+      "rate_published_units_per_hour": 1.15,
+      "rate_measured_per_span_hour": 1.375,
+      "rate_measured_per_extraction_hour": 3.666,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-10T12:50:53Z"
+    },
+    "2026-11-10T13:06:11Z": {
+      "tier": "colab_l4",
+      "cells": [
+        "smoke/gemma2-27b/colab_l4"
+      ],
+      "units_before": 112.93,
+      "units_after": 112.56,
+      "measured_units": 0.37,
+      "sessions": [
+        {
+          "cell": "smoke/gemma2-27b/colab_l4",
+          "started_at": "2026-11-10T12:58:04Z",
+          "finished_at": "2026-11-10T13:01:25Z",
+          "items_run": 20,
+          "wall_s": 201.4,
+          "estimate_wall_x_rate": 0.109
+        }
+      ],
+      "extraction_wall_s": 201.4,
+      "estimate_wall_x_rate": 0.109,
+      "gap_measured_minus_estimate": 0.261,
+      "span_s": 541.2,
+      "rate_published_units_per_hour": 1.94,
+      "rate_measured_per_span_hour": 2.461,
+      "rate_measured_per_extraction_hour": 6.614,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-10T13:06:11Z"
+    }
+  },
   "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
-  "updated_at": "2026-11-09T20:11:12Z",
+  "updated_at": "2026-11-10T13:14:44Z",
   "budget_projection": {
     "basis": "measured = GPU smoke cell of the model on its eval tier (mean latency per item + one model load) x the span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from configs/detection.yaml items.",
     "plans": {
@@ -213,8 +598,19 @@
       {
         "model": "qwen25-7b",
         "tier": "colab_t4",
-        "basis": "prior",
-        "gpu_smoke": null,
+        "basis": "measured",
+        "gpu_smoke": {
+          "n_done": 20,
+          "n_expected": 20,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 3.763,
+          "latency_mean_s": 3.709,
+          "output_tokens_mean": 117.5,
+          "gpu": "Tesla T4",
+          "model_load_s": 20.3,
+          "git_commit": "2c89fbb"
+        },
         "cpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -232,33 +628,44 @@
           "output_tokens_median": 52
         },
         "output_token_ratio": 2.262,
-        "ratio_source": "own CPU smoke",
+        "ratio_source": null,
         "seconds_per_item": {
-          "low": 2.05,
-          "high": 4.636
+          "low": 3.709,
+          "high": 3.709
         },
-        "model_load_s": 0.0,
+        "model_load_s": 20.3,
         "rate_units_per_hour": {
           "published": 1.15,
-          "measured_span": null,
-          "used": 1.15
+          "measured_span": 1.375,
+          "used": 1.375
         },
         "units": {
           "A": {
-            "low": 3.9,
-            "high": 8.9
+            "low": 8.5,
+            "high": 8.5
           },
           "B": {
-            "low": 2.6,
-            "high": 5.9
+            "low": 5.7,
+            "high": 5.7
           }
         }
       },
       {
         "model": "gemma2-9b",
         "tier": "colab_t4",
-        "basis": "prior",
-        "gpu_smoke": null,
+        "basis": "measured",
+        "gpu_smoke": {
+          "n_done": 20,
+          "n_expected": 20,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 5.808,
+          "latency_mean_s": 5.6,
+          "output_tokens_mean": 112.1,
+          "gpu": "Tesla T4",
+          "model_load_s": 25.5,
+          "git_commit": "2c89fbb"
+        },
         "cpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -276,79 +683,90 @@
           "output_tokens_median": 53
         },
         "output_token_ratio": 2.115,
-        "ratio_source": "own CPU smoke",
+        "ratio_source": null,
         "seconds_per_item": {
-          "low": 2.94,
-          "high": 6.218
+          "low": 5.6,
+          "high": 5.6
         },
-        "model_load_s": 0.0,
+        "model_load_s": 25.5,
         "rate_units_per_hour": {
           "published": 1.15,
-          "measured_span": null,
-          "used": 1.15
+          "measured_span": 1.375,
+          "used": 1.375
         },
         "units": {
           "A": {
-            "low": 5.6,
-            "high": 11.9
+            "low": 12.8,
+            "high": 12.8
           },
           "B": {
-            "low": 3.8,
-            "high": 8.0
+            "low": 8.6,
+            "high": 8.6
           }
         }
       },
       {
         "model": "gemma2-27b",
         "tier": "colab_l4",
-        "basis": "prior",
-        "gpu_smoke": null,
+        "basis": "measured",
+        "gpu_smoke": {
+          "n_done": 20,
+          "n_expected": 20,
+          "parse_failure_rate": 0.0,
+          "volunteered_verdict_rate": 0.0,
+          "latency_median_s": 9.879,
+          "latency_mean_s": 10.058,
+          "output_tokens_mean": 131.3,
+          "gpu": "NVIDIA L4",
+          "model_load_s": 5.3,
+          "git_commit": "2c89fbb"
+        },
         "cpu_smoke": null,
         "cot_eval": {
           "latency_mean_s": 4.4,
           "output_tokens_median": 54
         },
-        "output_token_ratio": 2.188,
-        "ratio_source": "other models' mean ratio",
+        "output_token_ratio": null,
+        "ratio_source": null,
         "seconds_per_item": {
-          "low": 4.4,
-          "high": 9.629
+          "low": 10.058,
+          "high": 10.058
         },
-        "model_load_s": 0.0,
+        "model_load_s": 5.3,
         "rate_units_per_hour": {
           "published": 1.94,
-          "measured_span": null,
-          "used": 1.94
+          "measured_span": 2.461,
+          "used": 2.461
         },
         "units": {
           "A": {
-            "low": 14.2,
-            "high": 31.1
+            "low": 41.3,
+            "high": 41.3
           },
           "B": {
-            "low": 9.5,
-            "high": 20.8
+            "low": 27.5,
+            "high": 27.5
           }
         }
       }
     ],
     "totals": {
       "A": {
-        "low": 23.8,
-        "high": 52.0
+        "low": 62.6,
+        "high": 62.6
       },
       "B": {
-        "low": 15.9,
-        "high": 34.7
+        "low": 41.8,
+        "high": 41.8
       }
     },
     "planned": 24,
     "stop": 60,
     "verdict": {
-      "A": "between the planned budget and the stop rule",
+      "A": "exceeds the stop rule",
       "B": "between the planned budget and the stop rule"
     },
-    "all_measured": false,
-    "computed_at": "2026-11-09T20:11:12Z"
+    "all_measured": true,
+    "computed_at": "2026-11-10T13:14:44Z"
   }
 }

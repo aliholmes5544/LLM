@@ -627,5 +627,34 @@
     stays in the report as a comparison only. configs/twostage.yaml budget.compute_units_stop 28 -> 60 (the budget block is outside
     config_hash, so no row hash changes); the planned figure of 24 stays as the original estimate. The parse-failure gate and the
     GPU smoke before the full run are unchanged.
-    Status: step 2 part 1 done (both laptop cells 20/20); part 2 (Colab GPU smoke of all three, cells smoke/<model>/colab_t4 and
-    smoke/gemma2-27b/colab_l4, with the units reading) awaits the author's session; no full run started.
+    **Step 2, part 2 (2026-11-10): GPU smoke of all three models on their tiers (notebooks/cloud_twostage.ipynb, MODE = smoke,
+    commit 2c89fbb; cells smoke/<model>/colab_t4 and smoke/gemma2-27b/colab_l4; results/smoke_twostage/<model>/colab_*.jsonl).
+    Format gate (parse failures <= 10%) PASSED in every cell; no prompt revision:**
+    qwen25-7b (colab_t4, Tesla T4): parse failures 0/20 (0%); volunteered verdicts 0 (0%); rows with extra keys 0; finish reasons {'stop': 20}; median latency 3.763 s, mean 3.709 s; output tokens mean 117.5; model load 20.3 s.
+    gemma2-9b (colab_t4, Tesla T4): parse failures 0/20 (0%); volunteered verdicts 0 (0%); rows with extra keys 0; finish reasons {'stop': 20}; median latency 5.808 s, mean 5.6 s; output tokens mean 112.1; model load 25.5 s.
+    gemma2-27b (colab_l4, NVIDIA L4): parse failures 0/20 (0%); volunteered verdicts 0 (0%); rows with extra keys 0; finish reasons {'stop': 20}; median latency 9.879 s, mean 10.058 s; output tokens mean 131.3; model load 5.3 s.
+    qwen25-7b GPU against the laptop CPU rows: identical indicator sets 16/20, identical values 256/260 (the format is stable across backends; greedy decoding is not byte-identical across backends, as in the main study's 99.7% label agreement).
+    gemma2-9b GPU against the laptop CPU rows: identical indicator sets 18/20, identical values 258/260 (the format is stable across backends; greedy decoding is not byte-identical across backends, as in the main study's 99.7% label agreement).
+    gemma2-27b wraps the object in a ```json fence; the first-balanced-object rule parses it (TASK_08 section 4).
+    **Compute units (item 18j/k), from the author's Colab readings entered in notebook cell 9:**
+    colab_t4 (2026-11-10T12:48:00Z): 113.12 -> 112.93 = 0.19 units; extraction wall 186.6 s, estimate at the published rate 0.06, gap 0.13; span 323.9 s -> 2.112 units/h (published 1.15).
+    colab_t4 (2026-11-10T12:50:53Z): 113.12 -> 112.93 = 0.19 units; extraction wall 186.6 s, estimate at the published rate 0.06, gap 0.13; span 497.6 s -> 1.375 units/h (published 1.15).
+    colab_l4 (2026-11-10T13:06:11Z): 112.93 -> 112.56 = 0.37 units; extraction wall 201.4 s, estimate at the published rate 0.109, gap 0.261; span 541.2 s -> 2.461 units/h (published 1.94).
+    The T4 entry exists twice because cell 9 was run twice (the same readings, a longer span the second time); the projection uses the
+    latest entry per tier. Caveat: a 5 to 9 minute smoke measures the rate poorly: the Colab display has a resolution of 0.01 units
+    and updates with a lag, so part of the 0.19 and 0.37 units may belong to the set-up cells; the T4 rate lies between 1.375 and
+    2.112 units/h, the L4 rate near 2.461, both above the published 1.15 and 1.94. The full dev run measures it properly.
+    **Revised projection (reports/twostage_report.json budget_projection, basis measured: mean GPU latency per item + one load, x the
+    latest span-measured rate of the tier):**
+    qwen25-7b (colab_t4): 3.709 s/item at 1.375 units/h: plan A 8.5 units, plan B 5.7 units;
+    gemma2-9b (colab_t4): 5.6 s/item at 1.375 units/h: plan A 12.8 units, plan B 8.6 units;
+    gemma2-27b (colab_l4): 10.058 s/item at 2.461 units/h: plan A 41.3 units, plan B 27.5 units;
+    plan A total 62.6 units (about 32.3 GPU hours: 6.2 + 9.3 on T4, 16.8 on L4); plan B total 41.8 units; planned 24, stop 60: plan A exceeds the stop rule, plan B between the planned budget and the stop rule.
+    Sensitivity to the rate: at the published rates plan A is 50.4 units; with the first T4 entry (2.112 units/h) it is 74.1.
+    gemma2-27b alone is two thirds of the cost: 10.06 s/item against 4.40 s for its CoT cell (131 output tokens against 54).
+    **Question for the author (2026-11-10):** the measured plan A projection (62.6 units, point estimate from 20 items and a coarse rate
+    reading) passes the stop rule of 60 set on 2026-11-09 (section 11: stop and report rather than improvise). 113.12 units are available
+    before the smoke, 112.56 after it. Options: (1) confirm plan A anyway, raising the stop rule once more (e.g. to 80, well inside the
+    available units, with the dev run's measured rate as the checkpoint before eval); (2) plan B (41.8 units); (3) plan A for the two
+    T4 models and plan B for gemma2-27b (8.5 + 12.8 + 27.5 = 48.8 units). No full run is started until this is answered.
+    Status: step 2 complete (gate passed on all three tiers, units measured); step 3 awaits the budget decision.
