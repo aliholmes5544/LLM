@@ -7,6 +7,8 @@ budget.py — compute-unit projection of the two-stage extraction (TASK_08 secti
 
 Basis per model, the best available first:
 
+  measured_dev  the full dev extraction cell twostage_<model>/extract/dev (796 items on the tier; the checkpoint of item 18
+            option 1: its mean latency and the dev session's span rate revise the projection before the eval run);
   measured  the GPU smoke cell smoke/<model>/<eval_tier> of reports/twostage_report.json: seconds per item = the
             cell's mean latency on its tier (the sum is governed by the mean; one point estimate from 20 items),
             plus one model load per session; units per hour = the rate measured from the author's "Available
@@ -17,7 +19,7 @@ Basis per model, the best available first:
             tokens / CoT output tokens); a model without a CPU smoke takes the other models' mean ratio.
 
 Nothing here reads a model or an evaluation partition's text; `06_run_twostage.py budget` writes the report's
-`budget_projection` and prints the table.
+`budget_projection` and prints the table. The `eval_only` totals are the remainder once dev is extracted.
 """
 from collections import defaultdict
 
@@ -92,9 +94,13 @@ def projection(report: dict, tcfg: dict, mcfg: dict, det_cells: dict, counts: di
     for m in tcfg["models"]:
         tier = mcfg["models"][m]["eval_tier"]
         gpu_cell, cpu_cell, cot = cells.get(f"smoke/{m}/{tier}"), cells.get(f"smoke/{m}/laptop"), det_cells.get(f"{m}/cot/eval", {})
+        dev_cell = cells.get(f"{tcfg.get('model_prefix', 'twostage_')}{m}/extract/dev")
         rate_pub, rate_meas = rates.get(tier), measured_rate(report, tier)
         rate_used = rate_meas or rate_pub
-        if gpu_cell and gpu_cell.get("n_done"):
+        if dev_cell and dev_cell.get("n_done"):
+            basis, s_lo, load_s, ratio_src = "measured_dev", dev_cell["latency_mean_s"], dev_cell.get("model_load_s") or 0.0, None
+            s_hi = s_lo
+        elif gpu_cell and gpu_cell.get("n_done"):
             basis, s_lo, load_s, ratio_src = "measured", gpu_cell["latency_mean_s"], gpu_cell.get("model_load_s") or 0.0, None
             s_hi = s_lo
         else:
@@ -110,7 +116,12 @@ def projection(report: dict, tcfg: dict, mcfg: dict, det_cells: dict, counts: di
             units[p] = {k: (round(v, 1) if v is not None else None) for k, v in u.items()}
             for k in ("low", "high"):
                 totals[p][k] += u[k] or 0.0
-        rows.append({"model": m, "tier": tier, "basis": basis, "gpu_smoke": _smoke_summary(gpu_cell), "cpu_smoke": _smoke_summary(cpu_cell),
+        eval_only = {p: (round((s_hi * c["eval"] + load_s) / 3600 * rate_used, 1) if s_hi else None) for p, c in counts.items()}
+        for p in counts:
+            totals.setdefault("eval_only_" + p, 0.0)
+            totals["eval_only_" + p] += eval_only[p] or 0.0
+        rows.append({"model": m, "tier": tier, "basis": basis, "dev_cell": _smoke_summary(dev_cell), "gpu_smoke": _smoke_summary(gpu_cell),
+                     "cpu_smoke": _smoke_summary(cpu_cell), "eval_only_units": eval_only,
                      "cot_eval": {"latency_mean_s": cot.get("latency_mean_s"), "output_tokens_median": cot.get("output_tokens_median")},
                      "output_token_ratio": (round(ratios[m], 3) if m in ratios else
                                             (round(mean_ratio, 3) if (basis == "prior" and mean_ratio) else None)),
@@ -118,7 +129,8 @@ def projection(report: dict, tcfg: dict, mcfg: dict, det_cells: dict, counts: di
                      "seconds_per_item": {"low": round(s_lo, 3) if s_lo else None, "high": round(s_hi, 3) if s_hi else None},
                      "model_load_s": load_s, "rate_units_per_hour": {"published": rate_pub, "measured_span": rate_meas, "used": rate_used},
                      "units": units})
-    totals = {p: {k: round(v, 1) for k, v in t.items()} for p, t in totals.items()}
+    eval_only = {p[len("eval_only_"):]: round(v, 1) for p, v in totals.items() if p.startswith("eval_only_")}
+    totals = {p: {k: round(v, 1) for k, v in t.items()} for p, t in totals.items() if not p.startswith("eval_only_")}
 
     def verdict(high):
         if high <= planned:
@@ -129,22 +141,24 @@ def projection(report: dict, tcfg: dict, mcfg: dict, det_cells: dict, counts: di
                      "span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's "
                      "CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from "
                      "configs/detection.yaml items.",
-            "plans": counts, "rows": rows, "totals": totals, "planned": planned, "stop": stop,
+            "plans": counts, "rows": rows, "totals": totals, "eval_only_totals": eval_only, "planned": planned, "stop": stop,
             "verdict": {p: verdict(t["high"]) for p, t in totals.items()},
-            "all_measured": all(r["basis"] == "measured" for r in rows)}
+            "all_measured": all(r["basis"].startswith("measured") for r in rows),
+            "basis_note": "measured_dev = the dev extraction cell (796 items) with the latest span rate of the tier; eval_only_totals = the "
+                          "remaining cost of the eval partition under each plan once dev is extracted."}
 
 
 def format_table(proj: dict) -> str:
     plans = list(proj["plans"])
-    lines = [f"{'model':11s} {'tier':9s} {'basis':8s} {'s/item lo-hi':>14s} {'rate':>6s} "
+    lines = [f"{'model':11s} {'tier':9s} {'basis':12s} {'s/item lo-hi':>14s} {'rate':>6s} "
              + " ".join(f"{'units ' + p + ' lo-hi':>18s}" for p in plans)]
     for r in proj["rows"]:
         s = r["seconds_per_item"]
         cells = " ".join(f"{str(r['units'][p]['low']):>8s}-{str(r['units'][p]['high']):<9s}" for p in plans)
-        lines.append(f"{r['model']:11s} {r['tier']:9s} {r['basis']:8s} {str(s['low']):>7s}-{str(s['high']):<6s} "
+        lines.append(f"{r['model']:11s} {r['tier']:9s} {r['basis']:12s} {str(s['low']):>7s}-{str(s['high']):<6s} "
                      f"{str(r['rate_units_per_hour']['used']):>6s} {cells}")
     for p in plans:
         c, t = proj["plans"][p], proj["totals"][p]
-        lines.append(f"plan {p} ({c['name']}; {c['items_per_model']:,} items per model): total {t['low']} to {t['high']} units; "
-                     f"planned {proj['planned']}, stop {proj['stop']}: {proj['verdict'][p]}")
+        lines.append(f"plan {p} ({c['name']}; {c['items_per_model']:,} items per model): total {t['low']} to {t['high']} units "
+                     f"(eval only {proj['eval_only_totals'][p]}); planned {proj['planned']}, stop {proj['stop']}: {proj['verdict'][p]}")
     return "\n".join(lines)

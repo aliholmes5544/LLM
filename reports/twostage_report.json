@@ -558,7 +558,7 @@
     }
   },
   "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
-  "updated_at": "2026-11-10T13:14:44Z",
+  "updated_at": "2026-11-10T13:30:37Z",
   "budget_projection": {
     "basis": "measured = GPU smoke cell of the model on its eval tier (mean latency per item + one model load) x the span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from configs/detection.yaml items.",
     "plans": {
@@ -599,6 +599,7 @@
         "model": "qwen25-7b",
         "tier": "colab_t4",
         "basis": "measured",
+        "dev_cell": null,
         "gpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -622,6 +623,10 @@
           "gpu": null,
           "model_load_s": null,
           "git_commit": "2fe688d"
+        },
+        "eval_only_units": {
+          "A": 7.4,
+          "B": 4.6
         },
         "cot_eval": {
           "latency_mean_s": 2.05,
@@ -654,6 +659,7 @@
         "model": "gemma2-9b",
         "tier": "colab_t4",
         "basis": "measured",
+        "dev_cell": null,
         "gpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -677,6 +683,10 @@
           "gpu": null,
           "model_load_s": 57.9,
           "git_commit": "1bcd177"
+        },
+        "eval_only_units": {
+          "A": 11.1,
+          "B": 6.9
         },
         "cot_eval": {
           "latency_mean_s": 2.94,
@@ -709,6 +719,7 @@
         "model": "gemma2-27b",
         "tier": "colab_l4",
         "basis": "measured",
+        "dev_cell": null,
         "gpu_smoke": {
           "n_done": 20,
           "n_expected": 20,
@@ -722,6 +733,10 @@
           "git_commit": "2c89fbb"
         },
         "cpu_smoke": null,
+        "eval_only_units": {
+          "A": 35.8,
+          "B": 22.1
+        },
         "cot_eval": {
           "latency_mean_s": 4.4,
           "output_tokens_median": 54
@@ -760,13 +775,18 @@
         "high": 41.8
       }
     },
+    "eval_only_totals": {
+      "A": 54.3,
+      "B": 33.6
+    },
     "planned": 24,
-    "stop": 60,
+    "stop": 80,
     "verdict": {
-      "A": "exceeds the stop rule",
+      "A": "between the planned budget and the stop rule",
       "B": "between the planned budget and the stop rule"
     },
     "all_measured": true,
-    "computed_at": "2026-11-10T13:14:44Z"
+    "basis_note": "measured_dev = the dev extraction cell (796 items) with the latest span rate of the tier; eval_only_totals = the remaining cost of the eval partition under each plan once dev is extracted.",
+    "computed_at": "2026-11-10T13:30:37Z"
   }
 }

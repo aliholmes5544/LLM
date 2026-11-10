@@ -657,4 +657,15 @@
     before the smoke, 112.56 after it. Options: (1) confirm plan A anyway, raising the stop rule once more (e.g. to 80, well inside the
     available units, with the dev run's measured rate as the checkpoint before eval); (2) plan B (41.8 units); (3) plan A for the two
     T4 models and plan B for gemma2-27b (8.5 + 12.8 + 27.5 = 48.8 units). No full run is started until this is answered.
-    Status: step 2 complete (gate passed on all three tiers, units measured); step 3 awaits the budget decision.
+    **Answered 2026-11-10 (author): option 1.** Plan A is confirmed for all three models including the generalisation partitions;
+    the stop rule rises from 60 to 80 compute units, with 112.56 available. Reasons recorded: the cost is affordable; the
+    generalisation arm must cover all three models for the comparison to be consistent; option 3 would leave gemma2-27b without
+    generalisation results; the headroom over the 62.6 projection is for resumes and error, not for widening scope. Checkpoint:
+    after the dev run, recompute the rate from that longer span and report it before the eval run starts; if the revised plan A
+    projection passes 80, stop and ask. Implemented: configs/twostage.yaml budget.compute_units_stop 80 (outside config_hash);
+    TASK_08 sections 2 and 11 amended; `06_run_twostage.py budget` prefers the dev extraction cell as its basis (basis
+    measured_dev) and reports the eval-only remainder, so notebook cell 9 after the dev session is the checkpoint. For the
+    thesis (docs/CHANGES_FOR_THESIS.md): the GPU-versus-laptop indicator agreement (256/260 qwen25-7b, 258/260 gemma2-9b) and
+    the gemma2-27b code fence handled by the first-balanced-object rule.
+    Status: step 2 complete; step 3 (full dev extraction, 796 x 3, T4 session then L4 session, MODE = dev) released; no eval run
+    before the checkpoint.

@@ -225,6 +225,21 @@ class TestBudget(unittest.TestCase):
         self.assertEqual(q["units"]["A"], {"low": round((3.0 * 1200 + 60) / 3600 * 1.2, 1), "high": round((3.0 * 1200 + 60) / 3600 * 1.2, 1)})
         self.assertEqual(p["rows"][1]["basis"], "prior"); self.assertFalse(p["all_measured"])
 
+    def test_dev_extraction_cell_is_preferred_and_the_eval_remainder_is_reported(self):
+        rep = {"cells": {"smoke/qwen25-7b/colab_t4": {"n_done": 20, "latency_mean_s": 3.0, "model_load_s": 60.0},
+                         "twostage_qwen25-7b/extract/dev": {"n_done": 796, "latency_mean_s": 2.0, "model_load_s": 30.0}},
+               "compute_units": {}}
+        counts = self.counts()
+        for pl, n in (("A", 3600), ("B", 1800)):                                     # dev 3 + eval n
+            counts[pl]["eval"], counts[pl]["items_per_model"] = n, n + 3
+        tcfg = {**self.TCFG, "model_prefix": "twostage_"}
+        p = projection(rep, tcfg, self.MCFG, self.DET, counts)
+        q = p["rows"][0]
+        self.assertEqual((q["basis"], q["seconds_per_item"]["low"], q["dev_cell"]["n_done"]), ("measured_dev", 2.0, 796))
+        self.assertEqual(q["units"]["A"]["low"], round((2.0 * 3603 + 30) / 3600 * 1.15, 1))
+        self.assertEqual(q["eval_only_units"], {"A": round((2.0 * 3600 + 30) / 3600 * 1.15, 1), "B": round((2.0 * 1800 + 30) / 3600 * 1.15, 1)})
+        self.assertIn("eval_only_totals", p); self.assertEqual(set(p["eval_only_totals"]), {"A", "B"})
+
 
 class TestRunnerGuards(unittest.TestCase):
     def run_cli(self, *args):

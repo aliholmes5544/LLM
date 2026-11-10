@@ -1447,3 +1447,24 @@ prompting strategies on the evaluation items, the integrity check and the scorin
 the six models are frozen and reproduced byte for byte, and an added model is reported beside them with its own
 test families."
 
+## 2026-11-10: two-stage indicator detector (TASK_08, exploratory), GPU smoke facts for the write-up
+
+Supervisor-requested, post hoc, exploratory (QUESTIONS.md item 18); reported in T12 and F8 only, RQ1 to RQ4 unchanged.
+Facts from the 20-item development smoke on the evaluation tiers (results/smoke_twostage/<model>/colab_*.jsonl,
+reports/twostage_report.json), for §3.6 (extraction and parsing) and §4.8 (threats to validity):
+
+- Format compliance of the indicator extraction: 0 parse failures and 0 volunteered verdicts in 20 of 20 items for each of
+  qwen25-7b (T4), gemma2-9b (T4) and gemma2-27b (L4); the 10 % gate of TASK_08 section 9 passed without a prompt revision.
+- GPU-versus-laptop agreement of the extracted indicators on the same 20 items (greedy decoding, same GGUF, CUDA against CPU):
+  qwen25-7b 256 of 260 indicator values identical (16 of 20 items identical in full), gemma2-9b 258 of 260 (18 of 20). Same
+  kind of backend variation as the main study's 99.7 % label agreement (319 of 320); the development set is the only place
+  where both backends are run.
+- gemma2-27b wraps its JSON object in a Markdown code fence (```json ... ```); the parsing rule of TASK_08 section 4, which
+  takes the first balanced object of the raw output, handles it without a special case; the other two models return the
+  bare object.
+- Cost: mean latency per item on the tier 3.71 s (qwen25-7b, T4), 5.60 s (gemma2-9b, T4), 10.06 s (gemma2-27b, L4), against
+  2.05, 2.94 and 4.40 s for the same models' CoT cells; the extraction writes about 112 to 131 output tokens against 52 to 54.
+  Plan A (dev + full eval, 6,003 items per model) projected at 62.6 compute units from the smoke; the stop rule was raised from
+  28 to 60 (2026-11-09, 100 units purchased) and to 80 (2026-11-10, item 18 option 1). Compute units actually consumed are
+  recorded per session in reports/twostage_report.json (compute_units) and are the figure to cite.
+
