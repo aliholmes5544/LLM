@@ -1486,3 +1486,17 @@ Source: reports/twostage_report.json (cells twostage_<model>/extract/dev, comput
   credential_or_payment_request (gemma2-9b), credential_or_payment_request and language_pattern (gemma2-27b). In all three,
   language_pattern = machine_like points towards legitimate on dev. These are development-set figures and not results; the eval
   rows (T12, F8) are the results.
+
+### 2026-11-10 (amendment): clean-fit stage 2 as the primary two-stage detector
+
+Author's amendment before any eval prediction existed (QUESTIONS.md item 18): the dev partition contains rewritten phishing variants, all labelled phishing, and no rewritten legitimate e-mail, so a stage 2 fitted on all 796 dev items is trained on the attack itself, which the direct zero-shot verdict never was; a robustness comparison must train on clean text and test on rewritten text. Two stage-2 fits per extraction
+model are therefore predicted and scored: the clean fit (400 dev originals only, 200 phishing and 200 legitimate; strategy
+`lr_clean`, family A-twostage-<model>-clean) is the headline of T12 and F8, the attack-aware fit (all 796 dev items; `lr_all`,
+A-twostage-<model>-all) stands beside it. The stage 2 figures in the previous section are those of the attack-aware fit.
+
+- Clean fit, dev only: C = 3.0 (qwen25-7b), 0.3 (gemma2-9b), 1.0 (gemma2-27b); balanced accuracy by 5-fold grouped cross-validation
+  0.890, 0.908, 0.890 (resubstitution 0.900, 0.913, 0.898). Largest effects (yes minus no): grammar_anomaly and
+  credential_or_payment_request (qwen25-7b), urgency and credential_or_payment_request (gemma2-9b), credential_or_payment_request
+  and urgency (gemma2-27b). The machine_like-points-to-legitimate effect of the attack-aware fit shrinks to -0.43, -0.07 and -0.97
+  once the rewritten variants leave the training rows: part of that effect was the attack itself.
+- For §3.5/§3.6: the extraction rows and config hash are shared by both fits; a fit is named by the row's `strategy` and `stage2_sha256`.

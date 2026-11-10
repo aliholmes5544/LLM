@@ -18,11 +18,14 @@ Five modes, one command each (TASK_08 section 9):
             into results/smoke_twostage/{model}/{tier}.jsonl instead (TASK_08 section 9 step 2).
             --units-before / --units-after record the Colab "Available compute units" reading of the session;
             the wall-clock estimate (hours x configs/twostage.yaml budget.rates_units_per_hour) is recorded too.
-  fit       stage 2: one logistic regression on the one-hot indicators of the COMPLETE dev extraction (TASK_08
+  fit       stage 2: logistic regressions on the one-hot indicators of the COMPLETE dev extraction (TASK_08
             section 5, item 18a/b: dev only; parse failures excluded and counted; C by StratifiedGroupKFold on dev
-            with the source e-mail as group; threshold 0.5), saved under models/twostage/ (gitignored) with its
-            sha256, coefficients and selection table in the report.
-  predict   writes the detector rows results/raw/twostage_{model}/lr/{partition}.jsonl in the runner schema
+            with the source e-mail as group; threshold 0.5), saved under models/twostage/ (gitignored) with their
+            sha256, coefficients and selection tables in the report. Two fits per model (configs/twostage.yaml
+            `fits`, amended 2026-11-10): `clean`, the PRIMARY, on the 400 dev originals only, and `all`, the
+            attack-aware secondary, on all 796 dev items. --stage2 clean|all runs one of them.
+  predict   writes the detector rows results/raw/twostage_{model}/{lr_clean,lr_all}/{partition}.jsonl, one file
+            per fit, in the runner schema
             of every other detector (TASK_08 section 6) from the extraction rows and the fitted stage 2:
             raw_output = the extraction JSON string, label_pred from stage 2 ("invalid" when the extraction did
             not parse, scored as incorrect exactly as in step 06), score = p_phish, plus parse_ok and the
@@ -104,13 +107,26 @@ def partition_items(partition: str, dcfg: dict, smoke: bool = False, seed: int =
     return eval_items(recs, part, dcfg) if partition == "eval" else dev_items(recs, part, dcfg)
 
 
-def paths(tcfg: dict, dcfg: dict, model: str, partition: str, tier: str = None, smoke: bool = False) -> dict:
+def paths(tcfg: dict, dcfg: dict, model: str, partition: str, tier: str = None, smoke: bool = False, fit_key: str = None) -> dict:
+    """Files of one model: the extraction rows, and for `fit_key` (configs/twostage.yaml fits) the stage-2 model file
+    models/twostage/{model}_{strategy_key}.joblib and the detector rows results/raw/twostage_{model}/{strategy_key}/."""
     name = tcfg["model_prefix"] + model
     raw = ROOT / dcfg["output"]["raw_dir"] / name
-    return {"name": name,
+    sk = tcfg["fits"][fit_key]["strategy_key"] if fit_key else None
+    return {"name": name, "strategy_key": sk,
             "extract": (ROOT / tcfg["smoke_dir"] / model / f"{tier}.jsonl") if smoke else raw / tcfg["extract_key"] / f"{partition}.jsonl",
-            "final": raw / tcfg["strategy_key"] / f"{partition}.jsonl",
-            "model": ROOT / tcfg["stage2"]["model_dir"] / f"{model}_lr.joblib"}
+            "final": raw / sk / f"{partition}.jsonl" if sk else None,
+            "model": ROOT / tcfg["stage2"]["model_dir"] / f"{model}_{sk}.joblib" if sk else None}
+
+
+def fit_keys(tcfg: dict, a) -> list:
+    """The stage-2 fits to run: --stage2 KEY, else every fit of configs/twostage.yaml `fits` in order (clean first)."""
+    keys = list(tcfg["fits"])
+    if getattr(a, "stage2", None):
+        if a.stage2 not in keys:
+            raise SystemExit(f"--stage2 {a.stage2} is not one of {keys} (configs/twostage.yaml fits)")
+        return [a.stage2]
+    return keys
 
 
 def archive_or_skip(out, rows: list, expected: list, phash: str, mhash, a, report: dict, cell_key: str) -> tuple:
@@ -352,32 +368,40 @@ def run_fit(a, tcfg: dict, dcfg: dict, seed: int) -> int:
     if fit_part != "dev":
         raise SystemExit("stage 2 is fitted on dev only (TASK_08 section 5)")
     phash, chash = extraction_prompt(tcfg, dcfg)["sha256"], config_hash(tcfg, seed)
-    p = paths(tcfg, dcfg, a.model, fit_part)
-    rows = complete_rows(p["extract"], fit_part, dcfg, phash, chash)
-    t0 = time.perf_counter()
-    res = fit_stage2(rows, tcfg, seed)
-    payload = {"model": res["model"], "feature_names": res["feature_names"], "C": res["C"], "prompt_hash": phash,
-               "config_hash": chash, "fit_partition": fit_part, "n_fitted": res["n_fitted"], "fitted_at": now()}
-    sha = save_model(p["model"], payload)
+    rows = complete_rows(paths(tcfg, dcfg, a.model, fit_part)["extract"], fit_part, dcfg, phash, chash)
     report = load_report()
-    report["stage2"][a.model] = {"model_file": str(p["model"].relative_to(ROOT)), "model_sha256": sha, "fit_partition": fit_part,
-                                 "n_rows": res["n_rows"], "n_fitted": res["n_fitted"], "n_excluded_parse_failures": res["n_excluded_parse_failures"],
-                                 "n_positive": res["n_positive"], "n_groups": res["n_groups"], "C": res["C"], "cv": tcfg["stage2"]["cv"],
-                                 "cv_table": res["cv_table"], "balanced_accuracy_cv": res["balanced_accuracy_cv"],
-                                 "balanced_accuracy_cv_sd": res["balanced_accuracy_cv_sd"],
-                                 "balanced_accuracy_resubstitution": res["balanced_accuracy_resubstitution"],
-                                 "intercept": round(res["intercept"], 6), "coefficients": res["coefficients"],
-                                 "top3_abs": [c["feature"] for c in res["coefficients"][:3]], "prompt_hash": phash, "config_hash": chash,
-                                 "fit_s": round(time.perf_counter() - t0, 1), "versions": {"scikit-learn": sklearn.__version__},
-                                 "fitted_at": now(), "git_commit": git("rev-parse", "--short", "HEAD")}
+    s2m = report["stage2"].get(a.model)
+    if not isinstance(s2m, dict) or "model_sha256" in s2m:        # before 2026-11-10 the entry was one flat fit
+        s2m = report["stage2"][a.model] = {}
+    for key in fit_keys(tcfg, a):
+        fcfg, p = tcfg["fits"][key], paths(tcfg, dcfg, a.model, fit_part, fit_key=key)
+        t0 = time.perf_counter()
+        res = fit_stage2(rows, tcfg, seed, fcfg["rows"])
+        payload = {"model": res["model"], "feature_names": res["feature_names"], "C": res["C"], "prompt_hash": phash,
+                   "config_hash": chash, "fit_partition": fit_part, "fit_key": key, "fit_rows": fcfg["rows"],
+                   "strategy_key": fcfg["strategy_key"], "n_fitted": res["n_fitted"], "fitted_at": now()}
+        sha = save_model(p["model"], payload)
+        s2m[key] = {"model_file": str(p["model"].relative_to(ROOT)), "model_sha256": sha, "fit_partition": fit_part, "fit_key": key,
+                    "fit_rows": fcfg["rows"], "strategy_key": fcfg["strategy_key"], "primary": bool(fcfg.get("primary")),
+                    "n_rows_available": res["n_rows_available"], "n_rows": res["n_rows"], "n_fitted": res["n_fitted"],
+                    "n_excluded_parse_failures": res["n_excluded_parse_failures"], "n_positive": res["n_positive"],
+                    "n_negative": res["n_negative"], "n_groups": res["n_groups"], "C": res["C"], "cv": tcfg["stage2"]["cv"],
+                    "cv_table": res["cv_table"], "balanced_accuracy_cv": res["balanced_accuracy_cv"],
+                    "balanced_accuracy_cv_sd": res["balanced_accuracy_cv_sd"],
+                    "balanced_accuracy_resubstitution": res["balanced_accuracy_resubstitution"],
+                    "intercept": round(res["intercept"], 6), "coefficients": res["coefficients"],
+                    "top3_abs": [c["feature"] for c in res["coefficients"][:3]], "prompt_hash": phash, "config_hash": chash,
+                    "fit_s": round(time.perf_counter() - t0, 1), "versions": {"scikit-learn": sklearn.__version__},
+                    "fitted_at": now(), "git_commit": git("rev-parse", "--short", "HEAD")}
+        print(f"[{p['name']}/{fcfg['strategy_key']}] stage 2 '{key}' ({fcfg['rows']}{', PRIMARY' if fcfg.get('primary') else ''}) fitted on "
+              f"{res['n_fitted']} of {res['n_rows']} rows ({res['n_excluded_parse_failures']} parse failures excluded; {res['n_positive']} phish, "
+              f"{res['n_negative']} legit; {res['n_groups']} source e-mails as cv groups); C = {res['C']} by {tcfg['stage2']['cv']['metric']} "
+              f"(grouped cv {res['balanced_accuracy_cv']:.4f}, resubstitution {res['balanced_accuracy_resubstitution']:.4f}); largest |coef|: "
+              f"{', '.join(f'{c['feature']} {c['coef']:+.3f}' for c in res['coefficients'][:3])}; sha256 {sha[:12]}")
+        print(f"-> {p['model'].relative_to(ROOT)}")
     report["updated_at"] = now()
     write_json(REPORT, report)
-    print(f"[{p['name']}] stage 2 fitted on {res['n_fitted']} of {res['n_rows']} dev rows ({res['n_excluded_parse_failures']} parse "
-          f"failures excluded; {res['n_positive']} phish; {res['n_groups']} source e-mails as cv groups); C = {res['C']} by "
-          f"{tcfg['stage2']['cv']['metric']} (grouped cv {res['balanced_accuracy_cv']:.4f}, resubstitution "
-          f"{res['balanced_accuracy_resubstitution']:.4f}); largest |coef|: {', '.join(f'{c['feature']} {c['coef']:+.3f}' for c in res['coefficients'][:3])}; "
-          f"sha256 {sha[:12]}")
-    print(f"-> {p['model'].relative_to(ROOT)}, {REPORT.relative_to(ROOT)}")
+    print(f"-> {REPORT.relative_to(ROOT)}")
     return 0
 
 
@@ -388,24 +412,34 @@ def run_predict(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
     if a.partition == "eval" and not frozen_is_committed():
         raise SystemExit(f"{', '.join(FROZEN)} must be committed unchanged; eval rows use frozen artefacts only")
     phash, chash = extraction_prompt(tcfg, dcfg)["sha256"], config_hash(tcfg, seed)
-    p = paths(tcfg, dcfg, a.model, a.partition)
+    rows_x = complete_rows(paths(tcfg, dcfg, a.model, a.partition)["extract"], a.partition, dcfg, phash, chash)
+    for key in fit_keys(tcfg, a):
+        predict_one(a, tcfg, dcfg, entry, key, rows_x, phash, chash)
+    return 0
+
+
+def predict_one(a, tcfg: dict, dcfg: dict, entry: dict, key: str, rows_x: list, phash: str, chash: str) -> None:
+    """The detector rows of one stage-2 fit (configs/twostage.yaml fits.<key>) from the complete extraction rows."""
+    p = paths(tcfg, dcfg, a.model, a.partition, fit_key=key)
+    sk = p["strategy_key"]
     report = load_report()
-    s2 = report["stage2"].get(a.model)
+    s2 = (report["stage2"].get(a.model) or {}).get(key) if isinstance(report["stage2"].get(a.model), dict) else None
     if not s2 or not p["model"].exists():
-        raise SystemExit(f"no fitted stage 2 for {a.model}; run `fit` first")
+        raise SystemExit(f"no fitted stage 2 '{key}' for {a.model}; run `fit` first")
     if sha256_path(p["model"]) != s2["model_sha256"]:
         raise SystemExit(f"{p['model'].relative_to(ROOT)}: sha256 differs from reports/twostage_report.json; refusing")
     payload = load_model(p["model"])
     if payload["prompt_hash"] != phash or payload["config_hash"] != chash:
         raise SystemExit("the fitted stage 2 was trained under another prompt or config hash; re-fit")
-    rows_x = complete_rows(p["extract"], a.partition, dcfg, phash, chash)
+    if payload.get("fit_key") != key or payload.get("strategy_key") != sk:
+        raise SystemExit(f"{p['model'].relative_to(ROOT)} was fitted as '{payload.get('fit_key')}', not '{key}'; re-fit")
     expected = [r["item_id"] for r in rows_x]
-    out, cell_key = p["final"], f"{p['name']}/{tcfg['strategy_key']}/{a.partition}"
+    out, cell_key = p["final"], f"{p['name']}/{sk}/{a.partition}"
     out.parent.mkdir(parents=True, exist_ok=True)
     rows, action = archive_or_skip(out, read_rows(out), expected, phash, entry.get("sha256"), a, report, cell_key)
     if action == SKIP:
         print(f"{cell_key}: already complete ({len(rows)} rows), skipping")
-        return 0
+        return
     have = {r["item_id"] for r in rows}
     t0, keys = time.perf_counter(), list(schema_of(tcfg))
     with open_utf8(out, "a") as f:
@@ -416,7 +450,7 @@ def run_predict(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
             label, score = predict_row(payload["model"], r, tcfg)
             lat = round(time.perf_counter() - t1, 4)
             row = {"item_id": r["item_id"], "partition": r["partition"], "condition": r["condition"], "label_true": r["label_true"],
-                   "model": p["name"], "strategy": tcfg["strategy_key"], "raw_output": r["raw_output"], "label_pred": label,
+                   "model": p["name"], "strategy": sk, "raw_output": r["raw_output"], "label_pred": label,
                    "invalid": label == "invalid", "score": None if score is None else round(score, 6),
                    "prompt_hash": phash, "config_hash": chash, "model_hash": r["model_hash"], "stage2_sha256": s2["model_sha256"],
                    "n_prompt_tokens": r["n_prompt_tokens"], "n_output_tokens": r["n_output_tokens"], "finish_reason": r["finish_reason"],
@@ -425,8 +459,8 @@ def run_predict(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     rows = read_rows(out)
     st = cell_stats(rows)
-    st.update({"model": a.model, "detector": p["name"], "strategy": tcfg["strategy_key"], "partition": a.partition,
-               "n_expected": len(expected), "n_done": len(rows), "complete": set(expected) <= {r["item_id"] for r in rows},
+    st.update({"model": a.model, "detector": p["name"], "strategy": sk, "fit_key": key, "fit_rows": s2["fit_rows"], "primary": s2["primary"],
+               "partition": a.partition, "n_expected": len(expected), "n_done": len(rows), "complete": set(expected) <= {r["item_id"] for r in rows},
                "stage2_sha256": s2["model_sha256"], "prompt_hash": phash, "config_hash": chash, "threshold": tcfg["stage2"]["threshold"],
                "wall_s": round(time.perf_counter() - t0, 1), "git_commit": git("rev-parse", "--short", "HEAD"), "at": now()})
     report["cells"][cell_key] = st
@@ -435,7 +469,6 @@ def run_predict(a, tcfg: dict, dcfg: dict, mcfg: dict, seed: int) -> int:
     print(f"[{cell_key}] {'COMPLETE' if st['complete'] else 'PARTIAL'} {st['n_done']}/{st['n_expected']}; invalid (parse failures) "
           f"{st['invalid']} ({st['invalid_rate']:.1%}); preds {st['pred_counts']}")
     print(f"-> {out.relative_to(ROOT)}, {REPORT.relative_to(ROOT)}")
-    return 0
 
 
 def main() -> int:
@@ -445,6 +478,7 @@ def main() -> int:
     ap.add_argument("--models", default=None, help="units: comma list of the models covered (default: the models of --tier)")
     ap.add_argument("--span-s", type=float, default=None, help="units: seconds from the start of the extraction cell to the after reading")
     ap.add_argument("--partition", default=None, choices=(None, "dev", "eval"))
+    ap.add_argument("--stage2", default=None, help="fit, predict: one stage-2 fit of configs/twostage.yaml `fits` (clean | all); default both")
     ap.add_argument("--tier", default="laptop")
     ap.add_argument("--backend", default="auto", choices=("auto", "cpu", "cuda"))
     ap.add_argument("--smoke", action="store_true", help="extract: the 20-item dev smoke sample into results/smoke_twostage/")

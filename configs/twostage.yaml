@@ -9,7 +9,13 @@
 
 models: [qwen25-7b, gemma2-9b, gemma2-27b]   # three, no more (TASK_08 section 2); tier = eval_tier in models.yaml
 model_prefix: twostage_                      # `model` field of every row: twostage_qwen25-7b, ...
-strategy_key: lr                             # final rows: results/raw/twostage_{model}/lr/{partition}.jsonl
+fits:                                        # TASK_08 sections 5 to 8 as amended 2026-11-10 (item 18, author): two stage-2 fits
+  clean: {rows: originals, strategy_key: lr_clean, primary: true}   # PRIMARY: the 400 dev originals only (200 phish, 200 legit;
+                                             # no rewritten text in training); rows results/raw/twostage_{model}/lr_clean/
+  all: {rows: all, strategy_key: lr_all, primary: false}           # SECONDARY, attack-aware: all 796 dev items (originals and the
+                                             # accepted dev variants, every variant phish); rows .../lr_all/. The block is
+                                             # outside config_hash: the hash is carried by the extraction rows, which a fit does
+                                             # not change; a fit is identified by the row's `strategy` and `stage2_sha256`.
 extract_key: extract                         # stage-1 rows: results/raw/twostage_{model}/extract/{partition}.jsonl
 smoke_dir: results/smoke_twostage            # `extract --smoke`: the 20-item dev smoke sample of configs/detection.yaml
 prompt: prompts/extract_indicators.txt       # frozen with its sha256 (prompt_hash in every row)

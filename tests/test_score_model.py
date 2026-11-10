@@ -62,7 +62,9 @@ class TestFrozenScores(unittest.TestCase):
     def test_families_of_the_additional_model_are_its_own(self):
         self.assertEqual(score_model.family_for("x", "zero_shot"), "A-x")
         self.assertEqual(score_model.family_for("x", "cot"), "A-x-cot")
-        self.assertEqual(score_model.family_for("twostage_qwen25-7b", "lr", "twostage"), "A-twostage-qwen25-7b")
+        self.assertEqual(score_model.family_for("twostage_qwen25-7b", "lr_clean", "twostage"), "A-twostage-qwen25-7b-clean")
+        self.assertEqual(score_model.family_for("twostage_qwen25-7b", "lr_all", "twostage"), "A-twostage-qwen25-7b-all")
+        self.assertEqual(score_model.TWOSTAGE_STRATEGIES, ["lr_clean", "lr_all"])
 
     def test_explicit_default_strategies_reproduce_the_frozen_rows(self):
         """The one-strategy option (item 18c) must leave the four-strategy path unchanged."""
@@ -76,9 +78,11 @@ class TestFrozenScores(unittest.TestCase):
         pd.testing.assert_frame_equal(roundtrip(res["deltas_long"].drop(columns=["holm_p", "family"])), roundtrip(fd), check_dtype=False)
 
     def test_one_strategy_specs_for_the_twostage_kind(self):
-        integ = {"cells": {"twostage_m/lr": {"model": "twostage_m", "strategy": "lr", "file": "f", "file_sha256": "0", "n_rows": 1, "pass": True}}}
-        specs = score_model.model_specs(integ, "twostage_m", ["lr"], "twostage")
-        self.assertEqual([(s["strategy"], s["kind"]) for s in specs], [("lr", "twostage")])
+        integ = {"cells": {"twostage_m/lr_clean": {"model": "twostage_m", "strategy": "lr_clean", "file": "f", "file_sha256": "0", "n_rows": 1, "pass": True}}}
+        specs = score_model.model_specs(integ, "twostage_m", ["lr_clean"], "twostage")
+        self.assertEqual([(s["strategy"], s["kind"]) for s in specs], [("lr_clean", "twostage")])
+        with self.assertRaises(SystemExit):
+            score_model.model_specs(integ, "twostage_m", score_model.TWOSTAGE_STRATEGIES, "twostage")   # lr_all missing
         with self.assertRaises(SystemExit):
             score_model.model_specs(integ, "twostage_m")          # the four strategies are not there
 

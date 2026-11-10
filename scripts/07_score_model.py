@@ -29,9 +29,11 @@ model is reported as a post-registration addition next to the frozen tables.
 Usage: python scripts/07_score_model.py --model <key> [--integrity reports/integrity_check_<key>.json]
                                         [--out-dir results/scores/additional/<key>] [--check] [--B 2000]
                                         [--strategies zero_shot,few_shot,cot,role] [--kind llm|twostage]
---kind twostage (TASK_08, QUESTIONS.md item 18c): the two-stage detector twostage_<key> with its single strategy
-`lr`, read from reports/integrity_check_twostage.json, written to results/scores/additional/twostage_<key>/ with
-the families A-twostage-<key>; the frozen files and the six models' rows are untouched.
+--kind twostage (TASK_08, QUESTIONS.md item 18c; amended 2026-11-10): the two-stage detector twostage_<key> with
+its two stage-2 fits as strategies, `lr_clean` (fitted on the dev originals only, the primary) and `lr_all` (fitted
+on all dev items, attack-aware), read from reports/integrity_check_twostage.json, written to
+results/scores/additional/twostage_<key>/ with the separate families A-twostage-<key>-clean and A-twostage-<key>-all;
+the frozen files and the six models' rows are untouched.
 """
 import argparse
 import datetime as dt
@@ -64,14 +66,16 @@ def git(*args) -> str:
     return r.stdout.strip() if r.returncode == 0 else ""
 
 
-TWOSTAGE_PREFIX, TWOSTAGE_STRATEGIES = "twostage_", ["lr"]
+TWOSTAGE_PREFIX, TWOSTAGE_STRATEGIES = "twostage_", ["lr_clean", "lr_all"]     # configs/twostage.yaml fits (clean = primary)
 
 
 def family_for(model: str, strategy: str, kind: str = "llm") -> str:
     """The additional detector's own families: a language model gets A-<key> for zero_shot and A-<key>-<strategy>
-    otherwise; the two-stage detector gets A-twostage-<key> (TASK_08 section 7)."""
+    otherwise; the two-stage detector gets one family per stage-2 fit, A-twostage-<key>-clean and A-twostage-<key>-all
+    (TASK_08 section 7 as amended 2026-11-10)."""
     if kind == "twostage":
-        return f"A-twostage-{model[len(TWOSTAGE_PREFIX):] if model.startswith(TWOSTAGE_PREFIX) else model}"
+        key = model[len(TWOSTAGE_PREFIX):] if model.startswith(TWOSTAGE_PREFIX) else model
+        return f"A-twostage-{key}-{strategy[3:] if strategy.startswith('lr_') else strategy}"
     return f"A-{model}" if strategy == "zero_shot" else f"A-{model}-{strategy}"
 
 

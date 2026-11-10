@@ -707,5 +707,31 @@
     Enron and hard-ham originals read as machine-like; a dev observation, to be checked on eval, not a claim. The positive intercepts
     reflect the 596:200 class ratio of dev (originals plus the accepted phish variants). C = 3.0 won in all three grids; the
     grid's cv curve is flat from 0.1 upwards (within one sd), so the choice is not sensitive.
-    Status: step 3 complete (dev extraction 3 x 796/796, checkpoint 58.0 < 80, stage 2 fitted); the eval extraction (step 4, plan A,
-    MODE = eval, T4 session then L4 session) awaits the author's go; no eval run started.
+    **Amendment 2026-11-10 (author), logged before any eval prediction exists: clean-fit stage 2 as primary.** Reason: the dev partition contains rewritten phishing variants, all labelled phishing, and no rewritten legitimate e-mail, so a stage 2 fitted on all 796 dev items is trained on the attack itself, which the direct zero-shot verdict never was; a robustness comparison must train on clean text and test on rewritten text.
+    Change: two stage-2 fits per extraction model, both predicted and scored. PRIMARY = clean fit, `fits.clean`, strategy `lr_clean`:
+    fitted on the 400 dev originals only (200 phishing, 200 legitimate), same grid, grouped 5-fold cv, same rules. SECONDARY =
+    attack-aware fit, `fits.all`, strategy `lr_all`: the existing fit on all 796 dev items, kept as is (refitted under the new file
+    name with identical coefficients). Rows results/raw/twostage_{model}/lr_clean/ and lr_all/; both scored as additional detectors
+    with separate families A-twostage-{model}-clean and A-twostage-{model}-all; T12 and F8 report the clean fit as the headline and
+    the attack-aware fit beside it. TASK_08 sections 5 to 9 amended. Implemented: configs/twostage.yaml `fits` (outside config_hash,
+    which stays defa94b131fd60ac: the hash is carried by the extraction rows, which a fit does not change; a fit is identified by
+    the row's `strategy` and `stage2_sha256`); `06_run_twostage.py fit` and `predict` run both fits (--stage2 clean|all for one);
+    models/twostage/{model}_{lr_clean,lr_all}.joblib; report stage2.<model>.{clean,all}; `06_check_integrity.py --twostage` checks
+    six eval files; `07_score_model.py --kind twostage` scores the two strategies with the two families; tests (107 OK).
+    **Clean fit (primary) next to the attack-aware fit, dev only:**
+    qwen25-7b clean (lr_clean, PRIMARY): 400 of 400 rows used (200 phish, 200 legit; 0 excluded; 400 groups); C = 3.0; balanced accuracy 0.890 grouped cv (sd 0.032), 0.900 resubstitution; intercept +5.97; five largest |coef|: grammar_anomaly=yes +2.012, grammar_anomaly=no -2.010, credential_or_payment_request=yes +1.923, credential_or_payment_request=no -1.920, impersonation_authority=yes +1.234; sha256 c8f4e693bab9.
+    qwen25-7b all (lr_all, secondary): 796 of 796 rows used (596 phish, 200 legit; 0 excluded; 400 groups); C = 3.0; balanced accuracy 0.889 grouped cv (sd 0.017), 0.892 resubstitution; intercept +6.38; five largest |coef|: credential_or_payment_request=yes +2.055, credential_or_payment_request=no -2.050, grammar_anomaly=yes +2.033, grammar_anomaly=no -2.029, link_or_url=yes +1.193; sha256 103f9c8796a1.
+    gemma2-9b clean (lr_clean, PRIMARY): 400 of 400 rows used (200 phish, 200 legit; 0 excluded; 400 groups); C = 0.3; balanced accuracy 0.907 grouped cv (sd 0.047), 0.912 resubstitution; intercept +2.05; five largest |coef|: urgency=no -1.250, urgency=yes +1.248, credential_or_payment_request=no -0.923, credential_or_payment_request=yes +0.921, impersonation_authority=no -0.686; sha256 91cbf7c17b7c.
+    gemma2-9b all (lr_all, secondary): 796 of 796 rows used (596 phish, 200 legit; 0 excluded; 400 groups); C = 3.0; balanced accuracy 0.890 grouped cv (sd 0.028), 0.891 resubstitution; intercept +3.47; five largest |coef|: urgency=yes +1.644, urgency=no -1.636, credential_or_payment_request=yes +1.623, credential_or_payment_request=no -1.615, impersonation_authority=yes +1.366; sha256 c0afe66d6292.
+    gemma2-27b clean (lr_clean, PRIMARY): 400 of 400 rows used (200 phish, 200 legit; 0 excluded; 400 groups); C = 1.0; balanced accuracy 0.890 grouped cv (sd 0.032), 0.897 resubstitution; intercept +1.76; five largest |coef|: credential_or_payment_request=no -1.493, credential_or_payment_request=yes +1.492, urgency=no -1.269, urgency=yes +1.269, impersonation_authority=no -1.068; sha256 72a9d5726427.
+    gemma2-27b all (lr_all, secondary): 796 of 796 rows used (596 phish, 200 legit; 0 excluded; 400 groups); C = 3.0; balanced accuracy 0.866 grouped cv (sd 0.023), 0.884 resubstitution; intercept +2.48; five largest |coef|: credential_or_payment_request=no -2.103, credential_or_payment_request=yes +1.956, language_pattern=machine_like -1.845, language_pattern=human_like +1.688, urgency=yes +1.538; sha256 be0ca2e6f576.
+    Reading: on originals only, the cv balanced accuracy is the same or higher (0.890 / 0.908 / 0.890 against 0.889 / 0.890 / 0.866),
+    the chosen C is smaller for the gemma models (0.3, 1.0), the intercepts drop with the balanced 200:200 classes, and the
+    coefficients shrink: grammar_anomaly and credential_or_payment_request lead for qwen25-7b, urgency and
+    credential_or_payment_request for gemma2-9b, credential_or_payment_request and urgency for gemma2-27b. The
+    language_pattern = machine_like effect that the attack-aware fit learnt (strongest -1.845 in gemma2-27b) falls to -0.43, -0.07
+    and -0.97 in the clean fits: part of it was the rewritten variants reading as human-like, i.e. the attack itself. The clean
+    fit's folds hold one e-mail each, so its cv sd is larger (0.032 to 0.047). The cv curves stay flat (within one sd) across the
+    grid for every fit.
+    Status: step 3 complete (dev extraction 3 x 796/796, checkpoint 58.0 < 80, two stage-2 fits per model); the eval extraction
+    (step 4, plan A, MODE = eval, T4 session then L4 session) awaits the author's go; no eval run started.

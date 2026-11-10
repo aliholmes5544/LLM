@@ -59,11 +59,13 @@ No free-text field. No probability scores: a model's self-reported confidence is
 - Hyper-parameter: C chosen on `dev` by cross-validation; **nothing is chosen on `eval`**. *Amended 2026-11-09 (item 18b):* 5-fold `StratifiedGroupKFold` with the source e-mail (cluster) as the group, because dev holds originals together with their own variants and ungrouped folds would make the selection optimistic; metric balanced accuracy, ties to the smallest C.
 - Threshold fixed at 0.5. The fitted model's sha256 is recorded; the model file stays out of git.
 
+*Amended 2026-11-10 (author, before any eval prediction existed; QUESTIONS.md item 18):* **two stage-2 fits per extraction model**, both predicted and scored. PRIMARY = **clean fit** (`fits.clean`, strategy `lr_clean`): fitted on the **400 dev originals only** (200 phishing, 200 legitimate), same grid, grouped 5-fold cv, same rules. SECONDARY = **attack-aware fit** (`fits.all`, strategy `lr_all`): the fit on all 796 dev items, kept as is. Reason: the dev partition contains rewritten phishing variants, all labelled phishing, and no rewritten legitimate e-mail, so a stage 2 fitted on all 796 dev items is trained on the attack itself, which the direct zero-shot verdict never was; a robustness comparison must train on clean text and test on rewritten text. The `fits` block of `configs/twostage.yaml` is outside `config_hash` (the hash is carried by the extraction rows, which a fit does not change); a fit is identified by the row's `strategy` and `stage2_sha256`.
+
 ## 6. Runner `scripts/06_run_twostage.py`
 
 Writes the **same row schema as every other detector**, so step 07 scores it with the existing code path:
 
-`results/raw/twostage_{model}/lr/{partition}.jsonl` — `item_id`, `partition`, `condition`, `label_true`, `raw_output` (the JSON string), `label_pred`, `invalid`, `prompt_hash`, `config_hash`, `model_hash`, `n_prompt_tokens`, `n_output_tokens`, `latency_s`, `truncated_input`, `backend`, plus `parse_ok` and the parsed indicator columns.
+`results/raw/twostage_{model}/{lr_clean,lr_all}/{partition}.jsonl` (*amended 2026-11-10:* one file per stage-2 fit, `lr_clean` the primary and `lr_all` the attack-aware secondary; `strategy` and `stage2_sha256` name the fit) — `item_id`, `partition`, `condition`, `label_true`, `raw_output` (the JSON string), `label_pred`, `invalid`, `prompt_hash`, `config_hash`, `model_hash`, `n_prompt_tokens`, `n_output_tokens`, `latency_s`, `truncated_input`, `backend`, plus `parse_ok` and the parsed indicator columns.
 
 Resumable, refuses to overwrite a finished eval file without `--force --reason`, refuses to run when configs or prompts differ from HEAD — the same guards as `06_run_detection.py`.
 
@@ -73,6 +75,8 @@ Resumable, refuses to overwrite a finished eval file without `--force --reason`,
 - Reported per condition: sensitivity, specificity, Δsens, Δspec on the control, with 95 % cluster bootstrap CIs on the same clusters and the same seed.
 - **Primary comparison:** difference of deltas, two-stage minus direct, per condition, with bootstrap CI and the two-sided bootstrap p defined in item 12(e).
 - A descriptive note on where the two pipelines disagree, and the three indicators with the largest fitted coefficients.
+
+*Amended 2026-11-10 (author):* both fits are scored as additional detectors through `07_score_model.py --kind twostage` (strategies `lr_clean`, `lr_all`) into `results/scores/additional/twostage_{model}/`, with **separate families** `A-twostage-{model}-clean` and `A-twostage-{model}-all`. The primary comparison (difference of deltas, two-stage minus direct) is reported for the clean fit as the headline and for the attack-aware fit beside it.
 
 ## 8. Outputs
 
@@ -85,11 +89,13 @@ Resumable, refuses to overwrite a finished eval file without `--force --reason`,
 
 *Amended 2026-11-09 (item 18d):* the two-stage detector does **not** gain rows in T1 to T11. It is reported only in `tab_t12_twostage.tex` (which carries its own capability block in the T1 format) and figure F8. Every committed `.tex` stays byte-identical, verified and recorded. This also matches the exploratory framing.
 
+*Amended 2026-11-10 (author):* table T12 and figure F8 report the **clean fit as the headline** and the attack-aware fit beside it (T12: both fits' columns per model per condition; F8: both fits as series in each model's panel). `reports/twostage_report.json` carries both fits under `stage2.<model>.{clean,all}`.
+
 ## 9. Order of work (one command each, stop and report between)
 
 1. `configs/twostage.yaml`, extraction prompt, runner, tests. Verify the frozen artefacts are untouched. Commit.
 2. Extraction smoke on `dev` (20 items × 3 models; the 27B on the L4 tier): parse-failure rate, volunteered verdicts, latency, and the measured compute-unit rate. Revise the prompt for format only; freeze; record hashes. Commit. **Gate: parse failures ≤ 10 % per cell.** Report the budget projection before any full run. *Amended 2026-11-09 (item 18j/k):* compute units are recorded two ways per session, wall-clock times the published rate (1.15 units/h on T4, 1.94 on L4) and the Colab "Available compute units" reading before and after the session as the ground truth; both numbers and any gap are reported (`reports/twostage_report.json`, `notebooks/cloud_twostage.ipynb`). *Amended 2026-11-09 (author):* the budget projection is reported for two plans, A = dev + the full eval partition (6,003 items per model, the plan of section 2) and B = dev + the core eval only, `gen_phish` and `gen_legit` excluded (4,003 items per model), so that the fallback of section 11 is decided on numbers before step 3 (`06_run_twostage.py budget`, report `budget_projection`).
-3. Full `dev` extraction (796 × 3); fit stage 2 per model; report dev performance and coefficients. Commit.
+3. Full `dev` extraction (796 × 3); fit stage 2 per model; report dev performance and coefficients. Commit. *Amended 2026-11-10:* two fits per model (`clean` on the 400 originals, primary; `all` on the 796 items, secondary), both reported.
 4. `eval` extraction (5,207 × 3): T4 run for `qwen25-7b` and `gemma2-9b`, then L4 run for `gemma2-27b`; integrity check. Commit.
 5. Scoring, table T12, figure F8; verify every frozen CSV byte-identical. Commit; tag `v1.1.0-twostage`.
 6. Write-up text for §3.5/§3.6, §4.5, §4.7, §4.8 and the shortened §5 future work, in `docs/CHANGES_FOR_THESIS.md`.

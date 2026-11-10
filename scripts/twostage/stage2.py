@@ -1,7 +1,8 @@
 """
 stage2.py — the stage-2 logistic regression of the two-stage detector (TASK_08 section 5; configs/twostage.yaml
-`stage2`; QUESTIONS.md item 18 decisions (a), (b)). One model per language model, fitted on the dev
-extractions only: features are the one-hot indicators, rows whose extraction did not parse are excluded from the
+`stage2`; QUESTIONS.md item 18 decisions (a), (b)). Two fits per language model (configs/twostage.yaml `fits`,
+amended 2026-11-10): `clean`, the primary, on the dev originals only, and `all`, the attack-aware secondary, on
+every dev item; features are the one-hot indicators, rows whose extraction did not parse are excluded from the
 fit (and counted), C is chosen on dev by stratified GROUP cross-validation with the source e-mail as the group
 (an original and its variants never straddle a fold), the threshold is fixed at 0.5. Nothing here reads an
 evaluation partition.
@@ -75,10 +76,16 @@ def select_C(X, y, groups, tcfg: dict, seed: int) -> tuple:
     return best["C"], table
 
 
-def fit_stage2(rows: list, tcfg: dict, seed: int) -> dict:
-    """Fit on the dev extraction rows (parse failures excluded and counted); model, selection table, coefficients."""
-    kept = [r for r in rows if r.get("indicators") is not None]
-    n_excluded = len(rows) - len(kept)
+FIT_ROWS = {"originals": lambda r: r.get("condition") == "original",     # the dev originals: no rewritten text (clean fit)
+            "all": lambda r: True}                                       # originals and accepted dev variants (attack-aware fit)
+
+
+def fit_stage2(rows: list, tcfg: dict, seed: int, fit_rows: str = "all") -> dict:
+    """Fit on the dev extraction rows selected by `fit_rows` (configs/twostage.yaml fits.<key>.rows: "originals" or
+    "all"; parse failures excluded and counted); model, selection table, coefficients."""
+    pool = [r for r in rows if FIT_ROWS[fit_rows](r)]
+    kept = [r for r in pool if r.get("indicators") is not None]
+    n_excluded = len(pool) - len(kept)
     X, y, groups, names = design(kept, tcfg)
     if len(set(y.tolist())) < 2:
         raise SystemExit("stage 2 needs both classes in the fitting rows")
@@ -91,8 +98,9 @@ def fit_stage2(rows: list, tcfg: dict, seed: int) -> dict:
             "balanced_accuracy_cv": round(cv_at_C["cv_mean"], 6), "balanced_accuracy_cv_sd": round(cv_at_C["cv_sd"], 6),
             "balanced_accuracy_resubstitution": round(resub, 6),
             "coefficients": [{"feature": n, "coef": round(c, 6)} for n, c in coefs],
-            "intercept": float(model.intercept_[0]), "n_rows": int(len(rows)), "n_fitted": int(len(kept)),
-            "n_excluded_parse_failures": int(n_excluded), "n_positive": int(y.sum()),
+            "intercept": float(model.intercept_[0]), "fit_rows": fit_rows, "n_rows_available": int(len(rows)),
+            "n_rows": int(len(pool)), "n_fitted": int(len(kept)),
+            "n_excluded_parse_failures": int(n_excluded), "n_positive": int(y.sum()), "n_negative": int(len(y) - y.sum()),
             "n_groups": int(len(set(groups.tolist())))}
 
 

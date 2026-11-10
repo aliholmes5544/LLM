@@ -130,10 +130,25 @@ class TestStage2(unittest.TestCase):
         for i in range(40):
             phish = i % 2 == 0
             ind = parsed(urgency="yes" if phish else "no", credential_or_payment_request="yes" if phish and i % 4 == 0 else "no")
-            src = f"src{i // 2}"
-            rows.append({"item_id": src if i % 4 < 2 else f"{src}#para_low", "label_true": "phish" if phish else "legit", "indicators": ind})
-        rows.append({"item_id": "bad", "label_true": "phish", "indicators": None})
+            src, orig = f"src{i // 2}", i % 4 < 2
+            rows.append({"item_id": src if orig else f"{src}#para_low", "condition": "original" if orig else "para_low",
+                         "label_true": "phish" if phish else "legit", "indicators": ind})
+        rows.append({"item_id": "bad", "condition": "original", "label_true": "phish", "indicators": None})
         return rows
+
+    def test_two_fits_clean_on_originals_only_and_all(self):
+        """configs/twostage.yaml fits (amended 2026-11-10): clean = the dev originals only (primary), all = every dev row."""
+        self.assertEqual(list(TCFG["fits"]), ["clean", "all"])
+        self.assertEqual({k: v["strategy_key"] for k, v in TCFG["fits"].items()}, {"clean": "lr_clean", "all": "lr_all"})
+        self.assertEqual({k: v["rows"] for k, v in TCFG["fits"].items()}, {"clean": "originals", "all": "all"})
+        self.assertTrue(TCFG["fits"]["clean"]["primary"]); self.assertFalse(TCFG["fits"]["all"]["primary"])
+        self.assertEqual(config_hash(TCFG, 2026), config_hash({k: v for k, v in TCFG.items() if k != "fits"}, 2026))
+        clean, every = fit_stage2(self.rows(), TCFG, 2026, "originals"), fit_stage2(self.rows(), TCFG, 2026, "all")
+        self.assertEqual((clean["fit_rows"], clean["n_rows_available"], clean["n_rows"], clean["n_fitted"], clean["n_excluded_parse_failures"]),
+                         ("originals", 41, 21, 20, 1))
+        self.assertEqual((clean["n_positive"], clean["n_negative"], clean["n_groups"]), (10, 10, 10))   # two originals per src id
+        self.assertEqual((every["fit_rows"], every["n_rows"], every["n_fitted"], every["n_groups"]), ("all", 41, 40, 20))
+        self.assertEqual(every["coefficients"], fit_stage2(self.rows(), TCFG, 2026)["coefficients"])   # default = all
 
     def test_fit_excludes_parse_failures_groups_by_source_and_is_deterministic(self):
         r1, r2 = fit_stage2(self.rows(), TCFG, 2026), fit_stage2(self.rows(), TCFG, 2026)
