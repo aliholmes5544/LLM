@@ -1,0 +1,56 @@
+{
+  "computed_at": "2026-11-12T05:09:24Z",
+  "model": "gemma2-27b",
+  "detector": "twostage_gemma2-27b",
+  "kind": "twostage",
+  "strategies": [
+    "lr_clean",
+    "lr_all"
+  ],
+  "note": "Additional detector scored after the pre-registered computation (07_score.py); not part of the ensemble, the pre-registered families, the tables or the figures.",
+  "inputs": {
+    "integrity_report": "reports/integrity_check_twostage.json",
+    "cells": {
+      "lr_clean": {
+        "file": "results/raw/twostage_gemma2-27b/lr_clean/eval.jsonl",
+        "sha256": "90fa9ae3b3a015034f3953398066849c820f510eddafbb1510af97a125035d02",
+        "n_rows": 5207
+      },
+      "lr_all": {
+        "file": "results/raw/twostage_gemma2-27b/lr_all/eval.jsonl",
+        "sha256": "2aeabe3b19b1263a7c5b6cde25f8395761957eb25764d94117c32aa11795b37c",
+        "n_rows": 5207
+      }
+    },
+    "pairs.csv": "4e953bb64eb5a6bcbcb9b3a426038d727e7872e43d2b0a5cb42c1dc146affa9e",
+    "variants_eval.jsonl": "d898cece2d0f5d399a036bdeab8d63c9246b4eb91fd8298c299285b354d46389"
+  },
+  "B": 2000,
+  "seed": 2026,
+  "families": {
+    "A-twostage-gemma2-27b-all": 5,
+    "A-twostage-gemma2-27b-clean": 5
+  },
+  "analyses": [
+    "primary",
+    "no_invalid"
+  ],
+  "rows": {
+    "metrics_long": 74,
+    "deltas_long": 20
+  },
+  "out_dir": "results/scores/additional/twostage_gemma2-27b",
+  "outputs": {
+    "items.parquet": "0a5ea0c2afc80bba4b007b924b2fac41c496f3f9cd1cea10d0ea19826b4350ee",
+    "metrics_long.csv": "999349b55eca72883bf0849d147b8de7136d65d85fbbe4f874593787a4492253",
+    "deltas_long.csv": "b89f188b6bd23f6f490e5ae86d80dc3f22b928972658af8d5b43d224cbf28b7b"
+  },
+  "runtime_s": 3.2,
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0"
+  },
+  "git_commit": "1d0282d",
+  "git_describe": "v1.0.0-thesis-11-g1d0282d"
+}

@@ -83,6 +83,8 @@ Resumable, refuses to overwrite a finished eval file without `--force --reason`,
 | Path | Content |
 |---|---|
 | `results/scores/additional/twostage_*/…csv` | metrics and deltas, same long format |
+| `results/scores/additional/twostage_compare/{contrasts,rate_differences,disagreement}.csv` | *added 2026-11-12 (`scripts/07_twostage_compare.py`):* the primary comparison (difference of deltas, two-stage minus direct, per fit and condition, bootstrap CI, two-sided bootstrap p, Holm within the fit's family), descriptive rate differences on the same items, and disagreement counts by item group |
+| `reports/integrity_check_twostage.json`, `reports/scoring_additional_twostage_<model>.json`, `reports/twostage_compare_report.json`, `reports/twostage_tables_figures_report.json` | *added 2026-11-12:* integrity, scoring, comparison and T12/F8 records with input and output hashes |
 | `results/tables/tab_t12_twostage.tex` | one table: direct vs two-stage per model per condition, with the difference of deltas |
 | `figures/ch04_f8_twostage_eng.png` | Δsens per condition, direct vs two-stage, three panels (one per model) |
 | `reports/twostage_report.json` | parse-failure rates, volunteered-verdict rate, fitted coefficients, hashes, runtime, compute units |
@@ -96,8 +98,8 @@ Resumable, refuses to overwrite a finished eval file without `--force --reason`,
 1. `configs/twostage.yaml`, extraction prompt, runner, tests. Verify the frozen artefacts are untouched. Commit.
 2. Extraction smoke on `dev` (20 items × 3 models; the 27B on the L4 tier): parse-failure rate, volunteered verdicts, latency, and the measured compute-unit rate. Revise the prompt for format only; freeze; record hashes. Commit. **Gate: parse failures ≤ 10 % per cell.** Report the budget projection before any full run. *Amended 2026-11-09 (item 18j/k):* compute units are recorded two ways per session, wall-clock times the published rate (1.15 units/h on T4, 1.94 on L4) and the Colab "Available compute units" reading before and after the session as the ground truth; both numbers and any gap are reported (`reports/twostage_report.json`, `notebooks/cloud_twostage.ipynb`). *Amended 2026-11-09 (author):* the budget projection is reported for two plans, A = dev + the full eval partition (6,003 items per model, the plan of section 2) and B = dev + the core eval only, `gen_phish` and `gen_legit` excluded (4,003 items per model), so that the fallback of section 11 is decided on numbers before step 3 (`06_run_twostage.py budget`, report `budget_projection`).
 3. Full `dev` extraction (796 × 3); fit stage 2 per model; report dev performance and coefficients. Commit. *Amended 2026-11-10:* two fits per model (`clean` on the 400 originals, primary; `all` on the 796 items, secondary), both reported.
-4. `eval` extraction (5,207 × 3): T4 run for `qwen25-7b` and `gemma2-9b`, then L4 run for `gemma2-27b`; integrity check. Commit.
-5. Scoring, table T12, figure F8; verify every frozen CSV byte-identical. Commit; tag `v1.1.0-twostage`.
+4. `eval` extraction (5,207 × 3): T4 run for `qwen25-7b` and `gemma2-9b`, then L4 run for `gemma2-27b`; integrity check. Commit. *Done 2026-11-12:* 3 × 5,207/5,207, 0 parse failures, 0 volunteered verdicts; both fits predicted; 6/6 cells pass the integrity check (item 18).
+5. Scoring, table T12, figure F8; verify every frozen CSV byte-identical. Commit; tag `v1.1.0-twostage`. *Done 2026-11-12:* scored through `07_score_model.py --kind twostage`, compared by `07_twostage_compare.py`, T12 and F8 by `07_twostage_tables_figures.py`; 83 frozen files (raw, scores, configs, prompts, the .tex of T1 to T11 and A1, F1 to F7) byte-identical; TASK_08 consumed 61.03 compute units in total.
 6. Write-up text for §3.5/§3.6, §4.5, §4.7, §4.8 and the shortened §5 future work, in `docs/CHANGES_FOR_THESIS.md`.
 
 ## 10. Definition of done

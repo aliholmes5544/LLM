@@ -743,6 +743,603 @@
       "gpu": "NVIDIA L4",
       "llama_cpp_python": "0.3.36",
       "model_load_s": 5.3
+    },
+    "twostage_qwen25-7b/extract/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 4.1,
+      "latency_mean_s": 4.148,
+      "latency_max_s": 7.548,
+      "latency_total_s": 21598.9,
+      "prompt_tokens_median": 592,
+      "output_tokens_mean": 117.2,
+      "output_tokens_max": 120,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "detector": "twostage_qwen25-7b",
+      "strategy": "extract",
+      "partition": "eval",
+      "smoke": false,
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": true,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "65b8fcd92af6b4fefa935c625d1ac27ea29dcb6ee14589c55a8f115ceaaa1423",
+      "config_sha256": {
+        "configs/twostage.yaml": "d306f73e051bd68a668e61568d14f16bf454abbb3048b2e47eb50770200821ab",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "1d0282d",
+      "git_describe": "1d0282d",
+      "sessions": [
+        {
+          "started_at": "2026-11-10T19:38:38Z",
+          "finished_at": "2026-11-11T01:38:52Z",
+          "items_run": 5207,
+          "wall_s": 21614.7,
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "units": {
+            "tier": "colab_t4",
+            "wall_s": 21614.7,
+            "rate_units_per_hour": 1.15,
+            "estimate_wall_x_rate": 6.905,
+            "units_before": 103.58,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 1.8
+    },
+    "twostage_gemma2-9b/extract/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 5.214,
+      "latency_mean_s": 5.302,
+      "latency_max_s": 10.22,
+      "latency_total_s": 27606.4,
+      "prompt_tokens_median": 625,
+      "output_tokens_mean": 112.1,
+      "output_tokens_max": 115,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "detector": "twostage_gemma2-9b",
+      "strategy": "extract",
+      "partition": "eval",
+      "smoke": false,
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_t4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "13b2a7b4115bbd0900162edcebe476da1ba1fc24e718e8b40d32f6e300f56dfe",
+      "config_sha256": {
+        "configs/twostage.yaml": "d306f73e051bd68a668e61568d14f16bf454abbb3048b2e47eb50770200821ab",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "1d0282d",
+      "git_describe": "1d0282d",
+      "sessions": [
+        {
+          "started_at": "2026-11-11T01:39:15Z",
+          "finished_at": "2026-11-11T09:19:42Z",
+          "items_run": 5207,
+          "wall_s": 27627.2,
+          "backend": "cuda",
+          "gpu": "Tesla T4",
+          "units": {
+            "tier": "colab_t4",
+            "wall_s": 27627.2,
+            "rate_units_per_hour": 1.15,
+            "estimate_wall_x_rate": 8.825,
+            "units_before": 103.58,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "Tesla T4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 2.4
+    },
+    "twostage_gemma2-27b/extract/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "parse_failures": 0,
+      "parse_failure_rate": 0.0,
+      "parse_errors": {},
+      "rows_with_extra_keys": 0,
+      "extra_keys_seen": {},
+      "volunteered_verdicts": 0,
+      "volunteered_verdict_rate": 0.0,
+      "latency_median_s": 9.853,
+      "latency_mean_s": 9.948,
+      "latency_max_s": 15.0,
+      "latency_total_s": 51801.8,
+      "prompt_tokens_median": 625,
+      "output_tokens_mean": 131.2,
+      "output_tokens_max": 134,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "detector": "twostage_gemma2-27b",
+      "strategy": "extract",
+      "partition": "eval",
+      "smoke": false,
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "items_by_partition_condition": {
+        "core_pos": {
+          "original": 334,
+          "para_low": 334,
+          "para_high": 325,
+          "obf_low": 334,
+          "obf_high": 334
+        },
+        "core_neg": {
+          "original": 1002
+        },
+        "ctrl_modern_legit": {
+          "original": 334
+        },
+        "ctrl_para_legit": {
+          "para_high": 210
+        },
+        "gen_phish": {
+          "original": 1000
+        },
+        "gen_legit": {
+          "original": 1000
+        }
+      },
+      "limit": null,
+      "tier": "colab_l4",
+      "runtime": {
+        "tier": "colab",
+        "n_threads": 4,
+        "n_batch": 512,
+        "n_gpu_layers": -1
+      },
+      "system_role": false,
+      "prompt_file": "prompts/extract_indicators.txt",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "decoding": {
+        "temperature": 0.0,
+        "top_p": 1.0,
+        "repeat_penalty": 1.0,
+        "seed_from": "data.yaml",
+        "max_tokens": 256,
+        "stop": []
+      },
+      "n_ctx": 4096,
+      "seed": 2026,
+      "model_sha256": "503a87ab47c9e7fb27545ec8592b4dc4493538bd47b397ceb3197e10a0370d23",
+      "config_sha256": {
+        "configs/twostage.yaml": "d306f73e051bd68a668e61568d14f16bf454abbb3048b2e47eb50770200821ab",
+        "prompts/extract_indicators.txt": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+        "configs/detection.yaml": "017aa5a93b5db68716cc96f9b8fb365d50036e883090ecc66018825f368f57a5",
+        "configs/models.yaml": "d65261eeff6bafbf909248f54ef71cdeb5437e7cdef68711c5d9a7966a6beeff"
+      },
+      "git_commit": "1d0282d",
+      "git_describe": "1d0282d",
+      "sessions": [
+        {
+          "started_at": "2026-11-11T13:16:01Z",
+          "finished_at": "2026-11-12T03:39:43Z",
+          "items_run": 5207,
+          "wall_s": 51822.2,
+          "backend": "cuda",
+          "gpu": "NVIDIA L4",
+          "units": {
+            "tier": "colab_l4",
+            "wall_s": 51822.2,
+            "rate_units_per_hour": 1.94,
+            "estimate_wall_x_rate": 27.926,
+            "units_before": 82.03,
+            "units_after": null,
+            "measured_from_reading": null,
+            "gap_measured_minus_estimate": null
+          }
+        }
+      ],
+      "backend": "cuda",
+      "gpu": "NVIDIA L4",
+      "llama_cpp_python": "0.3.36",
+      "model_load_s": 5.3
+    },
+    "twostage_qwen25-7b/lr_clean/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2292,
+        "legit": 2915
+      },
+      "latency_median_s": 4.1,
+      "latency_mean_s": 4.15,
+      "latency_max_s": 7.55,
+      "latency_total_s": 21599.4,
+      "prompt_tokens_median": 592,
+      "prompt_tokens_max": 3405,
+      "output_tokens_median": 117,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "detector": "twostage_qwen25-7b",
+      "strategy": "lr_clean",
+      "fit_key": "clean",
+      "fit_rows": "originals",
+      "primary": true,
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "stage2_sha256": "c8f4e693bab9b33663cbc1ce4465cc8b06beb5e118419c92f669af81c4d9f78b",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "wall_s": 0.6,
+      "git_commit": "1d0282d",
+      "at": "2026-11-12T05:08:14Z"
+    },
+    "twostage_qwen25-7b/lr_all/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 3128,
+        "legit": 2079
+      },
+      "latency_median_s": 4.1,
+      "latency_mean_s": 4.15,
+      "latency_max_s": 7.55,
+      "latency_total_s": 21599.2,
+      "prompt_tokens_median": 592,
+      "prompt_tokens_max": 3405,
+      "output_tokens_median": 117,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "qwen25-7b",
+      "detector": "twostage_qwen25-7b",
+      "strategy": "lr_all",
+      "fit_key": "all",
+      "fit_rows": "all",
+      "primary": false,
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "stage2_sha256": "103f9c8796a1e0e12f08b9b0894f3fdc2985c2450d608cfacf3c308c5e3f3ac4",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "wall_s": 0.5,
+      "git_commit": "1d0282d",
+      "at": "2026-11-12T05:08:15Z"
+    },
+    "twostage_gemma2-9b/lr_clean/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2283,
+        "legit": 2924
+      },
+      "latency_median_s": 5.21,
+      "latency_mean_s": 5.3,
+      "latency_max_s": 10.22,
+      "latency_total_s": 27606.8,
+      "prompt_tokens_median": 625,
+      "prompt_tokens_max": 3323,
+      "output_tokens_median": 112,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "detector": "twostage_gemma2-9b",
+      "strategy": "lr_clean",
+      "fit_key": "clean",
+      "fit_rows": "originals",
+      "primary": true,
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "stage2_sha256": "91cbf7c17b7cc6619c78bd2d306ee85a56e9699db2f918b2838ed1bc6f4e0084",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "wall_s": 0.5,
+      "git_commit": "1d0282d",
+      "at": "2026-11-12T05:08:17Z"
+    },
+    "twostage_gemma2-9b/lr_all/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2903,
+        "legit": 2304
+      },
+      "latency_median_s": 5.21,
+      "latency_mean_s": 5.3,
+      "latency_max_s": 10.22,
+      "latency_total_s": 27606.9,
+      "prompt_tokens_median": 625,
+      "prompt_tokens_max": 3323,
+      "output_tokens_median": 112,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-9b",
+      "detector": "twostage_gemma2-9b",
+      "strategy": "lr_all",
+      "fit_key": "all",
+      "fit_rows": "all",
+      "primary": false,
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "stage2_sha256": "c0afe66d62928ec0005c11bb13e000ad26f231e21bc61c27348ed83ddc38142b",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "wall_s": 0.5,
+      "git_commit": "1d0282d",
+      "at": "2026-11-12T05:08:17Z"
+    },
+    "twostage_gemma2-27b/lr_clean/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2443,
+        "legit": 2764
+      },
+      "latency_median_s": 9.85,
+      "latency_mean_s": 9.95,
+      "latency_max_s": 15.0,
+      "latency_total_s": 51802.3,
+      "prompt_tokens_median": 625,
+      "prompt_tokens_max": 3323,
+      "output_tokens_median": 131,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "detector": "twostage_gemma2-27b",
+      "strategy": "lr_clean",
+      "fit_key": "clean",
+      "fit_rows": "originals",
+      "primary": true,
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "stage2_sha256": "72a9d572642718c2cf1f0f73163b88e522d204e6ecfce1cb1eff22f122774ba7",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "wall_s": 0.5,
+      "git_commit": "1d0282d",
+      "at": "2026-11-12T05:08:19Z"
+    },
+    "twostage_gemma2-27b/lr_all/eval": {
+      "n": 5207,
+      "invalid": 0,
+      "invalid_rate": 0.0,
+      "pred_counts": {
+        "phish": 2976,
+        "legit": 2231
+      },
+      "latency_median_s": 9.85,
+      "latency_mean_s": 9.95,
+      "latency_max_s": 15.0,
+      "latency_total_s": 51802.2,
+      "prompt_tokens_median": 625,
+      "prompt_tokens_max": 3323,
+      "output_tokens_median": 131,
+      "finish_reasons": {
+        "stop": 5207
+      },
+      "truncated_input": 0,
+      "backends": {
+        "cuda": 5207
+      },
+      "model": "gemma2-27b",
+      "detector": "twostage_gemma2-27b",
+      "strategy": "lr_all",
+      "fit_key": "all",
+      "fit_rows": "all",
+      "primary": false,
+      "partition": "eval",
+      "n_expected": 5207,
+      "n_done": 5207,
+      "complete": true,
+      "stage2_sha256": "be0ca2e6f57637b66d94f6dcaeace9817ea417f4fd6e4ba92d8a40d542264e9e",
+      "prompt_hash": "e40c9fd3ee10f5ded807de453fdf9f6ce7370c2f71a1b228d072f0d5495f2850",
+      "config_hash": "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda",
+      "threshold": {
+        "score": "p_phish",
+        "rule": ">= 0.5"
+      },
+      "wall_s": 0.5,
+      "git_commit": "1d0282d",
+      "at": "2026-11-12T05:08:20Z"
     }
   },
   "stage2": {
@@ -2295,10 +2892,75 @@
       "rate_measured_per_extraction_hour": 1.758,
       "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
       "recorded_at": "2026-11-10T18:58:54Z"
+    },
+    "2026-11-11T09:20:42Z": {
+      "tier": "colab_t4",
+      "cells": [
+        "twostage_qwen25-7b/extract/eval",
+        "twostage_gemma2-9b/extract/eval"
+      ],
+      "units_before": 103.58,
+      "units_after": 82.03,
+      "measured_units": 21.55,
+      "sessions": [
+        {
+          "cell": "twostage_qwen25-7b/extract/eval",
+          "started_at": "2026-11-10T19:38:38Z",
+          "finished_at": "2026-11-11T01:38:52Z",
+          "items_run": 5207,
+          "wall_s": 21614.7,
+          "estimate_wall_x_rate": 6.905
+        },
+        {
+          "cell": "twostage_gemma2-9b/extract/eval",
+          "started_at": "2026-11-11T01:39:15Z",
+          "finished_at": "2026-11-11T09:19:42Z",
+          "items_run": 5207,
+          "wall_s": 27627.2,
+          "estimate_wall_x_rate": 8.825
+        }
+      ],
+      "extraction_wall_s": 49241.9,
+      "estimate_wall_x_rate": 15.73,
+      "gap_measured_minus_estimate": 5.82,
+      "span_s": 49341.1,
+      "rate_published_units_per_hour": 1.15,
+      "rate_measured_per_span_hour": 1.572,
+      "rate_measured_per_extraction_hour": 1.575,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-11T09:20:42Z"
+    },
+    "2026-11-12T04:51:32Z": {
+      "tier": "colab_l4",
+      "cells": [
+        "twostage_gemma2-27b/extract/eval"
+      ],
+      "units_before": 82.03,
+      "units_after": 52.09,
+      "measured_units": 29.94,
+      "sessions": [
+        {
+          "cell": "twostage_gemma2-27b/extract/eval",
+          "started_at": "2026-11-11T13:16:01Z",
+          "finished_at": "2026-11-12T03:39:43Z",
+          "items_run": 5207,
+          "wall_s": 51822.2,
+          "estimate_wall_x_rate": 27.926
+        }
+      ],
+      "extraction_wall_s": 51822.2,
+      "estimate_wall_x_rate": 27.926,
+      "gap_measured_minus_estimate": 2.014,
+      "span_s": 56184.5,
+      "rate_published_units_per_hour": 1.94,
+      "rate_measured_per_span_hour": 1.918,
+      "rate_measured_per_extraction_hour": 2.08,
+      "note": "span = the session from the start of the extraction cell to the moment the after reading was entered (model loads and idle time included): the span rate is the billing rate to compare with the published one; the per-extraction-hour rate is inflated by the loads of a short smoke and is not used for the projection.",
+      "recorded_at": "2026-11-12T04:51:32Z"
     }
   },
   "note": "Two-stage indicator detector, TASK_08: supervisor-requested, exploratory, post hoc (QUESTIONS.md item 18). Not a proposed system; RQ1 to RQ4 unchanged; the frozen scores of step 07 are untouched.",
-  "updated_at": "2026-11-10T19:23:49Z",
+  "updated_at": "2026-11-12T05:08:20Z",
   "budget_projection": {
     "basis": "measured = GPU smoke cell of the model on its eval tier (mean latency per item + one model load) x the span-measured compute-unit rate of the tier when recorded, else the published rate; prior = the main study's CoT mean latency (low) scaled by the output-token ratio (high), published rate. Items per plan from configs/detection.yaml items.",
     "plans": {
@@ -2376,8 +3038,8 @@
           "git_commit": "2fe688d"
         },
         "eval_only_units": {
-          "A": 11.3,
-          "B": 7.0
+          "A": 10.9,
+          "B": 6.7
         },
         "cot_eval": {
           "latency_mean_s": 2.05,
@@ -2392,17 +3054,17 @@
         "model_load_s": 1.8,
         "rate_units_per_hour": {
           "published": 1.15,
-          "measured_span": 1.632,
-          "used": 1.632
+          "measured_span": 1.572,
+          "used": 1.572
         },
         "units": {
           "A": {
-            "low": 13.0,
-            "high": 13.0
+            "low": 12.6,
+            "high": 12.6
           },
           "B": {
-            "low": 8.7,
-            "high": 8.7
+            "low": 8.4,
+            "high": 8.4
           }
         }
       },
@@ -2447,8 +3109,8 @@
           "git_commit": "1bcd177"
         },
         "eval_only_units": {
-          "A": 14.2,
-          "B": 8.7
+          "A": 13.7,
+          "B": 8.4
         },
         "cot_eval": {
           "latency_mean_s": 2.94,
@@ -2463,17 +3125,17 @@
         "model_load_s": 2.4,
         "rate_units_per_hour": {
           "published": 1.15,
-          "measured_span": 1.632,
-          "used": 1.632
+          "measured_span": 1.572,
+          "used": 1.572
         },
         "units": {
           "A": {
-            "low": 16.4,
-            "high": 16.4
+            "low": 15.8,
+            "high": 15.8
           },
           "B": {
-            "low": 10.9,
-            "high": 10.9
+            "low": 10.5,
+            "high": 10.5
           }
         }
       },
@@ -2507,8 +3169,8 @@
         },
         "cpu_smoke": null,
         "eval_only_units": {
-          "A": 24.8,
-          "B": 15.3
+          "A": 27.6,
+          "B": 17.0
         },
         "cot_eval": {
           "latency_mean_s": 4.4,
@@ -2523,34 +3185,34 @@
         "model_load_s": 5.3,
         "rate_units_per_hour": {
           "published": 1.94,
-          "measured_span": 1.721,
-          "used": 1.721
+          "measured_span": 1.918,
+          "used": 1.918
         },
         "units": {
           "A": {
-            "low": 28.6,
-            "high": 28.6
+            "low": 31.8,
+            "high": 31.8
           },
           "B": {
-            "low": 19.0,
-            "high": 19.0
+            "low": 21.2,
+            "high": 21.2
           }
         }
       }
     ],
     "totals": {
       "A": {
-        "low": 58.0,
-        "high": 58.0
+        "low": 60.1,
+        "high": 60.1
       },
       "B": {
-        "low": 38.7,
-        "high": 38.7
+        "low": 40.1,
+        "high": 40.1
       }
     },
     "eval_only_totals": {
-      "A": 50.3,
-      "B": 31.0
+      "A": 52.2,
+      "B": 32.1
     },
     "planned": 24,
     "stop": 80,
@@ -2560,6 +3222,107 @@
     },
     "all_measured": true,
     "basis_note": "measured_dev = the dev extraction cell (796 items) with the latest span rate of the tier; eval_only_totals = the remaining cost of the eval partition under each plan once dev is extracted.",
-    "computed_at": "2026-11-10T19:07:18Z"
-  }
+    "computed_at": "2026-11-12T04:51:33Z"
+  },
+  "stage2_note": "stage2 restored 2026-11-12 from commit 1d0282d: the Colab notebook restored its report copy from Drive (saved before the local fit of 2026-11-10) and so dropped the stage2 block; the six models/twostage/*.joblib files match the recorded sha256.",
+  "compute_units_total": {
+    "recorded_at": "2026-11-12",
+    "first_reading": 113.12,
+    "last_reading": 52.09,
+    "total_units_consumed": 61.03,
+    "by_part": {
+      "gpu_smoke": 0.56,
+      "dev_extraction": 8.6,
+      "eval_extraction": 51.49,
+      "set_up_cells_between_sessions": 0.38
+    },
+    "eval_extraction_projection_at_checkpoint_units": 50.3,
+    "eval_extraction_measured_units": 51.49,
+    "sessions": [
+      {
+        "recorded_at": "2026-11-10T12:50:53Z",
+        "tier": "colab_t4",
+        "cells": [
+          "smoke/qwen25-7b/colab_t4",
+          "smoke/gemma2-9b/colab_t4"
+        ],
+        "units_before": 113.12,
+        "units_after": 112.93,
+        "measured_units": 0.19,
+        "span_s": 497.6,
+        "rate_measured_per_span_hour": 1.375
+      },
+      {
+        "recorded_at": "2026-11-10T13:06:11Z",
+        "tier": "colab_l4",
+        "cells": [
+          "smoke/gemma2-27b/colab_l4"
+        ],
+        "units_before": 112.93,
+        "units_after": 112.56,
+        "measured_units": 0.37,
+        "span_s": 541.2,
+        "rate_measured_per_span_hour": 2.461
+      },
+      {
+        "recorded_at": "2026-11-10T16:33:29Z",
+        "tier": "colab_t4",
+        "cells": [
+          "twostage_qwen25-7b/extract/dev",
+          "twostage_gemma2-9b/extract/dev"
+        ],
+        "units_before": 112.35,
+        "units_after": 107.62,
+        "measured_units": 4.73,
+        "span_s": 10432.2,
+        "rate_measured_per_span_hour": 1.632
+      },
+      {
+        "recorded_at": "2026-11-10T18:58:54Z",
+        "tier": "colab_l4",
+        "cells": [
+          "twostage_gemma2-27b/extract/dev"
+        ],
+        "units_before": 107.45,
+        "units_after": 103.58,
+        "measured_units": 3.87,
+        "span_s": 8095.3,
+        "rate_measured_per_span_hour": 1.721
+      },
+      {
+        "recorded_at": "2026-11-11T09:20:42Z",
+        "tier": "colab_t4",
+        "cells": [
+          "twostage_qwen25-7b/extract/eval",
+          "twostage_gemma2-9b/extract/eval"
+        ],
+        "units_before": 103.58,
+        "units_after": 82.03,
+        "measured_units": 21.55,
+        "span_s": 49341.1,
+        "rate_measured_per_span_hour": 1.572
+      },
+      {
+        "recorded_at": "2026-11-12T04:51:32Z",
+        "tier": "colab_l4",
+        "cells": [
+          "twostage_gemma2-27b/extract/eval"
+        ],
+        "units_before": 82.03,
+        "units_after": 52.09,
+        "measured_units": 29.94,
+        "span_s": 56184.5,
+        "rate_measured_per_span_hour": 1.918
+      }
+    ],
+    "basis": "the author's Colab 'Available compute units' readings before and after every session (item 18j/k); stage 2 fit, prediction, integrity check, scoring, comparison, T12 and F8 ran on the laptop CPU and cost no units"
+  },
+  "frozen_outputs_check": {
+    "checked_at": "2026-11-12",
+    "n_files": 83,
+    "all_identical": true,
+    "files": "the 36 results/raw files of the main study and baselines, the 13 results/scores CSV and parquet files of 07_score.py and 07_secondary.py, the 9 main-study configs, the 6 prompts, the 12 committed .tex of T1 to T11 and A1, the 7 figures F1 to F7",
+    "method": "sha256sum -c against the list taken before TASK_08 step 1, repeated before and after every TASK_08 commit"
+  },
+  "eval_prediction_note": "predict and the integrity check ran 2026-11-12 after the eval extraction files were copied from Drive; the stage2 block of this report was restored from commit 1d0282d first (see stage2_note)."
 }

@@ -1,0 +1,36 @@
+{
+  "tables": {
+    "tab_t12_twostage.tex": "c575fbd3714964c0de3dc7cd96ffa7af5981416afa1e96965edbe02c8ea42a73"
+  },
+  "figures": {
+    "ch04_f8_twostage_eng.png": "58b93556839eda3ada47a9f4a1aa465528b22cf250eb38f908421ce2bd0232fd"
+  },
+  "inputs": {
+    "results/scores/metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
+    "results/scores/deltas_long.csv": "8053a31a421f0c900809c5761da9f871d95aa9015a68b534b5dfc8228dcfa9b3",
+    "results/scores/additional/twostage_compare/contrasts.csv": "4803c149b7e6484768feaee6fb3626cb8989270db05fc28068923ac337bd88c3",
+    "results/scores/additional/twostage_qwen25-7b/metrics_long.csv": "ae8be111293f1f0c9218c04458398cb936bd49e806855463b04edc746815b31a",
+    "results/scores/additional/twostage_qwen25-7b/deltas_long.csv": "e176376bb2169396d5325734a4bdc55e5d40995ffec99fb79f949cf4e7126346",
+    "results/scores/additional/twostage_gemma2-9b/metrics_long.csv": "aa0f81952b16446b55d020734a5f7f205d9fe000594e88645c03dcd5872710e9",
+    "results/scores/additional/twostage_gemma2-9b/deltas_long.csv": "8870cb220ea2af3654d147daefdfdcce3415f06a8883e2ca6e4f9f49e07d9c08",
+    "results/scores/additional/twostage_gemma2-27b/metrics_long.csv": "999349b55eca72883bf0849d147b8de7136d65d85fbbe4f874593787a4492253",
+    "results/scores/additional/twostage_gemma2-27b/deltas_long.csv": "b89f188b6bd23f6f490e5ae86d80dc3f22b928972658af8d5b43d224cbf28b7b"
+  },
+  "models": [
+    "qwen25-7b",
+    "gemma2-9b",
+    "gemma2-27b"
+  ],
+  "fits": [
+    "lr_clean",
+    "lr_all"
+  ],
+  "headline": "lr_clean",
+  "matplotlib": "3.11.2",
+  "series_colours": {
+    "zero_shot": "#0b0b0b",
+    "lr_clean": "#2a78d6",
+    "lr_all": "#eb6834"
+  },
+  "git_commit": "1d0282d"
+}

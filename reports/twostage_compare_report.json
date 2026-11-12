@@ -1,0 +1,456 @@
+{
+  "computed_at": "2026-11-12T05:22:58Z",
+  "note": "TASK_08 section 7 primary comparison (exploratory, post hoc; QUESTIONS.md item 18): difference of robustness deltas, two-stage minus the same model's direct zero-shot verdict, per condition; the pre-registered families, CSVs, tables and figures are untouched. Positive values: the rewrite costs the two-stage detector more (or benefits it less) than the direct verdict; negative: less.",
+  "models": [
+    "qwen25-7b",
+    "gemma2-9b",
+    "gemma2-27b"
+  ],
+  "fits": {
+    "clean": "lr_clean",
+    "all": "lr_all"
+  },
+  "direct_strategy": "zero_shot",
+  "conditions": [
+    "para_low",
+    "para_high",
+    "obf_low",
+    "obf_high",
+    "para_high_ctrl"
+  ],
+  "inputs": {
+    "results/scores/items.parquet": "857b43eb24d3f57c0cd05444291556b816b35bd68292df3d475268ac43ec0dbc",
+    "results/scores/pairs.csv": "4e953bb64eb5a6bcbcb9b3a426038d727e7872e43d2b0a5cb42c1dc146affa9e",
+    "results/scores/additional/twostage_qwen25-7b/items.parquet": "0ad9053bb6720340d2eb4ec4a7bade3dc9badc6854cbb9ede37ef1ef134daefb",
+    "results/scores/additional/twostage_gemma2-9b/items.parquet": "4f7cd8bb47a38a18044fc9646148b83f202d839eca5da832ac1be4cfc229c57e",
+    "results/scores/additional/twostage_gemma2-27b/items.parquet": "0a5ea0c2afc80bba4b007b924b2fac41c496f3f9cd1cea10d0ea19826b4350ee"
+  },
+  "B": 2000,
+  "seed": 2026,
+  "analyses": [
+    "primary",
+    "no_invalid"
+  ],
+  "families": {
+    "A-twostage-gemma2-27b-all": 5,
+    "A-twostage-gemma2-27b-clean": 5,
+    "A-twostage-gemma2-9b-all": 5,
+    "A-twostage-gemma2-9b-clean": 5,
+    "A-twostage-qwen25-7b-all": 5,
+    "A-twostage-qwen25-7b-clean": 5
+  },
+  "holm": "within (analysis, family); boot_p = two-sided percentile p floored at 1/B (item 12 refinement 2)",
+  "rows": {
+    "contrasts": 60,
+    "rate_differences": 72,
+    "disagreement": 66
+  },
+  "primary_contrasts": {
+    "qwen25-7b/lr_clean/para_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.10479,
+      "delta_twostage": -0.035928,
+      "value": 0.068862,
+      "ci_lo": 0.017964,
+      "ci_hi": 0.11976,
+      "boot_p": 0.011,
+      "holm_p": 0.033
+    },
+    "qwen25-7b/lr_clean/para_high": {
+      "n_pairs": 325,
+      "delta_direct": -0.144615,
+      "delta_twostage": -0.101538,
+      "value": 0.043077,
+      "ci_lo": -0.012385,
+      "ci_hi": 0.107692,
+      "boot_p": 0.159,
+      "holm_p": 0.318
+    },
+    "qwen25-7b/lr_clean/obf_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.245509,
+      "delta_twostage": -0.494012,
+      "value": -0.248503,
+      "ci_lo": -0.326347,
+      "ci_hi": -0.173653,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "qwen25-7b/lr_clean/obf_high": {
+      "n_pairs": 334,
+      "delta_direct": -0.320359,
+      "delta_twostage": -0.494012,
+      "value": -0.173653,
+      "ci_lo": -0.248503,
+      "ci_hi": -0.095808,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "qwen25-7b/lr_clean/para_high_ctrl": {
+      "n_pairs": 210,
+      "delta_direct": 0.07619,
+      "delta_twostage": 0.085714,
+      "value": 0.009524,
+      "ci_lo": -0.047619,
+      "ci_hi": 0.066667,
+      "boot_p": 0.817,
+      "holm_p": 0.817
+    },
+    "qwen25-7b/lr_all/para_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.10479,
+      "delta_twostage": 0.008982,
+      "value": 0.113772,
+      "ci_lo": 0.071856,
+      "ci_hi": 0.158683,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "qwen25-7b/lr_all/para_high": {
+      "n_pairs": 325,
+      "delta_direct": -0.144615,
+      "delta_twostage": 0.021538,
+      "value": 0.166154,
+      "ci_lo": 0.116923,
+      "ci_hi": 0.215385,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "qwen25-7b/lr_all/obf_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.245509,
+      "delta_twostage": -0.017964,
+      "value": 0.227545,
+      "ci_lo": 0.179641,
+      "ci_hi": 0.275449,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "qwen25-7b/lr_all/obf_high": {
+      "n_pairs": 334,
+      "delta_direct": -0.320359,
+      "delta_twostage": -0.017964,
+      "value": 0.302395,
+      "ci_lo": 0.245509,
+      "ci_hi": 0.356287,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "qwen25-7b/lr_all/para_high_ctrl": {
+      "n_pairs": 210,
+      "delta_direct": 0.07619,
+      "delta_twostage": 0.052381,
+      "value": -0.02381,
+      "ci_lo": -0.085714,
+      "ci_hi": 0.033333,
+      "boot_p": 0.469,
+      "holm_p": 0.469
+    },
+    "gemma2-9b/lr_clean/para_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.038922,
+      "delta_twostage": -0.071856,
+      "value": -0.032934,
+      "ci_lo": -0.071856,
+      "ci_hi": 0.005988,
+      "boot_p": 0.128,
+      "holm_p": 0.128
+    },
+    "gemma2-9b/lr_clean/para_high": {
+      "n_pairs": 325,
+      "delta_direct": -0.046154,
+      "delta_twostage": -0.129231,
+      "value": -0.083077,
+      "ci_lo": -0.132308,
+      "ci_hi": -0.036923,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-9b/lr_clean/obf_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.07485,
+      "delta_twostage": -0.502994,
+      "value": -0.428144,
+      "ci_lo": -0.488024,
+      "ci_hi": -0.368263,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-9b/lr_clean/obf_high": {
+      "n_pairs": 334,
+      "delta_direct": -0.07485,
+      "delta_twostage": -0.494012,
+      "value": -0.419162,
+      "ci_lo": -0.479042,
+      "ci_hi": -0.359281,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-9b/lr_clean/para_high_ctrl": {
+      "n_pairs": 210,
+      "delta_direct": 0.238095,
+      "delta_twostage": 0.038095,
+      "value": -0.2,
+      "ci_lo": -0.271429,
+      "ci_hi": -0.133333,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-9b/lr_all/para_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.038922,
+      "delta_twostage": 0.0,
+      "value": 0.038922,
+      "ci_lo": 0.008982,
+      "ci_hi": 0.068937,
+      "boot_p": 0.005,
+      "holm_p": 0.006
+    },
+    "gemma2-9b/lr_all/para_high": {
+      "n_pairs": 325,
+      "delta_direct": -0.046154,
+      "delta_twostage": 0.003077,
+      "value": 0.049231,
+      "ci_lo": 0.018462,
+      "ci_hi": 0.083077,
+      "boot_p": 0.003,
+      "holm_p": 0.006
+    },
+    "gemma2-9b/lr_all/obf_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.07485,
+      "delta_twostage": -0.020958,
+      "value": 0.053892,
+      "ci_lo": 0.026946,
+      "ci_hi": 0.080838,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-9b/lr_all/obf_high": {
+      "n_pairs": 334,
+      "delta_direct": -0.07485,
+      "delta_twostage": -0.017964,
+      "value": 0.056886,
+      "ci_lo": 0.02994,
+      "ci_hi": 0.086826,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-9b/lr_all/para_high_ctrl": {
+      "n_pairs": 210,
+      "delta_direct": 0.238095,
+      "delta_twostage": 0.090476,
+      "value": -0.147619,
+      "ci_lo": -0.219048,
+      "ci_hi": -0.071429,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_clean/para_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.002994,
+      "delta_twostage": -0.056886,
+      "value": -0.053892,
+      "ci_lo": -0.08982,
+      "ci_hi": -0.017964,
+      "boot_p": 0.001,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_clean/para_high": {
+      "n_pairs": 325,
+      "delta_direct": -0.006154,
+      "delta_twostage": -0.110769,
+      "value": -0.104615,
+      "ci_lo": -0.147692,
+      "ci_hi": -0.061538,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_clean/obf_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.020958,
+      "delta_twostage": -0.368263,
+      "value": -0.347305,
+      "ci_lo": -0.401198,
+      "ci_hi": -0.293413,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_clean/obf_high": {
+      "n_pairs": 334,
+      "delta_direct": -0.020958,
+      "delta_twostage": -0.356287,
+      "value": -0.335329,
+      "ci_lo": -0.392216,
+      "ci_hi": -0.278443,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_clean/para_high_ctrl": {
+      "n_pairs": 210,
+      "delta_direct": 0.166667,
+      "delta_twostage": 0.047619,
+      "value": -0.119048,
+      "ci_lo": -0.190476,
+      "ci_hi": -0.052381,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_all/para_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.002994,
+      "delta_twostage": -0.020958,
+      "value": -0.017964,
+      "ci_lo": -0.04491,
+      "ci_hi": 0.008982,
+      "boot_p": 0.237,
+      "holm_p": 0.374
+    },
+    "gemma2-27b/lr_all/para_high": {
+      "n_pairs": 325,
+      "delta_direct": -0.006154,
+      "delta_twostage": -0.04,
+      "value": -0.033846,
+      "ci_lo": -0.064615,
+      "ci_hi": -0.003077,
+      "boot_p": 0.032,
+      "holm_p": 0.096
+    },
+    "gemma2-27b/lr_all/obf_low": {
+      "n_pairs": 334,
+      "delta_direct": -0.020958,
+      "delta_twostage": -0.092814,
+      "value": -0.071856,
+      "ci_lo": -0.101796,
+      "ci_hi": -0.038922,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_all/obf_high": {
+      "n_pairs": 334,
+      "delta_direct": -0.020958,
+      "delta_twostage": -0.083832,
+      "value": -0.062874,
+      "ci_lo": -0.095808,
+      "ci_hi": -0.032934,
+      "boot_p": 0.0005,
+      "holm_p": 0.0025
+    },
+    "gemma2-27b/lr_all/para_high_ctrl": {
+      "n_pairs": 210,
+      "delta_direct": 0.166667,
+      "delta_twostage": 0.114286,
+      "value": -0.052381,
+      "ci_lo": -0.133333,
+      "ci_hi": 0.02381,
+      "boot_p": 0.187,
+      "holm_p": 0.374
+    }
+  },
+  "largest_coefficients": {
+    "qwen25-7b": {
+      "clean": [
+        {
+          "feature": "grammar_anomaly=yes",
+          "coef": 2.012491
+        },
+        {
+          "feature": "grammar_anomaly=no",
+          "coef": -2.010012
+        },
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 1.922664
+        }
+      ],
+      "all": [
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 2.05499
+        },
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -2.050337
+        },
+        {
+          "feature": "grammar_anomaly=yes",
+          "coef": 2.033179
+        }
+      ]
+    },
+    "gemma2-9b": {
+      "clean": [
+        {
+          "feature": "urgency=no",
+          "coef": -1.250319
+        },
+        {
+          "feature": "urgency=yes",
+          "coef": 1.248168
+        },
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -0.923403
+        }
+      ],
+      "all": [
+        {
+          "feature": "urgency=yes",
+          "coef": 1.644092
+        },
+        {
+          "feature": "urgency=no",
+          "coef": -1.635839
+        },
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 1.623162
+        }
+      ]
+    },
+    "gemma2-27b": {
+      "clean": [
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -1.492872
+        },
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 1.491945
+        },
+        {
+          "feature": "urgency=no",
+          "coef": -1.269479
+        }
+      ],
+      "all": [
+        {
+          "feature": "credential_or_payment_request=no",
+          "coef": -2.103127
+        },
+        {
+          "feature": "credential_or_payment_request=yes",
+          "coef": 1.955681
+        },
+        {
+          "feature": "language_pattern=machine_like",
+          "coef": -1.84539
+        }
+      ]
+    }
+  },
+  "out_dir": "results/scores/additional/twostage_compare",
+  "outputs": {
+    "contrasts.csv": "4803c149b7e6484768feaee6fb3626cb8989270db05fc28068923ac337bd88c3",
+    "rate_differences.csv": "d7cf160f2f6f9fdca4bfd71b851d78ec64014b59ba3b91206450ac8a3f384c19",
+    "disagreement.csv": "e21a31ca4b2f906f489bcd439c91bc545ea69dd03de88d70347a8a79658769ce"
+  },
+  "runtime_s": 7.0,
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0"
+  },
+  "git_commit": "1d0282d",
+  "git_describe": "v1.0.0-thesis-11-g1d0282d"
+}
