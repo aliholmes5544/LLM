@@ -174,3 +174,64 @@ an e-mail, including E-PhishLLM items. Reading: a few quoted words inside an ana
 redistribution of the dataset, so the raw files are deposited as they are in git; if the depositor prefers,
 the `raw_output` field of the 12 CoT and dev CoT files can be blanked before upload without affecting any
 score, since every label is reproducible from the committed `label_pred`.
+
+## 8. Environment details recorded on 2026-11-15 (step-05 models, paraphraser file, laptop, Colab builds)
+
+Read from the machine that ran steps 01 to 05, 07 and the TF-IDF baselines, and from the committed reports and
+notebooks; nothing was re-run. Where a value was never stored, the entry says so and gives the wording the thesis
+can use.
+
+**Step 05 meaning-check and span models (loaded on the laptop CPU by `scripts/variants/checks.py` with
+`HF_HOME = models/hf`, set in `scripts/05_derive_variants.py`).**
+
+| role | model | revision used (Hugging Face snapshot, `refs/main` at download on 2026-10-12) | weights file | base model and head | licence (model card) | library |
+|---|---|---|---|---|---|---|
+| embedding for the cosine check | sentence-transformers/all-mpnet-base-v2 | e8c3b32edf5434bc2275fc9bab85f82640a19130 | model.safetensors, 437,971,872 bytes | microsoft/mpnet-base, 12 layers, hidden 768, mean pooling, 768-dimensional output; inputs over 384 word pieces are truncated by the model's default | apache-2.0 | sentence-transformers 6.1.0, transformers 5.19.0, torch 2.14.1+cpu |
+| NLI for the entailment check | cross-encoder/nli-deberta-v3-base | 6c749ce3425cd33b46d187e45b92bbf96ee12ec7 | model.safetensors, 737,726,552 bytes; spm.model tokenizer | microsoft/deberta-v3-base, DebertaV2ForSequenceClassification, labels [contradiction, entailment, neutral] (entailment index 1, recorded as `entailment_label_index` in the variant reports); trained on SNLI and MultiNLI | apache-2.0 | sentence-transformers 6.1.0 (CrossEncoder), transformers 5.19.0, torch 2.14.1+cpu |
+| NER for protected spans | spaCy en_core_web_sm 3.8.0 | release wheel en_core_web_sm-3.8.0-py3-none-any.whl from github.com/explosion/spacy-models, sha256 1932429db727d4bff3deed6b34cfc05df17794f4a52eeb26cf8928f7c1a0fb85 | installed package | pipeline tok2vec, tagger, parser, attribute_ruler, lemmatizer, ner (loaded with the lemmatizer disabled); sources OntoNotes 5 and ClearNLP | MIT (model); OntoNotes 5 licensed by Explosion | spaCy 3.8.16 |
+
+The two Hugging Face models were resolved by name with no `revision` argument; the snapshot hashes above are
+the commits that `refs/main` pointed to when the cache was filled (2026-10-12) and are the only versions ever
+loaded for the dev and eval runs. A re-run should pass them as `revision=` or copy the cache.
+
+**Paraphraser (step 05).** `bartowski/Phi-3.5-mini-instruct-GGUF`, file `Phi-3.5-mini-instruct-Q4_K_M.gguf`,
+repository commit 6d70da17e749a471ccb62ade694486011a75cda3 at download (2026-10-12, Hugging Face download
+metadata), 2,393,232,672 bytes (2.23 GiB), sha256
+e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5 (pinned in `configs/variants.yaml` and verified
+on every run). GGUF header: architecture phi3, name "Phi 3.5 Mini Instruct", 32 blocks, embedding 3,072, trained
+context 131,072 (original 4,096), file type 15 = Q4_K Medium, 5.01 bits per weight, imatrix quantisation
+(calibration_datav3.txt), llama.cpp release b3751 used for quantisation (repository page), licence MIT. Parameter
+count: 3.82 B as printed by llama.cpp on load (`print_info: model params`); the model card says "Phi-3.5-mini has
+3.8B parameters". Run with llama-cpp-python 0.3.36 on the CPU, n_ctx 2,048, n_batch 256, 16 threads, temperature
+0.7, top_p 0.9, max_tokens = 3 x input tokens (`configs/variants.yaml`, echoed in the variant reports).
+
+**Laptop.** Lenovo 21K8S2HE00 with an AMD Ryzen 7 PRO 7840U (8 cores, 16 threads, 3.3 GHz maximum clock,
+integrated Radeon 780M not used), 16 GB RAM (15,747,084,288 bytes physical); Windows 11 Pro 10.0.26200; WSL
+2.6.1.0, kernel 6.6.87.2-microsoft-standard-WSL2, Ubuntu 24.04.3 LTS; the WSL instance sees 7.1 GiB of RAM and
+2 GiB of swap; Python 3.12.3 in `.venv`. llama-cpp-python 0.3.36 on the laptop was built from source by pip
+(scikit-build-core 1.1.1, wheel tag py3-none-linux_x86_64, no GPU offload); its CPU backend reports AVX, AVX2,
+FMA, F16C, AVX512, AVX512_VBMI, AVX512_VNNI, AVX512_BF16, OpenMP, llamafile and repack enabled. All laptop
+inference (paraphrase generation, dev smoke tests, two-stage CPU smoke) ran on this build.
+
+**Colab builds and drivers.** Every detection, extraction and smoke row and every session record stores the
+backend (`cuda`), the GPU name (`Tesla T4` or `NVIDIA L4`), `llama_cpp_python 0.3.36`, `n_gpu_layers -1`, the
+start and end time and the wall-clock. The seven cell logs copied back from Colab (`logs/`, gitignored) add the
+llama.cpp device line, "Tesla T4, compute capability 7.5, VMM: yes, VRAM: 14912 MiB" for the T4 cells. The
+notebooks install `llama-cpp-python==0.3.36` from the project's official wheel index, choosing `whl/cu130` when
+the runtime's `nvcc` reports CUDA 13 and `whl/cu124` otherwise, and fall back to a source build with
+`GGML_CUDA=on` only if the installed wheel has no GPU offload; the chosen index, the wheel file name and the
+`nvidia-smi` driver version were printed in the notebook but not written to any report, and the notebook outputs
+are not saved. Indirect evidence: the T4 runtime reported CUDA 13.0 when it was first checked (docs/PROJECT_STATE.md,
+2026-10-06) and the DistilBERT run of 2026-11-01 recorded torch 2.11.0+cu130, so the runtimes of this period were
+CUDA 13.0 and the `cu130` index would have been selected; whether any session took the source-build fallback is
+not recorded (none of the seven logs shows a build). Wording for the thesis: "All GPU inference used
+llama-cpp-python 0.3.36 with full GPU offload on Google Colab (Tesla T4, 15 GB; NVIDIA L4, 24 GB), installed from
+the project's prebuilt CUDA wheels for the runtime's CUDA 13 toolkit; the GPU driver version and the exact wheel
+build were not recorded, and the outputs are reproducible from the stored raw outputs rather than by re-running
+the inference." The labels themselves do not depend on this: every stored label is recomputed from the stored
+raw output by the integrity check, and the GPU/CPU smoke comparison bounds the backend effect.
+
+**Still not recoverable.** The wall-clock of the first dev variant-derivation run with generation
+(`reports/variants_dev_runtime.json` holds only the later cache replay); the compute units of the DistilBERT run
+on its own (inside the 86.9 main-study total); the runtimes of `07_build_items.py` and `07_tables_figures.py`.
+The thesis should give these as "not recorded" or omit them.
