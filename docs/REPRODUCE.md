@@ -77,7 +77,10 @@ the 7B to 14B detectors (20 cells) and the DistilBERT baseline, NVIDIA L4 (24 GB
 `requirements-detect.txt` with the CUDA build of llama-cpp-python 0.3.36 from the official wheel index (cu124
 or cu130 chosen from the runtime's CUDA version by the notebook); `requirements-baselines.txt` with the
 runtime's torch (2.11.0+cu130 recorded) and transformers 5.19.0. Total consumption 86.9 compute units (about
-USD 8.70) for the 24 detector cells, the Mistral rerun, DistilBERT and the six dev CoT cells.
+USD 8.70) for the 24 detector cells, the Mistral rerun, DistilBERT and the six dev CoT cells; the two-stage
+condition (TASK_08, 2026-11-09 to 2026-11-12) added 61.03 units, so the whole study consumed 147.9 of the 200
+units bought (52.09 unused). Billed cost: USD 10.79 for one month of Colab Pro plus USD 9.99 for 100 additional
+units, USD 20.78 in total.
 
 **Decoding and seeds.** Greedy decoding (temperature 0, top_p 1, repeat penalty off), seed 2026 everywhere
 (`configs/data.yaml`), context 4,096 tokens, one run per cell. Every bootstrap stream is derived from the table
@@ -92,7 +95,7 @@ git and are deposited with the thesis (section 7 of `docs/DATASHEET.md`).
 |---|---|---|
 | Nahmias et al. repository zip, commit 1c5ecbdd | 4804c49341808f941f847e8b079801193ab1403fdb50137663fd3d6c83c9e8f9 | 01_download_data (data/raw/provenance.json) |
 | E-PhishLLM repository zip, commit 3ff53fb2 | edc5c5850a78463b6ebf07ab1f1334afded1a2fd88edd455f6b87e0550813094 | 01_download_data |
-| data/processed/variants_eval.jsonl (*archive*, 1,670 rows) | d898cece5d0f5d399a036bdeab8d63c9246b4eb91fd8298c299285b354d46389 | reports/variants_eval_fixed_artifacts.json; 06_run_detection, 07_build_items, 07_score_model, cloud_run.ipynb |
+| data/processed/variants_eval.jsonl (*archive*, 1,670 rows) | d898cece2d0f5d399a036bdeab8d63c9246b4eb91fd8298c299285b354d46389 | reports/variants_eval_fixed_artifacts.json; 06_run_detection, 07_build_items, 07_score_model, cloud_run.ipynb |
 | data/interim/paraphrase_cache_eval.jsonl (*archive*, 8,228 rows) | 694cd11b27045dfd6d7256b6f2bfae366e77d6c9d1be6fb02b9e6b0aac6297d7 | reports/variants_eval_fixed_artifacts.json |
 | paraphraser Phi-3.5-mini-instruct-Q4_K_M.gguf | e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5 | 05_derive_variants (configs/variants.yaml) |
 | prompts/paraphrase_v1.txt | abe51e78ab6c6342ba5201cf1c355e9b9e163da38260072f0ae2a238b5da36e4 | reports/variants_eval_report.json |
@@ -132,7 +135,7 @@ cell; the laptop CPU smoke test agreed with the GPU smoke test on 319 of 320 lab
 
 ```bash
 python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
-make test                      # 78 unit tests, including the re-run of 07_score.py --check
+make test                      # 119 unit tests (2026-11-15), including the re-run of 07_score.py --check
 make check                     # 07_build_items, 07_score, 07_secondary: IDENTICAL for every output
 python scripts/07_freeze_lexicon.py --check
 python scripts/06_check_integrity.py          # needs results/raw (in git) and data/processed (rebuilt by steps 01 to 05)
@@ -148,7 +151,7 @@ The author used Claude Code (Anthropic) as an implementation assistant for this 
 specifications (docs/METHODOLOGY_3.2.md, docs/TASK_05_variants.md, docs/TASK_06_detection.md,
 docs/TASK_07_scoring.md), took every methodological decision, and reviewed the methodology with a separate
 advisory process. Whenever a specification was ambiguous or infeasible, the assistant wrote the question into
-docs/QUESTIONS.md instead of guessing, and the author's answer is logged there with its date; all 17 items,
+docs/QUESTIONS.md instead of guessing, and the author's answer is logged there with its date; all 18 items,
 their answers and the resulting deviations are in that file. The assistant wrote code, tests and documentation
 under those specifications and the project rules of CLAUDE.md (no data or secrets in git, no generation of
 phishing content, evaluation items read-only, determinism, every exclusion reported, text-only detectors,
