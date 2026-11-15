@@ -1,0 +1,11 @@
+set,stratum,type,failure_type,n,n_rows_in_stratum,share
+preregistered,para_high,variant,paraphrase_cue_dropped,2,3,0.6667
+preregistered,para_high,variant,paraphrase_neutral,1,3,0.3333
+preregistered,para_low,variant,paraphrase_neutral,3,5,0.6
+preregistered,para_low,variant,paraphrase_cue_dropped,2,5,0.4
+posthoc,original,original,personalised_pretext,13,16,0.8125
+posthoc,original,original,placeholder_artifact,2,16,0.125
+posthoc,original,original,no_call_to_action,1,16,0.0625
+posthoc,para_high,variant,paraphrase_neutral,6,6,1
+posthoc,para_low,variant,paraphrase_neutral,7,8,0.875
+posthoc,para_low,variant,paraphrase_softened,1,8,0.125

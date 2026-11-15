@@ -8,7 +8,7 @@
     },
     "sample_csv": {
       "file": "reports/hardcore_sample.csv",
-      "sha256": "a186008674fbd6b0b156e4ba72e876a6c67db6a722987d099749d5a7a238faf4"
+      "sha256": "70963d0948de5aa3d8c56e49357d31ae6b0870f9e3ece8a725cd3262ade416ac"
     },
     "extractions": {
       "qwen25-7b": {

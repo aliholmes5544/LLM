@@ -1524,11 +1524,10 @@ results/scores/additional/twostage_*/ and twostage_compare/, reports/twostage_re
 of results/raw/twostage_*/lr_clean/eval.jsonl (entry of 2026-11-12 above). T12 and F8 are referred to by their
 working names; the author numbers them in the chapter.
 
-One point to confirm before the text is used: the sentence in Section 4.7 that refers to the manual coding of the
-hard-core sample. The coding workbook in the repository (reports/hardcore_coding.xlsx, 38 rows) has no failure_type
-entered yet and 07_import_coding.py has not been run, so the repository holds no coding result. The clause is written
-as "[coding, to confirm]" and should be kept only if the author's coding supports it; the indicator counts that follow
-it are computed and stand on their own.
+The point flagged here on 2026-11-12 (the Section 4.7 clause on the manual coding of the hard-core sample, written as
+"[coding, to confirm]" while reports/hardcore_coding.xlsx was still unfilled) was resolved on 2026-11-15: the coding is
+imported and cross-checked (entry "Hard-core coding imported" below), and the clause in the Section 4.7 wording is
+rewritten to what the codes and the cross-check support. The indicator counts around it are computed and unchanged.
 
 **Wording for Section 3.5 (Components and Design, addition "An additional evaluated condition: the two-stage indicator
 pipeline"):** "After the pre-registered scores had been computed, one further condition was added at the supervisor's
@@ -1593,9 +1592,12 @@ assert on average only 1.6 to 1.8 of the eight threat indicators, and 45% to 54%
 the originals the clean fit misses carry about 1.0 indicator on average against 2.2 to 2.6 for those it catches, and
 the eight phishing variants that all six models missed under the zero-shot prompt carry 0.25 to 0.38 indicators, of
 which the clean fit flags none (one for Gemma-2-27B). The indicator with the largest or second-largest coefficient in
-all three clean fits, a credential or payment request, is asserted in only 3% of the originals. [coding, to confirm:
-This is consistent with the manual coding of the hard-core sample, in which the misclassified originals read as
-routine, well-written business correspondence.] A well-crafted spear-phishing e-mail of this corpus offers few
+all three clean fits, a credential or payment request, is asserted in only 3% of the originals. The manual coding of
+the hard-core sample points the same way: of the 16 misclassified originals, 13 were coded as convincing through their
+personalisation (correct names, roles and shared company detail), 2 through the neutralised link placeholder and 1 as
+carrying no call to action, and the extractors assert on average 1.5 to 1.6 of the eight threat indicators on the 13
+personalised originals. Personalisation is a property of every e-mail in this corpus, so the code describes why these
+e-mails look legitimate rather than what sets the missed ones apart. A well-crafted spear-phishing e-mail of this corpus offers few
 explicit cues, so a decision forced through a fixed list of indicators loses what the holistic verdict of the larger
 models captured, while a model whose direct verdict is weak gains a usable signal.
 
@@ -1650,3 +1652,129 @@ whose detectors are evaluated as direct, zero-shot and prompt-engineered classif
 (eval extraction 51.49, development extraction 8.60, smoke 0.56, set-up 0.38); the three evaluation extractions took
 about 28 GPU-hours, 4.1, 5.3 and 9.9 s per e-mail, each e-mail costing about 115 to 130 output tokens against a
 one-word direct verdict."
+
+## Hard-core coding imported; author's re-review; automatic cross-check against the TASK_08 indicators; billed cost (2026-11-15, tag v1.2.0-thesis)
+
+**What changed.** The author's coding of the 38 hard-core rows (TASK_07 section 4c; QUESTIONS.md items 12c and 17;
+docs/HARDCORE_CODING_GUIDE.md) is complete and imported. Files: reports/hardcore_coding.xlsx (final coding, 38 of 38
+rows, with the author's own re-review in sheets `review` and `review_general`); reports/hardcore_coding_review_6_rows.xlsx
+(the author's decisions and reasons on the six rows the cross-check flagged); scripts/07_coding_crosscheck.py and
+reports/hardcore_coding_crosscheck.json (the read-only cross-check, committed on 2026-11-15 before the six-row review);
+reports/hardcore_sample.csv (the two coding columns failure_type and note filled by scripts/07_import_coding.py,
+every other byte unchanged) and reports/hardcore_coding_summary.csv. `07_secondary.py --check` stays IDENTICAL on all
+eight files; no frozen file changed (reports/frozen_hashes_v1.1.0.txt, 83 files, `sha256sum -c` OK). The coding is
+descriptive and informs no test.
+
+**Who coded, and how.** Coded by the author; re-reviewed by the author after an interval, row by row (sheet `review`:
+31 rows "agree", 6 "note extended", 1 "code changed"). One code changed in the re-review (sample_id 29, paraphrase_neutral
+to paraphrase_softened); four notes gained a secondary code. This is not an independent second coder and no inter-coder
+agreement is claimed. The cross-check (below) was run before the six-row review, and no code was changed after it, so it
+is an independent comparison, not a reconciliation. Decision rules recorded by the author: for an original,
+personalisation at the level of the organisation (names, roles, shared history or company detail) is coded
+personalised_pretext; otherwise, when a neutralised link is the only cue a reader would have noticed, placeholder_artifact.
+For a variant, a cue counts as "dropped" (paraphrase_cue_dropped) only when no location reference to the resource
+remains in the text, and as "neutral" (paraphrase_neutral) when one survives in reworded form. The codes answer "what
+change explains the miss", so a paraphrase that strengthens the tone is coded neutral, because a strengthening cannot
+explain a miss.
+
+**Coding result (38 rows; reports/hardcore_coding_summary.csv):**
+
+| set | stratum | rows | codes |
+|---|---|---|---|
+| pre-registered (all six wrong) | para_low | 5 | paraphrase_neutral 3, paraphrase_cue_dropped 2 |
+| pre-registered | para_high | 3 | paraphrase_cue_dropped 2, paraphrase_neutral 1 |
+| post hoc (at least 4 of 6 wrong) | original | 16 | personalised_pretext 13, placeholder_artifact 2, no_call_to_action 1 |
+| post hoc | para_low | 8 | paraphrase_neutral 7, paraphrase_softened 1 |
+| post hoc | para_high | 6 | paraphrase_neutral 6 |
+
+Over all 22 variants: paraphrase_neutral 17, paraphrase_cue_dropped 4, paraphrase_softened 1; no meaning_shifted,
+truncated_or_short, label_noise or other as a primary code. Four rows (sample_id 4, 5, 17, 36: no link, no attachment,
+no request) carry label_noise as a plausible secondary reading in their notes.
+
+**Automatic cross-check (scripts/07_coding_crosscheck.py; reports/hardcore_coding_crosscheck.json), reported as it came
+out.** Each coded row, and for a variant its original, was joined with the stage-1 indicators extracted by the three
+TASK_08 models (results/raw/twostage_{qwen25-7b, gemma2-9b, gemma2-27b}/extract/eval.jsonl; the same rows the two-stage
+detector uses; the extractors are three models' readings, not ground truth). One fixed rule per code; counts are rows in
+which the extraction meets the rule, out of n coded rows, per model (Qwen2.5-7B / Gemma-2-9B / Gemma-2-27B):
+
+| code | n | rule | Qwen2.5-7B | Gemma-2-9B | Gemma-2-27B |
+|---|---|---|---|---|---|
+| paraphrase_cue_dropped | 4 | link_or_url yes (original) to no (variant) | 0 | 2 | 2 |
+| paraphrase_softened | 1 | urgency yes (original) to no or unclear (variant) | 0 | 0 | 0 |
+| paraphrase_neutral | 17 | none of the eight threat indicators changes | 15 | 13 | 14 |
+| no_call_to_action | 1 | link_or_url and credential_or_payment_request both no | 1 | 1 | 1 |
+| personalised_pretext | 13 | descriptive: mean threat indicators asserted | 1.62 | 1.46 | 1.62 |
+| placeholder_artifact | 2 | descriptive: mean threat indicators asserted | 2.00 | 1.00 | 2.00 |
+
+By majority of the three extractors the extraction agrees with the code in 32 of 38 rows (this count includes the 16
+rows whose codes are descriptive or met by all three; 20 row-by-model disagreements in total). Six rows are contradicted
+by at least two extractors. Three of them (sample_id 29, 35, 37) arise because a binary urgency indicator registers only
+changes that cross its threshold, in either direction: in 29 the imperative became a recommendation and all three
+extractors keep urgency = yes; in 35 and 37 both Gemma extractors turn urgency from no to yes on the variant. Two (sample_id
+2 and 6, the same e-mail at both paraphrase levels) rest on the author's stated assumption that "Here" in "Here are the
+compiled resources" is link anchor text; all three extractors read link_or_url = no on the original as well, so no drop
+is visible to them. One (sample_id 38) is a genuine borderline case: all three extractors read the link as lost
+("Please join the discussion here" to "participate in the conversation located in this space"), while the author keeps
+paraphrase_neutral because a location reference survives, with cue_dropped recorded as the secondary code. Four further
+rows (sample_id 3, 7, 5, 30) differ for a single extractor only (Qwen2.5-7B misses the link drop in 3 and 7, which both
+Gemma extractors confirm; one extractor reports one indicator change in 5 and 30).
+
+**The author's decisions on the six rows (reports/hardcore_coding_review_6_rows.xlsx, sheet review_6_rows; all kept;
+REASON quoted verbatim):**
+
+| sample_id | stratum | code kept | author's reason |
+|---|---|---|---|
+| 2 | para_low | paraphrase_cue_dropped | "Here" is the only delivery point in the message; the variant states that the resources exist without pointing to them. The code rests on reading "Here" as link anchor text. |
+| 6 | para_high | paraphrase_cue_dropped | Same e-mail and same change as sample 2. |
+| 29 | para_low | paraphrase_softened | The imperative became a recommendation; a binary urgency indicator cannot register a change of degree. |
+| 35 | para_high | paraphrase_neutral | The wording is marginally more emphatic (important to crucial) with no time pressure added and the link kept; a strengthening cannot explain the miss. |
+| 37 | para_high | paraphrase_neutral | The variant is slightly more pressing, not less, so the paraphrase cannot explain the miss. |
+| 38 | para_high | paraphrase_neutral | A location reference survives ("this space"), unlike samples 2 and 6 where none remains; cue_dropped is recorded as secondary, and all three extractors read the link as lost. |
+
+**Wording for Section 3.6 (Proposed Algorithm, the hard-core coding procedure; replaces any earlier sentence that
+describes the coding as pending):** "The hard-core sample is coded by the author with one code list per question: for a
+misclassified original, why the e-mail looks legitimate; for a misclassified variant, what changed relative to the
+original. Two decision rules are fixed before coding is compared with anything else. For an original, personalisation at
+the level of the organisation (correct names, roles, shared history or company detail) is coded as a personalised
+pretext; otherwise, when a neutralised link is the only cue a reader would have noticed, the code is the placeholder
+artefact. For a variant, a cue is coded as dropped only when no reference to the location of the linked resource
+remains in the text, and as neutral when such a reference survives in reworded form; because the codes answer what
+change explains the miss, a paraphrase that strengthens the tone is coded neutral. The author re-reviews every row
+after an interval and records each decision; there is no independent second coder, so no inter-coder agreement is
+reported. As an independent comparison, each coded row, and for a variant its original, is joined with the indicators
+that the three extraction models of the two-stage condition produced for the same e-mails, and one fixed rule per code
+states what the extraction should show if the code is right: a link indicator that goes from yes to no for a dropped
+cue, an urgency indicator that falls for a softened paraphrase, no change in any of the eight threat indicators for a
+neutral paraphrase, and neither a link nor a credential or payment request for an e-mail coded as having no call to
+action. The rows that at least two of the three extractors contradict are re-read by the author, who records a decision
+and a reason for each; no code is changed after the comparison, so it remains a check on the coding rather than a
+reconciliation with it."
+
+**Wording for Section 4.5 (Results, the hard-core paragraph; continues the 2026-11-01 wording above):** "All 38 rows were
+coded. Of the 16 misclassified originals, 13 were coded as convincing through their personalisation, 2 through the
+neutralised link placeholder and 1 as carrying no call to action. Of the 22 misclassified paraphrases, 17 were coded
+neutral, that is the cues of the original survive reworded and the variant looks legitimate for the same reason as the
+original, 4 as having dropped a cue (two of them the same e-mail at both paraphrase levels) and 1 as softened. The
+automatic comparison with the extracted indicators agrees with the code, by majority of the three extraction models, in
+32 of 38 rows. Of the six rows it contradicts, three concern the urgency indicator, which is binary and registers only
+changes that cross its threshold, in either direction, whereas the codes concern a change of degree; two rest on the
+reading of a bare "Here" as link anchor text, which plain text cannot confirm; one is a borderline case in which all
+three extractors read the link as lost while the coder judged that a location reference survived. The author re-read
+the six rows and kept every code, with a reason recorded for each. One caution governs the reading of the original
+rows: personalisation is a property of every e-mail in this corpus, so the dominant code describes why these e-mails
+look legitimate, not what distinguishes the missed ones from those detected."
+
+**Wording for Section 4.8 (Threats to Validity, addition to the hard-core paragraph):** "The qualitative coding was done
+by the author alone and re-reviewed by the author after an interval; it is not an independent second coding, and no
+inter-coder agreement is claimed. The automatic cross-check against the extracted indicators is a comparison with three
+models' readings, not with ground truth, and it can only register changes that cross a binary indicator's threshold.
+Four of the 38 rows (originals and paraphrases with no link, no attachment and no request) carry label noise as a
+plausible secondary reading, that is, the e-mail may not be phishing in any operative sense; the primary code was kept
+and the secondary reading is recorded in the notes."
+
+**Billed cost, wording for Section 3.7 (Implementation Details; complements the 4.2.1 cost note of 2026-11-12):** "All
+GPU inference ran on Google Colab. The billed cost was USD 10.79 for one month of Colab Pro and USD 9.99 for 100
+additional compute units, USD 20.78 in total for 200 compute units, of which 147.9 were consumed: 86.9 by the main
+study (detection cells, baselines, smoke tests and the development chain-of-thought run) and 61.03 by the two-stage
+condition; 52.09 units were unused at the end of the study." Source: the author's Colab billing and the unit readings
+recorded in reports/twostage_report.json and the entries above.
