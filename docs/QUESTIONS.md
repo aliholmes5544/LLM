@@ -223,6 +223,13 @@
     the pre-registered criterion. The extension changes no computed number; its counts per stratum before sampling
     are in reports/secondary_report.json (`hardcore.sample.posthoc`) and in item 17.
 
+    **Item 12c status 2026-11-15:** the hard-core coding is complete (38 of 38 rows), imported into
+    reports/hardcore_sample.csv by 07_import_coding.py (07_secondary.py --check IDENTICAL), cross-checked read-only
+    against the TASK_08 indicator extractions (scripts/07_coding_crosscheck.py, reports/hardcore_coding_crosscheck.json:
+    32 of 38 agree by majority of the three extractors) and re-read by the author on the six contradicted rows, all
+    kept with a reason (reports/hardcore_coding_review_6_rows.xlsx). Descriptive, informs no test. Details and the
+    thesis wording: CHANGES_FOR_THESIS.md, entry "Hard-core coding imported ... (2026-11-15, tag v1.2.0-thesis)".
+
     **Deviation logged 2026-11-09, after the scores were computed (supervisor request; item 18):** a two-stage
     indicator detector (docs/TASK_08_twostage.md) is added as an exploratory, post hoc, additional evaluated
     condition for three of the six models. Reason: requested by the supervisor after the step-07 scores were
@@ -473,6 +480,13 @@
     zero; the rule was applied as written. The post hoc sample is drawn from a separate random stream
     ("hardcore_sample_posthoc", seed 2026), so the pre-registered rows are unchanged (sample_id 1 to 8); the post
     hoc rows are sample_id 9 to 38. Status: closed; the author's manual coding of the 38 rows is pending.
+    **Coding status 2026-11-15:** complete, 38 of 38 rows coded by the author (originals: personalised_pretext 13,
+    placeholder_artifact 2, no_call_to_action 1; variants: paraphrase_neutral 17, paraphrase_cue_dropped 4,
+    paraphrase_softened 1), imported (07_import_coding.py; reports/hardcore_coding_summary.csv), cross-checked against
+    the TASK_08 extractions of the three models (reports/hardcore_coding_crosscheck.json) and reviewed by the author on
+    the six rows at least two extractors contradicted (all kept, reasons in reports/hardcore_coding_review_6_rows.xlsx).
+    No code changed after the cross-check. See CHANGES_FOR_THESIS.md, entry "Hard-core coding imported ...
+    (2026-11-15, tag v1.2.0-thesis)".
 
 ## TASK_08 two-stage indicator detector: deviation and open points before step 2 (2026-11-09)
 
