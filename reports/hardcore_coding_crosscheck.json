@@ -1,0 +1,2199 @@
+{
+  "script": "scripts/07_coding_crosscheck.py",
+  "purpose": "read-only cross-check of the hard-core coding against the TASK_08 stage-1 indicator extractions; the coding is not imported and nothing frozen changes",
+  "inputs": {
+    "coding_xlsx": {
+      "file": "reports/hardcore_coding.xlsx",
+      "sha256": "f2c889b1d88866b5c61d7b58a92b9b85a548d92ddbc0502a8b05900c78e0d53b"
+    },
+    "sample_csv": {
+      "file": "reports/hardcore_sample.csv",
+      "sha256": "a186008674fbd6b0b156e4ba72e876a6c67db6a722987d099749d5a7a238faf4"
+    },
+    "extractions": {
+      "qwen25-7b": {
+        "file": "results/raw/twostage_qwen25-7b/extract/eval.jsonl",
+        "sha256": "3ed01e2fbaefa90d56f11ab8042da8e8f362eb8eb1e637ae5701e82caab0d36b",
+        "n_rows": 5207,
+        "config_hash": [
+          "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda"
+        ]
+      },
+      "gemma2-9b": {
+        "file": "results/raw/twostage_gemma2-9b/extract/eval.jsonl",
+        "sha256": "d1179b697e43b9138161ebf21cbee013a9769f387efc43a81be252cf5c493947",
+        "n_rows": 5207,
+        "config_hash": [
+          "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda"
+        ]
+      },
+      "gemma2-27b": {
+        "file": "results/raw/twostage_gemma2-27b/extract/eval.jsonl",
+        "sha256": "1c2f4e82e768828622eb7449afbd0598811c349ce666d185b7e305e61487aa5a",
+        "n_rows": 5207,
+        "config_hash": [
+          "defa94b131fd60ace857797563813d9e2bf8ea61f6bcb7affa9e30f8dc98fbda"
+        ]
+      }
+    },
+    "threat_indicators": [
+      "urgency",
+      "link_or_url",
+      "sender_claim_inconsistency",
+      "credential_or_payment_request",
+      "grammar_anomaly",
+      "impersonation_authority",
+      "attachment",
+      "generic_greeting"
+    ]
+  },
+  "n_rows": 38,
+  "codes": {
+    "no_call_to_action": 1,
+    "paraphrase_cue_dropped": 4,
+    "paraphrase_neutral": 17,
+    "paraphrase_softened": 1,
+    "personalised_pretext": 13,
+    "placeholder_artifact": 2
+  },
+  "codes_by_stratum": {
+    "original": {
+      "no_call_to_action": 1,
+      "personalised_pretext": 13,
+      "placeholder_artifact": 2
+    },
+    "para_high": {
+      "paraphrase_cue_dropped": 2,
+      "paraphrase_neutral": 7
+    },
+    "para_low": {
+      "paraphrase_cue_dropped": 2,
+      "paraphrase_neutral": 10,
+      "paraphrase_softened": 1
+    }
+  },
+  "review_sheet": {
+    "present": true,
+    "n_review_rows": 38,
+    "final_code_equals_reviewer_code": 38,
+    "differ_sample_ids": [],
+    "reviewer_verdicts": {
+      "APPLIED: code changed": 1,
+      "APPLIED: note extended": 6,
+      "agree": 31
+    }
+  },
+  "rules": {
+    "paraphrase_cue_dropped": {
+      "rule": "link_or_url_yes_to_no",
+      "uses_original": true,
+      "description": "link_or_url is yes on the original and no on the variant"
+    },
+    "paraphrase_softened": {
+      "rule": "urgency_drops",
+      "uses_original": true,
+      "description": "urgency is yes on the original and no or unclear on the variant"
+    },
+    "paraphrase_neutral": {
+      "rule": "no_threat_indicator_changes",
+      "uses_original": true,
+      "description": "all eight threat indicators are identical on original and variant"
+    },
+    "no_call_to_action": {
+      "rule": "link_and_credential_both_no",
+      "uses_original": false,
+      "description": "link_or_url and credential_or_payment_request are both no on the item"
+    },
+    "personalised_pretext": {
+      "rule": null,
+      "uses_original": false,
+      "description": "descriptive only: mean number of threat indicators asserted (yes) on the item"
+    },
+    "placeholder_artifact": {
+      "rule": null,
+      "uses_original": false,
+      "description": "descriptive only: mean number of threat indicators asserted (yes) on the item"
+    }
+  },
+  "per_code": {
+    "no_call_to_action": {
+      "rule": "link_and_credential_both_no",
+      "description": "link_or_url and credential_or_payment_request are both no on the item",
+      "n": 1,
+      "sample_ids": [
+        17
+      ],
+      "per_model": {
+        "qwen25-7b": {
+          "n": 1,
+          "n_valid": 1,
+          "mean_threat_indicators_asserted": 0.0,
+          "count_rule_met": 1,
+          "fraction_rule_met": 1.0,
+          "disagreeing_sample_ids": []
+        },
+        "gemma2-9b": {
+          "n": 1,
+          "n_valid": 1,
+          "mean_threat_indicators_asserted": 1.0,
+          "count_rule_met": 1,
+          "fraction_rule_met": 1.0,
+          "disagreeing_sample_ids": []
+        },
+        "gemma2-27b": {
+          "n": 1,
+          "n_valid": 1,
+          "mean_threat_indicators_asserted": 1.0,
+          "count_rule_met": 1,
+          "fraction_rule_met": 1.0,
+          "disagreeing_sample_ids": []
+        }
+      }
+    },
+    "paraphrase_cue_dropped": {
+      "rule": "link_or_url_yes_to_no",
+      "description": "link_or_url is yes on the original and no on the variant",
+      "n": 4,
+      "sample_ids": [
+        2,
+        3,
+        6,
+        7
+      ],
+      "per_model": {
+        "qwen25-7b": {
+          "n": 4,
+          "n_valid": 4,
+          "mean_threat_indicators_asserted": 0.0,
+          "count_rule_met": 0,
+          "fraction_rule_met": 0.0,
+          "disagreeing_sample_ids": [
+            2,
+            3,
+            6,
+            7
+          ],
+          "mean_threat_indicators_asserted_original": 0.0
+        },
+        "gemma2-9b": {
+          "n": 4,
+          "n_valid": 4,
+          "mean_threat_indicators_asserted": 0.0,
+          "count_rule_met": 2,
+          "fraction_rule_met": 0.5,
+          "disagreeing_sample_ids": [
+            2,
+            6
+          ],
+          "mean_threat_indicators_asserted_original": 0.5
+        },
+        "gemma2-27b": {
+          "n": 4,
+          "n_valid": 4,
+          "mean_threat_indicators_asserted": 0.0,
+          "count_rule_met": 2,
+          "fraction_rule_met": 0.5,
+          "disagreeing_sample_ids": [
+            2,
+            6
+          ],
+          "mean_threat_indicators_asserted_original": 0.5
+        }
+      }
+    },
+    "paraphrase_neutral": {
+      "rule": "no_threat_indicator_changes",
+      "description": "all eight threat indicators are identical on original and variant",
+      "n": 17,
+      "sample_ids": [
+        1,
+        4,
+        5,
+        8,
+        25,
+        26,
+        27,
+        28,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38
+      ],
+      "per_model": {
+        "qwen25-7b": {
+          "n": 17,
+          "n_valid": 17,
+          "mean_threat_indicators_asserted": 1.059,
+          "count_rule_met": 15,
+          "fraction_rule_met": 0.882,
+          "disagreeing_sample_ids": [
+            30,
+            38
+          ],
+          "mean_threat_indicators_asserted_original": 1.059
+        },
+        "gemma2-9b": {
+          "n": 17,
+          "n_valid": 17,
+          "mean_threat_indicators_asserted": 1.118,
+          "count_rule_met": 13,
+          "fraction_rule_met": 0.765,
+          "disagreeing_sample_ids": [
+            5,
+            35,
+            37,
+            38
+          ],
+          "mean_threat_indicators_asserted_original": 1.118
+        },
+        "gemma2-27b": {
+          "n": 17,
+          "n_valid": 17,
+          "mean_threat_indicators_asserted": 1.235,
+          "count_rule_met": 14,
+          "fraction_rule_met": 0.824,
+          "disagreeing_sample_ids": [
+            35,
+            37,
+            38
+          ],
+          "mean_threat_indicators_asserted_original": 1.176
+        }
+      }
+    },
+    "paraphrase_softened": {
+      "rule": "urgency_drops",
+      "description": "urgency is yes on the original and no or unclear on the variant",
+      "n": 1,
+      "sample_ids": [
+        29
+      ],
+      "per_model": {
+        "qwen25-7b": {
+          "n": 1,
+          "n_valid": 1,
+          "mean_threat_indicators_asserted": 2.0,
+          "count_rule_met": 0,
+          "fraction_rule_met": 0.0,
+          "disagreeing_sample_ids": [
+            29
+          ],
+          "mean_threat_indicators_asserted_original": 2.0
+        },
+        "gemma2-9b": {
+          "n": 1,
+          "n_valid": 1,
+          "mean_threat_indicators_asserted": 2.0,
+          "count_rule_met": 0,
+          "fraction_rule_met": 0.0,
+          "disagreeing_sample_ids": [
+            29
+          ],
+          "mean_threat_indicators_asserted_original": 2.0
+        },
+        "gemma2-27b": {
+          "n": 1,
+          "n_valid": 1,
+          "mean_threat_indicators_asserted": 2.0,
+          "count_rule_met": 0,
+          "fraction_rule_met": 0.0,
+          "disagreeing_sample_ids": [
+            29
+          ],
+          "mean_threat_indicators_asserted_original": 2.0
+        }
+      }
+    },
+    "personalised_pretext": {
+      "rule": null,
+      "description": "descriptive only: mean number of threat indicators asserted (yes) on the item",
+      "n": 13,
+      "sample_ids": [
+        10,
+        11,
+        12,
+        13,
+        15,
+        16,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "per_model": {
+        "qwen25-7b": {
+          "n": 13,
+          "n_valid": 13,
+          "mean_threat_indicators_asserted": 1.615
+        },
+        "gemma2-9b": {
+          "n": 13,
+          "n_valid": 13,
+          "mean_threat_indicators_asserted": 1.462
+        },
+        "gemma2-27b": {
+          "n": 13,
+          "n_valid": 13,
+          "mean_threat_indicators_asserted": 1.615
+        }
+      }
+    },
+    "placeholder_artifact": {
+      "rule": null,
+      "description": "descriptive only: mean number of threat indicators asserted (yes) on the item",
+      "n": 2,
+      "sample_ids": [
+        9,
+        14
+      ],
+      "per_model": {
+        "qwen25-7b": {
+          "n": 2,
+          "n_valid": 2,
+          "mean_threat_indicators_asserted": 2.0
+        },
+        "gemma2-9b": {
+          "n": 2,
+          "n_valid": 2,
+          "mean_threat_indicators_asserted": 1.0
+        },
+        "gemma2-27b": {
+          "n": 2,
+          "n_valid": 2,
+          "mean_threat_indicators_asserted": 2.0
+        }
+      }
+    }
+  },
+  "n_disagreements": 20,
+  "disagreements": [
+    {
+      "sample_id": 2,
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "qwen25-7b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 2,
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "gemma2-9b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 2,
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "gemma2-27b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 3,
+      "item_id": "nah:spear_phishing:john_simmons_invitation_for_advanced_cybersecurity_panel_at_sigapp_2024_02_04_16_36_02#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "qwen25-7b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 5,
+      "item_id": "nah:spear_phishing:ethan_hawk_important_update_for_safesecurity_team_2024_02_04_16_52_11#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-9b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "urgency",
+            "original": "yes",
+            "variant": "no"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 6,
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "qwen25-7b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 6,
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "gemma2-9b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 6,
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "gemma2-27b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 7,
+      "item_id": "nah:spear_phishing:john_simmons_invitation_for_advanced_cybersecurity_panel_at_sigapp_2024_02_04_16_36_02#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_cue_dropped",
+      "model": "qwen25-7b",
+      "rule": "link_or_url_yes_to_no",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 0,
+        "threat_changes": [],
+        "link_or_url": {
+          "original": "no",
+          "variant": "no"
+        }
+      }
+    },
+    {
+      "sample_id": 29,
+      "item_id": "nah:spear_phishing:lars_treble_important_announcement_for_john_simmons_2024_02_04_17_45_58#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_softened",
+      "model": "qwen25-7b",
+      "rule": "urgency_drops",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "urgency",
+          "link_or_url"
+        ],
+        "n_threat_asserted_original": 2,
+        "threat_changes": [],
+        "urgency": {
+          "original": "yes",
+          "variant": "yes"
+        }
+      }
+    },
+    {
+      "sample_id": 29,
+      "item_id": "nah:spear_phishing:lars_treble_important_announcement_for_john_simmons_2024_02_04_17_45_58#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_softened",
+      "model": "gemma2-9b",
+      "rule": "urgency_drops",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "urgency",
+          "link_or_url"
+        ],
+        "n_threat_asserted_original": 2,
+        "threat_changes": [],
+        "urgency": {
+          "original": "yes",
+          "variant": "yes"
+        }
+      }
+    },
+    {
+      "sample_id": 29,
+      "item_id": "nah:spear_phishing:lars_treble_important_announcement_for_john_simmons_2024_02_04_17_45_58#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_softened",
+      "model": "gemma2-27b",
+      "rule": "urgency_drops",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "urgency",
+          "link_or_url"
+        ],
+        "n_threat_asserted_original": 2,
+        "threat_changes": [],
+        "urgency": {
+          "original": "yes",
+          "variant": "yes"
+        }
+      }
+    },
+    {
+      "sample_id": 30,
+      "item_id": "nah:spear_phishing:john_thompson_important_announcement_-_update_on_cyber_security_ontology_2024_02_04_17_43_34#para_low",
+      "stratum": "para_low",
+      "failure_type": "paraphrase_neutral",
+      "model": "qwen25-7b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "link_or_url",
+          "impersonation_authority"
+        ],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "impersonation_authority",
+            "original": "no",
+            "variant": "yes"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 35,
+      "item_id": "nah:spear_phishing:jason_rogers_important_cybersecurity_update_2024_02_04_17_28_04#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-9b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "urgency",
+          "link_or_url"
+        ],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "urgency",
+            "original": "no",
+            "variant": "yes"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 35,
+      "item_id": "nah:spear_phishing:jason_rogers_important_cybersecurity_update_2024_02_04_17_28_04#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-27b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "urgency",
+          "link_or_url"
+        ],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "urgency",
+            "original": "no",
+            "variant": "yes"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 37,
+      "item_id": "nah:spear_phishing:gale_robinson_exclusive_invitation_for_graphconnect_attendees_2024_02_04_17_43_24#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-9b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 2,
+        "asserted": [
+          "urgency",
+          "link_or_url"
+        ],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "urgency",
+            "original": "no",
+            "variant": "yes"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 37,
+      "item_id": "nah:spear_phishing:gale_robinson_exclusive_invitation_for_graphconnect_attendees_2024_02_04_17_43_24#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-27b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 3,
+        "asserted": [
+          "urgency",
+          "link_or_url",
+          "sender_claim_inconsistency"
+        ],
+        "n_threat_asserted_original": 2,
+        "threat_changes": [
+          {
+            "indicator": "urgency",
+            "original": "no",
+            "variant": "yes"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 38,
+      "item_id": "nah:spear_phishing:ethan_hawk_invitation_to_participate_in_sigapp_event_discussions_2024_02_04_16_43_05#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "qwen25-7b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "link_or_url",
+            "original": "yes",
+            "variant": "no"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 38,
+      "item_id": "nah:spear_phishing:ethan_hawk_invitation_to_participate_in_sigapp_event_discussions_2024_02_04_16_43_05#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-9b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "link_or_url",
+            "original": "yes",
+            "variant": "no"
+          }
+        ]
+      }
+    },
+    {
+      "sample_id": 38,
+      "item_id": "nah:spear_phishing:ethan_hawk_invitation_to_participate_in_sigapp_event_discussions_2024_02_04_16_43_05#para_high",
+      "stratum": "para_high",
+      "failure_type": "paraphrase_neutral",
+      "model": "gemma2-27b",
+      "rule": "no_threat_indicator_changes",
+      "extraction": {
+        "n_threat_asserted": 0,
+        "asserted": [],
+        "n_threat_asserted_original": 1,
+        "threat_changes": [
+          {
+            "indicator": "link_or_url",
+            "original": "yes",
+            "variant": "no"
+          }
+        ]
+      }
+    }
+  ],
+  "rows": [
+    {
+      "sample_id": 1,
+      "set": "preregistered",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:john_simmons_important_announcement_from_safesecurity_2024_02_04_17_28_21#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 2,
+      "set": "preregistered",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_low",
+      "failure_type": "paraphrase_cue_dropped",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        }
+      }
+    },
+    {
+      "sample_id": 3,
+      "set": "preregistered",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:john_simmons_invitation_for_advanced_cybersecurity_panel_at_sigapp_2024_02_04_16_36_02#para_low",
+      "failure_type": "paraphrase_cue_dropped",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "link_or_url": {
+            "original": "yes",
+            "variant": "no"
+          },
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "link_or_url": {
+            "original": "yes",
+            "variant": "no"
+          },
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 4,
+      "set": "preregistered",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:jane_taylor_important_message_from_safesecurity_2024_02_04_17_43_20#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 5,
+      "set": "preregistered",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:ethan_hawk_important_update_for_safesecurity_team_2024_02_04_16_52_11#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "urgency",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "urgency"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 6,
+      "set": "preregistered",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:josephine_baldi_graphconnect_important_post-conference_follow-up_2024_02_04_16_23_52#para_high",
+      "failure_type": "paraphrase_cue_dropped",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        }
+      }
+    },
+    {
+      "sample_id": 7,
+      "set": "preregistered",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:john_simmons_invitation_for_advanced_cybersecurity_panel_at_sigapp_2024_02_04_16_36_02#para_high",
+      "failure_type": "paraphrase_cue_dropped",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "link_or_url": {
+            "original": "no",
+            "variant": "no"
+          },
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "link_or_url": {
+            "original": "yes",
+            "variant": "no"
+          },
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "link_or_url": {
+            "original": "yes",
+            "variant": "no"
+          },
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 8,
+      "set": "preregistered",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:john_simmons_important_announcement_from_safesecurity_2024_02_04_17_28_21#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 9,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:david_foster_invitation_to_exclusive_cybersecurity_conference_2024_02_04_17_35_08",
+      "failure_type": "placeholder_artifact",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 10,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:michael_reynolds_important_update_for_engineering_team_2024_02_04_17_11_02",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 3,
+          "asserted": [
+            "urgency",
+            "link_or_url",
+            "impersonation_authority"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 11,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:john_smith_important_update_continuous_learning_program_for_safesecurity_employees_2024_02_04_16_52_09",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 12,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:gerald_j._williams_important_cyber_security_update_for_safesecurity_2024_02_04_16_30_33",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 13,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:jason_anderson_important_update_for_devops_team_2024_02_04_17_28_18",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 3,
+          "asserted": [
+            "urgency",
+            "link_or_url",
+            "impersonation_authority"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 14,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:gale_robinson_an_exclusive_invitation_for_moses_sharp_2024_02_04_17_35_33",
+      "failure_type": "placeholder_artifact",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 15,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:micheal_stevens_follow-up_on_the_kgc23,_upcoming_sigapp_&_safesecurity_updates_2024_02_04_16_43_02",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 16,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:marina_adams_important_announcement_for_josephine_baldi_2024_02_04_17_45_58",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "urgency"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "urgency"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "urgency"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 17,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:ethan_hawk_important_update_for_safesecurity_team_2024_02_04_16_52_11",
+      "failure_type": "no_call_to_action",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "link_or_url": "no",
+          "credential_or_payment_request": "no",
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "urgency"
+          ],
+          "link_or_url": "no",
+          "credential_or_payment_request": "no",
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "urgency"
+          ],
+          "link_or_url": "no",
+          "credential_or_payment_request": "no",
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 18,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:ethan_hawk_important_announcement_urgent_action_required_2024_02_04_17_28_02",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 19,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:john_carter_important_message_regarding_cyber_security_2024_02_04_17_11_16",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 3,
+          "asserted": [
+            "urgency",
+            "link_or_url",
+            "impersonation_authority"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 20,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:gale_robinson_upcoming_safesecurity_team_meeting_schedule_2024_02_04_16_25_51",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 21,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:michael_anderson_important_update_-_safesecurity_employee_recognition_2024_02_04_17_43_12",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 22,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:matthew_reynolds_urgent_important_cybersecurity_update_2024_02_04_16_52_07",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 23,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:emily_thompson_important_update_for_safesecurity_team_2024_02_04_16_52_11",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 24,
+      "set": "posthoc",
+      "stratum": "original",
+      "item_id": "nah:spear_phishing:emily_donovan_important_collaboration_opportunity_2024_02_04_17_42_56",
+      "failure_type": "personalised_pretext",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "rule_met": null
+        }
+      }
+    },
+    {
+      "sample_id": 25,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:lisa_thompson_important_update_from_safesecurity_2024_02_04_17_28_29#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "link_or_url",
+            "impersonation_authority"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 26,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:john_mitchell_important_update_from_safesecurity_2024_02_04_17_34_58#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 27,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:oliver_bell_urgent!_cyber_security_report_updates_2024_02_04_16_43_01#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 28,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:emily_cooper_job_opportunity_at_safesecurity_2024_02_04_17_28_22#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 29,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:lars_treble_important_announcement_for_john_simmons_2024_02_04_17_45_58#para_low",
+      "failure_type": "paraphrase_softened",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "urgency": {
+            "original": "yes",
+            "variant": "yes"
+          },
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "urgency": {
+            "original": "yes",
+            "variant": "yes"
+          },
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "urgency": {
+            "original": "yes",
+            "variant": "yes"
+          },
+          "rule_met": false
+        }
+      }
+    },
+    {
+      "sample_id": 30,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:john_thompson_important_announcement_-_update_on_cyber_security_ontology_2024_02_04_17_43_34#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "link_or_url",
+            "impersonation_authority"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "impersonation_authority",
+              "original": "no",
+              "variant": "yes"
+            }
+          ],
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 31,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:john_simmons_important_announcement_for_gale_robinson_2024_02_04_17_36_03#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 32,
+      "set": "posthoc",
+      "stratum": "para_low",
+      "item_id": "nah:spear_phishing:moses_sharp_follow-up_on_ray_levinson's_graphconnect_conference_insights_2024_02_04_16_42_46#para_low",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "link_or_url",
+            "attachment"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 33,
+      "set": "posthoc",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:oliver_bell_urgent!_cyber_security_report_updates_2024_02_04_16_43_01#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 34,
+      "set": "posthoc",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:ethan_hawk_safesecurity_team_collaboration_event_-_important_information_2024_02_04_16_30_41#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 35,
+      "set": "posthoc",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:jason_rogers_important_cybersecurity_update_2024_02_04_17_28_04#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 1,
+          "asserted": [
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "urgency",
+              "original": "no",
+              "variant": "yes"
+            }
+          ],
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "urgency",
+              "original": "no",
+              "variant": "yes"
+            }
+          ],
+          "rule_met": false
+        }
+      }
+    },
+    {
+      "sample_id": 36,
+      "set": "posthoc",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:gregory_johnston_impending_ontology_for_cyber_security_update_and_graphconnect_2024_02_04_16_42_57#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 0,
+          "threat_changes": [],
+          "rule_met": true
+        }
+      }
+    },
+    {
+      "sample_id": 37,
+      "set": "posthoc",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:gale_robinson_exclusive_invitation_for_graphconnect_attendees_2024_02_04_17_43_24#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [],
+          "rule_met": true
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 2,
+          "asserted": [
+            "urgency",
+            "link_or_url"
+          ],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "urgency",
+              "original": "no",
+              "variant": "yes"
+            }
+          ],
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 3,
+          "asserted": [
+            "urgency",
+            "link_or_url",
+            "sender_claim_inconsistency"
+          ],
+          "n_threat_asserted_original": 2,
+          "threat_changes": [
+            {
+              "indicator": "urgency",
+              "original": "no",
+              "variant": "yes"
+            }
+          ],
+          "rule_met": false
+        }
+      }
+    },
+    {
+      "sample_id": 38,
+      "set": "posthoc",
+      "stratum": "para_high",
+      "item_id": "nah:spear_phishing:ethan_hawk_invitation_to_participate_in_sigapp_event_discussions_2024_02_04_16_43_05#para_high",
+      "failure_type": "paraphrase_neutral",
+      "models": {
+        "qwen25-7b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "rule_met": false
+        },
+        "gemma2-9b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "rule_met": false
+        },
+        "gemma2-27b": {
+          "n_threat_asserted": 0,
+          "asserted": [],
+          "n_threat_asserted_original": 1,
+          "threat_changes": [
+            {
+              "indicator": "link_or_url",
+              "original": "yes",
+              "variant": "no"
+            }
+          ],
+          "rule_met": false
+        }
+      }
+    }
+  ]
+}
