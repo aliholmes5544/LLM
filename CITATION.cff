@@ -1,5 +1,5 @@
 # Citation metadata for SpearShift (Citation File Format 1.2.0; GitHub and Zenodo read this file).
-# The DOI below is a placeholder until the Zenodo deposit of the v1.0.0-thesis archive mints one.
+# The DOI below is a placeholder until the Zenodo deposit of the v1.2.1-thesis archive mints one.
 cff-version: 1.2.0
 message: "If you use SpearShift, please cite it as below."
 type: software
@@ -7,10 +7,10 @@ title: "SpearShift: an evaluation framework for open-weight LLM detectors under 
 authors:
   - family-names: Mashan
     given-names: Bakhit Ali
-version: v1.0.0-thesis
-date-released: 2026-11-01
+version: v1.2.1-thesis
+date-released: 2026-11-17
 repository-code: "https://github.com/aliholmes5544/LLM"
-doi: 10.5281/zenodo.XXXXXXX   # placeholder: replace with the DOI minted by Zenodo for the v1.0.0-thesis deposit
+doi: 10.5281/zenodo.XXXXXXX   # placeholder: replace with the DOI minted by Zenodo for the v1.2.1-thesis deposit
 license:
   - MIT
   - CC-BY-NC-SA-4.0

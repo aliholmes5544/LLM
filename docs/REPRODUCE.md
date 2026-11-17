@@ -2,8 +2,9 @@
 
 How every table and figure of Chapter 4 is produced, from which file, by which script, at which commit; the
 pinned environment; the hashes of the fixed artefacts; the checks that confirm a re-run; and the disclosure of
-AI assistance. Written 2026-11-01 at tag v1.0.0-thesis. Repository: https://github.com/aliholmes5544/LLM
-(tags v0.6-detection-ready to v1.0.0-thesis).
+AI assistance. Written 2026-11-01 at tag v1.0.0-thesis; the state the thesis cites is tag v1.2.1-thesis
+(2026-11-17: documentation corrections after v1.2.0-thesis, no result, config, prompt or frozen file changed).
+Repository: https://github.com/aliholmes5544/LLM (tags v0.6-detection-ready to v1.2.1-thesis).
 
 ## 1. Tables and figures of Chapter 4
 
@@ -159,9 +160,9 @@ evaluation inference on GPU only). Commits made with the assistant carry a Co-Au
 plan was declared before any metric was computed (QUESTIONS.md item 12), the scores were computed once, and the
 author's manual coding of the hard-core sample is the only step performed by hand on results.
 
-## 7. Zenodo deposit for v1.0.0-thesis
+## 7. Zenodo deposit for the thesis state (v1.2.1-thesis; written for v1.0.0-thesis, contents unchanged)
 
-**Include.** The GitHub release archive of tag v1.0.0-thesis (code, configs, prompts, docs, tests, notebooks,
+**Include.** The GitHub release archive of tag v1.2.1-thesis (code, configs, prompts, docs, tests, notebooks,
 reports/, results/scores, results/tables, results/raw, figures); `data/processed/variants_eval.jsonl`,
 `data/interim/paraphrase_cache_eval.jsonl` and `data/processed/obfuscation_log_eval.jsonl` under CC BY-NC-SA
 4.0 with attribution to Nahmias et al. (2024); `models/baselines/distilbert.pt` with its hash and the licence
