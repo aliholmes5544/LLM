@@ -818,3 +818,17 @@
     under zero_shot and the three baselines: precision, recall and F1 on the core originals, FPR on
     legit_core_neg and on legit_ctrl_modern, with intervals, in the style of T1. Recall and F1 are read from the
     frozen metrics_long.csv; only precision and the FPR are new. Status: logged; computation follows this entry.
+    **Done 2026-11-24:** computed by scripts/07_precision_fpr.py (37 cells x 2 analyses; all checks passed, --check
+    IDENTICAL; reports/precision_fpr_report.json); T13 written; no frozen file changed.
+
+## Presentation-only thesis versions of the Chapter 4 figures (2026-11-24)
+
+20. **Thesis versions of figures F1 to F8 (presentation only).** The eight committed figures (figures/ch04_f1 to f7
+    by 07_tables_figures.py, f8 by 07_twostage_tables_figures.py) are kept unchanged. A new script,
+    scripts/09_thesis_figures.py, re-renders exactly the rows those scripts select, by calling their figure functions
+    and editing layout and wording only (American spelling, "email", "generalization"; legends moved off the data;
+    no overlapping or clipped text; axis-label wording of the thesis), and writes figures/thesis/ with the same file
+    names as 300 dpi PNG plus a vector PDF copy of each. No number, row, colour, marker or model order changes; no
+    score file is read differently; the plotted values are asserted equal to the selected rows and the input hashes
+    and row counts are written to reports/thesis_figures_report.json. New files only; both frozen hash lists are
+    verified before and after. Not a result: nothing here enters a table, a test or a claim.

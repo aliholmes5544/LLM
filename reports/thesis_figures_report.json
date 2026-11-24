@@ -1,0 +1,212 @@
+{
+  "purpose": "presentation-only thesis versions of F1 to F8 (QUESTIONS.md item 20); the committed figures are unchanged",
+  "inputs": {
+    "results/scores/metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
+    "results/scores/deltas_long.csv": "8053a31a421f0c900809c5761da9f871d95aa9015a68b534b5dfc8228dcfa9b3",
+    "results/scores/frontier.csv": "9a19ab4fe51e94e3c7a9c6aa4c234b7b86828c2830b7098042b4a03916c337b5",
+    "results/scores/cues_change.csv": "624ac928ec08bd4f6814d0b6591f0a895c1fe5ebe07d2aceddf0f3bf6db8be64",
+    "results/scores/additional/twostage_qwen25-7b/deltas_long.csv": "e176376bb2169396d5325734a4bdc55e5d40995ffec99fb79f949cf4e7126346",
+    "results/scores/additional/twostage_gemma2-9b/deltas_long.csv": "8870cb220ea2af3654d147daefdfdcce3415f06a8883e2ca6e4f9f49e07d9c08",
+    "results/scores/additional/twostage_gemma2-27b/deltas_long.csv": "b89f188b6bd23f6f490e5ae86d80dc3f22b928972658af8d5b43d224cbf28b7b"
+  },
+  "figures": {
+    "F1": {
+      "source": "ch04_f1_sens_by_condition_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 30,
+        "n_expected": 30,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 19,
+        "n_legends": 1,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f1_sens_by_condition_eng.png": "1ada4cd2aabf1e0d830d337650ea1483e08c6406f5a92af8c7696cf4b5d5a3f1",
+        "figures/thesis/ch04_f1_sens_by_condition_eng.pdf": "b5b6c46e4c85f02fd4d362bacc9ca5ac4fff004d6905f19f378a973a671345a3"
+      }
+    },
+    "F2": {
+      "source": "ch04_f2_delta_heatmap_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 120,
+        "n_expected": 120,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 161,
+        "n_legends": 0,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f2_delta_heatmap_eng.png": "66cd1b5a5ced505f3a2113c6caf6cfc62376bfe55658986881ebe039cf6dcb11",
+        "figures/thesis/ch04_f2_delta_heatmap_eng.pdf": "779a414e4ea67a31237f4faeeaf749f734efa65befa494c41d1680af81353c06"
+      }
+    },
+    "F3": {
+      "source": "ch04_f3_size_effect_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 20,
+        "n_expected": 20,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 21,
+        "n_legends": 2,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f3_size_effect_eng.png": "47a019a9dc66fd57990420edcdb1d9a01e4dc681ec2bbe57921f31780801e360",
+        "figures/thesis/ch04_f3_size_effect_eng.pdf": "010ab6f99bbdad1ca4ac327b309678b87ca2b8ebfcccb26ff1a54a62d0093feb"
+      }
+    },
+    "F4": {
+      "source": "ch04_f4_strategy_effect_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 48,
+        "n_expected": 48,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 25,
+        "n_legends": 1,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f4_strategy_effect_eng.png": "0fcc5d11f612e7c29704121087f9ec0572461e71516872af07cfa719973305b3",
+        "figures/thesis/ch04_f4_strategy_effect_eng.pdf": "8ec8fdb8e074b1301782b0c55d1c338c9912be35bb505fd670ed9bef56aa5701"
+      }
+    },
+    "F5": {
+      "source": "ch04_f5_frontier_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 54,
+        "n_expected": 54,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 35,
+        "n_legends": 1,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f5_frontier_eng.png": "7172fb6ad0ffca692894e822c562affd8a4ec58dab090ca685abbea5aeb7f25d",
+        "figures/thesis/ch04_f5_frontier_eng.pdf": "31f336daacb37ce1a0b0e03c86f364b47b9dbcbb7fad945c3032e55c6790bd6f"
+      }
+    },
+    "F6": {
+      "source": "ch04_f6_cue_change_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 64,
+        "n_expected": 64,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 33,
+        "n_legends": 2,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f6_cue_change_eng.png": "a13dbea505835ac041705deb21b3d2ad122306bb26598336350f22c5dcc0ae43",
+        "figures/thesis/ch04_f6_cue_change_eng.pdf": "3b4826a2bc709895fce5ae918ce5ba8b5b8e3f8227f1d8ba0a0e1dcebc543bb6"
+      }
+    },
+    "F7": {
+      "source": "ch04_f7_generalisation_eng.png",
+      "values_equal_selected_rows": {
+        "x": {
+          "n_plotted": 20,
+          "n_expected": 20,
+          "equal": true,
+          "max_abs_diff": 0.0
+        },
+        "y": {
+          "n_plotted": 20,
+          "n_expected": 20,
+          "equal": true,
+          "max_abs_diff": 0.0
+        },
+        "equal": true,
+        "n_plotted": 20,
+        "n_expected": 20
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 42,
+        "n_legends": 1,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f7_generalisation_eng.png": "8b89068a55f9288be8b52600aadbd52ddc62165b8be30d4f1df8ab9513e83136",
+        "figures/thesis/ch04_f7_generalisation_eng.pdf": "5c936ea8fbbb5c5325047ef16db6bee30ef820f79fa736e9a034772e786b0990"
+      }
+    },
+    "F8": {
+      "source": "ch04_f8_twostage_eng.png",
+      "values_equal_selected_rows": {
+        "n_plotted": 45,
+        "n_expected": 45,
+        "equal": true,
+        "max_abs_diff": 0.0
+      },
+      "respelled_texts": 0,
+      "layout": {
+        "n_texts": 26,
+        "n_legends": 1,
+        "text_overlaps": [],
+        "legend_over_data": [],
+        "legend_over_text": [],
+        "text_outside_canvas": [],
+        "ok": true
+      },
+      "outputs": {
+        "figures/thesis/ch04_f8_twostage_eng.png": "58b93556839eda3ada47a9f4a1aa465528b22cf250eb38f908421ce2bd0232fd",
+        "figures/thesis/ch04_f8_twostage_eng.pdf": "5f8b76910fdf1151ad0df7da913ae82638cc21ce6477e18a4ac8f092050f1991"
+      }
+    }
+  },
+  "all_ok": true,
+  "matplotlib": "3.11.2",
+  "git_commit": "30b27aa"
+}
