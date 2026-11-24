@@ -1,25 +1,31 @@
 #!/usr/bin/env python3
 """
 09_thesis_figures.py — presentation-only thesis versions of the Chapter 4 figures F1 to F8 (QUESTIONS.md item 20,
-2026-11-24). The committed figures under figures/ stay as they are; this script writes figures/thesis/ only.
+2026-11-24, first and second round). The committed figures under figures/ stay as they are; this script writes
+figures/thesis/ only.
 
 How the data stay identical: the figure functions of scripts/07_tables_figures.py (F1 to F7) and
 scripts/07_twostage_tables_figures.py (F8) are CALLED, with their save step intercepted, so every plotted artist is
 built by the original selection code on the same CSV rows. This script then edits layout and wording only (axis-label
-wording of the thesis, American spelling, legends moved off the data, more room where text overlapped) and saves each
-figure as a 300 dpi PNG and a vector PDF under the same file name. Before saving, it (a) asserts that the values
-carried by the plotted artists equal the rows selected from the CSVs (same count, same numbers) and (b) checks the
-rendered layout programmatically: no two texts overlap (rotated texts tested as rotated rectangles), no legend covers a
-data artist, every text lies inside the saved canvas. reports/thesis_figures_report.json records the input hashes, the
-row counts, the check results and the output hashes. No existing file is modified.
+wording of the thesis, American spelling, capitalised labels, legends moved off the data, F2 as a 2 x 3 grid, F7 with
+the model points above the ensemble point) and saves each figure as a 300 dpi PNG and a vector PDF under the same
+file name, EXACTLY as wide as the text width of the thesis (WIDTH_PT, read from the thesis repository's thesis.log,
+read-only) so that it can be included at natural size, with every text element at least MIN_FONT points. Before
+saving, it (a) asserts that the values carried by the plotted artists equal the rows selected from the CSVs (same
+count, same numbers) and (b) checks the rendered layout programmatically: no two texts overlap (rotated texts tested
+as rotated rectangles), no legend covers a data artist or another text, every text lies inside the saved canvas.
+reports/thesis_figures_report.json records the input hashes, the row counts, the check results, the final size in
+inches, the smallest font size and the output hashes. No existing file is modified.
 
-Usage: python scripts/09_thesis_figures.py
+Usage: python scripts/09_thesis_figures.py [--draft DIR] [--width-in 6.10]
 """
+import argparse
 import importlib
 import math
 import re
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -42,6 +48,13 @@ from matplotlib.transforms import Bbox  # noqa: E402
 SCORES, ADDITIONAL = tf.SCORES, tf.SCORES / "additional"
 OUT = ROOT / "figures" / "thesis"
 REPORT = ROOT / "reports" / "thesis_figures_report.json"
+# \textwidth of the thesis: thesis.log of the thesis repository (2026_bakhit_mashan-thesis, read 2026-11-24, read-only)
+WIDTH_PT = 441.01773
+WIDTH_SOURCE = "thesis.log of the thesis repository: \\textwidth=441.01773pt (TeX points, 72.27 per inch)"
+WIDTH_IN = WIDTH_PT / 72.27
+PAD_IN = 0.02                 # white margin added by savefig on every side; included in the width
+MIN_FONT = 7.0                # points, at natural size
+DPI = 300
 SPELLING = [("e-mails", "emails"), ("E-mails", "Emails"), ("e-mail", "email"), ("E-mail", "Email"),
             ("generalisation", "generalization"), ("Generalisation", "Generalization")]
 TOL = 1e-12
@@ -68,6 +81,10 @@ def american(s: str) -> str:
     for a, b in SPELLING:
         s = s.replace(a, b)
     return s
+
+
+def capitalised(s: str) -> str:
+    return s[0].upper() + s[1:] if s and s[0].islower() else s
 
 
 # ---------------------------------------------------------------- artists -> plotted values
@@ -131,16 +148,26 @@ def _polys_intersect(a: np.ndarray, b: np.ndarray, shrink: float = 0.75) -> bool
 
 
 def _undrawn_tick_labels(fig) -> set:
-    """ids of tick labels whose tick lies outside the axis view interval (they exist but are never drawn)."""
+    """ids of tick labels that are never drawn: ticks outside the axis view interval, and the stale tick objects that
+    matplotlib keeps in its tick pool beyond the ones the locator currently uses."""
     out = set()
     for ax in fig.axes:
         for axis in (ax.xaxis, ax.yaxis):
+            if not ax.axison:                                   # axis switched off: nothing of it is drawn
+                for tick in list(axis.majorTicks) + list(axis.minorTicks):
+                    out.add(id(tick.label1)); out.add(id(tick.label2))
+                out.add(id(axis.label))
+                continue
             lo, hi = sorted(axis.get_view_interval())
+            active = set()
             for ticks in (axis.get_major_ticks(), axis.get_minor_ticks()):
                 for tick in ticks:
                     loc = tick.get_loc()
-                    if not (lo - 1e-9 <= loc <= hi + 1e-9):
-                        out.add(id(tick.label1)); out.add(id(tick.label2))
+                    if lo - 1e-9 <= loc <= hi + 1e-9:
+                        active.add(id(tick))
+            for tick in list(axis.majorTicks) + list(axis.minorTicks):
+                if id(tick) not in active:
+                    out.add(id(tick.label1)); out.add(id(tick.label2))
     return out
 
 
@@ -239,7 +266,6 @@ def layout_check(fig) -> dict:
         for ax in axes:
             if _legend_covers_data(lb, ax, r):
                 legend_hits.append({"legend": [t.get_text() for t in leg.get_texts()][:2], "axes": ax.get_title() or ax.get_ylabel()[:30]})
-    # texts crossing a legend box (a legend over a label), excluding the legend's own texts
     text_legend_hits = []
     for leg_k, leg in enumerate(legs):
         lb = leg.get_window_extent(r)
@@ -252,10 +278,13 @@ def layout_check(fig) -> dict:
     tight = fig.get_tightbbox(r).transformed(fig.dpi_scale_trans)     # inches -> display px
     outside = [t.get_text()[:40] for t, poly in zip(texts, polys)
                if poly[:, 0].min() < tight.x0 - 0.5 or poly[:, 0].max() > tight.x1 + 0.5 or poly[:, 1].min() < tight.y0 - 0.5 or poly[:, 1].max() > tight.y1 + 0.5]
+    sizes = [float(t.get_fontsize()) for t in texts]
     return {"n_texts": len(texts), "n_legends": len(legs), "text_overlaps": overlaps, "legend_over_data": legend_hits,
-            "legend_over_text": text_legend_hits, "text_outside_canvas": outside,
-            "ok": not (overlaps or legend_hits or text_legend_hits or outside)}
+            "legend_over_text": text_legend_hits, "text_outside_canvas": outside, "min_font_pt": min(sizes) if sizes else None,
+            "ok": not (overlaps or legend_hits or text_legend_hits or outside) and (not sizes or min(sizes) >= MIN_FONT)}
 
+
+# ---------------------------------------------------------------- wording, fonts, size
 
 def respell(fig) -> int:
     """American spelling in every non-tick text; tick labels are asserted free of the words (they come from fixed maps)."""
@@ -277,12 +306,48 @@ def respell(fig) -> int:
     return n
 
 
-def lowest_edge(fig, exclude=()) -> float:
+def capitalise(fig) -> int:
+    """Axis labels, figure-level labels and legend titles start with a capital letter."""
+    n = 0
+    targets = []
+    for ax in fig.axes:
+        targets += [(ax.get_xlabel, ax.set_xlabel), (ax.get_ylabel, ax.set_ylabel)]
+    for attr in ("_supxlabel", "_supylabel", "_suptitle"):
+        t = getattr(fig, attr, None)
+        if t is not None:
+            targets.append((t.get_text, t.set_text))
+    for leg in _legends(fig):
+        t = leg.get_title()
+        targets.append((t.get_text, t.set_text))
+    for get, set_ in targets:
+        s = get()
+        if s and capitalised(s) != s:
+            set_(capitalised(s))
+            n += 1
+    return n
+
+
+def enforce_min_font(fig) -> int:
+    n = 0
+    for t in _texts(fig):
+        if t.get_fontsize() < MIN_FONT:
+            t.set_fontsize(MIN_FONT)
+            n += 1
+    for ax in fig.axes:
+        for axis in (ax.xaxis, ax.yaxis):
+            for tick in axis.get_major_ticks() + axis.get_minor_ticks():
+                for lab in (tick.label1, tick.label2):
+                    if lab.get_fontsize() < MIN_FONT:
+                        lab.set_fontsize(MIN_FONT)
+    return n
+
+
+def lowest_edge(fig) -> float:
     """Lowest y (figure fraction) reached by any axes or text of the figure, for placing a legend below everything."""
     fig.canvas.draw()
     r = fig.canvas.get_renderer()
     ys = [ax.get_window_extent(r).y0 for ax in fig.axes]
-    ys += [t.get_window_extent(r).y0 for t in _texts(fig) if t not in exclude]
+    ys += [t.get_window_extent(r).y0 for t in _texts(fig, r)]
     return min(ys) / fig.bbox.height
 
 
@@ -291,19 +356,75 @@ def legend_below(fig, handles, labels, ncol: int, gap: float = 0.03, **kw):
     return fig.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, y), ncol=ncol, frameon=False, **kw)
 
 
-def save(fig, name: str) -> dict:
+def fit_width(fig, width_in: float, dpi: float, pad: float = PAD_IN, iters: int = 20) -> tuple:
+    """Shrink or grow the figure until its tight bounding box plus the margins is exactly `width_in` wide at the
+    rendering resolution `dpi` (text extents round differently per dpi, so the fit is done at the dpi of the file to
+    be saved); the height set by the figure function is kept. Returns (width, height) in inches."""
+    fig.set_dpi(dpi)
+    last = None
+    for _ in range(iters):
+        fig.canvas.draw()
+        tb = fig.get_tightbbox(fig.canvas.get_renderer())
+        over = tb.width + 2 * pad - width_in
+        if abs(over) < 0.002:
+            break
+        w, h = fig.get_size_inches()
+        if w - over < 1.0 or (last is not None and abs(over) >= abs(last) - 1e-6):
+            raise SystemExit(f"fit_width: cannot reach {width_in:.3f} in (figure {w:.2f} in, overshoot {over:+.3f} in): "
+                             "an element wider than the panels (a legend?) does not shrink with the figure")
+        last = over
+        fig.set_size_inches(w - over, h)
+    fig.canvas.draw()
+    tb = fig.get_tightbbox(fig.canvas.get_renderer())
+    return tb.width + 2 * pad, tb.height + 2 * pad
+
+
+def _save_exact(fig, path: Path, width_in: float, measure, tol: float, iters: int = 8, **kw) -> float:
+    """Save, measure the width of the file written, correct the figure width by the difference, repeat until the
+    file is `width_in` wide within `tol` inches (each backend rounds text extents in its own way)."""
+    w_file = None
+    for _ in range(iters):
+        fig.savefig(path, bbox_inches="tight", pad_inches=PAD_IN, facecolor="white", **kw)
+        w_file = measure(path)
+        err = width_in - w_file
+        if abs(err) <= tol:
+            break
+        w, h = fig.get_size_inches()
+        fig.set_size_inches(w + err, h)
+    return w_file
+
+
+def save_png(fig, name: str, width_in: float) -> tuple:
     OUT.mkdir(parents=True, exist_ok=True)
     png = OUT / name
-    pdf = png.with_suffix(".pdf")
-    fig.savefig(png, dpi=300, bbox_inches="tight", facecolor="white", metadata={"Software": None})
-    fig.savefig(pdf, bbox_inches="tight", facecolor="white", metadata={"Creator": None, "Producer": None, "CreationDate": None})
-    plt.close(fig)
-    return {str(png.relative_to(ROOT)): sha256_file(png), str(pdf.relative_to(ROOT)): sha256_file(pdf)}
+    w = _save_exact(fig, png, width_in, lambda p: png_size(p)[0] / DPI, 0.5 / DPI, dpi=DPI, metadata={"Software": None})
+    return {str(png.relative_to(ROOT)): sha256_file(png)}, w
+
+
+def save_pdf(fig, name: str, width_in: float) -> tuple:
+    pdf = (OUT / name).with_suffix(".pdf")
+    w = _save_exact(fig, pdf, width_in, lambda p: pdf_size_in(p)[0], 0.003, dpi=72,
+                    metadata={"Creator": None, "Producer": None, "CreationDate": None})
+    return {str(pdf.relative_to(ROOT)): sha256_file(pdf)}, w
+
+
+def png_size(path: Path) -> tuple:
+    """(width, height) in pixels from the PNG header; no image library needed."""
+    with open(path, "rb") as f:
+        head = f.read(24)
+    return int.from_bytes(head[16:20], "big"), int.from_bytes(head[20:24], "big")
+
+
+def pdf_size_in(path: Path) -> tuple:
+    """(width, height) in inches from the first /MediaBox of the PDF (PostScript points, 72 per inch)."""
+    m = re.search(rb"/MediaBox\s*\[\s*([\d.\-]+)\s+([\d.\-]+)\s+([\d.\-]+)\s+([\d.\-]+)\s*\]", path.read_bytes())
+    x0, y0, x1, y1 = (float(v) for v in m.groups())
+    return (x1 - x0) / 72.0, (y1 - y0) / 72.0
 
 
 # ---------------------------------------------------------------- the eight figures
 
-def f1(M):
+def f1(M, W):
     name = tf.fig_f1(M)
     fig = _captured["fig"]
     ax = fig.axes[0]
@@ -311,35 +432,54 @@ def f1(M):
     exp = [P[(P["detector"] == m) & (P["condition"] == c)]["value"].item() for m in MODELS for c in ["original"] + PHISH_CONDITIONS]
     chk = same_values(bar_heights(ax), exp)
     ax.set_xlabel("Input condition (core phishing emails)")
+    fig.set_size_inches(W, 3.3)
     return name, fig, chk
 
 
-def f2(D):
+def f2(D, W):
     name = tf.fig_f2(D)
     fig = _captured["fig"]
     DP = D[(D["analysis"] == "primary") & (D["kind"] == "llm")]
+    panels = fig.axes[:5]
     exp, plotted = [], []
-    for ax, cond in zip(fig.axes[:5], PHISH_CONDITIONS + [CONTROL]):
+    for ax, cond in zip(panels, PHISH_CONDITIONS + [CONTROL]):
         mat = DP[DP["condition"] == cond].pivot(index="detector", columns="strategy", values="delta").loc[MODELS, STRATEGIES]
         exp += mat.values.ravel().tolist()
         plotted += np.asarray(ax.images[0].get_array()).ravel().tolist()
         for t in ax.texts:
             if re.fullmatch(r"[+-]0\.00", t.get_text()):
                 t.set_text("0.00")
-    return name, fig, same_values(plotted, exp)
+    chk = same_values(plotted, exp)
+    # 2 x 3 grid: para. low, para. high, control / obf. low, obf. high, colour bar; one shared scale (the same mappable)
+    im = panels[0].images[0]
+    fig.axes[5].remove()
+    fig.set_size_inches(W, 5.2)
+    gs = fig.add_gridspec(2, 3, left=0.14, right=0.98, top=0.96, bottom=0.1, wspace=0.18, hspace=0.62)
+    cells = {0: (0, 0), 1: (0, 1), 4: (0, 2), 2: (1, 0), 3: (1, 1)}
+    for i, (r, c) in cells.items():
+        panels[i].set_subplotspec(gs[r, c])
+    panels[2].yaxis.set_tick_params(labelleft=True)          # model labels at the left of the second row too
+    host = fig.add_subplot(gs[1, 2])
+    host.set_axis_off()
+    cax = host.inset_axes([0.08, 0.55, 0.84, 0.1])              # horizontal bar in the sixth cell, label below it
+    cb = fig.colorbar(im, cax=cax, orientation="horizontal")
+    cb.set_label("$\\Delta$ = rate(original) $-$ rate(variant)", fontsize=8)
+    cax.tick_params(labelsize=8)
+    return name, fig, chk
 
 
-def f3(M):
+def f3(M, W):
     name = tf.fig_f3(M)
     fig = _captured["fig"]
     P = M[(M["analysis"] == "primary") & (M["strategy"] == "zero_shot") & (M["metric"] == "sens")]
     conds = ["original"] + PHISH_CONDITIONS
     exp = [P[(P["detector"] == m) & (P["condition"] == c)]["value"].item() for m in ("qwen25-7b", "qwen25-14b", "gemma2-9b", "gemma2-27b") for c in conds]
     plotted = [v for ax in fig.axes for v in errorbar_y(ax)]
+    fig.set_size_inches(W, 3.0)
     return name, fig, same_values(plotted, exp)
 
 
-def f4(D):
+def f4(D, W):
     name = tf.fig_f4(D)
     fig = _captured["fig"]
     DP = D[(D["analysis"] == "primary") & (D["kind"] == "llm")]
@@ -347,14 +487,15 @@ def f4(D):
            for c in ("para_high", "obf_high") for s in STRATEGIES for m in MODELS]
     plotted = [v for ax in fig.axes for v in errorbar_y(ax)]
     chk = same_values(plotted, exp)
+    fig.set_size_inches(W, 3.4)
     leg = fig.axes[1].get_legend()
     handles, labels = fig.axes[1].get_legend_handles_labels()
     leg.remove()
-    legend_below(fig, handles, labels, ncol=4, fontsize=8, title="strategy", title_fontsize=8)
+    legend_below(fig, handles, labels, ncol=4, fontsize=8, title="Strategy", title_fontsize=8)
     return name, fig, chk
 
 
-def f5(F):
+def f5(F, W):
     name = tf.fig_f5(F)
     fig = _captured["fig"]
     exp, plotted = [], []
@@ -362,8 +503,8 @@ def f5(F):
         exp += F[f"delta_sens_{cond}"].astype(float).tolist()
         plotted += errorbar_y(ax) + [float(ln.get_ydata()[0]) for ln in point_lines(ax) if ln.get_marker() == "x"]
     chk = same_values(plotted, exp)
-    fig.set_size_inches(9.0, 3.8)
-    fig.subplots_adjust(wspace=0.32, bottom=0.17)
+    fig.set_size_inches(W, 3.6)
+    fig.subplots_adjust(wspace=0.3, bottom=0.17)
     fig.supxlabel("Median latency per email (s)", fontsize=9, y=0.0)
     leg = fig.legends[0]                                   # rebuilt below the x label with the same handles and labels
     handles, labels = leg.legend_handles, [t.get_text() for t in leg.get_texts()]
@@ -372,7 +513,7 @@ def f5(F):
     return name, fig, chk
 
 
-def f6(cues_c):
+def f6(cues_c, W):
     name = tf.fig_f6(cues_c)
     fig = _captured["fig"]
     chg = cues_c.groupby(["condition", "category", "outcome"], sort=False)[["n_pairs", "lost", "gained"]].sum().reset_index()
@@ -382,18 +523,22 @@ def f6(cues_c):
            for cat in CATEGORIES]
     plotted = [v for ax in fig.axes for v in bar_heights(ax)]
     chk = same_values(plotted, exp)
-    fig.set_size_inches(10.5, 4.0)
-    for ax in fig.axes:
+    # at the text width the two panels go one above the other, each with its legend above it
+    fig.set_size_inches(W, 6.6)
+    gs = fig.add_gridspec(2, 1, left=0.1, right=0.99, top=0.94, bottom=0.14, hspace=1.05)
+    for ax, cell in zip(fig.axes, (gs[0, 0], gs[1, 0])):
+        ax.set_subplotspec(cell)
+        ax.yaxis.set_tick_params(labelleft=True)
         handles, labels = ax.get_legend_handles_labels()
         ax.get_legend().remove()
         title = ax.get_title()
         ax.set_title("")
-        ax.legend(handles, labels, fontsize=7, ncol=2, loc="lower left", bbox_to_anchor=(0, 1.01), frameon=False,
-                  title=title, title_fontsize=9, alignment="left")
+        ax.legend(handles, labels, fontsize=8, ncol=2, loc="lower left", bbox_to_anchor=(0, 1.01), frameon=False,
+                  title=title, title_fontsize=9, alignment="left", columnspacing=1.0, handlelength=1.2)
     return name, fig, chk
 
 
-def f7(M):
+def f7(M, W):
     name = tf.fig_f7(M)
     fig = _captured["fig"]
     P = M[M["analysis"] == "primary"].set_index(["detector", "strategy", "metric", "condition"])
@@ -405,13 +550,14 @@ def f7(M):
             exp_x.append(P.at[(det, s, xm, xc), "value"]); exp_y.append(P.at[(det, s, ym, yc), "value"])
             plotted_x.append(float(ln.get_xdata()[0])); plotted_y.append(float(ln.get_ydata()[0]))
             ln.set_label(tf.NAME[det])
-        for t in list(ax.texts):                       # the per-point annotations are replaced by one shared legend
+            ln.set_zorder(3 if det in tf.COLOR else 2)        # the six model circles above the ensemble diamond
+        for t in list(ax.texts):                               # the per-point annotations are replaced by one shared legend
             t.remove()
     chk = {"x": same_values(plotted_x, exp_x), "y": same_values(plotted_y, exp_y)}
     chk["equal"] = chk["x"]["equal"] and chk["y"]["equal"]
     chk["n_plotted"], chk["n_expected"] = chk["y"]["n_plotted"], chk["y"]["n_expected"]
-    fig.set_size_inches(8.6, 4.3)
-    fig.subplots_adjust(wspace=0.38)
+    fig.set_size_inches(W, 3.5)
+    fig.subplots_adjust(wspace=0.4)
     ax0, ax1 = fig.axes
     ax0.set_xlabel("Sensitivity on the spear-phishing originals"); ax0.set_ylabel("Sensitivity on the generalization set")
     ax1.set_xlabel("Specificity on the core negatives"); ax1.set_ylabel("Specificity on the generalization set")
@@ -427,12 +573,12 @@ def f7(M):
                             fontsize=7, color="#333333", ha="right" if dx < 0 else "left", va="center",
                             arrowprops={"arrowstyle": "-", "color": tf.GREY, "lw": 0.6, "shrinkA": 0, "shrinkB": 4})
     handles = [ln for (det, s), ln in zip(tf.ref_cells(), point_lines(ax0)) if det not in BASELINES]
-    handles.append(Line2D([], [], marker="s", color=tf.GREY, ls="", ms=6, label="supervised baselines (labeled)"))
+    handles.append(Line2D([], [], marker="s", color=tf.GREY, ls="", ms=6, label="Supervised baselines (labeled)"))
     legend_below(fig, handles, [h.get_label() for h in handles], ncol=4, fontsize=8, handletextpad=0.4, columnspacing=1.2)
     return name, fig, chk
 
 
-def f8():
+def f8(W):
     tcfg = load_config("twostage.yaml")
     models = list(tcfg["models"])
     fits = [v["strategy_key"] for v in sorted(tcfg["fits"].values(), key=lambda v: not v.get("primary"))]
@@ -442,44 +588,70 @@ def f8():
     DP = D8[D8["analysis"] == "primary"].set_index(["model", "strategy", "condition"])
     exp = [DP.at[(m, s, c), "delta"] for m in models for s in [tsf.DIRECT] + fits for c in tsf.CONDITIONS]
     plotted = [v for ax in fig.axes for v in errorbar_y(ax)]
+    fig.set_size_inches(W, 3.3)
+    fig.subplots_adjust(wspace=0.12)
+    fig.legends[0].remove()
+    handles, labels = fig.axes[0].get_legend_handles_labels()      # the error-bar containers, as in the committed figure
+    legend_below(fig, handles, labels, ncol=3, fontsize=8)
     inputs = [SCORES / "deltas_long.csv"] + [ADDITIONAL / f"{tsf.TWOSTAGE_PREFIX}{m}" / "deltas_long.csv" for m in models]
     return name, fig, same_values(plotted, exp), inputs
 
 
 def main() -> int:
-    import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--draft", default=None, help="also write every figure (checks passed or not) as PNG into this directory, for inspection")
+    ap.add_argument("--width-in", type=float, default=WIDTH_IN, help=f"design width in inches (default {WIDTH_IN:.4f}: {WIDTH_SOURCE})")
     a = ap.parse_args()
+    W = a.width_in
     M = pd.read_csv(SCORES / "metrics_long.csv"); D = pd.read_csv(SCORES / "deltas_long.csv")
     F = pd.read_csv(SCORES / "frontier.csv"); cues_c = pd.read_csv(SCORES / "cues_change.csv")
     inputs = {str(p.relative_to(ROOT)): sha256_file(p) for p in (SCORES / "metrics_long.csv", SCORES / "deltas_long.csv",
                                                                    SCORES / "frontier.csv", SCORES / "cues_change.csv")}
     figures, all_ok = {}, True
-    jobs = [("F1", lambda: f1(M)), ("F2", lambda: f2(D)), ("F3", lambda: f3(M)), ("F4", lambda: f4(D)), ("F5", lambda: f5(F)),
-            ("F6", lambda: f6(cues_c)), ("F7", lambda: f7(M)), ("F8", f8)]
+    jobs = [("F1", lambda: f1(M, W)), ("F2", lambda: f2(D, W)), ("F3", lambda: f3(M, W)), ("F4", lambda: f4(D, W)),
+            ("F5", lambda: f5(F, W)), ("F6", lambda: f6(cues_c, W)), ("F7", lambda: f7(M, W)), ("F8", lambda: f8(W))]
     for label, job in jobs:
         res = job()
         name, fig, chk = res[0], res[1], res[2]
         if label == "F8":
             inputs.update({str(p.relative_to(ROOT)): sha256_file(p) for p in res[3]})
         n_respelled = respell(fig)
+        n_cap = capitalise(fig)
+        n_font = enforce_min_font(fig)
+        width, height = (float(v) for v in fit_width(fig, W, DPI))      # fitted at the PNG resolution
         lay = layout_check(fig)
-        ok = bool(chk["equal"]) and lay["ok"]
-        all_ok &= ok
-        entry = {"source": name, "values_equal_selected_rows": chk, "respelled_texts": n_respelled, "layout": lay}
+        size_ok = bool(abs(width - W) < 0.005)
+        ok = bool(chk["equal"]) and lay["ok"] and size_ok
+        entry = {"source": name, "values_equal_selected_rows": chk, "respelled_texts": n_respelled, "capitalised_labels": n_cap,
+                 "texts_raised_to_min_font": n_font, "width_in": round(width, 4), "height_in": round(height, 4),
+                 "width_equals_design_width": size_ok, "min_font_pt": lay["min_font_pt"], "layout": lay}
         if a.draft:
-            from pathlib import Path
             Path(a.draft).mkdir(parents=True, exist_ok=True)
-            fig.savefig(Path(a.draft) / name, dpi=150, bbox_inches="tight", facecolor="white")
+            fig.savefig(Path(a.draft) / name, dpi=150, bbox_inches="tight", pad_inches=PAD_IN, facecolor="white")
         if ok:
-            entry["outputs"] = save(fig, name)
-        else:
-            plt.close(fig)
+            outputs, _ = save_png(fig, name, W)                           # iterated on the pixel width of the file
+            px = png_size(OUT / name)
+            entry["png_pixels"] = list(px)
+            entry["png_width_in"], entry["png_height_in"] = round(px[0] / DPI, 4), round(px[1] / DPI, 4)
+            entry["png_width_matches"] = bool(abs(px[0] - round(W * DPI)) <= 1)
+            fit_width(fig, W, 72)                                         # start the PDF from a fit at its resolution
+            more, _ = save_pdf(fig, name, W)                              # iterated on the MediaBox of the file
+            outputs.update(more)
+            pdf_w, pdf_h = pdf_size_in((OUT / name).with_suffix(".pdf"))
+            entry["pdf_width_in"], entry["pdf_height_in"] = round(pdf_w, 4), round(pdf_h, 4)
+            entry["pdf_width_matches"] = bool(abs(pdf_w - W) < 0.005)
+            entry["outputs"] = outputs
+            ok = ok and entry["png_width_matches"] and entry["pdf_width_matches"]
+        plt.close(fig)
+        all_ok &= ok
         figures[label] = entry
-        print(f"{label} {name}: values {'OK' if chk['equal'] else 'MISMATCH'} ({chk['n_plotted']} plotted / {chk['n_expected']} expected); "
-              f"layout {'OK' if lay['ok'] else 'PROBLEM'} {'' if lay['ok'] else {k: v for k, v in lay.items() if v and k != 'ok'}}")
-    report = {"purpose": "presentation-only thesis versions of F1 to F8 (QUESTIONS.md item 20); the committed figures are unchanged",
+        print(f"{label} {name}: values {'OK' if chk['equal'] else 'MISMATCH'} ({chk['n_plotted']}/{chk['n_expected']}); "
+              f"size {width:.3f} x {height:.3f} in{'' if size_ok else ' WIDTH OFF'}; png {entry.get('png_pixels')} px; "
+              f"pdf {entry.get('pdf_width_in')} x {entry.get('pdf_height_in')} in; min font {lay['min_font_pt']} pt; "
+              f"layout {'OK' if lay['ok'] else 'PROBLEM'} {'' if lay['ok'] else {k: v for k, v in lay.items() if v and k not in ('ok', 'min_font_pt', 'n_texts', 'n_legends')}}")
+    report = {"purpose": "presentation-only thesis versions of F1 to F8 (QUESTIONS.md item 20, second round); the committed figures are unchanged",
+              "design_width_in": round(W, 4), "design_width_source": WIDTH_SOURCE if abs(W - WIDTH_IN) < 1e-9 else "command line",
+              "pad_in": PAD_IN, "min_font_pt_required": MIN_FONT, "dpi": DPI,
               "inputs": inputs, "figures": figures, "all_ok": all_ok, "matplotlib": matplotlib.__version__,
               "git_commit": git("rev-parse", "--short", "HEAD")}
     write_json(REPORT, report)

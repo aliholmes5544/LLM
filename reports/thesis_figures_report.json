@@ -1,5 +1,10 @@
 {
-  "purpose": "presentation-only thesis versions of F1 to F8 (QUESTIONS.md item 20); the committed figures are unchanged",
+  "purpose": "presentation-only thesis versions of F1 to F8 (QUESTIONS.md item 20, second round); the committed figures are unchanged",
+  "design_width_in": 6.1024,
+  "design_width_source": "thesis.log of the thesis repository: \\textwidth=441.01773pt (TeX points, 72.27 per inch)",
+  "pad_in": 0.02,
+  "min_font_pt_required": 7.0,
+  "dpi": 300,
   "inputs": {
     "results/scores/metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
     "results/scores/deltas_long.csv": "8053a31a421f0c900809c5761da9f871d95aa9015a68b534b5dfc8228dcfa9b3",
@@ -19,6 +24,12 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 0,
+      "width_in": 6.1019,
+      "height_in": 3.4094,
+      "width_equals_design_width": true,
+      "min_font_pt": 8.0,
       "layout": {
         "n_texts": 19,
         "n_legends": 1,
@@ -26,11 +37,22 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 8.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        1022
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 3.4067,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1011,
+      "pdf_height_in": 3.4062,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f1_sens_by_condition_eng.png": "1ada4cd2aabf1e0d830d337650ea1483e08c6406f5a92af8c7696cf4b5d5a3f1",
-        "figures/thesis/ch04_f1_sens_by_condition_eng.pdf": "b5b6c46e4c85f02fd4d362bacc9ca5ac4fff004d6905f19f378a973a671345a3"
+        "figures/thesis/ch04_f1_sens_by_condition_eng.png": "0dc52c00092fdca1f7c0c2f220118efe14e34c8731cf3179d462d2a565d2680d",
+        "figures/thesis/ch04_f1_sens_by_condition_eng.pdf": "80fc8f3f5af21e73c5a590b070ad209a1428a857c403490fceeee3be83f2b1ec"
       }
     },
     "F2": {
@@ -42,6 +64,12 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 120,
+      "width_in": 6.1039,
+      "height_in": 5.2981,
+      "width_equals_design_width": true,
+      "min_font_pt": 7.0,
       "layout": {
         "n_texts": 161,
         "n_legends": 0,
@@ -49,11 +77,22 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 7.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        1589
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 5.2967,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1007,
+      "pdf_height_in": 5.2895,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f2_delta_heatmap_eng.png": "66cd1b5a5ced505f3a2113c6caf6cfc62376bfe55658986881ebe039cf6dcb11",
-        "figures/thesis/ch04_f2_delta_heatmap_eng.pdf": "779a414e4ea67a31237f4faeeaf749f734efa65befa494c41d1680af81353c06"
+        "figures/thesis/ch04_f2_delta_heatmap_eng.png": "67b48805a0256ca2da5f318c2f803a1b537570779a5d2fe3c0352cca2128c2f8",
+        "figures/thesis/ch04_f2_delta_heatmap_eng.pdf": "89afdb33ddf989763ab9fcfde0864d482dc73307a9849c0aef15ccd0ddf5a711"
       }
     },
     "F3": {
@@ -65,6 +104,12 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 0,
+      "width_in": 6.1019,
+      "height_in": 2.8786,
+      "width_equals_design_width": true,
+      "min_font_pt": 8.0,
       "layout": {
         "n_texts": 21,
         "n_legends": 2,
@@ -72,11 +117,22 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 8.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        863
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 2.8767,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1011,
+      "pdf_height_in": 2.8736,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f3_size_effect_eng.png": "47a019a9dc66fd57990420edcdb1d9a01e4dc681ec2bbe57921f31780801e360",
-        "figures/thesis/ch04_f3_size_effect_eng.pdf": "010ab6f99bbdad1ca4ac327b309678b87ca2b8ebfcccb26ff1a54a62d0093feb"
+        "figures/thesis/ch04_f3_size_effect_eng.png": "f56ed887760d124035b761530193b949491f236d0f97b7ccbdf87cb25084f097",
+        "figures/thesis/ch04_f3_size_effect_eng.pdf": "7a57aac06d8bf7ee1f40848061d007f6843a438a99090e16cee75c3b97649ea0"
       }
     },
     "F4": {
@@ -88,6 +144,12 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 0,
+      "width_in": 6.1019,
+      "height_in": 4.0427,
+      "width_equals_design_width": true,
+      "min_font_pt": 8.0,
       "layout": {
         "n_texts": 25,
         "n_legends": 1,
@@ -95,11 +157,22 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 8.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        1212
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 4.04,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1016,
+      "pdf_height_in": 4.0411,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f4_strategy_effect_eng.png": "0fcc5d11f612e7c29704121087f9ec0572461e71516872af07cfa719973305b3",
-        "figures/thesis/ch04_f4_strategy_effect_eng.pdf": "8ec8fdb8e074b1301782b0c55d1c338c9912be35bb505fd670ed9bef56aa5701"
+        "figures/thesis/ch04_f4_strategy_effect_eng.png": "86999b381604f5ea1b7cede4988f3ae15be9c85846b7cacfe1fbefbccb5e8755",
+        "figures/thesis/ch04_f4_strategy_effect_eng.pdf": "79db1f5cdc7ecbf011515012b72282ceff3fe0f7826909ee2c56f81ad80af3e3"
       }
     },
     "F5": {
@@ -111,6 +184,12 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 6,
+      "width_in": 6.1006,
+      "height_in": 3.8654,
+      "width_equals_design_width": true,
+      "min_font_pt": 7.0,
       "layout": {
         "n_texts": 35,
         "n_legends": 1,
@@ -118,11 +197,22 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 7.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        1159
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 3.8633,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1016,
+      "pdf_height_in": 3.8638,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f5_frontier_eng.png": "7172fb6ad0ffca692894e822c562affd8a4ec58dab090ca685abbea5aeb7f25d",
-        "figures/thesis/ch04_f5_frontier_eng.pdf": "31f336daacb37ce1a0b0e03c86f364b47b9dbcbb7fad945c3032e55c6790bd6f"
+        "figures/thesis/ch04_f5_frontier_eng.png": "d4392eb2fe96b6ff6a8f690bcd78e06dfb4741c869e6574761866749e64acc1b",
+        "figures/thesis/ch04_f5_frontier_eng.pdf": "c5d19c1b77f29ee4d5406eda2914a85e38bf967ceb06c6f4a700504f1f05714d"
       }
     },
     "F6": {
@@ -134,18 +224,35 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 3,
+      "texts_raised_to_min_font": 0,
+      "width_in": 6.1026,
+      "height_in": 7.0682,
+      "width_equals_design_width": true,
+      "min_font_pt": 8.0,
       "layout": {
-        "n_texts": 33,
+        "n_texts": 37,
         "n_legends": 2,
         "text_overlaps": [],
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 8.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        2120
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 7.0667,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1019,
+      "pdf_height_in": 7.053,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f6_cue_change_eng.png": "a13dbea505835ac041705deb21b3d2ad122306bb26598336350f22c5dcc0ae43",
-        "figures/thesis/ch04_f6_cue_change_eng.pdf": "3b4826a2bc709895fce5ae918ce5ba8b5b8e3f8227f1d8ba0a0e1dcebc543bb6"
+        "figures/thesis/ch04_f6_cue_change_eng.png": "32b221a024d5ca883febd395c2f5b3af0b2c870478eb0e3f35b7f9ecf09e0a2f",
+        "figures/thesis/ch04_f6_cue_change_eng.pdf": "72052bd633d53648a26eb85a55f37c1033f31ea59ce3f6b6e90264f999bc61f0"
       }
     },
     "F7": {
@@ -168,6 +275,12 @@
         "n_expected": 20
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 0,
+      "width_in": 6.1009,
+      "height_in": 3.68,
+      "width_equals_design_width": true,
+      "min_font_pt": 7.0,
       "layout": {
         "n_texts": 42,
         "n_legends": 1,
@@ -175,11 +288,22 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 7.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        1104
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 3.68,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1008,
+      "pdf_height_in": 3.68,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f7_generalisation_eng.png": "8b89068a55f9288be8b52600aadbd52ddc62165b8be30d4f1df8ab9513e83136",
-        "figures/thesis/ch04_f7_generalisation_eng.pdf": "5c936ea8fbbb5c5325047ef16db6bee30ef820f79fa736e9a034772e786b0990"
+        "figures/thesis/ch04_f7_generalisation_eng.png": "7fad5445fbb96a87cbf755c5243453d730e1c4045480c207874f898a4f8442ff",
+        "figures/thesis/ch04_f7_generalisation_eng.pdf": "546e2731662efa8b18296f196301e762d3195914c8ff518d7e7b52faf4d158f6"
       }
     },
     "F8": {
@@ -191,6 +315,12 @@
         "max_abs_diff": 0.0
       },
       "respelled_texts": 0,
+      "capitalised_labels": 0,
+      "texts_raised_to_min_font": 0,
+      "width_in": 6.1004,
+      "height_in": 3.8472,
+      "width_equals_design_width": true,
+      "min_font_pt": 8.0,
       "layout": {
         "n_texts": 26,
         "n_legends": 1,
@@ -198,15 +328,26 @@
         "legend_over_data": [],
         "legend_over_text": [],
         "text_outside_canvas": [],
+        "min_font_pt": 8.0,
         "ok": true
       },
+      "png_pixels": [
+        1831,
+        1154
+      ],
+      "png_width_in": 6.1033,
+      "png_height_in": 3.8467,
+      "png_width_matches": true,
+      "pdf_width_in": 6.1016,
+      "pdf_height_in": 3.8455,
+      "pdf_width_matches": true,
       "outputs": {
-        "figures/thesis/ch04_f8_twostage_eng.png": "58b93556839eda3ada47a9f4a1aa465528b22cf250eb38f908421ce2bd0232fd",
-        "figures/thesis/ch04_f8_twostage_eng.pdf": "5f8b76910fdf1151ad0df7da913ae82638cc21ce6477e18a4ac8f092050f1991"
+        "figures/thesis/ch04_f8_twostage_eng.png": "a23dd198c4a78697d352c8eaf329d6c570093e511786de74d72afdc1d9dfeaa6",
+        "figures/thesis/ch04_f8_twostage_eng.pdf": "ff4521950b3796717881d05e4ac1931a24577ddec3b1bdbfaea8cea38c865c13"
       }
     }
   },
   "all_ok": true,
   "matplotlib": "3.11.2",
-  "git_commit": "30b27aa"
+  "git_commit": "eb7496f"
 }

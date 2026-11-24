@@ -832,3 +832,12 @@
     score file is read differently; the plotted values are asserted equal to the selected rows and the input hashes
     and row counts are written to reports/thesis_figures_report.json. New files only; both frozen hash lists are
     verified before and after. Not a result: nothing here enters a table, a test or a claim.
+    **Second and final round, 2026-11-24 (same rules):** every figure re-rendered at the text width of the thesis
+    (read from the thesis repository's page geometry, read-only; 6.0 in if unreadable) so that it is included at
+    natural size, with every text element at least 7 pt at that size; heights, panel spacing and legend placement
+    adjusted; F2 laid out as a 2 x 3 grid (para. low, para. high, control / obf. low, obf. high, colour bar) with one
+    shared colour scale and the model labels at the left of each row; F7 with the six model circles drawn above the
+    ensemble diamond (z-order only) and the legend entry "Supervised baselines (labeled)"; axis labels and legend
+    titles capitalised. The same selected rows, the same assertion that the plotted values equal them, and the same
+    layout check; reports/thesis_figures_report.json rewritten with, per figure, the final width and height in inches
+    and the smallest font size used. Committed figures in figures/ and both frozen lists untouched.
