@@ -21,7 +21,7 @@ order.
 |---|---|---|---|---|---|
 | T1 | capability on the 1,670 core originals: accuracy, balanced accuracy, F1, sensitivity, specificity (core, modern), invalid rate; LLMs zero-shot, ensemble, baselines | metrics_long.csv | 07_score.py | results/tables/tab_t1_capability.tex | 09d9e6b3d1d983bf |
 | T2 | sensitivity by condition, zero-shot, 95% cluster-bootstrap CIs | metrics_long.csv | 07_score.py | results/tables/tab_t2_sens_by_condition.tex | f71e2a9d7bf26905 |
-| T3 | paired deltas, zero-shot (family F-RQ4): delta, CI, discordant pairs, exact McNemar p, Holm p | deltas_long.csv | 07_score.py | results/tables/tab_t3_deltas_zero_shot.tex | df378092a51255bf |
+| T3 | paired deltas, zero-shot (family F-RQ4): delta, CI, discordant pairs, exact McNemar p, Holm p | deltas_long.csv | 07_score.py | results/tables/tab_t3_deltas_zero_shot.tex | df378092a51255fb |
 | T4 | paired deltas by strategy (families S-few_shot, S-cot, S-role) | deltas_long.csv | 07_score.py | results/tables/tab_t4_deltas_by_strategy.tex | b2feda818620f471 |
 | T5 | size contrasts (F-RQ2): Qwen 7B vs 14B, Gemma 9B vs 27B | contrasts.csv | 07_score.py | results/tables/tab_t5_size_contrasts.tex | 5457e6ab62d9937b |
 | T6 | strategy contrasts (F-RQ3): each strategy vs zero-shot, para_high and obf_high | contrasts.csv | 07_score.py | results/tables/tab_t6_strategy_contrasts.tex | 7dc9730fb486a128 |
@@ -31,14 +31,16 @@ order.
 | T10 | CoT cue frequencies by category and item group, pooled over models | cues_frequency.csv | 07_secondary.py | results/tables/tab_t10_cues.tex | f0b54c0e1b74a03a |
 | T11 | hard core: items missed by all six vs by none, per item group | hardcore_summary.csv | 07_secondary.py | results/tables/tab_t11_hardcore.tex | e7ecb4dfe9426635 |
 | A1 | sensitivity by condition without invalid outputs (analysis no_invalid) | metrics_long.csv | 07_score.py | results/tables/tab_a1_sensitivity_no_invalid.tex | 0fda73f354788bd6 |
+| T12 | two-stage indicator condition (exploratory, post hoc; QUESTIONS.md item 18): capability, robustness with differences of deltas, generalisation and specificity; three tabulars | additional/twostage_*/metrics_long.csv and deltas_long.csv, additional/twostage_compare/contrasts.csv, metrics_long.csv, deltas_long.csv | 07_twostage_tables_figures.py (CSVs from 07_score_model.py --kind twostage and 07_twostage_compare.py) | results/tables/tab_t12_twostage.tex | c575fbd3714964c0 |
 | T13 | precision and false-positive rate on the core originals (post hoc descriptive addition, QUESTIONS.md item 19, 2026-11-24; recall and F1 read from metrics_long.csv; intervals only, no test) | additional/precision_fpr/precision_fpr.csv, metrics_long.csv | 07_precision_fpr.py | results/tables/tab_t13_precision_fpr.tex | 7ddacbc8dfdbdabe |
 | F1 | sensitivity by condition, zero-shot, grouped bars with CI whiskers | metrics_long.csv | 07_score.py | figures/ch04_f1_sens_by_condition_eng.png | 2874d4917e756582 |
 | F2 | heat map of paired deltas, model x strategy per condition | deltas_long.csv | 07_score.py | figures/ch04_f2_delta_heatmap_eng.png | d035f0f6ddd9ab56 |
 | F3 | size effect: the two model families by condition | metrics_long.csv | 07_score.py | figures/ch04_f3_size_effect_eng.png | 47a019a9dc66fd57 |
 | F4 | strategy effect: deltas per strategy by model | deltas_long.csv | 07_score.py | figures/ch04_f4_strategy_effect_eng.png | 3267ca20fd960316 |
-| F5 | cost-robustness frontier: median GPU latency vs delta sensitivity | frontier.csv | 07_secondary.py | figures/ch04_f5_frontier_eng.png | 63f0e689679e7e83 |
-| F6 | cue change by outcome in the paired rationales | cues_change.csv | 07_secondary.py | figures/ch04_f6_cue_change_eng.png | d19e384887822e0e |
+| F5 | cost-robustness frontier: median GPU latency vs delta sensitivity | frontier.csv | 07_secondary.py | figures/ch04_f5_frontier_eng.png | e208cd43ae68517c (regenerated 2026-11-02, commit 986786a: label overlap fixed) |
+| F6 | cue change by outcome in the paired rationales | cues_change.csv | 07_secondary.py | figures/ch04_f6_cue_change_eng.png | 8f3a4db2876099ed (regenerated 2026-11-02, commit 986786a: y-limit fixed) |
 | F7 | generalisation: core vs E-PhishLLM sensitivity and specificity | metrics_long.csv | 07_score.py | figures/ch04_f7_generalisation_eng.png | e78164fba4ad9b4b |
+| F8 | two-stage indicator condition: delta per condition with 95% CIs, three panels (one per model), direct zero-shot vs clean fit vs attack-aware fit | additional/twostage_*/deltas_long.csv, deltas_long.csv | 07_twostage_tables_figures.py | figures/ch04_f8_twostage_eng.png | 58b93556839eda3a |
 
 The hard-core coding sample (`reports/hardcore_sample.csv`, 8 pre-registered and 30 post hoc rows) and its
 guide (`docs/HARDCORE_CODING_GUIDE.md`) feed the qualitative paragraph of Section 4.5; the author's codes are

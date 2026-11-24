@@ -175,7 +175,7 @@ reported next to the frozen tables as a post-registration addition with its own 
 ## Status
 
 - [x] 01–04 data construction and audit (Section 3.2.1–3.2.4)
-- [x] 05 variant derivation + meaning checks on the development set (Section 3.2.3) — thresholds await the manual rating (05b)
+- [x] 05 variant derivation + meaning checks (Section 3.2.3): thresholds calibrated on the development set by three raters and frozen 2026-10-25 (05b); evaluation variants derived once with the frozen thresholds 2026-10-26 (fixed artefact, hashes in reports/variants_eval_fixed_artifacts.json)
 - [x] 06 prompting / inference (Sections 3.4, 3.6): 24 cells on Colab GPUs, all passing the integrity check
 - [x] 07 baselines (Section 3.5): tfidf_lr, tfidf_svm (laptop) and distilbert (Colab T4); 3/3 pass the integrity check
 - [x] 08 evaluation and statistics (Section 4.3, 4.5): scores computed once (v0.7.1-scored); tables and figures in results/tables and figures/
