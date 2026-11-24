@@ -31,6 +31,7 @@ order.
 | T10 | CoT cue frequencies by category and item group, pooled over models | cues_frequency.csv | 07_secondary.py | results/tables/tab_t10_cues.tex | f0b54c0e1b74a03a |
 | T11 | hard core: items missed by all six vs by none, per item group | hardcore_summary.csv | 07_secondary.py | results/tables/tab_t11_hardcore.tex | e7ecb4dfe9426635 |
 | A1 | sensitivity by condition without invalid outputs (analysis no_invalid) | metrics_long.csv | 07_score.py | results/tables/tab_a1_sensitivity_no_invalid.tex | 0fda73f354788bd6 |
+| T13 | precision and false-positive rate on the core originals (post hoc descriptive addition, QUESTIONS.md item 19, 2026-11-24; recall and F1 read from metrics_long.csv; intervals only, no test) | additional/precision_fpr/precision_fpr.csv, metrics_long.csv | 07_precision_fpr.py | results/tables/tab_t13_precision_fpr.tex | 7ddacbc8dfdbdabe |
 | F1 | sensitivity by condition, zero-shot, grouped bars with CI whiskers | metrics_long.csv | 07_score.py | figures/ch04_f1_sens_by_condition_eng.png | 2874d4917e756582 |
 | F2 | heat map of paired deltas, model x strategy per condition | deltas_long.csv | 07_score.py | figures/ch04_f2_delta_heatmap_eng.png | d035f0f6ddd9ab56 |
 | F3 | size effect: the two model families by condition | metrics_long.csv | 07_score.py | figures/ch04_f3_size_effect_eng.png | 47a019a9dc66fd57 |

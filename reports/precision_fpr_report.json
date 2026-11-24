@@ -1,0 +1,127 @@
+{
+  "computed_at": "2026-11-24T14:46:03Z",
+  "note": "Post hoc descriptive addition (QUESTIONS.md item 19, logged 2026-11-24 before this computation): precision and the false-positive rate; no test, no family; frozen files unchanged.",
+  "inputs": {
+    "results/scores/items.parquet": "857b43eb24d3f57c0cd05444291556b816b35bd68292df3d475268ac43ec0dbc",
+    "results/scores/ensemble_predictions.csv": "631475ca60b86569bb35fac950c0d9dc6b37254163d9acb2afe65cf92481f959",
+    "results/scores/metrics_long.csv": "6c53871c3719d6927a0be006b246ba92042c0c38d423ca3b2570d9611c34fbe7",
+    "results/scores/additional/twostage_qwen25-7b/items.parquet": "0ad9053bb6720340d2eb4ec4a7bade3dc9badc6854cbb9ede37ef1ef134daefb",
+    "results/scores/additional/twostage_qwen25-7b/metrics_long.csv": "ae8be111293f1f0c9218c04458398cb936bd49e806855463b04edc746815b31a",
+    "results/scores/additional/twostage_gemma2-9b/items.parquet": "4f7cd8bb47a38a18044fc9646148b83f202d839eca5da832ac1be4cfc229c57e",
+    "results/scores/additional/twostage_gemma2-9b/metrics_long.csv": "aa0f81952b16446b55d020734a5f7f205d9fe000594e88645c03dcd5872710e9",
+    "results/scores/additional/twostage_gemma2-27b/items.parquet": "0a5ea0c2afc80bba4b007b924b2fac41c496f3f9cd1cea10d0ea19826b4350ee",
+    "results/scores/additional/twostage_gemma2-27b/metrics_long.csv": "999349b55eca72883bf0849d147b8de7136d65d85fbbe4f874593787a4492253"
+  },
+  "ensemble_rows_checked_against_ensemble_predictions.csv": 20828,
+  "cells": [
+    "llama31-8b/zero_shot",
+    "mistral-7b/zero_shot",
+    "gemma2-9b/zero_shot",
+    "qwen25-7b/zero_shot",
+    "qwen25-14b/zero_shot",
+    "gemma2-27b/zero_shot",
+    "llama31-8b/few_shot",
+    "mistral-7b/few_shot",
+    "gemma2-9b/few_shot",
+    "qwen25-7b/few_shot",
+    "qwen25-14b/few_shot",
+    "gemma2-27b/few_shot",
+    "llama31-8b/cot",
+    "mistral-7b/cot",
+    "gemma2-9b/cot",
+    "qwen25-7b/cot",
+    "qwen25-14b/cot",
+    "gemma2-27b/cot",
+    "llama31-8b/role",
+    "mistral-7b/role",
+    "gemma2-9b/role",
+    "qwen25-7b/role",
+    "qwen25-14b/role",
+    "gemma2-27b/role",
+    "ensemble/zero_shot",
+    "ensemble/few_shot",
+    "ensemble/cot",
+    "ensemble/role",
+    "baseline_tfidf_lr/supervised",
+    "baseline_tfidf_svm/supervised",
+    "baseline_distilbert/supervised",
+    "twostage_qwen25-7b/lr_clean",
+    "twostage_qwen25-7b/lr_all",
+    "twostage_gemma2-9b/lr_clean",
+    "twostage_gemma2-9b/lr_all",
+    "twostage_gemma2-27b/lr_clean",
+    "twostage_gemma2-27b/lr_all"
+  ],
+  "n_cells": 37,
+  "analyses": [
+    "primary",
+    "no_invalid"
+  ],
+  "B": 2000,
+  "seed": 2026,
+  "definitions": {
+    "precision": "TP / (TP + FP); TP = phishing items labelled phishing, FP = legitimate items labelled phishing; an invalid output is never a predicted phishing; NaN when TP + FP = 0",
+    "precision_sets": {
+      "core_originals": [
+        "phish_original",
+        "legit_core_neg",
+        "legit_ctrl_modern"
+      ],
+      "generalisation": [
+        "gen_phish",
+        "gen_legit"
+      ]
+    },
+    "fpr": "FP / n of the legitimate group in the analysis",
+    "fpr_groups": [
+      "legit_core_neg",
+      "legit_ctrl_modern",
+      "legit_ctrl_para",
+      "gen_legit",
+      "legit_core_pooled"
+    ],
+    "pooled": [
+      "legit_core_neg",
+      "legit_ctrl_modern"
+    ]
+  },
+  "checks": {
+    "stored_metrics": {
+      "n_compared": 814,
+      "n_mismatch": 0,
+      "mismatches": []
+    },
+    "fpr_identity": {
+      "exact_count_identity": {
+        "n": 296,
+        "n_fail": 0,
+        "failures": [],
+        "float_max_abs_deviation": 1.1102230246251565e-16
+      },
+      "against_stored_invalid_rate": {
+        "n": 148,
+        "n_fail": 0,
+        "failures": [],
+        "note": "(1 - spec) - FPR computed exactly on the counts, compared with the stored invalid_rate at the stored precision (%.6g); primary analysis"
+      }
+    },
+    "precision_undefined_cells": []
+  },
+  "rows": {
+    "confusion_counts": 740,
+    "precision_fpr": 518
+  },
+  "outputs": {
+    "results/scores/additional/precision_fpr/confusion_counts.csv": "b259dde224742971e43ddb354705b5887b9b7057b9d42845cb76ef6cae3c16c5",
+    "results/scores/additional/precision_fpr/precision_fpr.csv": "36c32475469c7c65cfc5315eabb2090478ee891a607c01e4634117a8f28036e4",
+    "results/tables/tab_t13_precision_fpr.tex": "7ddacbc8dfdbdabe15588efb302dc0a06bc0863635ef627c1772583ef9680736"
+  },
+  "runtime_s": 28.6,
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.5.4",
+    "pandas": "3.1.0"
+  },
+  "git_commit": "db9112a",
+  "git_describe": "v1.2.1-thesis"
+}

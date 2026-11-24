@@ -777,3 +777,44 @@
     the manual coding of the hard-core sample is marked "[coding, to confirm]" because reports/hardcore_coding.xlsx holds no
     failure_type yet (07_import_coding.py not run); the indicator counts beside it are computed. TASK_08 complete except that
     confirmation; RQ1 to RQ4 and every frozen output unchanged.
+
+## Post hoc descriptive addition: precision and the false-positive rate (2026-11-24)
+
+19. **Precision and the false-positive rate added as descriptive metrics (logged 2026-11-24, before any
+    computation; the scores of the study were already known when this item was written).** RQ1 names
+    accuracy, precision, recall, F1 and the false-positive rate (FPR). The planned outputs of item 12 and
+    TASK_07 hold accuracy, balanced accuracy, F1 (phishing), sensitivity per condition, specificity per
+    legitimate set and the invalid rate, but no precision and no FPR as such. Both are therefore added now as a
+    **post hoc, descriptive** addition: they belong to no test family, carry no p-value and no Holm correction,
+    change no pre-specified number, and are reported with 95 % cluster-bootstrap intervals only. The scores in
+    results/scores/ were computed on 2026-11-01 (v0.7.1-scored) and have been read since; this item was written
+    after that, which is why it is post hoc. Nothing frozen changes: the script reads the frozen item tables and
+    writes new files only (results/scores/additional/precision_fpr/, reports/precision_fpr_report.json,
+    results/tables/tab_t13_precision_fpr.tex); both frozen hash lists are verified before and after.
+    **Definitions (consistent with f1_phish in scripts/scoring/score.py):**
+    (a) Cells: the 31 cells of the main scoring (6 models x 4 strategies, the ensemble x 4, the 3 baselines) from
+    results/scores/items.parquet with the ensemble rows rebuilt by scoring.ensemble and asserted equal to
+    results/scores/ensemble_predictions.csv, plus the 6 two-stage cells (3 models x lr_clean, lr_all) from
+    results/scores/additional/twostage_<model>/items.parquet. Analyses: primary (an invalid output is an
+    incorrect prediction and never a predicted phishing) and no_invalid (invalid items dropped), exactly as the
+    scoring code handles them.
+    (b) Confusion counts per cell, analysis and item group (the ten groups of score.GROUPS): n, predicted
+    phishing, predicted legitimate, invalid, correct.
+    (c) precision = TP / (TP + FP), TP = phishing items labelled phishing, FP = legitimate items labelled
+    phishing; computed on the core originals (phish_original + legit_core_neg + legit_ctrl_modern, the item
+    set of f1_phish) and on the generalisation set (gen_phish + gen_legit). Undefined when TP + FP = 0: written
+    as NaN and the cells are listed in the report.
+    (d) false-positive rate = FP / n for each legitimate group (legit_core_neg, legit_ctrl_modern,
+    legit_ctrl_para, gen_legit) and for the pooled legitimate core originals (legit_core_neg +
+    legit_ctrl_modern); n is the number of items of the group in the analysis.
+    (e) Intervals: scoring.stats.point_and_ci (cluster bootstrap over source e-mails, B = 2000, seed 2026 from
+    configs/data.yaml), stream keys "<detector>/<strategy>/<analysis>/precision/<core_originals|generalisation>"
+    and "<detector>/<strategy>/<analysis>/fpr/<group|legit_core_pooled>" in the existing naming scheme.
+    **Checks the script makes and reports:** sensitivity, specificity and f1_phish recomputed from the counts
+    equal the stored values of metrics_long.csv (and of the two-stage metrics files) at the stored precision;
+    for every cell and legitimate group, (1 - specificity) - FPR equals the invalid rate of that group; a
+    --check mode recomputes the new files and compares them byte for byte; unit tests on toy data.
+    **Table:** T13 (results/tables/tab_t13_precision_fpr.tex), for the six models under zero_shot, the ensemble
+    under zero_shot and the three baselines: precision, recall and F1 on the core originals, FPR on
+    legit_core_neg and on legit_ctrl_modern, with intervals, in the style of T1. Recall and F1 are read from the
+    frozen metrics_long.csv; only precision and the FPR are new. Status: logged; computation follows this entry.
